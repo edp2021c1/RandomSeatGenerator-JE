@@ -22,29 +22,29 @@ public class SeatGenerator {
     }
 
     public Seat next(long seed) {
-        System.out.println("Config:");
-        System.out.println("Seed: " + seed);
-        System.out.print("Front rows:");
+        System.out.println("生成配置：");
+        System.out.println("种子：" + seed);
+        System.out.print("前两排名单：");
         for(int i=0;i<this.conf.frontRows.size();i++){
             System.out.print(" "+this.conf.frontRows.get(i));
         }
         System.out.println();
-        System.out.print("Middle rows:");
+        System.out.print("中两排名单：");
         for(int i=0;i<this.conf.middleRows.size();i++){
             System.out.print(" "+this.conf.middleRows.get(i));
         }
         System.out.println();
-        System.out.print("Back rows:");
+        System.out.print("后两排名单：");
         for(int i=0;i<this.conf.backRows.size();i++){
             System.out.print(" "+this.conf.backRows.get(i));
         }
         System.out.println();
-        System.out.print("Group leaders:");
+        System.out.print("组长名单：");
         for(int i=0;i<this.conf.groupLeaders.size();i++){
             System.out.print(" "+this.conf.groupLeaders.get(i));
         }
         System.out.println();
-        System.out.println("Separated:");
+        System.out.println("拆分列表：");
         for(int i = 0; i<this.conf.separated.size(); i++){
             System.out.println(this.conf.separated.get(i).toString());
         }
@@ -54,7 +54,7 @@ public class SeatGenerator {
         this.seat = new ArrayList<>(Arrays.asList(new String[49]));
         ArrayList<Boolean> sorted = new ArrayList<>(Arrays.asList(new Boolean[44]));
         int t;
-        int generation = 0;
+        int times = 0;
         do {
             for (int i = 0; i < 44; i++) {
                 this.seat.set(i, "-");
@@ -104,7 +104,7 @@ public class SeatGenerator {
             } while (sorted.get(t + 28) || n == m);
             this.seat.set(n, this.conf.backRows.get(t));
 
-            generation++;
+            times++;
         } while (!check());
 
         //组长
@@ -115,27 +115,35 @@ public class SeatGenerator {
             this.seat.set(t * 7 + i, "*%s".formatted(this.seat.get(t * 7 + i)));
         }
 
-        System.out.println("Successfully generated after " + generation + " generation(s)");
+        System.out.println(times + "次生成后成功");
 
-        return new Seat(this.seat, seed, generation);
+        StringBuilder str = new StringBuilder("座位表：\n");
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                str.append(this.seat.get(i * 7 + j)).append("\t");
+            }
+            str.append("\n");
+        }
+        System.out.print(str);
+
+        return new Seat(this.seat, seed, times);
     }
 
     public boolean check() {
-        boolean hasLeader = true;
+        boolean hasLeader = false;
         boolean isSeparated = true;
         // 检查每列是否都有组长
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 7; j++) {
-                if(!hasLeader){
-                    hasLeader = this.conf.groupLeaders.contains(this.seat.get(j * 7 + i));
-                }else{
+                hasLeader = this.conf.groupLeaders.contains(this.seat.get(j * 7 + i));
+                if (hasLeader) {
                     break;
                 }
             }
             if (!hasLeader) {
                 return false;
             }
-            hasLeader = true;
+            hasLeader = false;
         }
         // 检查是否分开
         for (int i = 0; i < this.conf.separated.size(); i++) {

@@ -1,11 +1,10 @@
 package com.edp2021c1.util;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class Seat {
-	public ArrayList<String> seat;
-	public long seed;
+	private final ArrayList<String> seat;
+	private final long seed;
 	public int generation;
 
 	public Seat(ArrayList<String> st, long sd, int gnrt) {
@@ -14,4 +13,11 @@ public class Seat {
 		this.generation = gnrt;
 	}
 
+	public ArrayList<String> getSeat() {
+		return seat;
+	}
+
+	public long getSeed() {
+		return seed;
+	}
 }

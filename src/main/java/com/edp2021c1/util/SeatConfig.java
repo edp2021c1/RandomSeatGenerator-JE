@@ -18,8 +18,12 @@ public class SeatConfig {
 
 		this.separated = new ArrayList<>();
 		String[] t = sp.split("\n");
-		for (String i : t) {
-			this.separated.add(new Separate(i));
-		}
+        for (String i : t) {
+            if (!i.isEmpty()) this.separated.add(new Separate(i));
+        }
+    }
+
+    public SeatConfig(OriginalSeatConfig j) {
+        this(j.getOt(), j.getTf(), j.getFs(), j.getZz(), j.getSeparate());
 	}
 }

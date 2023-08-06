@@ -1,0 +1,69 @@
+* {
+    -font-default:"Microsoft Yahei";
+    -font-large:Impact;
+    -color-text-default:#dfe1e5;
+    -color-text-input:white;
+    -color-background-default:#2d2d30;
+    -color-background-menu:#414145;
+    -color-background-input:#1d1d1f;
+    -color-background-button:#515156;
+    -color-background-focused:#65656b;
+    -color-border-default:#4e5157;
+}
+
+.menu .label,
+.menu-item>.label,
+.label,.button{
+    -fx-text-fill:-color-text-default;
+}
+
+.text-field,.text-area{
+    -fx-border-color:-color-border-default;
+    -fx-text-fill:-color-text-input;
+}
+
+.text-field,
+.text-area .content{
+    -fx-background-color:-color-background-input;
+}
+
+.scroll-bar{
+    -fx-background-color:-color-background-default;
+}
+
+.text-field:focused,
+.text-area:focused .content,
+.button:hover,
+.menu:hover,
+.menu-item:focused{
+    -fx-background-color:-color-background-focused;
+}
+
+.button{
+    -fx-background-color:-color-background-button;
+}
+
+.menu-bar,.menu,.menu-item,.context-menu{
+    -fx-background-color:-color-background-menu;
+}
+
+.mainPane{
+    -fx-background-color:-color-background-default;
+}
+
+.dialog{
+    -fx-background-color:-color-background-default;
+    -fx-border-color:-color-border-default;
+}
+
+.largeLabel{
+    -fx-font-size:35px;
+}
+
+.middleLabel{
+    -fx-font-size:24px;
+}
+
+.closeButton:hover{
+    -fx-background-color: #c42b1c;
+}
