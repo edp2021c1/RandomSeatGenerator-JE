@@ -47,6 +47,19 @@
     -fx-background-color:-color-background-menu;
 }
 
+.closeButton:hover{
+    -fx-background-color: #c42b1c;
+}
+
+.table-view{
+    -fx-background-color:-color-background-input;
+    -fx-border-color:black;
+}
+
+.table-view .column-header{
+    -fx-background-color:-color-background-menu;
+}
+
 .mainPane{
     -fx-background-color:-color-background-default;
 }
@@ -62,8 +75,4 @@
 
 .middleLabel{
     -fx-font-size:24px;
-}
-
-.closeButton:hover{
-    -fx-background-color: #c42b1c;
 }

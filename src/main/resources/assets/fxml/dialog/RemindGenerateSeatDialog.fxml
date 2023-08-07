@@ -15,50 +15,44 @@
             <BorderPane prefHeight="158.0" prefWidth="316.0" styleClass="dialog">
                 <top>
                     <HBox prefHeight="25.0" prefWidth="312.0" BorderPane.alignment="CENTER">
-                        <children>
-                            <ImageView fx:id="icon" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true"
-                                       preserveRatio="true"/>
-                            <Label prefHeight="24.0" prefWidth="175.0" text="提示"/>
-                            <Button fx:id="closeBtn" alignment="CENTER" mnemonicParsing="false" onAction="#closeDialog"
-                                    prefHeight="24.0" prefWidth="28.0" styleClass="closeButton" text="×"
-                                    textAlignment="CENTER">
-                                <HBox.margin>
-                                    <Insets left="86.0"/>
-                                </HBox.margin>
-                            </Button>
-                        </children>
+                        <ImageView fx:id="icon" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true"
+                                   preserveRatio="true"/>
+                        <Label prefHeight="24.0" prefWidth="175.0" text="提示"/>
+                        <Button fx:id="closeBtn" alignment="CENTER" mnemonicParsing="false" onAction="#closeDialog"
+                                prefHeight="24.0" prefWidth="28.0" styleClass="closeButton" text="×"
+                                textAlignment="CENTER">
+                            <HBox.margin>
+                                <Insets left="86.0"/>
+                            </HBox.margin>
+                        </Button>
                     </HBox>
                 </top>
                 <center>
                     <HBox alignment="CENTER" prefHeight="108.0" prefWidth="311.0" BorderPane.alignment="CENTER">
-                        <children>
-                            <ImageView fx:id="img" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true"
-                                       preserveRatio="true">
-                                <HBox.margin>
-                                    <Insets right="12.0"/>
-                                </HBox.margin>
-                            </ImageView>
-                            <Label prefHeight="37.0" prefWidth="151.0" text="请先生成座位表!">
-                                <font>
-                                    <Font size="20.0"/>
-                                </font>
-                                <HBox.margin>
-                                    <Insets left="12.0"/>
-                                </HBox.margin>
-                            </Label>
-                        </children>
+                        <ImageView fx:id="img" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true"
+                                   preserveRatio="true">
+                            <HBox.margin>
+                                <Insets right="12.0"/>
+                            </HBox.margin>
+                        </ImageView>
+                        <Label prefHeight="37.0" prefWidth="151.0" text="请先生成座位表!">
+                            <font>
+                                <Font size="20.0"/>
+                            </font>
+                            <HBox.margin>
+                                <Insets left="12.0"/>
+                            </HBox.margin>
+                        </Label>
                     </HBox>
                 </center>
                 <bottom>
                     <HBox alignment="CENTER_RIGHT" prefHeight="45.0" prefWidth="314.0" BorderPane.alignment="CENTER">
-                        <children>
-                            <Button fx:id="confirmBtn" mnemonicParsing="false" onAction="#closeDialog" prefHeight="26.0"
-                                    prefWidth="47.0" text=" 确定 ">
-                                <HBox.margin>
-                                    <Insets right="48.0"/>
-                                </HBox.margin>
-                            </Button>
-                        </children>
+                        <Button fx:id="confirmBtn" mnemonicParsing="false" onAction="#closeDialog" prefHeight="26.0"
+                                prefWidth="47.0" text=" 确定 ">
+                            <HBox.margin>
+                                <Insets right="48.0"/>
+                            </HBox.margin>
+                        </Button>
                     </HBox>
                 </bottom>
             </BorderPane>

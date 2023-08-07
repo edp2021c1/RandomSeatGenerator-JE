@@ -137,6 +137,7 @@ public class MainWindowController {
     void exportToFile(ActionEvent event) throws IOException {
         if (seat == null) {
             Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("assets/fxml/dialog/RemindGenerateSeatDialog.fxml")));
+            s.initOwner(stage);
             s.show();
         } else {
             FileChooser fc = new FileChooser();
@@ -172,7 +173,7 @@ public class MainWindowController {
                     fr.write(str.toString());
                     fr.close();
                 } else if (f.getName().endsWith(".xlsx")) {
-                    EasyExcel.write(f, SeatExcelRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatExcelRowData.fromSeat(this.seat));
+                    EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(this.seat));
                 } else {
                     str.append(String.format(",,,座位表-%tF-%tT,,,\n", date, date));
                     str.append("第七列,第六列,第五列,第四列,第三列,第二列,第一列\n");
@@ -258,6 +259,7 @@ public class MainWindowController {
     void generate(ActionEvent event) throws IOException {
         if (frontRowsInput.getText().isEmpty() || middleRowsInput.getText().isEmpty() || backRowsInput.getText().isEmpty() || groupLeadersInput.getText().isEmpty()) {
             Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("assets/fxml/dialog/RemindFillInConfigDialog.fxml")));
+            s.initOwner(stage);
             s.show();
         }
         SeatConfig conf = new SeatConfig(frontRowsInput.getText(), middleRowsInput.getText(), backRowsInput.getText(), groupLeadersInput.getText(), separatedInput.getText());
@@ -273,8 +275,8 @@ public class MainWindowController {
 
     @FXML
     void showAboutDialog(ActionEvent event) throws IOException {
-        Stage aboutDialog = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/AboutDialog.fxml")));
-
+        Stage aboutDialog = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("assets/fxml/dialog/AboutDialog.fxml")));
+        aboutDialog.initOwner(stage);
         aboutDialog.show();
     }
 

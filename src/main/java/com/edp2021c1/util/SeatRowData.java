@@ -4,7 +4,7 @@ import com.alibaba.excel.annotation.ExcelProperty;
 
 import java.util.ArrayList;
 
-public class SeatExcelRowData {
+public class SeatRowData {
     @ExcelProperty("第七列")
     private String c1;
     @ExcelProperty("第六列")
@@ -20,7 +20,7 @@ public class SeatExcelRowData {
     @ExcelProperty("第一列")
     private String c7;
 
-    public SeatExcelRowData(String c1, String c2, String c3, String c4, String c5, String c6, String c7) {
+    public SeatRowData(String c1, String c2, String c3, String c4, String c5, String c6, String c7) {
         this.c1 = c1;
         this.c2 = c2;
         this.c3 = c3;
@@ -30,14 +30,14 @@ public class SeatExcelRowData {
         this.c7 = c7;
     }
 
-    public static ArrayList<SeatExcelRowData> fromSeat(Seat seat) {
+    public static ArrayList<SeatRowData> fromSeat(Seat seat) {
         ArrayList<String> l = seat.getSeat();
-        ArrayList<SeatExcelRowData> s = new ArrayList<>();
+        ArrayList<SeatRowData> s = new ArrayList<>();
 
         for (int i = 0; i < 7; i++) {
-            s.add(new SeatExcelRowData(l.get(i), l.get(i + 1), l.get(i + 2), l.get(i + 3), l.get(i + 4), l.get(i + 5), l.get(i + 6)));
+            s.add(new SeatRowData(l.get(i), l.get(i + 1), l.get(i + 2), l.get(i + 3), l.get(i + 4), l.get(i + 5), l.get(i + 6)));
         }
-        s.add(new SeatExcelRowData("Seed:", String.format("%d", seat.getSeed()), "", "", "", "", ""));
+        s.add(new SeatRowData("Seed:", String.format("%d", seat.getSeed()), "", "", "", "", ""));
 
         return s;
     }

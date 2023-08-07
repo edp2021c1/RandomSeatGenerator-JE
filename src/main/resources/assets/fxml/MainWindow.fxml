@@ -1,177 +1,169 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.embed.swing.SwingNode?>
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.Scene?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.input.KeyCodeCombination?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.stage.Stage?>
-
 <Stage fx:id="stage" maximized="true" title="Random Seat Generator - 随机座位生成器" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edp2021c1.ui.controller.MainWindowController">
     <scene>
         <Scene stylesheets="@../css/style.css">
             <BorderPane prefHeight="540.0" prefWidth="960.0" styleClass="mainPane">
                 <top>
                     <MenuBar BorderPane.alignment="CENTER">
-                        <menus>
-                            <Menu mnemonicParsing="false" text="文件">
-                                <items>
-                                    <MenuItem fx:id="importConfigMenu" mnemonicParsing="false" onAction="#importConfig" text="导入配置...">
-                                        <accelerator>
-                                            <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                                        </accelerator>
-                                    </MenuItem>
-                                    <MenuItem fx:id="exportToFileMenu" mnemonicParsing="false" onAction="#exportToFile" text="导出为...">
-                                        <accelerator>
-                                            <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                                        </accelerator>
-                                    </MenuItem>
-                                </items>
-                            </Menu>
-                            <Menu mnemonicParsing="false" text="编辑">
-                                <items>
-                                    <MenuItem fx:id="fillInConfigMenu" mnemonicParsing="false" onAction="#fillInConfig" text="填入配置">
-                                        <accelerator>
-                                            <KeyCodeCombination alt="UP" code="F" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                                        </accelerator>
-                                    </MenuItem>
-                                    <MenuItem fx:id="clearConfigMenu" mnemonicParsing="false" onAction="#clearConfig" text="清空配置">
-                                        <accelerator>
-                                            <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
-                                        </accelerator>
-                                    </MenuItem>
-                           <SeparatorMenuItem mnemonicParsing="false" />
-                           <MenuItem fx:id="generateMenu" mnemonicParsing="false" onAction="#generate" text="生成">
-                              <accelerator>
-                                 <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                              </accelerator>
-                           </MenuItem>
-                                </items>
-                            </Menu>
-                            <Menu mnemonicParsing="false" text="帮助">
-                                <items>
-                                    <MenuItem fx:id="aboutMenu" mnemonicParsing="false" onAction="#showAboutDialog" text="关于" />
-                                </items>
-                            </Menu>
-                        </menus>
+                        <Menu mnemonicParsing="false" text="文件">
+                            <MenuItem fx:id="importConfigMenu" mnemonicParsing="false" onAction="#importConfig"
+                                      text="导入配置...">
+                                <accelerator>
+                                    <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP"
+                                                        shortcut="UP"/>
+                                </accelerator>
+                            </MenuItem>
+                            <MenuItem fx:id="exportToFileMenu" mnemonicParsing="false" onAction="#exportToFile"
+                                      text="导出为...">
+                                <accelerator>
+                                    <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP"
+                                                        shortcut="UP"/>
+                                </accelerator>
+                            </MenuItem>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="编辑">
+                            <MenuItem fx:id="fillInConfigMenu" mnemonicParsing="false" onAction="#fillInConfig"
+                                      text="填入配置">
+                                <accelerator>
+                                    <KeyCodeCombination alt="UP" code="F" control="DOWN" meta="UP" shift="UP"
+                                                        shortcut="UP"/>
+                                </accelerator>
+                            </MenuItem>
+                            <MenuItem fx:id="clearConfigMenu" mnemonicParsing="false" onAction="#clearConfig"
+                                      text="清空配置">
+                                <accelerator>
+                                    <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="DOWN"
+                                                        shortcut="UP"/>
+                                </accelerator>
+                            </MenuItem>
+                            <SeparatorMenuItem mnemonicParsing="false"/>
+                            <MenuItem fx:id="generateMenu" mnemonicParsing="false" onAction="#generate" text="生成">
+                                <accelerator>
+                                    <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP"
+                                                        shortcut="UP"/>
+                                </accelerator>
+                            </MenuItem>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="帮助">
+                            <MenuItem fx:id="aboutMenu" mnemonicParsing="false" onAction="#showAboutDialog"
+                                      text="关于"/>
+                        </Menu>
                     </MenuBar>
                 </top>
                 <center>
-                    <HBox fx:id="mainHBox" alignment="CENTER" prefHeight="527.5" prefWidth="955.5" BorderPane.alignment="CENTER">
-                        <children>
-                            <VBox fx:id="mainVBox" alignment="CENTER" prefHeight="872.0" prefWidth="1092.0">
-                                <children>
-                                    <HBox fx:id="subBox_1" alignment="CENTER" prefHeight="96.0" prefWidth="912.0">
-                                        <children>
-                                            <TextField fx:id="frontRowsInput" promptText="第1~2排">
-                                                <HBox.margin>
-                                                    <Insets left="12.0" right="6.0" />
-                                                </HBox.margin>
-                                            </TextField>
-                                            <Button fx:id="fillDefaultFRBtn" mnemonicParsing="false" onAction="#fillFR" text="填入默认">
-                                                <HBox.margin>
-                                                    <Insets left="6.0" right="12.0" />
-                                                </HBox.margin>
-                                            </Button>
-                                            <TextField fx:id="middleRowsInput" promptText="第3~4排">
-                                                <HBox.margin>
-                                                    <Insets left="12.0" right="6.0" />
-                                                </HBox.margin>
-                                            </TextField>
-                                            <Button fx:id="fillDefaultMRBtn" mnemonicParsing="false" onAction="#fillMR" text="填入默认">
-                                                <HBox.margin>
-                                                    <Insets left="6.0" right="12.0" />
-                                                </HBox.margin>
-                                            </Button>
-                                            <TextField fx:id="backRowsInput" promptText="第5~7排">
-                                                <HBox.margin>
-                                                    <Insets left="12.0" right="6.0" />
-                                                </HBox.margin>
-                                            </TextField>
-                                            <Button fx:id="fillDefaultBRBtn" mnemonicParsing="false" onAction="#fillBR" text="填入默认">
-                                                <HBox.margin>
-                                                    <Insets left="6.0" right="12.0" />
-                                                </HBox.margin>
-                                            </Button>
-                                        </children>
-                                    </HBox>
-                                    <HBox fx:id="subBox_2" alignment="CENTER" prefHeight="96.0" prefWidth="912.0">
-                                        <children>
-                                            <TextField fx:id="seedInput" promptText="种子（long）">
-                                                <HBox.margin>
-                                                    <Insets left="12.0" right="6.0" />
-                                                </HBox.margin>
-                                            </TextField>
-                                            <Button fx:id="rdSeed" mnemonicParsing="false" onAction="#fillRdSeed" text="随机生成">
-                                                <HBox.margin>
-                                                    <Insets left="6.0" right="12.0" />
-                                                </HBox.margin>
-                                            </Button>
-                                            <TextField fx:id="groupLeadersInput" promptText="组长">
-                                                <HBox.margin>
-                                                    <Insets left="12.0" right="6.0" />
-                                                </HBox.margin>
-                                            </TextField>
-                                            <Button fx:id="fillDefaultGLBtn" mnemonicParsing="false" onAction="#fillGL" text="填入默认">
-                                                <HBox.margin>
-                                                    <Insets left="6.0" right="12.0" />
-                                                </HBox.margin>
-                                            </Button>
-                                            <TextArea fx:id="separatedInput" prefHeight="75.0" prefWidth="165.0" promptText="分开">
-                                                <HBox.margin>
-                                                    <Insets left="12.0" right="6.0" />
-                                                </HBox.margin>
-                                            </TextArea>
-                                            <Button fx:id="fillDefaultSpBtn" mnemonicParsing="false" onAction="#fillSP" text="填入默认">
-                                                <HBox.margin>
-                                                    <Insets left="6.0" right="12.0" />
-                                                </HBox.margin>
-                                            </Button>
-                                        </children>
-                                    </HBox>
-                                    <HBox fx:id="subBox_3" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                                        <children>
-                                            <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#generate" text="生成">
-                                                <font>
-                                                    <Font size="22.0" />
-                                                </font>
-                                                <HBox.margin>
-                                                    <Insets right="48.0" />
-                                                </HBox.margin>
-                                            </Button>
-                                            <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#exportToFile" text="导出">
-                                                <font>
-                                                    <Font size="22.0" />
-                                                </font>
-                                                <HBox.margin>
-                                                    <Insets left="48.0" />
-                                                </HBox.margin>
-                                            </Button>
-                                        </children>
-                                    </HBox>
-                                    <HBox fx:id="subBox_4" alignment="CENTER" prefHeight="110.0" prefWidth="860.0">
-                                        <children>
-                                            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="71.0" prefWidth="478.0" style="-fx-font-family: Impact;" styleClass="largeLabel" text="--RESULT--" textAlignment="CENTER" />
-                                        </children>
-                                    </HBox>
-                                    <SwingNode fx:id="tableNode" />
-                                </children>
-                            </VBox>
-                        </children>
+                    <HBox fx:id="mainHBox" alignment="CENTER" prefHeight="527.5" prefWidth="955.5"
+                          BorderPane.alignment="CENTER">
                         <BorderPane.margin>
-                            <Insets left="24.0" right="24.0" />
+                            <Insets left="24.0" right="24.0"/>
                         </BorderPane.margin>
+                        <VBox fx:id="mainVBox" alignment="CENTER" prefHeight="872.0" prefWidth="1092.0">
+                            <HBox fx:id="subBox_1" alignment="CENTER" prefHeight="96.0" prefWidth="912.0">
+                                <TextField fx:id="frontRowsInput" promptText="第1~2排">
+                                    <HBox.margin>
+                                        <Insets left="12.0" right="6.0"/>
+                                    </HBox.margin>
+                                </TextField>
+                                <Button fx:id="fillDefaultFRBtn" mnemonicParsing="false" onAction="#fillFR"
+                                        text="填入默认">
+                                    <HBox.margin>
+                                        <Insets left="6.0" right="12.0"/>
+                                    </HBox.margin>
+                                </Button>
+                                <TextField fx:id="middleRowsInput" promptText="第3~4排">
+                                    <HBox.margin>
+                                        <Insets left="12.0" right="6.0"/>
+                                    </HBox.margin>
+                                </TextField>
+                                <Button fx:id="fillDefaultMRBtn" mnemonicParsing="false" onAction="#fillMR"
+                                        text="填入默认">
+                                    <HBox.margin>
+                                        <Insets left="6.0" right="12.0"/>
+                                    </HBox.margin>
+                                </Button>
+                                <TextField fx:id="backRowsInput" promptText="第5~7排">
+                                    <HBox.margin>
+                                        <Insets left="12.0" right="6.0"/>
+                                    </HBox.margin>
+                                </TextField>
+                                <Button fx:id="fillDefaultBRBtn" mnemonicParsing="false" onAction="#fillBR"
+                                        text="填入默认">
+                                    <HBox.margin>
+                                        <Insets left="6.0" right="12.0"/>
+                                    </HBox.margin>
+                                </Button>
+                            </HBox>
+                            <HBox fx:id="subBox_2" alignment="CENTER" prefHeight="96.0" prefWidth="912.0">
+                                <TextField fx:id="seedInput" promptText="种子（long）">
+                                    <HBox.margin>
+                                        <Insets left="12.0" right="6.0"/>
+                                    </HBox.margin>
+                                </TextField>
+                                <Button fx:id="rdSeed" mnemonicParsing="false" onAction="#fillRdSeed"
+                                        text="随机生成">
+                                    <HBox.margin>
+                                        <Insets left="6.0" right="12.0"/>
+                                    </HBox.margin>
+                                </Button>
+                                <TextField fx:id="groupLeadersInput" promptText="组长">
+                                    <HBox.margin>
+                                        <Insets left="12.0" right="6.0"/>
+                                    </HBox.margin>
+                                </TextField>
+                                <Button fx:id="fillDefaultGLBtn" mnemonicParsing="false" onAction="#fillGL"
+                                        text="填入默认">
+                                    <HBox.margin>
+                                        <Insets left="6.0" right="12.0"/>
+                                    </HBox.margin>
+                                </Button>
+                                <TextArea fx:id="separatedInput" prefHeight="75.0" prefWidth="165.0"
+                                          promptText="分开">
+                                    <HBox.margin>
+                                        <Insets left="12.0" right="6.0"/>
+                                    </HBox.margin>
+                                </TextArea>
+                                <Button fx:id="fillDefaultSpBtn" mnemonicParsing="false" onAction="#fillSP"
+                                        text="填入默认">
+                                    <HBox.margin>
+                                        <Insets left="6.0" right="12.0"/>
+                                    </HBox.margin>
+                                </Button>
+                            </HBox>
+                            <HBox fx:id="subBox_3" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#generate"
+                                        text="生成">
+                                    <font>
+                                        <Font size="22.0"/>
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets right="48.0"/>
+                                    </HBox.margin>
+                                </Button>
+                                <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#exportToFile"
+                                        text="导出">
+                                    <font>
+                                        <Font size="22.0"/>
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets left="48.0"/>
+                                    </HBox.margin>
+                                </Button>
+                            </HBox>
+                            <HBox fx:id="subBox_4" alignment="CENTER" prefHeight="110.0" prefWidth="860.0">
+                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="71.0"
+                                       prefWidth="478.0" style="-fx-font-family: Impact;"
+                                       styleClass="largeLabel" text="--RESULT--" textAlignment="CENTER"/>
+                            </HBox>
+                            <SwingNode fx:id="tableNode"/>
+                        </VBox>
                     </HBox>
                 </center>
             </BorderPane>
