@@ -13,7 +13,8 @@
 
 .menu .label,
 .menu-item>.label,
-.label,.button{
+.label,.button,
+.table-cell{
     -fx-text-fill:-color-text-default;
 }
 
@@ -58,6 +59,18 @@
 
 .table-view .column-header{
     -fx-background-color:-color-background-menu;
+}
+
+.table-row-cell{
+    -fx-background-color:-color-background-default;
+}
+
+.table-row-cell:odd{
+    -fx-background-color:-color-background-menu;
+}
+
+.table-cell{
+    -fx-border-color:-border-color-default
 }
 
 .mainPane{

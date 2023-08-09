@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.embed.swing.SwingNode?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.input.*?>
@@ -107,8 +106,7 @@
                                         <Insets left="12.0" right="6.0"/>
                                     </HBox.margin>
                                 </TextField>
-                                <Button fx:id="rdSeed" mnemonicParsing="false" onAction="#fillRdSeed"
-                                        text="随机生成">
+                                <Button fx:id="rdSeed" mnemonicParsing="false" onAction="#fillRdSeed" text="随机生成">
                                     <HBox.margin>
                                         <Insets left="6.0" right="12.0"/>
                                     </HBox.margin>
@@ -124,8 +122,7 @@
                                         <Insets left="6.0" right="12.0"/>
                                     </HBox.margin>
                                 </Button>
-                                <TextArea fx:id="separatedInput" prefHeight="75.0" prefWidth="165.0"
-                                          promptText="分开">
+                                <TextArea fx:id="separatedInput" prefHeight="75.0" prefWidth="165.0" promptText="分开">
                                     <HBox.margin>
                                         <Insets left="12.0" right="6.0"/>
                                     </HBox.margin>
@@ -138,8 +135,7 @@
                                 </Button>
                             </HBox>
                             <HBox fx:id="subBox_3" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                                <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#generate"
-                                        text="生成">
+                                <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#generate" text="生成">
                                     <font>
                                         <Font size="22.0"/>
                                     </font>
@@ -147,8 +143,7 @@
                                         <Insets right="48.0"/>
                                     </HBox.margin>
                                 </Button>
-                                <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#exportToFile"
-                                        text="导出">
+                                <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#exportToFile" text="导出">
                                     <font>
                                         <Font size="22.0"/>
                                     </font>
@@ -158,11 +153,11 @@
                                 </Button>
                             </HBox>
                             <HBox fx:id="subBox_4" alignment="CENTER" prefHeight="110.0" prefWidth="860.0">
-                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="71.0"
-                                       prefWidth="478.0" style="-fx-font-family: Impact;"
-                                       styleClass="largeLabel" text="--RESULT--" textAlignment="CENTER"/>
+                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="71.0" prefWidth="478.0"
+                                       style="-fx-font-family: Impact;" styleClass="largeLabel" text="--RESULT--"
+                                       textAlignment="CENTER"/>
                             </HBox>
-                            <SwingNode fx:id="tableNode"/>
+                            <TableView fx:id="resultTable" prefHeight="221.0" prefWidth="912.0"/>
                         </VBox>
                     </HBox>
                 </center>

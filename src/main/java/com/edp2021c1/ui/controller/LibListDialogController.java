@@ -1,6 +1,6 @@
 package com.edp2021c1.ui.controller;
 
-import com.edp2021c1.ui.LibData;
+import com.edp2021c1.util.LibData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -60,14 +60,11 @@ public class LibListDialogController {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         TableColumn<LibData, String> libCol = new TableColumn<>("Lib");
         libCol.setCellValueFactory(new PropertyValueFactory<>("lib"));
-        libCol.setSortable(false);
-        libCol.setEditable(false);
         TableColumn<LibData, String> licenseCol = new TableColumn<>("License");
         licenseCol.setCellValueFactory(new PropertyValueFactory<>("license"));
-        licenseCol.setSortable(false);
-        licenseCol.setEditable(false);
 
         table.setItems(data);
+        table.setEditable(false);
         table.getColumns().addAll(libCol, licenseCol);
 
 

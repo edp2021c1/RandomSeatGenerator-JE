@@ -3,14 +3,13 @@ package com.edp2021c1.ui.controller;
 import com.alibaba.excel.EasyExcel;
 import com.edp2021c1.util.*;
 import com.google.gson.Gson;
-import javafx.embed.swing.SwingNode;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -18,8 +17,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -27,11 +24,12 @@ import java.util.*;
 
 public class MainWindowController {
 
-    private JTable resultTable;
-
     private Seat seat;
     private SeatConfig defaultConfig;
     private OriginalSeatConfig defaultConfigJson;
+
+    @FXML
+    private TableView<SeatRowData> resultTable;
 
     @FXML
     private Stage stage;
@@ -113,9 +111,6 @@ public class MainWindowController {
 
     @FXML
     private HBox subBox_4;
-
-    @FXML
-    private SwingNode tableNode;
 
     @FXML
     private Button generateBtn;
@@ -266,11 +261,7 @@ public class MainWindowController {
         SeatGenerator sg = new SeatGenerator(conf);
         seat = sg.next(Long.parseLong(seedInput.getText()));
         ArrayList<String> l = seat.getSeat();
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                resultTable.setValueAt(l.get(i * 7 + j), i, j);
-            }
-        }
+        resultTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
     }
 
     @FXML
@@ -305,23 +296,37 @@ public class MainWindowController {
         assert subBox_1 != null : "fx:id=\"subBox_1\" was not injected: check your FXML file 'MainWindow.fxml'.";
         assert subBox_2 != null : "fx:id=\"subBox_2\" was not injected: check your FXML file 'MainWindow.fxml'.";
         assert subBox_3 != null : "fx:id=\"subBox_3\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert tableNode != null : "fx:id=\"tableNode\" was not injected: check your FXML file 'MainWindow.fxml'.";
+        assert resultTable != null : "fx:id=\"resultTable\" was not injected: check your FXML file 'MainWindow.fxml'.";
 
         stage.getIcons().add(new Image("assets/img/icon.png"));
 
-        resultTable = new JTable(7, 7);
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                resultTable.setValueAt("-", i, j);
-            }
-        }
-        resultTable.setRowHeight(40);
-        resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        resultTable.setGridColor(new Color(223, 225, 229));
-        resultTable.setCellSelectionEnabled(false);
-        resultTable.setFont(new Font("Microsoft Yahei", Font.PLAIN, 28));
-        resultTable.setBorder(null);
-        tableNode.setContent(resultTable);
+        TableColumn<SeatRowData, String> c1 = new TableColumn<>("G7");
+        c1.setCellValueFactory(new PropertyValueFactory<>("c1"));
+        c1.setSortable(false);
+        TableColumn<SeatRowData, String> c2 = new TableColumn<>("G6");
+        c2.setCellValueFactory(new PropertyValueFactory<>("c2"));
+        c2.setSortable(false);
+        TableColumn<SeatRowData, String> c3 = new TableColumn<>("G5");
+        c3.setCellValueFactory(new PropertyValueFactory<>("c3"));
+        c3.setSortable(false);
+        TableColumn<SeatRowData, String> c4 = new TableColumn<>("G4");
+        c4.setCellValueFactory(new PropertyValueFactory<>("c4"));
+        c4.setSortable(false);
+        TableColumn<SeatRowData, String> c5 = new TableColumn<>("G3");
+        c5.setCellValueFactory(new PropertyValueFactory<>("c5"));
+        c5.setSortable(false);
+        TableColumn<SeatRowData, String> c6 = new TableColumn<>("G2");
+        c6.setCellValueFactory(new PropertyValueFactory<>("c6"));
+        c6.setSortable(false);
+        TableColumn<SeatRowData, String> c7 = new TableColumn<>("G1");
+        c7.setCellValueFactory(new PropertyValueFactory<>("c7"));
+        c7.setSortable(false);
+
+        ObservableList<SeatRowData> data = FXCollections.observableArrayList(SeatRowData.emptySeat);
+        resultTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        resultTable.setEditable(false);
+        resultTable.setItems(data);
+        resultTable.getColumns().addAll(c1, c2, c3, c4, c5, c6, c7);
 
         HBox.setHgrow(mainHBox, Priority.ALWAYS);
         VBox.setVgrow(mainVBox, Priority.ALWAYS);

@@ -25,27 +25,27 @@ public class SeatGenerator {
         System.out.println("生成配置：");
         System.out.println("种子：" + seed);
         System.out.print("前两排名单：");
-        for(int i=0;i<this.conf.frontRows.size();i++){
-            System.out.print(" "+this.conf.frontRows.get(i));
+        for (int i = 0; i < this.conf.frontRows.size(); i++) {
+            System.out.print(" " + this.conf.frontRows.get(i));
         }
         System.out.println();
         System.out.print("中两排名单：");
-        for(int i=0;i<this.conf.middleRows.size();i++){
-            System.out.print(" "+this.conf.middleRows.get(i));
+        for (int i = 0; i < this.conf.middleRows.size(); i++) {
+            System.out.print(" " + this.conf.middleRows.get(i));
         }
         System.out.println();
         System.out.print("后两排名单：");
-        for(int i=0;i<this.conf.backRows.size();i++){
-            System.out.print(" "+this.conf.backRows.get(i));
+        for (int i = 0; i < this.conf.backRows.size(); i++) {
+            System.out.print(" " + this.conf.backRows.get(i));
         }
         System.out.println();
         System.out.print("组长名单：");
-        for(int i=0;i<this.conf.groupLeaders.size();i++){
-            System.out.print(" "+this.conf.groupLeaders.get(i));
+        for (int i = 0; i < this.conf.groupLeaders.size(); i++) {
+            System.out.print(" " + this.conf.groupLeaders.get(i));
         }
         System.out.println();
         System.out.println("拆分列表：");
-        for(int i = 0; i<this.conf.separated.size(); i++){
+        for (int i = 0; i < this.conf.separated.size(); i++) {
             System.out.println(this.conf.separated.get(i).toString());
         }
         System.out.println();

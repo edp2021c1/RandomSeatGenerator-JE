@@ -22,7 +22,7 @@ public class Separate {
         return !notSeparated.contains(t);
     }
 
-    public String toString(){
-        return this.a+" "+this.b;
+    public String toString() {
+        return this.a + " " + this.b;
     }
 }

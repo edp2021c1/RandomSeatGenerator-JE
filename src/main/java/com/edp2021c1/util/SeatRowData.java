@@ -1,8 +1,10 @@
 package com.edp2021c1.util;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SeatRowData {
     @ExcelProperty("第七列")
@@ -19,6 +21,26 @@ public class SeatRowData {
     private String c6;
     @ExcelProperty("第一列")
     private String c7;
+    @ExcelIgnore
+    public static ArrayList<SeatRowData> emptySeat = new ArrayList<>(Arrays.asList(new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
+            new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
+            new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
+            new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
+            new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
+            new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
+            new SeatRowData("-", "-", "-", "-", "-", "-", "-")));
+
+    public static ArrayList<SeatRowData> fromSeat(Seat seat) {
+        ArrayList<String> l = seat.getSeat();
+        ArrayList<SeatRowData> s = new ArrayList<>();
+
+        for (int i = 0; i < 7; i++) {
+            s.add(new SeatRowData(l.get(i * 7), l.get(i * 7 + 1), l.get(i * 7 + 2), l.get(i * 7 + 3), l.get(i * 7 + 4), l.get(i * 7 + 5), l.get(i * 7 + 6)));
+        }
+        s.add(new SeatRowData("Seed:", String.format("%d", seat.getSeed()), "", "", "", "", ""));
+
+        return s;
+    }
 
     public SeatRowData(String c1, String c2, String c3, String c4, String c5, String c6, String c7) {
         this.c1 = c1;
@@ -28,18 +50,6 @@ public class SeatRowData {
         this.c5 = c5;
         this.c6 = c6;
         this.c7 = c7;
-    }
-
-    public static ArrayList<SeatRowData> fromSeat(Seat seat) {
-        ArrayList<String> l = seat.getSeat();
-        ArrayList<SeatRowData> s = new ArrayList<>();
-
-        for (int i = 0; i < 7; i++) {
-            s.add(new SeatRowData(l.get(i), l.get(i + 1), l.get(i + 2), l.get(i + 3), l.get(i + 4), l.get(i + 5), l.get(i + 6)));
-        }
-        s.add(new SeatRowData("Seed:", String.format("%d", seat.getSeed()), "", "", "", "", ""));
-
-        return s;
     }
 
     public String getC1() {

@@ -1,19 +1,17 @@
-import org.openjfx.gradle.JavaFXPlatform
-
 plugins {
     id("java")
     id("org.openjfx.javafxplugin") version "0.0.14"
 }
 
 javafx {
-    version="20.0.1"
-    modules("javafx.controls", "javafx.fxml", "javafx.swing")
+    version = "20.0.1"
+    modules("javafx.controls", "javafx.fxml")
 }
 
 group = "com.edp2021c1"
-version = "1.0.1"
+version = "1.1.0"
 
-val mainClassName="com.edp2021c1.Main"
+val mainClassName = "com.edp2021c1.Main"
 
 repositories {
     mavenCentral()
@@ -39,7 +37,7 @@ tasks.jar {
         attributes("Main-Class" to mainClassName)
     }
 
-    duplicatesStrategy=DuplicatesStrategy.EXCLUDE
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from(sourceSets.main.get().output)
 
