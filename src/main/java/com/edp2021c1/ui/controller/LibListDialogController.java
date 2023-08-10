@@ -65,7 +65,8 @@ public class LibListDialogController {
 
         table.setItems(data);
         table.setEditable(false);
-        table.getColumns().addAll(libCol, licenseCol);
+        table.getColumns().add(libCol);
+        table.getColumns().add(licenseCol);
 
 
     }

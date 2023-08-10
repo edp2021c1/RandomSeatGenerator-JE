@@ -69,10 +69,6 @@
     -fx-background-color:-color-background-menu;
 }
 
-.table-cell{
-    -fx-border-color:-border-color-default
-}
-
 .mainPane{
     -fx-background-color:-color-background-default;
 }

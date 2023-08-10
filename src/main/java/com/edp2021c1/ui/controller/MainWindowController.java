@@ -25,7 +25,6 @@ import java.util.*;
 public class MainWindowController {
 
     private Seat seat;
-    private SeatConfig defaultConfig;
     private OriginalSeatConfig defaultConfigJson;
 
     @FXML
@@ -193,17 +192,17 @@ public class MainWindowController {
 
     @FXML
     void fillBR(ActionEvent event) {
-        backRowsInput.setText(defaultConfigJson.getFs());
+        backRowsInput.setText(defaultConfigJson.fs());
     }
 
     @FXML
     void fillFR(ActionEvent event) {
-        frontRowsInput.setText(defaultConfigJson.getOt());
+        frontRowsInput.setText(defaultConfigJson.ot());
     }
 
     @FXML
     void fillGL(ActionEvent event) {
-        groupLeadersInput.setText(defaultConfigJson.getZz());
+        groupLeadersInput.setText(defaultConfigJson.zz());
     }
 
     @FXML
@@ -218,7 +217,7 @@ public class MainWindowController {
 
     @FXML
     void fillMR(ActionEvent event) {
-        middleRowsInput.setText(defaultConfigJson.getTf());
+        middleRowsInput.setText(defaultConfigJson.tf());
     }
 
     @FXML
@@ -228,7 +227,7 @@ public class MainWindowController {
 
     @FXML
     void fillSP(ActionEvent event) {
-        separatedInput.setText(defaultConfigJson.getSeparate());
+        separatedInput.setText(defaultConfigJson.separate());
     }
 
     @FXML
@@ -246,7 +245,6 @@ public class MainWindowController {
             String str = new String(bytes, StandardCharsets.UTF_8);
             Gson gson = new Gson();
             defaultConfigJson = gson.fromJson(str, OriginalSeatConfig.class);
-            defaultConfig = new SeatConfig(defaultConfigJson);
         }
     }
 
@@ -260,7 +258,6 @@ public class MainWindowController {
         SeatConfig conf = new SeatConfig(frontRowsInput.getText(), middleRowsInput.getText(), backRowsInput.getText(), groupLeadersInput.getText(), separatedInput.getText());
         SeatGenerator sg = new SeatGenerator(conf);
         seat = sg.next(Long.parseLong(seedInput.getText()));
-        ArrayList<String> l = seat.getSeat();
         resultTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
     }
 
@@ -337,14 +334,13 @@ public class MainWindowController {
 
         BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("assets/json/defaultConfig.json"))));
         StringBuilder buffer = new StringBuilder();
-        String line = "";
+        String line;
         while ((line = in.readLine()) != null) {
             buffer.append(line);
         }
         String str = buffer.toString();
         Gson gson = new Gson();
         defaultConfigJson = gson.fromJson(str, OriginalSeatConfig.class);
-        defaultConfig = new SeatConfig(defaultConfigJson);
     }
 
 }

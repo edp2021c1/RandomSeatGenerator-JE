@@ -21,14 +21,11 @@ public class SeatRowData {
     private String c6;
     @ExcelProperty("第一列")
     private String c7;
+
     @ExcelIgnore
-    public static ArrayList<SeatRowData> emptySeat = new ArrayList<>(Arrays.asList(new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
-            new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
-            new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
-            new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
-            new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
-            new SeatRowData("-", "-", "-", "-", "-", "-", "-"),
-            new SeatRowData("-", "-", "-", "-", "-", "-", "-")));
+    private static final SeatRowData emptyRow = new SeatRowData("-", "-", "-", "-", "-", "-", "-");
+    @ExcelIgnore
+    public static ArrayList<SeatRowData> emptySeat = new ArrayList<>(Arrays.asList(emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow));
 
     public static ArrayList<SeatRowData> fromSeat(Seat seat) {
         ArrayList<String> l = seat.getSeat();

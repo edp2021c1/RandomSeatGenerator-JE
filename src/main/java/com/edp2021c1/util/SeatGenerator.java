@@ -5,19 +5,10 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class SeatGenerator {
-    public static SeatConfig defaultConf = new SeatConfig("19 16 21 40 13 34 8 31 37 24 22 28 38 44", "17 10 12 35 36 3 1 6 20 14 7 42 15 18", "23 25 33 30 39 5 4 29 11 26 32 2 43 9 41 27", "2 4 10 16 19 20 23 24 25 26 27 28 29 30 31 32 33 34 38 39 43 44", "2 4\n2 5\n4 5\n22 34\n22 20\n22 10\n22 40\n20 10\n20 40 \n20 34\n10 40\n10 34\n40 34\n42 36");
-    private SeatConfig conf;
+    private final SeatConfig conf;
     private ArrayList<String> seat;
 
-    public SeatGenerator() {
-        this(defaultConf);
-    }
-
     public SeatGenerator(SeatConfig c) {
-        this.conf = c;
-    }
-
-    public void setConfig(SeatConfig c) {
         this.conf = c;
     }
 

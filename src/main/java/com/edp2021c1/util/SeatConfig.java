@@ -23,8 +23,4 @@ public class SeatConfig {
             if (!i.isEmpty()) this.separated.add(new Separate(i));
         }
     }
-
-    public SeatConfig(OriginalSeatConfig j) {
-        this(j.getOt(), j.getTf(), j.getFs(), j.getZz(), j.getSeparate());
-    }
 }

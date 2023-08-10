@@ -1,8 +1,8 @@
 package com.edp2021c1.util;
 
 public class LibData {
-    private String lib;
-    private String license;
+    private final String lib;
+    private final String license;
 
     public LibData(String lib, String license) {
         this.lib = lib;
@@ -13,15 +13,7 @@ public class LibData {
         return lib;
     }
 
-    public void setLib(String lib) {
-        this.lib = lib;
-    }
-
     public String getLicense() {
         return license;
-    }
-
-    public void setLicense(String license) {
-        this.license = license;
     }
 }
