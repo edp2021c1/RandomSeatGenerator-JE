@@ -6,7 +6,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
-<Stage fx:id="stage" maximized="true" title="Random Seat Generator - 随机座位生成器" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edp2021c1.ui.controller.MainWindowController">
+<Stage xmlns:fx="http://javafx.com/fxml/1" fx:id="stage" maximized="true"
+       title="Random Seat Generator - 随机座位生成器" xmlns="http://javafx.com/javafx/20.0.1"
+       fx:controller="com.edp2021c1.ui.controller.MainWindowController">
     <scene>
         <Scene stylesheets="@../css/style.css">
             <BorderPane prefHeight="540.0" prefWidth="960.0" styleClass="mainPane">
