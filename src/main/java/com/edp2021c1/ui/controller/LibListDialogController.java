@@ -44,11 +44,6 @@ public class LibListDialogController {
 
     @FXML
     void initialize() {
-        assert closeBtn1 != null : "fx:id=\"closeBtn1\" was not injected: check your FXML file 'LibListDialog.fxml'.";
-        assert icon != null : "fx:id=\"icon\" was not injected: check your FXML file 'LibListDialog.fxml'.";
-        assert stage != null : "fx:id=\"stage\" was not injected: check your FXML file 'LibListDialog.fxml'.";
-        assert table != null : "fx:id=\"table\" was not injected: check your FXML file 'LibListDialog.fxml'.";
-
         icon.setImage(new Image("assets/img/icon.png"));
 
         stage.initStyle(StageStyle.UNDECORATED);

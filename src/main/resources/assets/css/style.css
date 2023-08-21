@@ -1,81 +1,69 @@
-* {
-    -font-default:"Microsoft Yahei";
-    -font-large:Impact;
-    -color-text-default:#dfe1e5;
-    -color-text-input:white;
-    -color-background-default:#2d2d30;
-    -color-background-menu:#414145;
-    -color-background-input:#1d1d1f;
-    -color-background-button:#515156;
-    -color-background-focused:#65656b;
-    -color-border-default:#4e5157;
-}
-
 .menu .label,
-.menu-item>.label,
 .label,.button,
 .table-cell{
-    -fx-text-fill:-color-text-default;
+    -fx-text-fill:#dfe1e5;
 }
 
 .text-field,.text-area{
-    -fx-border-color:-color-border-default;
-    -fx-text-fill:-color-text-input;
+    -fx-border-color:#4e5157;
+    -fx-text-fill:white;
 }
 
 .text-field,
+.text-area,
 .text-area .content{
-    -fx-background-color:-color-background-input;
+    -fx-background-color:#1d1d1f;
 }
 
 .scroll-bar{
-    -fx-background-color:-color-background-default;
+    -fx-background-color:#2d2d30;
 }
 
 .text-field:focused,
+.text-area:focused,
 .text-area:focused .content,
 .button:hover,
 .menu:hover,
 .menu-item:focused{
-    -fx-background-color:-color-background-focused;
+    -fx-background-color:#65656b;
 }
 
 .button{
-    -fx-background-color:-color-background-button;
+    -fx-background-color:#515156;
 }
 
 .menu-bar,.menu,.menu-item,.context-menu{
-    -fx-background-color:-color-background-menu;
-}
-
-.closeButton:hover{
-    -fx-background-color: #c42b1c;
+    -fx-background-color:#414145;
 }
 
 .table-view{
-    -fx-background-color:-color-background-input;
+    -fx-background-color:#1d1d1f;
     -fx-border-color:black;
 }
 
 .table-view .column-header{
-    -fx-background-color:-color-background-menu;
+    -fx-background-color:#414145;
 }
 
 .table-row-cell{
-    -fx-background-color:-color-background-default;
+    -fx-background-color:#2d2d30;
 }
 
 .table-row-cell:odd{
-    -fx-background-color:-color-background-menu;
+    -fx-background-color:#414145;
+}
+
+.tooltip{
+    -fx-font-size:10px;
 }
 
 .mainPane{
-    -fx-background-color:-color-background-default;
+    -fx-background-color:#2d2d30;
 }
 
 .dialog{
-    -fx-background-color:-color-background-default;
-    -fx-border-color:-color-border-default;
+    -fx-background-color:#2d2d30;
+    -fx-border-color:#4e5157;
 }
 
 .largeLabel{
@@ -84,4 +72,12 @@
 
 .middleLabel{
     -fx-font-size:24px;
+}
+
+.largeButton{
+    -fx-font-size:22px;
+}
+
+.closeButton:hover{
+    -fx-background-color: #c42b1c;
 }

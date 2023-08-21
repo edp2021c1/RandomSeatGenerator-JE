@@ -13,39 +13,10 @@ public class SeatGenerator {
     }
 
     public Seat next(long seed) {
-        System.out.println("生成配置：");
-        System.out.println("种子：" + seed);
-        System.out.print("前两排名单：");
-        for (int i = 0; i < this.conf.frontRows.size(); i++) {
-            System.out.print(" " + this.conf.frontRows.get(i));
-        }
-        System.out.println();
-        System.out.print("中两排名单：");
-        for (int i = 0; i < this.conf.middleRows.size(); i++) {
-            System.out.print(" " + this.conf.middleRows.get(i));
-        }
-        System.out.println();
-        System.out.print("后两排名单：");
-        for (int i = 0; i < this.conf.backRows.size(); i++) {
-            System.out.print(" " + this.conf.backRows.get(i));
-        }
-        System.out.println();
-        System.out.print("组长名单：");
-        for (int i = 0; i < this.conf.groupLeaders.size(); i++) {
-            System.out.print(" " + this.conf.groupLeaders.get(i));
-        }
-        System.out.println();
-        System.out.println("拆分列表：");
-        for (int i = 0; i < this.conf.separated.size(); i++) {
-            System.out.println(this.conf.separated.get(i).toString());
-        }
-        System.out.println();
-
         Random rd = new Random(seed);
         this.seat = new ArrayList<>(Arrays.asList(new String[49]));
         ArrayList<Boolean> sorted = new ArrayList<>(Arrays.asList(new Boolean[44]));
         int t;
-        int times = 0;
         do {
             for (int i = 0; i < 44; i++) {
                 this.seat.set(i, "-");
@@ -95,7 +66,6 @@ public class SeatGenerator {
             } while (sorted.get(t + 28) || n == m);
             this.seat.set(n, this.conf.backRows.get(t));
 
-            times++;
         } while (!check());
 
         //组长
@@ -106,21 +76,10 @@ public class SeatGenerator {
             this.seat.set(t * 7 + i, "*%s".formatted(this.seat.get(t * 7 + i)));
         }
 
-        System.out.println(times + "次生成后成功");
-
-        StringBuilder str = new StringBuilder("座位表：\n");
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                str.append(this.seat.get(i * 7 + j)).append("\t");
-            }
-            str.append("\n");
-        }
-        System.out.print(str);
-
-        return new Seat(this.seat, seed, times);
+        return new Seat(this.seat, seed);
     }
 
-    public boolean check() {
+    private boolean check() {
         boolean hasLeader = false;
         boolean isSeparated = true;
         // 检查每列是否都有组长

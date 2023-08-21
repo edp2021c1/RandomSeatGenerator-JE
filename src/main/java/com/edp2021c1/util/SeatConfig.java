@@ -13,10 +13,6 @@ public class SeatConfig {
         this.backRows = new ArrayList<>(Arrays.asList(br.split(" ")));
         this.groupLeaders = new ArrayList<>(Arrays.asList(gl.split(" ")));
 
-        if (this.frontRows.size() > 14 || this.middleRows.size() > 14 || this.backRows.size() > 16 || this.groupLeaders.size() > 44) {
-            new Exception("Invalid seat info").printStackTrace();
-        }
-
         this.separated = new ArrayList<>();
         String[] t = sp.split("\n");
         for (String i : t) {

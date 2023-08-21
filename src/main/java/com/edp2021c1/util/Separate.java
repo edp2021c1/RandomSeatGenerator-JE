@@ -10,9 +10,6 @@ public class Separate {
 
     public Separate(String s) {
         String[] t = s.split(" ");
-        if (t.length > 2) {
-            new Exception("Invalid separate info").printStackTrace();
-        }
         a = t[0];
         b = t[1];
     }
@@ -20,9 +17,5 @@ public class Separate {
     public boolean check(ArrayList<String> seat) {
         Integer t = seat.indexOf(a) - seat.indexOf(b);
         return !notSeparated.contains(t);
-    }
-
-    public String toString() {
-        return this.a + " " + this.b;
     }
 }

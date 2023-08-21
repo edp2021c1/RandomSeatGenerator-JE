@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class MainWindow extends Application {
     public void start(Stage primaryStage) throws IOException {
-        Stage stage = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("assets/fxml/MainWindow.fxml")));
+        Stage stage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/MainWindow.fxml")));
         stage.show();
     }
 }

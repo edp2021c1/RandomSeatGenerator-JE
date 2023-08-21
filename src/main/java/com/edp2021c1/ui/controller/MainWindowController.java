@@ -19,8 +19,12 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Random;
+import java.util.ResourceBundle;
 
 public class MainWindowController {
 
@@ -130,7 +134,7 @@ public class MainWindowController {
     @FXML
     void exportToFile(ActionEvent event) throws IOException {
         if (seat == null) {
-            Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("assets/fxml/dialog/RemindGenerateSeatDialog.fxml")));
+            Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/RemindGenerateSeatDialog.fxml")));
             s.initOwner(stage);
             s.show();
         } else {
@@ -151,7 +155,7 @@ public class MainWindowController {
                 StringBuilder str = new StringBuilder();
                 if (name.endsWith(".htm") || name.endsWith(".html")) {
                     str.append(String.format("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>座位表-%tF-%tT</title><style>table{font-family: 'Microsoft Yahei';font-size: 28px;}table,tr,th{border: 2px solid;}</style></head><body><center><table>", date, date));
-                    str.append("<tr><th>第七列</th><th>第六列</th><th>第五列</th><th>第四列</th><th>第三列</th><th>第二列</th><th>第一列</th></tr>");
+                    str.append("<tr><th>&nbsp;&nbsp;G7&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G6&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G5&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G4&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G3&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G2&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G1&nbsp;&nbsp;</th></tr>");
                     for (int i = 0; i < 7; i++) {
                         str.append("<tr>");
                         for (int j = 0; j < 7; j++) {
@@ -169,8 +173,8 @@ public class MainWindowController {
                 } else if (f.getName().endsWith(".xlsx")) {
                     EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(this.seat));
                 } else {
-                    str.append(String.format(",,,座位表-%tF-%tT,,,\n", date, date));
-                    str.append("第七列,第六列,第五列,第四列,第三列,第二列,第一列\n");
+                    str.append(String.format(",,,Seat Table-%tF-%tT,,,\n", date, date));
+                    str.append("G7,G6,G5,G4,G3,G2,G1\n");
                     for (int i = 0; i < 7; i++) {
                         for (int j = 0; j < 7; j++) {
                             str.append(this.seat.getSeat().get(i * 7 + j));
@@ -180,10 +184,9 @@ public class MainWindowController {
                     }
                     str.append("Seed,");
                     str.append(this.seat.getSeed());
-                    str.append(",,,,,");
 
-                    FileWriter fr = new FileWriter(f);
-                    fr.write(str.toString());
+                    FileOutputStream fr=new FileOutputStream(f);
+                    fr.write(str.toString().getBytes());
                     fr.close();
                 }
             }
@@ -251,7 +254,7 @@ public class MainWindowController {
     @FXML
     void generate(ActionEvent event) throws IOException {
         if (frontRowsInput.getText().isEmpty() || middleRowsInput.getText().isEmpty() || backRowsInput.getText().isEmpty() || groupLeadersInput.getText().isEmpty()) {
-            Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("assets/fxml/dialog/RemindFillInConfigDialog.fxml")));
+            Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/RemindFillInConfigDialog.fxml")));
             s.initOwner(stage);
             s.show();
         }
@@ -263,38 +266,13 @@ public class MainWindowController {
 
     @FXML
     void showAboutDialog(ActionEvent event) throws IOException {
-        Stage aboutDialog = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("assets/fxml/dialog/AboutDialog.fxml")));
+        Stage aboutDialog = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/AboutDialog.fxml")));
         aboutDialog.initOwner(stage);
         aboutDialog.show();
     }
 
     @FXML
     void initialize() throws IOException {
-        assert aboutMenu != null : "fx:id=\"aboutMenu\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert backRowsInput != null : "fx:id=\"backRowsInput\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert clearConfigMenu != null : "fx:id=\"clearConfigMenu\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert exportToFileMenu != null : "fx:id=\"exportToFileMenu\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert fillDefaultBRBtn != null : "fx:id=\"fillDefaultBRBtn\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert fillDefaultFRBtn != null : "fx:id=\"fillDefaultFRBtn\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert fillDefaultGLBtn != null : "fx:id=\"fillDefaultGLBtn\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert fillDefaultMRBtn != null : "fx:id=\"fillDefaultMRBtn\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert fillDefaultSpBtn != null : "fx:id=\"fillDefaultSpBtn\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert fillInConfigMenu != null : "fx:id=\"fillInConfigMenu\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert frontRowsInput != null : "fx:id=\"frontRowsInput\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert groupLeadersInput != null : "fx:id=\"groupLeadersInput\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert importConfigMenu != null : "fx:id=\"importConfigMenu\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert mainHBox != null : "fx:id=\"mainHBox\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert mainVBox != null : "fx:id=\"mainVBox\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert middleRowsInput != null : "fx:id=\"middleRowsInput\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert rdSeed != null : "fx:id=\"rdSeed\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert seedInput != null : "fx:id=\"seedInput\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert separatedInput != null : "fx:id=\"separatedInput\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert stage != null : "fx:id=\"stage\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert subBox_1 != null : "fx:id=\"subBox_1\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert subBox_2 != null : "fx:id=\"subBox_2\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert subBox_3 != null : "fx:id=\"subBox_3\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert resultTable != null : "fx:id=\"resultTable\" was not injected: check your FXML file 'MainWindow.fxml'.";
-
         stage.getIcons().add(new Image("assets/img/icon.png"));
 
         TableColumn<SeatRowData, String> c1 = new TableColumn<>("G7");
@@ -332,7 +310,7 @@ public class MainWindowController {
         HBox.setHgrow(subBox_3, Priority.ALWAYS);
         HBox.setHgrow(subBox_4, Priority.ALWAYS);
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("assets/json/defaultConfig.json"))));
+        BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/assets/json/defaultConfig.json"))));
         StringBuilder buffer = new StringBuilder();
         String line;
         while ((line = in.readLine()) != null) {

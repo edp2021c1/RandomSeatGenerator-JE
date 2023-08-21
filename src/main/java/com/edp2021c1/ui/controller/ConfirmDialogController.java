@@ -27,12 +27,6 @@ public class ConfirmDialogController {
 
     @FXML
     void initialize() {
-        assert closeBtn != null : "fx:id=\"closeBtn\" was not injected: check your FXML file 'RemindGenerateSeatDialog.fxml'.";
-        assert confirmBtn != null : "fx:id=\"confirmBtn\" was not injected: check your FXML file 'RemindGenerateSeatDialog.fxml'.";
-        assert icon != null : "fx:id=\"icon\" was not injected: check your FXML file 'RemindGenerateSeatDialog.fxml'.";
-        assert img != null : "fx:id=\"img\" was not injected: check your FXML file 'RemindGenerateSeatDialog.fxml'.";
-        assert stage != null : "fx:id=\"stage\" was not injected: check your FXML file 'RemindGenerateSeatDialog.fxml'.";
-
         icon.setImage(new Image("assets/img/icon.png"));
         img.setImage(new Image("assets/img/icon.png"));
 
