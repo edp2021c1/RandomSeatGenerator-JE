@@ -172,7 +172,7 @@ public class MainWindowController {
                 } else if (f.getName().endsWith(".xlsx")) {
                     EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat));
                 } else {
-                    str.append(String.format(",,,Seat Table-%tF-%tT,,,\n", date, date));
+                    str.append(String.format(",,,Seat Table-%tF-%tT\n", date, date));
                     str.append("G7,G6,G5,G4,G3,G2,G1\n");
                     for (int i = 0; i < 7; i++) {
                         for (int j = 0; j < 6; j++) {
