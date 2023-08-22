@@ -25,7 +25,6 @@ dependencies {
     implementation("com.alibaba:easyexcel:3.3.2")
     // https://mavenlibs.com/maven/dependency/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.slf4j:slf4j-nop:2.0.5")
 }
 
 tasks.test {

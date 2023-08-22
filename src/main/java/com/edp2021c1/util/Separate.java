@@ -4,18 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Separate {
-    public static final ArrayList<Integer> notSeparated = new ArrayList<>(Arrays.asList(-1, -6, -7, -8, 1, 6, 7, 8));
-    private final String a;
-    private final String b;
+    public static final ArrayList<Integer> NOT_SEPARATED = new ArrayList<>(Arrays.asList(-1, -6, -7, -8, 1, 6, 7, 8));
+    public final String a;
+    public final String b;
 
     public Separate(String s) {
         String[] t = s.split(" ");
         a = t[0];
         b = t[1];
-    }
-
-    public boolean check(ArrayList<String> seat) {
-        Integer t = seat.indexOf(a) - seat.indexOf(b);
-        return !notSeparated.contains(t);
     }
 }

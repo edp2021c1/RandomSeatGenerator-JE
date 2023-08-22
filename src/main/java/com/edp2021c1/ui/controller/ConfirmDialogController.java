@@ -27,9 +27,9 @@ public class ConfirmDialogController {
 
     @FXML
     void initialize() {
+        stage.initStyle(StageStyle.UNDECORATED);
+
         icon.setImage(new Image("assets/img/icon.png"));
         img.setImage(new Image("assets/img/icon.png"));
-
-        stage.initStyle(StageStyle.UNDECORATED);
     }
 }

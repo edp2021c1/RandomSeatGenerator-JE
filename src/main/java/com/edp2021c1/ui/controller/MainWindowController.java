@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
 public class MainWindowController {
 
     private Seat seat;
-    private OriginalSeatConfig defaultConfigJson;
+    private OriginalSeatConfig defaultConfig;
 
     @FXML
     private TableView<SeatRowData> resultTable;
@@ -170,19 +170,20 @@ public class MainWindowController {
                     fr.write(str.toString());
                     fr.close();
                 } else if (f.getName().endsWith(".xlsx")) {
-                    EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(this.seat));
+                    EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat));
                 } else {
                     str.append(String.format(",,,Seat Table-%tF-%tT,,,\n", date, date));
                     str.append("G7,G6,G5,G4,G3,G2,G1\n");
                     for (int i = 0; i < 7; i++) {
-                        for (int j = 0; j < 7; j++) {
-                            str.append(this.seat.getSeat().get(i * 7 + j));
+                        for (int j = 0; j < 6; j++) {
+                            str.append(seat.getSeat().get(i * 7 + j));
                             str.append(",");
                         }
-                        str.setCharAt(str.length() - 1, '\n');
+                        str.append(seat.getSeat().get(i * 7 + 6));
+                        str.append("\n");
                     }
                     str.append("Seed,");
-                    str.append(this.seat.getSeed());
+                    str.append(seat.getSeed());
 
                     FileOutputStream fr=new FileOutputStream(f);
                     fr.write(str.toString().getBytes());
@@ -194,17 +195,17 @@ public class MainWindowController {
 
     @FXML
     void fillBR(ActionEvent event) {
-        backRowsInput.setText(defaultConfigJson.fs());
+        backRowsInput.setText(defaultConfig.fs());
     }
 
     @FXML
     void fillFR(ActionEvent event) {
-        frontRowsInput.setText(defaultConfigJson.ot());
+        frontRowsInput.setText(defaultConfig.ot());
     }
 
     @FXML
     void fillGL(ActionEvent event) {
-        groupLeadersInput.setText(defaultConfigJson.zz());
+        groupLeadersInput.setText(defaultConfig.zz());
     }
 
     @FXML
@@ -219,17 +220,17 @@ public class MainWindowController {
 
     @FXML
     void fillMR(ActionEvent event) {
-        middleRowsInput.setText(defaultConfigJson.tf());
+        middleRowsInput.setText(defaultConfig.tf());
     }
 
     @FXML
     void fillRdSeed(ActionEvent event) {
-        seedInput.setText(String.format("%d", new Random().nextLong()));
+        seedInput.setText(Long.toString(new Random().nextLong()));
     }
 
     @FXML
     void fillSP(ActionEvent event) {
-        separatedInput.setText(defaultConfigJson.separate());
+        separatedInput.setText(defaultConfig.separate());
     }
 
     @FXML
@@ -240,13 +241,11 @@ public class MainWindowController {
         File f = fc.showOpenDialog(stage);
         if (f != null && f.isFile()) {
             FileInputStream inputStream = new FileInputStream(f);
-            int length = inputStream.available();
-            byte[] bytes = new byte[length];
+            byte[] bytes = new byte[inputStream.available()];
             inputStream.read(bytes);
             inputStream.close();
             String str = new String(bytes, StandardCharsets.UTF_8);
-            Gson gson = new Gson();
-            defaultConfigJson = gson.fromJson(str, OriginalSeatConfig.class);
+            defaultConfig = new Gson().fromJson(str, OriginalSeatConfig.class);
         }
     }
 
@@ -315,9 +314,7 @@ public class MainWindowController {
         while ((line = in.readLine()) != null) {
             buffer.append(line);
         }
-        String str = buffer.toString();
-        Gson gson = new Gson();
-        defaultConfigJson = gson.fromJson(str, OriginalSeatConfig.class);
+        defaultConfig = new Gson().fromJson(buffer.toString(), OriginalSeatConfig.class);
     }
 
 }

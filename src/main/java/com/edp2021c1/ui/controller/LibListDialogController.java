@@ -58,10 +58,9 @@ public class LibListDialogController {
         TableColumn<LibData, String> licenseCol = new TableColumn<>("License");
         licenseCol.setCellValueFactory(new PropertyValueFactory<>("license"));
 
-        table.setItems(data);
         table.setEditable(false);
-        table.getColumns().add(libCol);
-        table.getColumns().add(licenseCol);
+        table.setItems(data);
+        table.getColumns().addAll(libCol, licenseCol);
 
 
     }

@@ -9,83 +9,89 @@ public class SeatGenerator {
     private ArrayList<String> seat;
 
     public SeatGenerator(SeatConfig c) {
-        this.conf = c;
+        conf = c;
     }
 
     public Seat next(long seed) {
         Random rd = new Random(seed);
-        this.seat = new ArrayList<>(Arrays.asList(new String[49]));
+        seat = new ArrayList<>(Arrays.asList(new String[49]));
         ArrayList<Boolean> sorted = new ArrayList<>(Arrays.asList(new Boolean[44]));
-        int t;
+        int t, i, m, n;
+        ArrayList<String> fr = conf.frontRows;
+        ArrayList<String> mr = conf.middleRows;
+        ArrayList<String> br = conf.backRows;
+        ArrayList<String> gl = conf.groupLeaders;
         do {
-            for (int i = 0; i < 44; i++) {
-                this.seat.set(i, "-");
+            //初始化
+            for (i = 42; i < 49; i++) {
+                seat.set(i, "-");  //只有第七排会有空位，所以只填入第七排
+            }
+            for (i = 0; i < 44; i++) {
                 sorted.set(i, false);
             }
-            for (int i = 44; i < 49; i++) {
-                this.seat.set(i, "-");
-            }
             // 第一、二排
-            for (int i = 0; i < 14; i++) {
+            for (i = 0; i < 14; i++) {
                 do {
                     t = rd.nextInt(0, 14);
                 } while (sorted.get(t));
-                this.seat.set(i, this.conf.frontRows.get(t));
+                seat.set(i, fr.get(t));
                 sorted.set(t, true);
             }
 
             // 第三、四排
-            for (int i = 14; i < 28; i++) {
+            for (i = 14; i < 28; i++) {
                 do {
-                    t = rd.nextInt(0, 14);
-                } while (sorted.get(t + 14));
-                this.seat.set(i, this.conf.middleRows.get(t));
-                sorted.set(t + 14, true);
+                    t = rd.nextInt(14, 28);
+                } while (sorted.get(t));
+                seat.set(i, mr.get(t - 14));
+                sorted.set(t, true);
             }
 
             // 第五、六排
-            for (int i = 28; i < 42; i++) {
+            for (i = 28; i < 42; i++) {
                 do {
-                    t = rd.nextInt(0, 16);
-                } while (sorted.get(t + 28));
-                this.seat.set(i, this.conf.backRows.get(t));
-                sorted.set(t + 28, true);
+                    t = rd.nextInt(28, 44);
+                } while (sorted.get(t));
+                seat.set(i, br.get(t - 28));
+                sorted.set(t, true);
             }
 
             // 第七排
             do {
-                t = rd.nextInt(0, 16);
-            } while (sorted.get(t + 28));
-            int m = rd.nextInt(42, 49);
-            this.seat.set(m, this.conf.backRows.get(t));
-            sorted.set(t + 28, true);
-            int n;
+                t = rd.nextInt(28, 44);
+            } while (sorted.get(t));
+            m = rd.nextInt(42, 49);
+            seat.set(m, br.get(t - 28));
+            sorted.set(t, true);
             do {
-                t = rd.nextInt(0, 16);
+                t = rd.nextInt(28, 44);
                 n = rd.nextInt(42, 49);
-            } while (sorted.get(t + 28) || n == m);
-            this.seat.set(n, this.conf.backRows.get(t));
+            } while (sorted.get(t) || n == m);
+            seat.set(n, br.get(t - 28));
 
         } while (!check());
 
         //组长
-        for (int i = 0; i < 7; i++) {
+        for (i = 0; i < 7; i++) {
             do {
                 t = rd.nextInt(0, 7);
-            } while (!this.conf.groupLeaders.contains(this.seat.get(t * 7 + i)));
-            this.seat.set(t * 7 + i, "*%s".formatted(this.seat.get(t * 7 + i)));
+            } while (!gl.contains(seat.get(t * 7 + i)));
+            seat.set(t * 7 + i, "*" + seat.get(t * 7 + i) + "*");
         }
 
-        return new Seat(this.seat, seed);
+        return new Seat(seat, seed);
     }
 
     private boolean check() {
         boolean hasLeader = false;
         boolean isSeparated = true;
+        int i, j, len;
+        ArrayList<String> gl = conf.groupLeaders;
+        ArrayList<Separate> sp = conf.separated;
         // 检查每列是否都有组长
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                hasLeader = this.conf.groupLeaders.contains(this.seat.get(j * 7 + i));
+        for (i = 0; i < 7; i++) {
+            for (j = 0; j < 7; j++) {
+                hasLeader = gl.contains(seat.get(j * 7 + i));
                 if (hasLeader) {
                     break;
                 }
@@ -96,12 +102,13 @@ public class SeatGenerator {
             hasLeader = false;
         }
         // 检查是否分开
-        for (int i = 0; i < this.conf.separated.size(); i++) {
-            if (isSeparated) {
-                isSeparated = this.conf.separated.get(i).check(this.seat);
-            } else {
+        Separate s;
+        for (i = 0, len = sp.size(); i < len; i++) {
+            if (!isSeparated) {
                 return false;
             }
+            s = sp.get(i);
+            isSeparated = !Separate.NOT_SEPARATED.contains(seat.indexOf(s.a) - seat.indexOf(s.b));
         }
 
         return true;

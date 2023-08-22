@@ -29,7 +29,7 @@ public class AboutDialogController {
     private ImageView icon;
 
     @FXML
-    private Stage aboutDialog;
+    private Stage stage;
 
     @FXML
     private Button closeBtn;
@@ -42,19 +42,19 @@ public class AboutDialogController {
 
     @FXML
     void closeDialog(ActionEvent event) {
-        aboutDialog.close();
+        stage.close();
     }
 
     @FXML
     void openLibList(ActionEvent event) throws IOException {
         Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/LibListDialog.fxml")));
-        s.initOwner(aboutDialog);
+        s.initOwner(stage);
         s.show();
     }
 
     @FXML
     void initialize() {
-        aboutDialog.initStyle(StageStyle.UNDECORATED);
+        stage.initStyle(StageStyle.UNDECORATED);
 
         img.setImage(new Image("assets/img/icon.png"));
         icon.setImage(new Image("assets/img/icon.png"));

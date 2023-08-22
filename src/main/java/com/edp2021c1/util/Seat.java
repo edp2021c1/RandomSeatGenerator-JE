@@ -7,8 +7,8 @@ public class Seat {
     private final long seed;
 
     public Seat(ArrayList<String> st, long sd) {
-        this.seat = st;
-        this.seed = sd;
+        seat = st;
+        seed = sd;
     }
 
     public ArrayList<String> getSeat() {

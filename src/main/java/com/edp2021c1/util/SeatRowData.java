@@ -43,7 +43,7 @@ public class SeatRowData {
         for (int i = 0; i < 7; i++) {
             s.add(new SeatRowData(l.get(i * 7), l.get(i * 7 + 1), l.get(i * 7 + 2), l.get(i * 7 + 3), l.get(i * 7 + 4), l.get(i * 7 + 5), l.get(i * 7 + 6)));
         }
-        s.add(new SeatRowData("Seed:", String.format("%d", seat.getSeed()), "", "", "", "", ""));
+        s.add(new SeatRowData("Seed:", Long.toString(seat.getSeed()), "", "", "", "", ""));
 
         return s;
     }

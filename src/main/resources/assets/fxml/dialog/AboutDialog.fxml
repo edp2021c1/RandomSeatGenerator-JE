@@ -7,7 +7,7 @@
 <?import javafx.scene.Scene?>
 <?import javafx.scene.text.Font?>
 <?import javafx.stage.Stage?>
-<Stage xmlns:fx="http://javafx.com/fxml/1" fx:id="aboutDialog" title="关于 RandomSeatGenerator"
+<Stage xmlns:fx="http://javafx.com/fxml/1" fx:id="stage" title="关于 RandomSeatGenerator"
        xmlns="http://javafx.com/javafx/20.0.1" fx:controller="com.edp2021c1.ui.controller.AboutDialogController">
     <scene>
         <Scene stylesheets="@../../css/style.css">

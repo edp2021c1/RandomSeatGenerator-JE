@@ -8,15 +8,17 @@ public class SeatConfig {
     public ArrayList<Separate> separated;
 
     public SeatConfig(String fr, String mr, String br, String gl, String sp) {
-        this.frontRows = new ArrayList<>(Arrays.asList(fr.split(" ")));
-        this.middleRows = new ArrayList<>(Arrays.asList(mr.split(" ")));
-        this.backRows = new ArrayList<>(Arrays.asList(br.split(" ")));
-        this.groupLeaders = new ArrayList<>(Arrays.asList(gl.split(" ")));
+        frontRows = new ArrayList<>(Arrays.asList(fr.split(" ")));
+        middleRows = new ArrayList<>(Arrays.asList(mr.split(" ")));
+        backRows = new ArrayList<>(Arrays.asList(br.split(" ")));
+        groupLeaders = new ArrayList<>(Arrays.asList(gl.split(" ")));
 
-        this.separated = new ArrayList<>();
+        separated = new ArrayList<>();
         String[] t = sp.split("\n");
         for (String i : t) {
-            if (!i.isEmpty()) this.separated.add(new Separate(i));
+            if (!i.isEmpty()) {
+                separated.add(new Separate(i));
+            }
         }
     }
 }
