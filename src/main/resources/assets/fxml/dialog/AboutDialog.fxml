@@ -58,17 +58,20 @@
                 <top>
                     <HBox prefHeight="24.0" prefWidth="311.0" BorderPane.alignment="CENTER">
                         <BorderPane.margin>
-                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
+                            <Insets/>
                         </BorderPane.margin>
                         <ImageView fx:id="icon" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true"
                                    preserveRatio="true"/>
                         <Label prefHeight="24.0" prefWidth="175.0" text=" 关于 RandomSeatGenerator"/>
                         <Button fx:id="closeBtn1" alignment="CENTER" mnemonicParsing="false" onAction="#closeDialog"
-                                prefHeight="24.0" prefWidth="28.0" styleClass="closeButton" text="×"
+                                prefHeight="27.0" prefWidth="34.0" styleClass="closeButton" text="×"
                                 textAlignment="CENTER">
                             <HBox.margin>
-                                <Insets left="86.0"/>
+                                <Insets left="87.0"/>
                             </HBox.margin>
+                            <font>
+                                <Font size="20.0"/>
+                            </font>
                         </Button>
                     </HBox>
                 </top>

@@ -133,62 +133,58 @@ public class MainWindowController {
     @FXML
     void exportToFile(ActionEvent event) throws IOException {
         if (seat == null) {
-            Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/RemindGenerateSeatDialog.fxml")));
-            s.initOwner(stage);
-            s.show();
-        } else {
-            FileChooser fc = new FileChooser();
-            fc.setTitle("导出座位表");
-            fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("所有文件", "*"),
-                    new FileChooser.ExtensionFilter("CSV文件", "*.csv"),
-                    new FileChooser.ExtensionFilter("HTML文档", "*.htm", "*.html"),
-                    new FileChooser.ExtensionFilter("Excel工作薄", "*.xlsx"));
-            File f = fc.showSaveDialog(stage);
-            if (f != null) {
-                if (f.exists()) {
-                    f.delete();
-                }
-                f.createNewFile();
-                String name = f.getName();
-                Date date = new Date();
-                StringBuilder str = new StringBuilder();
-                if (name.endsWith(".htm") || name.endsWith(".html")) {
-                    str.append(String.format("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>座位表-%tF-%tT</title><style>table{font-family: 'Microsoft Yahei';font-size: 28px;}table,tr,th{border: 2px solid;}</style></head><body><center><table>", date, date));
-                    str.append("<tr><th>&nbsp;&nbsp;G7&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G6&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G5&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G4&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G3&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G2&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G1&nbsp;&nbsp;</th></tr>");
-                    for (int i = 0; i < 7; i++) {
-                        str.append("<tr>");
-                        for (int j = 0; j < 7; j++) {
-                            str.append("<th>");
-                            str.append(seat.getSeat().get(i * 7 + j));
-                            str.append("</th>");
-                        }
-                        str.append("</tr>");
+            generate(event);
+        }
+        var fc = new FileChooser();
+        fc.setTitle("导出座位表");
+        fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("所有文件", "*"),
+                new FileChooser.ExtensionFilter("CSV文件", "*.csv"),
+                new FileChooser.ExtensionFilter("HTML文档", "*.htm", "*.html"),
+                new FileChooser.ExtensionFilter("Excel工作薄", "*.xlsx"));
+        File f = fc.showSaveDialog(stage);
+        if (f != null) {
+            if (f.exists()) {
+                f.delete();
+            }
+            f.createNewFile();
+            String name = f.getName();
+            Date date = new Date();
+            StringBuilder str = new StringBuilder();
+            if (name.endsWith(".htm") || name.endsWith(".html")) {
+                str.append(String.format("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>座位表-%tF-%tT</title><style>table{font-family: 'Microsoft Yahei';font-size: 28px;}table,tr,th{border: 2px solid;}</style></head><body><center><table>", date, date));
+                str.append("<tr><th>&nbsp;&nbsp;G7&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G6&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G5&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G4&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G3&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G2&nbsp;&nbsp;</th><th>&nbsp;&nbsp;G1&nbsp;&nbsp;</th></tr>");
+                for (int i = 0; i < 7; i++) {
+                    str.append("<tr>");
+                    for (int j = 0; j < 7; j++) {
+                        str.append("<th>");
+                        str.append(seat.getSeat().get(i * 7 + j));
+                        str.append("</th>");
                     }
-                    str.append(String.format("</table></center><p>Seed:%d</body></html>", seat.getSeed()));
-
-                    FileWriter fr = new FileWriter(f);
-                    fr.write(str.toString());
-                    fr.close();
-                } else if (f.getName().endsWith(".xlsx")) {
-                    EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat));
-                } else {
-                    str.append(String.format(",,,Seat Table-%tF-%tT\n", date, date));
-                    str.append("G7,G6,G5,G4,G3,G2,G1\n");
-                    for (int i = 0; i < 7; i++) {
-                        for (int j = 0; j < 6; j++) {
-                            str.append(seat.getSeat().get(i * 7 + j));
-                            str.append(",");
-                        }
-                        str.append(seat.getSeat().get(i * 7 + 6));
-                        str.append("\n");
-                    }
-                    str.append("Seed,");
-                    str.append(seat.getSeed());
-
-                    FileOutputStream fr=new FileOutputStream(f);
-                    fr.write(str.toString().getBytes());
-                    fr.close();
+                    str.append("</tr>");
                 }
+                str.append(String.format("</table></center><p>Seed:%d</body></html>", seat.getSeed()));
+                FileWriter fr = new FileWriter(f);
+                fr.write(str.toString());
+                fr.close();
+            } else if (f.getName().endsWith(".xlsx")) {
+                EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat));
+            } else {
+                str.append(String.format(",,,Seat Table-%tF-%tT\n", date, date));
+                str.append("G7,G6,G5,G4,G3,G2,G1\n");
+                for (int i = 0; i < 7; i++) {
+                    for (int j = 0; j < 6; j++) {
+                        str.append(seat.getSeat().get(i * 7 + j));
+                        str.append(",");
+                    }
+                    str.append(seat.getSeat().get(i * 7 + 6));
+                    str.append("\n");
+                }
+                str.append("Seed,");
+                str.append(seat.getSeed());
+
+                FileOutputStream fr = new FileOutputStream(f);
+                fr.write(str.toString().getBytes());
+                fr.close();
             }
         }
     }
@@ -250,11 +246,21 @@ public class MainWindowController {
     }
 
     @FXML
-    void generate(ActionEvent event) throws IOException {
-        if (frontRowsInput.getText().isEmpty() || middleRowsInput.getText().isEmpty() || backRowsInput.getText().isEmpty() || groupLeadersInput.getText().isEmpty()) {
-            Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/RemindFillInConfigDialog.fxml")));
-            s.initOwner(stage);
-            s.show();
+    void generate(ActionEvent event) {
+        if (frontRowsInput.getText().isEmpty()) {
+            fillFR(event);
+        }
+        if (middleRowsInput.getText().isEmpty()) {
+            fillMR(event);
+        }
+        if (backRowsInput.getText().isEmpty()) {
+            fillBR(event);
+        }
+        if (seedInput.getText().isEmpty()) {
+            fillRdSeed(event);
+        }
+        if (groupLeadersInput.getText().isEmpty()) {
+            fillGL(event);
         }
         SeatConfig conf = new SeatConfig(frontRowsInput.getText(), middleRowsInput.getText(), backRowsInput.getText(), groupLeadersInput.getText(), separatedInput.getText());
         SeatGenerator sg = new SeatGenerator(conf);
