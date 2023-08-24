@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class SeatGenerator {
+public final class SeatGenerator {
     private final SeatConfig conf;
     private ArrayList<String> seat;
 

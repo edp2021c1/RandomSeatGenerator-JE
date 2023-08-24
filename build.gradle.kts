@@ -9,7 +9,7 @@ javafx {
 }
 
 group = "com.edp2021c1"
-version = "1.1.2"
+version = "1.1.3"
 
 val mainClassName = "com.edp2021c1.Main"
 
