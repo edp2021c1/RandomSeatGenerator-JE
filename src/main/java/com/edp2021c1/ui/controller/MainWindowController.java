@@ -142,7 +142,7 @@ public class MainWindowController {
                 new FileChooser.ExtensionFilter("HTML文档", "*.htm", "*.html"),
                 new FileChooser.ExtensionFilter("Excel工作薄", "*.xlsx"));
         File f = fc.showSaveDialog(stage);
-        if(f==null){
+        if (f == null) {
             return;
         }
         if (f.exists()) {
@@ -236,7 +236,7 @@ public class MainWindowController {
         fc.setTitle("导入配置文件");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
         File f = fc.showOpenDialog(stage);
-        if(f==null){
+        if (f == null) {
             return;
         }
         FileInputStream inputStream = new FileInputStream(f);

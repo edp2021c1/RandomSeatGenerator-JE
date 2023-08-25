@@ -26,9 +26,10 @@ public class SeatRowData {
     @ExcelProperty("G1")
     private String c7;
 
-    public SeatRowData(){
-        c1=c2=c3=c4=c5=c6=c7="-";
+    public SeatRowData() {
+        c1 = c2 = c3 = c4 = c5 = c6 = c7 = "-";
     }
+
     public SeatRowData(String c1, String c2, String c3, String c4, String c5, String c6, String c7) {
         this.c1 = c1;
         this.c2 = c2;
