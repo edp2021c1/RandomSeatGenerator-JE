@@ -40,14 +40,13 @@ public class SeatRowData {
         this.c7 = c7;
     }
 
-    public static ArrayList<SeatRowData> fromSeat(Seat seat) {
-        ArrayList<String> l = seat.getSeat();
+    public static ArrayList<SeatRowData> fromSeat(ArrayList<String> seat,long seed) {
         ArrayList<SeatRowData> s = new ArrayList<>();
 
         for (int i = 0; i < 7; i++) {
-            s.add(new SeatRowData(l.get(i * 7), l.get(i * 7 + 1), l.get(i * 7 + 2), l.get(i * 7 + 3), l.get(i * 7 + 4), l.get(i * 7 + 5), l.get(i * 7 + 6)));
+            s.add(new SeatRowData(seat.get(i * 7), seat.get(i * 7 + 1), seat.get(i * 7 + 2), seat.get(i * 7 + 3), seat.get(i * 7 + 4), seat.get(i * 7 + 5), seat.get(i * 7 + 6)));
         }
-        s.add(new SeatRowData("Seed:", Long.toString(seat.getSeed()), "", "", "", "", ""));
+        s.add(new SeatRowData("Seed:", Long.toString(seed), "", "", "", "", ""));
 
         return s;
     }

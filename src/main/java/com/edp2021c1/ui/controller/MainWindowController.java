@@ -20,14 +20,12 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Random;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class MainWindowController {
 
-    private Seat seat;
+    private ArrayList<String> seat;
+    private long seed;
     private OriginalSeatConfig defaultConfig;
 
     @FXML
@@ -159,30 +157,30 @@ public class MainWindowController {
                 str.append("<tr>");
                 for (int j = 0; j < 7; j++) {
                     str.append("<th>");
-                    str.append(seat.getSeat().get(i * 7 + j));
+                    str.append(seat.get(i * 7 + j));
                     str.append("</th>");
                 }
                 str.append("</tr>");
             }
-            str.append(String.format("</table></center><p>Seed:%d</body></html>", seat.getSeed()));
+            str.append(String.format("</table></center><p>Seed:%d</body></html>", seed));
             FileWriter fr = new FileWriter(f);
             fr.write(str.toString());
             fr.close();
         } else if (f.getName().endsWith(".xlsx")) {
-            EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat));
+            EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat,seed));
         } else {
             str.append(String.format(",,,Seat Table-%tF-%tT\n", date, date));
             str.append("G7,G6,G5,G4,G3,G2,G1\n");
             for (int i = 0; i < 7; i++) {
                 for (int j = 0; j < 6; j++) {
-                    str.append(seat.getSeat().get(i * 7 + j));
+                    str.append(seat.get(i * 7 + j));
                     str.append(",");
                 }
-                str.append(seat.getSeat().get(i * 7 + 6));
+                str.append(seat.get(i * 7 + 6));
                 str.append("\n");
             }
             str.append("Seed,");
-            str.append(seat.getSeed());
+            str.append(seed);
 
             FileOutputStream fr = new FileOutputStream(f);
             fr.write(str.toString().getBytes());
@@ -265,9 +263,10 @@ public class MainWindowController {
             fillGL(event);
         }
         SeatConfig conf = new SeatConfig(frontRowsInput.getText(), middleRowsInput.getText(), backRowsInput.getText(), groupLeadersInput.getText(), separatedInput.getText());
+        seed=Long.parseLong(seedInput.getText());
         SeatGenerator sg = new SeatGenerator(conf);
-        seat = sg.next(Long.parseLong(seedInput.getText()));
-        resultTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
+        seat = sg.next(seed).seat;
+        resultTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat,seed)));
     }
 
     @FXML

@@ -11,6 +11,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -47,12 +48,13 @@ public class LibListDialogController {
         icon.setImage(new Image("assets/img/icon.png"));
 
         stage.initStyle(StageStyle.UNDECORATED);
+        stage.initModality(Modality.APPLICATION_MODAL);
 
         ObservableList<LibData> data = FXCollections.observableArrayList(new LibData("EasyExcel 3.3.2", "Apache 2.0"),
                 new LibData("Gson 2.10.1", "Apache 2.0"),
                 new LibData("JavaFX 20.0.1", "GNU GPLv3.0"));
 
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         TableColumn<LibData, String> libCol = new TableColumn<>("Lib");
         libCol.setCellValueFactory(new PropertyValueFactory<>("lib"));
         TableColumn<LibData, String> licenseCol = new TableColumn<>("License");
