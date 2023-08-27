@@ -11,8 +11,6 @@ javafx {
 group = "com.edp2021c1"
 version = "1.1.3"
 
-val mainClassName = "com.edp2021c1.Main"
-
 repositories {
     mavenCentral()
 }
@@ -24,13 +22,9 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 tasks.jar {
     manifest {
-        attributes("Main-Class" to mainClassName)
+        attributes("Main-Class" to "com.edp2021c1.Main")
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

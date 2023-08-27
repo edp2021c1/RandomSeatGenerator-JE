@@ -40,7 +40,7 @@ public class SeatRowData {
         this.c7 = c7;
     }
 
-    public static ArrayList<SeatRowData> fromSeat(ArrayList<String> seat,long seed) {
+    public static ArrayList<SeatRowData> fromSeat(ArrayList<String> seat, long seed) {
         ArrayList<SeatRowData> s = new ArrayList<>();
 
         for (int i = 0; i < 7; i++) {

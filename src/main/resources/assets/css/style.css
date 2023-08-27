@@ -102,9 +102,9 @@
     -fx-font-size: 24px;
 }
 
-.topBar{
-    -fx-background-color:#414145;
-    -fx-background-radius:5 5 0 0;
+.topBar {
+    -fx-background-color: #414145;
+    -fx-background-radius: 5 5 0 0;
 }
 
 .largeButton {
@@ -112,8 +112,8 @@
 }
 
 .closeButton {
-    -fx-background-color:inherit;
-    -fx-background-radius:0 5 0 0;
+    -fx-background-color: inherit;
+    -fx-background-radius: 0 5 0 0;
     -fx-border-width: 0;
     -fx-padding: 0;
 }

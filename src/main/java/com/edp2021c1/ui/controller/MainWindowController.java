@@ -1,7 +1,10 @@
 package com.edp2021c1.ui.controller;
 
 import com.alibaba.excel.EasyExcel;
-import com.edp2021c1.util.*;
+import com.edp2021c1.util.OriginalSeatConfig;
+import com.edp2021c1.util.SeatConfig;
+import com.edp2021c1.util.SeatGenerator;
+import com.edp2021c1.util.SeatRowData;
 import com.google.gson.Gson;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -167,7 +170,7 @@ public class MainWindowController {
             fr.write(str.toString());
             fr.close();
         } else if (f.getName().endsWith(".xlsx")) {
-            EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat,seed));
+            EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat, seed));
         } else {
             str.append(String.format(",,,Seat Table-%tF-%tT\n", date, date));
             str.append("G7,G6,G5,G4,G3,G2,G1\n");
@@ -263,10 +266,10 @@ public class MainWindowController {
             fillGL(event);
         }
         SeatConfig conf = new SeatConfig(frontRowsInput.getText(), middleRowsInput.getText(), backRowsInput.getText(), groupLeadersInput.getText(), separatedInput.getText());
-        seed=Long.parseLong(seedInput.getText());
+        seed = Long.parseLong(seedInput.getText());
         SeatGenerator sg = new SeatGenerator(conf);
         seat = sg.next(seed).seat;
-        resultTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat,seed)));
+        resultTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat, seed)));
     }
 
     @FXML
