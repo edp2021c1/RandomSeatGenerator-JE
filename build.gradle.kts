@@ -20,6 +20,8 @@ dependencies {
     implementation("com.alibaba:easyexcel:3.3.2")
     // https://mavenlibs.com/maven/dependency/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:2.10.1")
+    compileOnly("org.projectlombok:lombok:1.18.28")
+    annotationProcessor("org.projectlombok:lombok:1.18.28")
 }
 
 tasks.jar {

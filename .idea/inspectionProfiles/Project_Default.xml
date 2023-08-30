@@ -1,11 +1,24 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
+    <inspection_tool class="ClassCanBeRecord" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="myIgnoredAnnotations">
+        <list>
+          <option value="io.micronaut.*" />
+          <option value="jakarta.*" />
+          <option value="javax.*" />
+          <option value="org.springframework.*" />
+          <option value="lombok.Getter" />
+        </list>
+      </option>
+    </inspection_tool>
     <inspection_tool class="FieldCanBeLocal" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="EXCLUDE_ANNOS">
         <value>
-          <list size="1">
+          <list size="3">
             <item index="0" class="java.lang.String" itemvalue="com.alibaba.excel.annotation.ExcelProperty" />
+            <item index="1" class="java.lang.String" itemvalue="com.edp2021c1.util.TableCellData" />
+            <item index="2" class="java.lang.String" itemvalue="lombok.Getter" />
           </list>
         </value>
       </option>

@@ -30,6 +30,7 @@ public class MainWindowController {
     private ArrayList<String> seat;
     private long seed;
     private OriginalSeatConfig defaultConfig;
+    private SeatGenerator seatGenerator;
 
     @FXML
     private TableView<SeatRowData> resultTable;
@@ -267,8 +268,9 @@ public class MainWindowController {
         }
         SeatConfig conf = new SeatConfig(frontRowsInput.getText(), middleRowsInput.getText(), backRowsInput.getText(), groupLeadersInput.getText(), separatedInput.getText());
         seed = Long.parseLong(seedInput.getText());
-        SeatGenerator sg = new SeatGenerator(conf);
-        seat = sg.next(seed).seat;
+        seatGenerator.setConfig(conf);
+        seatGenerator.setSeed(seed);
+        seat = seatGenerator.next().seat;
         resultTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat, seed)));
     }
 
@@ -325,6 +327,8 @@ public class MainWindowController {
             buffer.append(line);
         }
         defaultConfig = new Gson().fromJson(buffer.toString(), OriginalSeatConfig.class);
+
+        seatGenerator =new SeatGenerator();
     }
 
 }

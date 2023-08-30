@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
-    <list size="2">
+    <list size="4">
       <item index="0" class="java.lang.String" itemvalue="com.alibaba.excel.annotation.ExcelProperty" />
-      <item index="1" class="java.lang.String" itemvalue="javafx.fxml.FXML" />
+      <item index="1" class="java.lang.String" itemvalue="com.edp2021c1.util.TableCellData" />
+      <item index="2" class="java.lang.String" itemvalue="javafx.fxml.FXML" />
+      <item index="3" class="java.lang.String" itemvalue="lombok.Getter" />
     </list>
     <writeAnnotations>
       <writeAnnotation name="com.alibaba.excel.annotation.ExcelProperty" />

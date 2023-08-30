@@ -4,23 +4,74 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * An instance of this class will be used to generate a seat table in form of an {@link ArrayList}.
+ * <p>
+ * If same config and seed are set to two instances,
+ * they will generate same seat tables.
+ * <p>
+ * If the seed of an instance is not set, then it will default to 0.
+ *
+ * @author Calboot
+ * @since 1.0
+ */
 public final class SeatGenerator {
-    private final SeatConfig conf;
+    /**
+     * Saves the config of an instance.
+     */
+    private SeatConfig config;
+    /**
+     * Buffers the seat table.
+     */
     private ArrayList<String> seat;
+    /**
+     * The instance of {@code Random} which is used to generate random numbers.
+     */
+    private final Random random;
+    /**
+     * The seed used to generate seat table, default to 0.
+     */
+    private long seed;
 
-    public SeatGenerator(SeatConfig c) {
-        conf = c;
+    /**
+     * Initialization.
+     */
+    public SeatGenerator() {
+        random =new Random();
+        seed=0;
     }
 
-    public Seat next(long seed) {
-        Random rd = new Random(seed);
+    /**
+     * Initialize the config of this instance.
+     * @param config the config which will be set as the config of the instance.
+     */
+    public void setConfig(SeatConfig config){
+        this.config = config;
+    }
+
+    /**
+     * Set the default seed of this instance to a new seed.
+     * @param seed the seed which will be set as the default seed of the instance.
+     */
+    public void setSeed(long seed){
+        random.setSeed(this.seed=seed);
+    }
+
+    /**
+     * Generate a seat table with the config and the seed.
+     * @return an instance of {@code Seat}.
+     */
+    public Seat next() {
+        if(config==null){
+            throw new NullPointerException("The config cannot be null.");
+        }
         seat = new ArrayList<>(Arrays.asList(new String[49]));
         ArrayList<Boolean> sorted = new ArrayList<>(Arrays.asList(new Boolean[44]));
         int t, i, m, n;
-        ArrayList<String> fr = conf.frontRows;
-        ArrayList<String> mr = conf.middleRows;
-        ArrayList<String> br = conf.backRows;
-        ArrayList<String> gl = conf.groupLeaders;
+        ArrayList<String> fr = config.frontRows;
+        ArrayList<String> mr = config.middleRows;
+        ArrayList<String> br = config.backRows;
+        ArrayList<String> gl = config.groupLeaders;
         do {
             //初始化
             for (i = 42; i < 49; i++) {
@@ -32,7 +83,7 @@ public final class SeatGenerator {
             // 第一、二排
             for (i = 0; i < 14; i++) {
                 do {
-                    t = rd.nextInt(0, 14);
+                    t = random.nextInt(0, 14);
                 } while (sorted.get(t));
                 seat.set(i, fr.get(t));
                 sorted.set(t, true);
@@ -41,7 +92,7 @@ public final class SeatGenerator {
             // 第三、四排
             for (i = 14; i < 28; i++) {
                 do {
-                    t = rd.nextInt(14, 28);
+                    t = random.nextInt(14, 28);
                 } while (sorted.get(t));
                 seat.set(i, mr.get(t - 14));
                 sorted.set(t, true);
@@ -50,7 +101,7 @@ public final class SeatGenerator {
             // 第五、六排
             for (i = 28; i < 42; i++) {
                 do {
-                    t = rd.nextInt(28, 44);
+                    t = random.nextInt(28, 44);
                 } while (sorted.get(t));
                 seat.set(i, br.get(t - 28));
                 sorted.set(t, true);
@@ -58,14 +109,14 @@ public final class SeatGenerator {
 
             // 第七排
             do {
-                t = rd.nextInt(28, 44);
+                t = random.nextInt(28, 44);
             } while (sorted.get(t));
-            m = rd.nextInt(42, 49);
+            m = random.nextInt(42, 49);
             seat.set(m, br.get(t - 28));
             sorted.set(t, true);
             do {
-                t = rd.nextInt(28, 44);
-                n = rd.nextInt(42, 49);
+                t = random.nextInt(28, 44);
+                n = random.nextInt(42, 49);
             } while (sorted.get(t) || n == m);
             seat.set(n, br.get(t - 28));
 
@@ -74,7 +125,7 @@ public final class SeatGenerator {
         //组长
         for (i = 0; i < 7; i++) {
             do {
-                t = rd.nextInt(0, 7);
+                t = random.nextInt(0, 7);
             } while (!gl.contains(seat.get(t * 7 + i)));
             seat.set(t * 7 + i, "*" + seat.get(t * 7 + i) + "*");
         }
@@ -82,12 +133,16 @@ public final class SeatGenerator {
         return new Seat(seat, seed);
     }
 
+    /**
+     * Check if the seat table fits the config.
+     * @return {@code true} if the seat table fits the config and {@code false} if not.
+     */
     private boolean check() {
         boolean hasLeader = false;
         boolean isSeparated = true;
         int i, j, len;
-        ArrayList<String> gl = conf.groupLeaders;
-        ArrayList<Separate> sp = conf.separated;
+        ArrayList<String> gl = config.groupLeaders;
+        ArrayList<Separate> sp = config.separated;
         // 检查每列是否都有组长
         for (i = 0; i < 7; i++) {
             for (j = 0; j < 7; j++) {
@@ -102,13 +157,12 @@ public final class SeatGenerator {
             hasLeader = false;
         }
         // 检查是否分开
-        Separate s;
         for (i = 0, len = sp.size(); i < len; i++) {
-            if (!isSeparated) {
-                return false;
+            if(isSeparated) {
+                isSeparated = sp.get(i).check(seat);
+                continue;
             }
-            s = sp.get(i);
-            isSeparated = !Separate.NOT_SEPARATED.contains(seat.indexOf(s.a) - seat.indexOf(s.b));
+            return false;
         }
 
         return true;
