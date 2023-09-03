@@ -1,6 +1,7 @@
 package com.edp2021c1.util;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Getter;
 
@@ -8,35 +9,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * An instance of this class saves a row of a seat table.This class also provides a method to
+ * An instance of this class saves a row of a seat table. This class also provides a method to
+ * turn a seat table into an {@code ArrayList} of this class.
  * @since 1.0.1
  */
 
+@Getter
 public class SeatRowData {
     @ExcelIgnore
     private static final SeatRowData emptyRow = new SeatRowData();
     @ExcelIgnore
     public static ArrayList<SeatRowData> emptySeat = new ArrayList<>(Arrays.asList(emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow));
     @ExcelProperty("G7")
-    @Getter
     private String c1;
     @ExcelProperty("G6")
-    @Getter
     private String c2;
     @ExcelProperty("G5")
-    @Getter
     private String c3;
     @ExcelProperty("G4")
-    @Getter
     private String c4;
     @ExcelProperty("G3")
-    @Getter
     private String c5;
     @ExcelProperty("G2")
-    @Getter
     private String c6;
     @ExcelProperty("G1")
-    @Getter
     private String c7;
 
     public SeatRowData() {

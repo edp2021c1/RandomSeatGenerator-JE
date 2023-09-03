@@ -178,7 +178,7 @@
                                        style="-fx-font-family: Impact;" styleClass="largeLabel" text="--RESULT--"
                                        textAlignment="CENTER"/>
                             </HBox>
-                            <TableView fx:id="resultTable" prefHeight="221.0" prefWidth="912.0"/>
+                            <TableView fx:id="resultTable" prefHeight="230.0" prefWidth="912.0"/>
                         </VBox>
                     </HBox>
                 </center>
