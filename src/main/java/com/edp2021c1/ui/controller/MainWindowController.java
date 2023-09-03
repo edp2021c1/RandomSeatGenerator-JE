@@ -328,7 +328,7 @@ public class MainWindowController {
         }
         defaultConfig = new Gson().fromJson(buffer.toString(), OriginalSeatConfig.class);
 
-        seatGenerator =new SeatGenerator();
+        seatGenerator = new SeatGenerator();
     }
 
 }

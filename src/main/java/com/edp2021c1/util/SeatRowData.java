@@ -10,6 +10,7 @@ import java.util.Arrays;
 /**
  * An instance of this class saves a row of a seat table. This class also provides a method to
  * turn a seat table into an {@code ArrayList} of this class.
+ *
  * @since 1.0.1
  */
 

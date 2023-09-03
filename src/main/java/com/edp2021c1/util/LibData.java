@@ -1,6 +1,7 @@
 package com.edp2021c1.util;
 
 import lombok.Getter;
+
 @Getter
 public class LibData {
     private final String lib;

@@ -17,6 +17,10 @@ import java.util.Random;
  */
 public final class SeatGenerator {
     /**
+     * The instance of {@code Random} which is used to generate random numbers.
+     */
+    private final Random random;
+    /**
      * Saves the config of an instance.
      */
     private SeatConfig config;
@@ -24,10 +28,6 @@ public final class SeatGenerator {
      * Buffers the seat table.
      */
     private ArrayList<String> seat;
-    /**
-     * The instance of {@code Random} which is used to generate random numbers.
-     */
-    private final Random random;
     /**
      * The seed used to generate seat table, default to 0.
      */
@@ -37,32 +37,35 @@ public final class SeatGenerator {
      * Initialization.
      */
     public SeatGenerator() {
-        random =new Random();
-        seed=0;
+        random = new Random();
+        seed = 0;
     }
 
     /**
      * Initialize the config of this instance.
+     *
      * @param config the config which will be set as the config of the instance.
      */
-    public void setConfig(SeatConfig config){
+    public void setConfig(SeatConfig config) {
         this.config = config;
     }
 
     /**
      * Set the default seed of this instance to a new seed.
+     *
      * @param seed the seed which will be set as the default seed of the instance.
      */
-    public void setSeed(long seed){
-        random.setSeed(this.seed=seed);
+    public void setSeed(long seed) {
+        random.setSeed(this.seed = seed);
     }
 
     /**
      * Generate a seat table with the config and the seed.
+     *
      * @return an instance of {@code Seat}.
      */
     public Seat next() {
-        if(config==null){
+        if (config == null) {
             throw new NullPointerException("The config cannot be null.");
         }
         seat = new ArrayList<>(Arrays.asList(new String[49]));
@@ -135,6 +138,7 @@ public final class SeatGenerator {
 
     /**
      * Check if the seat table fits the config.
+     *
      * @return {@code true} if the seat table fits the config and {@code false} if not.
      */
     private boolean check() {
@@ -158,7 +162,7 @@ public final class SeatGenerator {
         }
         // 检查是否分开
         for (i = 0, len = sp.size(); i < len; i++) {
-            if(isSeparated) {
+            if (isSeparated) {
                 isSeparated = sp.get(i).check(seat);
                 continue;
             }
