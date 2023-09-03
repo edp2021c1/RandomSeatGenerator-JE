@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * An instance of this class will be used to generate a seat table in form of an {@link ArrayList}.
+ * An instance of this class generates a seat table in form of an {@link ArrayList}.
  * <p>
  * If same config and seed are set to two instances,
  * they will generate same seat tables.
@@ -17,7 +17,7 @@ import java.util.Random;
  */
 public final class SeatGenerator {
     /**
-     * The instance of {@code Random} which is used to generate random numbers.
+     * The instance of {@code Random} used to generate random numbers.
      */
     private final Random random;
     /**
@@ -44,7 +44,7 @@ public final class SeatGenerator {
     /**
      * Initialize the config of this instance.
      *
-     * @param config the config which will be set as the config of the instance.
+     * @param config the config of the instance.
      */
     public void setConfig(SeatConfig config) {
         this.config = config;
@@ -53,7 +53,7 @@ public final class SeatGenerator {
     /**
      * Set the default seed of this instance to a new seed.
      *
-     * @param seed the seed which will be set as the default seed of the instance.
+     * @param seed the seed of the instance.
      */
     public void setSeed(long seed) {
         random.setSeed(this.seed = seed);
