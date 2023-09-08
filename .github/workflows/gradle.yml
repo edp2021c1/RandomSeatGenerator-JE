@@ -13,8 +13,7 @@ on:
       - v*.*.*
 
 permissions:
-  contents: read
-  packages: write
+  contents: write
 
 jobs:
   build:
