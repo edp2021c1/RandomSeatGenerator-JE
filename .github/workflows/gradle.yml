@@ -12,8 +12,7 @@ on:
     tags:
       - v*.*.*
 
-permissions:
-  contents: read
+permissions: read-all|write-all
 
 jobs:
   build:
@@ -60,4 +59,3 @@ jobs:
          with: 
            files: 
              ./**/**.jar
-           token: ${{ github.token }}
