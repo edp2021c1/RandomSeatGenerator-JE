@@ -1,8 +1,8 @@
 package com.edp2021c1.ui.controller;
 
 import com.alibaba.excel.EasyExcel;
-import com.edp2021c1.util.OriginalSeatConfig;
 import com.edp2021c1.util.SeatConfig;
+import com.edp2021c1.util.SeatConfig_Old;
 import com.edp2021c1.util.SeatGenerator;
 import com.edp2021c1.util.SeatRowData;
 import com.google.gson.Gson;
@@ -29,7 +29,7 @@ public class MainWindowController {
 
     private ArrayList<String> seat;
     private long seed;
-    private OriginalSeatConfig defaultConfig;
+    private SeatConfig defaultConfig;
     private SeatGenerator seatGenerator;
 
     @FXML
@@ -194,17 +194,17 @@ public class MainWindowController {
 
     @FXML
     void fillBR(ActionEvent event) {
-        backRowsInput.setText(defaultConfig.fs());
+        backRowsInput.setText(defaultConfig.fs);
     }
 
     @FXML
     void fillFR(ActionEvent event) {
-        frontRowsInput.setText(defaultConfig.ot());
+        frontRowsInput.setText(defaultConfig.ot);
     }
 
     @FXML
     void fillGL(ActionEvent event) {
-        groupLeadersInput.setText(defaultConfig.zz());
+        groupLeadersInput.setText(defaultConfig.zz);
     }
 
     @FXML
@@ -219,7 +219,7 @@ public class MainWindowController {
 
     @FXML
     void fillMR(ActionEvent event) {
-        middleRowsInput.setText(defaultConfig.tf());
+        middleRowsInput.setText(defaultConfig.tf);
     }
 
     @FXML
@@ -229,7 +229,7 @@ public class MainWindowController {
 
     @FXML
     void fillSP(ActionEvent event) {
-        separatedInput.setText(defaultConfig.separate());
+        separatedInput.setText(defaultConfig.separate);
     }
 
     @FXML
@@ -246,7 +246,7 @@ public class MainWindowController {
         inputStream.read(bytes);
         inputStream.close();
         String str = new String(bytes, StandardCharsets.UTF_8);
-        defaultConfig = new Gson().fromJson(str, OriginalSeatConfig.class);
+        defaultConfig = new Gson().fromJson(str, SeatConfig.class);
     }
 
     @FXML
@@ -266,7 +266,7 @@ public class MainWindowController {
         if (groupLeadersInput.getText().isEmpty()) {
             fillGL(event);
         }
-        SeatConfig conf = new SeatConfig(frontRowsInput.getText(), middleRowsInput.getText(), backRowsInput.getText(), groupLeadersInput.getText(), separatedInput.getText());
+        SeatConfig_Old conf = new SeatConfig_Old(frontRowsInput.getText(), middleRowsInput.getText(), backRowsInput.getText(), groupLeadersInput.getText(), separatedInput.getText());
         seed = Long.parseLong(seedInput.getText());
         seatGenerator.setConfig(conf);
         seatGenerator.setSeed(seed);
@@ -326,7 +326,7 @@ public class MainWindowController {
         while ((line = in.readLine()) != null) {
             buffer.append(line);
         }
-        defaultConfig = new Gson().fromJson(buffer.toString(), OriginalSeatConfig.class);
+        defaultConfig = new Gson().fromJson(buffer.toString(), SeatConfig.class);
 
         seatGenerator = new SeatGenerator();
     }

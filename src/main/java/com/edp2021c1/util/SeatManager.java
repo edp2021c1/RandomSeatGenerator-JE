@@ -4,79 +4,38 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-/**
- * An instance of this class generates a seat table in form of an {@link ArrayList}.
- * <p>
- * If same config and seed are set to two instances,
- * they will generate same seat tables.
- * <p>
- * If the seed of an instance is not set, then it will default to 0.
- *
- * @author Calboot
- * @since 1.0
- * @deprecated Now use {@link SeatManager} instead.
- */
-@Deprecated
-public final class SeatGenerator {
+public abstract class SeatManager {
     /**
      * The instance of {@code Random} used to generate random numbers.
      */
-    private final Random random;
+    private static final Random random=new Random();
     /**
      * Saves the config of an instance.
+     * @deprecated Use config instead.
      */
-    private SeatConfig_Old config;
+    @Deprecated
+    public static SeatConfig_Old conf;
     /**
      * Buffers the seat table.
      */
-    private ArrayList<String> seat;
+    private static ArrayList<String> seat;
     /**
-     * The seed used to generate seat table, default to 0.
-     */
-    private long seed;
-
-    /**
-     * Initialization.
-     */
-    public SeatGenerator() {
-        random = new Random();
-        seed = 0;
-    }
-
-    /**
-     * Initialize the config of this instance.
-     *
-     * @param config the config of the instance.
-     */
-    public void setConfig(SeatConfig_Old config) {
-        this.config = config;
-    }
-
-    /**
-     * Set the default seed of this instance to a new seed.
-     *
-     * @param seed the seed of the instance.
-     */
-    public void setSeed(long seed) {
-        random.setSeed(this.seed = seed);
-    }
-
-    /**
-     * Generate a seat table with the config and the seed.
+     * Generate a seat table using the config and the seed.
      *
      * @return an instance of {@code Seat}.
      */
-    public Seat next() {
-        if (config == null) {
+    public static Seat generate(long seed) {
+        random.setSeed(seed);
+        if (conf == null) {
             throw new NullPointerException("The config cannot be null.");
         }
         seat = new ArrayList<>(Arrays.asList(new String[49]));
         ArrayList<Boolean> sorted = new ArrayList<>(Arrays.asList(new Boolean[44]));
         int t, i, m, n;
-        ArrayList<String> fr = config.frontRows;
-        ArrayList<String> mr = config.middleRows;
-        ArrayList<String> br = config.backRows;
-        ArrayList<String> gl = config.groupLeaders;
+        ArrayList<String> fr = conf.frontRows;
+        ArrayList<String> mr = conf.middleRows;
+        ArrayList<String> br = conf.backRows;
+        ArrayList<String> gl = conf.groupLeaders;
         do {
             //初始化
             for (i = 42; i < 49; i++) {
@@ -143,12 +102,12 @@ public final class SeatGenerator {
      *
      * @return {@code true} if the seat table fits the config and {@code false} if not.
      */
-    private boolean check() {
+    private static boolean check() {
         boolean hasLeader = false;
         boolean isSeparated = true;
         int i, j, len;
-        ArrayList<String> gl = config.groupLeaders;
-        ArrayList<Separate> sp = config.separated;
+        ArrayList<String> gl = conf.groupLeaders;
+        ArrayList<Separate> sp = conf.separated;
         // 检查每列是否都有组长
         for (i = 0; i < 7; i++) {
             for (j = 0; j < 7; j++) {
