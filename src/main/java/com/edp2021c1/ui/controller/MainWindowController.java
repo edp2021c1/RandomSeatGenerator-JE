@@ -251,19 +251,19 @@ public class MainWindowController {
 
     @FXML
     void generate(ActionEvent event) {
-        if (frontRowsInput.getText().isEmpty()) {
+        if (frontRowsInput.getText() == null) {
             fillFR(event);
         }
-        if (middleRowsInput.getText().isEmpty()) {
+        if (middleRowsInput.getText() == null) {
             fillMR(event);
         }
-        if (backRowsInput.getText().isEmpty()) {
+        if (backRowsInput.getText() == null) {
             fillBR(event);
         }
-        if (seedInput.getText().isEmpty()) {
+        if (seedInput.getText() == null) {
             fillRdSeed(event);
         }
-        if (groupLeadersInput.getText().isEmpty()) {
+        if (groupLeadersInput.getText() == null) {
             fillGL(event);
         }
         SeatConfig_Old conf = new SeatConfig_Old(frontRowsInput.getText(), middleRowsInput.getText(), backRowsInput.getText(), groupLeadersInput.getText(), separatedInput.getText());
@@ -320,7 +320,7 @@ public class MainWindowController {
         HBox.setHgrow(subBox_3, Priority.ALWAYS);
         HBox.setHgrow(subBox_4, Priority.ALWAYS);
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/assets/json/config.json"))));
+        BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/assets/json/defaultConfig.json"))));
         StringBuilder buffer = new StringBuilder();
         String line;
         while ((line = in.readLine()) != null) {

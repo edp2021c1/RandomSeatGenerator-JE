@@ -19,7 +19,7 @@ public class SeatRowData {
     @ExcelIgnore
     private static final SeatRowData emptyRow = new SeatRowData();
     @ExcelIgnore
-    public static ArrayList<SeatRowData> emptySeat = new ArrayList<>(Arrays.asList(emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow));
+    public static final ArrayList<SeatRowData> emptySeat = new ArrayList<>(Arrays.asList(emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow));
     @ExcelProperty("G7")
     private String c1;
     @ExcelProperty("G6")

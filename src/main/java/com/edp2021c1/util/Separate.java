@@ -1,7 +1,7 @@
 package com.edp2021c1.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class packs a pair of people which should be separated when generating the seat and
@@ -15,7 +15,7 @@ public class Separate {
      * If the difference between the index of {@code a} and {@code b} in a seat table is contained in this {@code ArrayList},
      * it means that they are next to each other.
      */
-    private static final ArrayList<Integer> NOT_SEPARATED = new ArrayList<>(Arrays.asList(-1, -6, -7, -8, 1, 6, 7, 8));
+    private static final List<Integer> NOT_SEPARATED = Arrays.asList(-1, -6, -7, -8, 1, 6, 7, 8);
     /**
      * The first person.
      */
@@ -26,7 +26,7 @@ public class Separate {
     private final String b;
 
     /**
-     * @param s a {@code String} that matches the format "%a %b".
+     * @param s a {@code String} that matches the format "%a %b”.
      */
     public Separate(String s) {
         String[] t = s.split(" ");
@@ -39,7 +39,7 @@ public class Separate {
      * @return true if {@code a} and {@code b} are separated in the seat table, and false if not.
      * @see Separate#NOT_SEPARATED
      */
-    public boolean check(ArrayList<String> seat) {
+    public boolean check(List<String> seat) {
         return !NOT_SEPARATED.contains(seat.indexOf(a) - seat.indexOf(b));
     }
 }

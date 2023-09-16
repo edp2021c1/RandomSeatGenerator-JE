@@ -2,99 +2,133 @@ package com.edp2021c1.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public abstract class SeatManager {
     /**
      * The instance of {@code Random} used to generate random numbers.
      */
-    private static final Random random=new Random();
+    private static final Random random = new Random();
     /**
      * Saves the config of an instance.
+     *
      * @deprecated Use config instead.
      */
     @Deprecated
     public static SeatConfig_Old conf;
     /**
+     * Saves the config of an instance.
+     */
+    public static SeatConfig config;
+    /**
      * Buffers the seat table.
      */
-    private static ArrayList<String> seat;
+    private static List<String> seat;
+
     /**
-     * Generate a seat table using the config and the seed.
+     * Generate a seat table using the pre-set config and the seed.
      *
      * @return an instance of {@code Seat}.
      */
-    public static Seat generate(long seed) {
+    public static List<String> generate(long seed) {
         random.setSeed(seed);
-        if (conf == null) {
-            throw new NullPointerException("The config cannot be null.");
+        if (config == null) {
+            throw new NullPointerException("Config cannot be null.");
         }
-        seat = new ArrayList<>(Arrays.asList(new String[49]));
-        ArrayList<Boolean> sorted = new ArrayList<>(Arrays.asList(new Boolean[44]));
-        int t, i, m, n;
-        ArrayList<String> fr = conf.frontRows;
-        ArrayList<String> mr = conf.middleRows;
-        ArrayList<String> br = conf.backRows;
-        ArrayList<String> gl = conf.groupLeaders;
+
+        // 获取配置
+        int r = config.getRows();
+        int c = config.getColumns();
+        int rdr = config.getRandomBetweenRows();
+        List<Integer> last = config.getLastRowPosCanBeChoosed();
+        List<String> nameList = config.getNameList();
+        List<String> gl = config.getGroupLeaderList();
+
+        // 座位表变量
+        seat = Arrays.asList(new String[r * c]);
+
+        List<Boolean> sorted = Arrays.asList(new Boolean[nameList.size()]);
+
+        // 临时变量，提前声明以减少内存操作
+        int i, j, x, y, t, m, peopleNum = nameList.size(), rp = c * rdr, peopleLeft = peopleNum % (rp);
+        boolean b = peopleLeft <= c && peopleLeft != 0;
+        List<Integer> tmp;
+
         do {
-            //初始化
-            for (i = 42; i < 49; i++) {
-                seat.set(i, "-");  //只有第七排会有空位，所以只填入第七排
+            // 座位表初始化
+            // 只有最后一排会出现空位，因此只填入最后一排
+            for (i = (r - 1) * c, x = r * c; i < x; i++) {
+                seat.set(i, "-");
             }
-            for (i = 0; i < 44; i++) {
+            for (i = 0, x = nameList.size(); i < x; i++) {
                 sorted.set(i, false);
             }
-            // 第一、二排
-            for (i = 0; i < 14; i++) {
-                do {
-                    t = random.nextInt(0, 14);
-                } while (sorted.get(t));
-                seat.set(i, fr.get(t));
-                sorted.set(t, true);
-            }
+            tmp = new ArrayList<>(peopleNum % c);
 
-            // 第三、四排
-            for (i = 14; i < 28; i++) {
-                do {
-                    t = random.nextInt(14, 28);
-                } while (sorted.get(t));
-                seat.set(i, mr.get(t - 14));
-                sorted.set(t, true);
-            }
+            for (i = 0, x = peopleNum / (rp); i < x; i++) {
+                if (i == x - 1 && b) {    // 如果余位不多于一排，则将最后一排归到前两排中轮换
+                    for (j = 0; j < rp; j++) {
+                        do {
+                            t = random.nextInt(i * rp, peopleNum);
+                        } while (sorted.get(t));
+                        seat.set(j, nameList.get(t));
+                        sorted.set(t, true);
+                    }
+                    for (j = 0; j < peopleLeft; j++) {
+                        do {
+                            t = random.nextInt(i * rp, peopleNum);
+                        } while (sorted.get(t));
+                        do {
+                            m = random.nextInt(r * c - 1, r * c);
+                        } while (!last.contains(m - peopleNum + c + 1) || tmp.contains(m));
+                        tmp.add(m);
+                        seat.set(m, nameList.get(t));
+                        sorted.set(t, true);
+                    }
+                    break;
+                } else if (i == x - 1 && !b) {   // 如果余位多于一排，则在余位中进行随机轮换
+                    for (j = 0, y = peopleLeft - peopleNum % c; j < y; j++) {
+                        do {
+                            t = random.nextInt(i * rp, peopleNum);
+                        } while (sorted.get(t));
+                        seat.set(j + y, nameList.get(t));
+                        sorted.set(t, true);
+                    }
+                    for (j = 0; j < peopleLeft; j++) {
+                        do {
+                            t = random.nextInt(i * rp, peopleNum);
+                        } while (sorted.get(t));
+                        do {
+                            m = random.nextInt(peopleNum - c, peopleNum);
+                        } while (!last.contains(m - peopleNum + c + 1) || tmp.contains(m));
+                        tmp.add(m);
+                        seat.set(m, nameList.get(t));
+                        sorted.set(t, true);
+                    }
+                    break;
+                }
+                for (j = 0; j < rp; j++) {
+                    do {
+                        t = random.nextInt(i * rp, (i + 1) * rp);
+                    } while (sorted.get(t));
+                    seat.set(j, nameList.get(t));
+                    sorted.set(t, true);
+                }
 
-            // 第五、六排
-            for (i = 28; i < 42; i++) {
-                do {
-                    t = random.nextInt(28, 44);
-                } while (sorted.get(t));
-                seat.set(i, br.get(t - 28));
-                sorted.set(t, true);
             }
-
-            // 第七排
-            do {
-                t = random.nextInt(28, 44);
-            } while (sorted.get(t));
-            m = random.nextInt(42, 49);
-            seat.set(m, br.get(t - 28));
-            sorted.set(t, true);
-            do {
-                t = random.nextInt(28, 44);
-                n = random.nextInt(42, 49);
-            } while (sorted.get(t) || n == m);
-            seat.set(n, br.get(t - 28));
 
         } while (!check());
 
         //组长
-        for (i = 0; i < 7; i++) {
+        for (i = 0; i < c; i++) {
             do {
                 t = random.nextInt(0, 7);
-            } while (!gl.contains(seat.get(t * 7 + i)));
-            seat.set(t * 7 + i, "*" + seat.get(t * 7 + i) + "*");
+            } while (!gl.contains(seat.get(t * c + i)));
+            seat.set(t * c + i, "*" + seat.get(t * c + i) + "*");
         }
 
-        return new Seat(seat, seed);
+        return seat;
     }
 
     /**
@@ -106,8 +140,8 @@ public abstract class SeatManager {
         boolean hasLeader = false;
         boolean isSeparated = true;
         int i, j, len;
-        ArrayList<String> gl = conf.groupLeaders;
-        ArrayList<Separate> sp = conf.separated;
+        List<String> gl = config.getGroupLeaderList();
+        List<Separate> sp = config.getSeparatedList();
         // 检查每列是否都有组长
         for (i = 0; i < 7; i++) {
             for (j = 0; j < 7; j++) {
@@ -132,4 +166,5 @@ public abstract class SeatManager {
 
         return true;
     }
+
 }
