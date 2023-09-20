@@ -320,7 +320,7 @@ public class MainWindowController {
         HBox.setHgrow(subBox_3, Priority.ALWAYS);
         HBox.setHgrow(subBox_4, Priority.ALWAYS);
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/assets/json/defaultConfig.json"))));
+        BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/assets/json/seat_config_old.json"))));
         StringBuilder buffer = new StringBuilder();
         String line;
         while ((line = in.readLine()) != null) {
