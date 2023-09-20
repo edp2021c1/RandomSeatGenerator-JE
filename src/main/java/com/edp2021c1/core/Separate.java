@@ -1,4 +1,4 @@
-package com.edp2021c1.util;
+package com.edp2021c1.core;
 
 import java.util.Arrays;
 import java.util.List;

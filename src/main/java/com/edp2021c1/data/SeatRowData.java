@@ -1,4 +1,4 @@
-package com.edp2021c1.util;
+package com.edp2021c1.data;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;

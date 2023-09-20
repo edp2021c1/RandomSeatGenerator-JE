@@ -1,4 +1,6 @@
-package com.edp2021c1.util;
+package com.edp2021c1.core;
+
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,6 +1,6 @@
 package com.edp2021c1.ui.controller;
 
-import com.edp2021c1.util.LibData;
+import com.edp2021c1.data.LibData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

@@ -1,10 +1,10 @@
 package com.edp2021c1.ui.controller;
 
 import com.alibaba.excel.EasyExcel;
-import com.edp2021c1.util.SeatConfig;
-import com.edp2021c1.util.SeatConfig_Old;
-import com.edp2021c1.util.SeatGenerator;
-import com.edp2021c1.util.SeatRowData;
+import com.edp2021c1.core.SeatConfig;
+import com.edp2021c1.core.SeatConfig_Old;
+import com.edp2021c1.core.SeatGenerator;
+import com.edp2021c1.data.SeatRowData;
 import com.google.gson.Gson;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
