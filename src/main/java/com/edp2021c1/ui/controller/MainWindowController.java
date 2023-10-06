@@ -38,8 +38,6 @@ public class MainWindowController {
     @FXML
     private TableView<SeatRowData> seatTable;
 
-    private TableView<SeatRowData> seatRowDataTableView;
-
     @FXML
     void dateAsSeed(ActionEvent event) {
         Date t = new Date();
