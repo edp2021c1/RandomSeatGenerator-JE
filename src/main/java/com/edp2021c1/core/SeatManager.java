@@ -29,9 +29,9 @@ public abstract class SeatManager {
     /**
      * Generate a seat table using the pre-set config and the seed.
      *
-     * @return an instance of {@code Seat}.
+     * @return an instance of {@code Seat_Old}.
      */
-    public static List<String> generate(long seed) {
+    public static Seat generate(long seed) {
         random.setSeed(seed);
         if (config == null) {
             throw new NullPointerException("Config cannot be null.");
@@ -68,7 +68,7 @@ public abstract class SeatManager {
 
             for (i = 0, x = peopleNum / (rp); i < x; i++) {
                 if (i == x - 1 && b) {    // 如果余位不多于一排，则将最后一排归到前两排中轮换
-                    for (j = 0; j < rp; j++) {
+                    for (j = i * rp, m = (i + 1) * rp; j < m; j++) {
                         do {
                             t = random.nextInt(i * rp, peopleNum);
                         } while (sorted.get(t));
@@ -80,8 +80,8 @@ public abstract class SeatManager {
                             t = random.nextInt(i * rp, peopleNum);
                         } while (sorted.get(t));
                         do {
-                            m = random.nextInt(r * c - 1, r * c);
-                        } while (!last.contains(m - peopleNum + c + 1) || tmp.contains(m));
+                            m = random.nextInt((r - 1) * c, r * c);
+                        } while (!last.contains(m - x * rp + 1) || tmp.contains(m));
                         tmp.add(m);
                         seat.set(m, nameList.get(t));
                         sorted.set(t, true);
@@ -100,15 +100,15 @@ public abstract class SeatManager {
                             t = random.nextInt(i * rp, peopleNum);
                         } while (sorted.get(t));
                         do {
-                            m = random.nextInt(peopleNum - c, peopleNum);
-                        } while (!last.contains(m - peopleNum + c + 1) || tmp.contains(m));
+                            m = random.nextInt((r - 1) * c, r * c);
+                        } while (!last.contains(m - x * rp + 1) || tmp.contains(m));
                         tmp.add(m);
                         seat.set(m, nameList.get(t));
                         sorted.set(t, true);
                     }
                     break;
                 }
-                for (j = 0; j < rp; j++) {
+                for (j = i * rp, m = (i + 1) * rp; j < m; j++) {
                     do {
                         t = random.nextInt(i * rp, (i + 1) * rp);
                     } while (sorted.get(t));
@@ -128,7 +128,7 @@ public abstract class SeatManager {
             seat.set(t * c + i, "*" + seat.get(t * c + i) + "*");
         }
 
-        return seat;
+        return new Seat(seat, config, seed);
     }
 
     /**

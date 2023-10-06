@@ -64,9 +64,9 @@ public final class SeatGenerator {
     /**
      * Generate a seat table with the config and the seed.
      *
-     * @return an instance of {@code Seat}.
+     * @return an instance of {@code Seat_Old}.
      */
-    public Seat next() {
+    public Seat_Old next() {
         if (config == null) {
             throw new NullPointerException("The config cannot be null.");
         }
@@ -135,7 +135,7 @@ public final class SeatGenerator {
             seat.set(t * 7 + i, "*" + seat.get(t * 7 + i) + "*");
         }
 
-        return new Seat(seat, seed);
+        return new Seat_Old(seat, seed);
     }
 
     /**

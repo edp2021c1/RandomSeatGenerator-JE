@@ -8,13 +8,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+@Deprecated
 public class AboutDialogController {
 
     @FXML
@@ -27,16 +27,10 @@ public class AboutDialogController {
     private ImageView img;
 
     @FXML
-    private ImageView icon;
-
-    @FXML
     private Stage stage;
 
     @FXML
     private Button closeBtn;
-
-    @FXML
-    private Button closeBtn1;
 
     @FXML
     private Button libBtn;
@@ -55,11 +49,9 @@ public class AboutDialogController {
 
     @FXML
     void initialize() {
-        stage.initStyle(StageStyle.UNDECORATED);
         stage.initModality(Modality.APPLICATION_MODAL);
 
         img.setImage(new Image("assets/img/icon.png"));
-        icon.setImage(new Image("assets/img/icon.png"));
     }
 
 }

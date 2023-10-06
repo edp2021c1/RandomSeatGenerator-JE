@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class MainWindow extends Application {
+public class App extends Application {
     public void start(Stage primaryStage) throws IOException {
         Stage stage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/MainWindow.fxml")));
         stage.show();

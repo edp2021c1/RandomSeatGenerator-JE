@@ -1,14 +1,18 @@
 package com.edp2021c1.core;
 
-import java.util.ArrayList;
+import lombok.Getter;
 
-@Deprecated
+import java.util.List;
+
+@Getter
 public class Seat {
-    public final ArrayList<String> seat;
-    public final long seed;
+    private final List<String> seat;
+    private final SeatConfig config;
+    private final long seed;
 
-    public Seat(ArrayList<String> st, long sd) {
-        seat = st;
-        seed = sd;
+    public Seat(List<String> seat, SeatConfig config, long seed) {
+        this.seat = seat;
+        this.config = config;
+        this.seed = seed;
     }
 }

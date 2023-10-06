@@ -3,6 +3,7 @@ package com.edp2021c1.data;
 import lombok.Getter;
 
 @Getter
+@Deprecated
 public class LibData {
     private final String lib;
     private final String license;
