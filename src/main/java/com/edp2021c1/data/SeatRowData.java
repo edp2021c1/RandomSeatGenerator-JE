@@ -21,20 +21,13 @@ import java.util.List;
 public class SeatRowData {
     @ExcelIgnore
     public static final int MAX_COLUMN_COUNT = 20;
-    @ExcelIgnore
-    private static final SeatRowData emptyRow = new SeatRowData();
-    @ExcelIgnore
-    public static final ArrayList<SeatRowData> emptySeat = new ArrayList<>(Arrays.asList(emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow));
-    private String c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20;
 
-    public SeatRowData() {
-        c1 = c2 = c3 = c4 = c5 = c6 = c7 = c8 = c9 = c10 = c11 = c12 = c13 = c14 = c15 = c16 = c17 = c18 = c19 = c20 = "-";
-    }
+    private String c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20;
 
     public SeatRowData(String... c) throws Exception {
         for (int i = 0, j = c.length; i < j; i++) {
             if (i > 19) throw new Exception(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));
-            Field f = this.getClass().getDeclaredField(String.format("c%d", (j + 1)));
+            Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
             f.setAccessible(true);
             f.set(this, c[i]);
         }
@@ -42,7 +35,7 @@ public class SeatRowData {
 
     public static List<SeatRowData> fromSeat(Seat seat) throws Exception {
         SeatConfig conf = seat.getConfig();
-        int r = conf.getRows(), c = conf.getColumns();
+        int r = conf.getRowCount(), c = conf.getColumnCount();
         List<String> s = seat.getSeat();
         List<SeatRowData> seatRowData = new ArrayList<>(r);
         String[] tmp = new String[c];
@@ -53,5 +46,17 @@ public class SeatRowData {
             seatRowData.add(new SeatRowData(tmp));
         }
         return seatRowData;
+    }
+
+    public static List<SeatRowData> emptySeat(int rowCount, int columnCount) throws Exception {
+        String[] emptyRowData = new String[columnCount];
+        Arrays.fill(emptyRowData, "-");
+
+        SeatRowData emptyRow = new SeatRowData(emptyRowData);
+
+        SeatRowData[] list = new SeatRowData[rowCount];
+        Arrays.fill(list, emptyRow);
+
+        return Arrays.asList(list);
     }
 }

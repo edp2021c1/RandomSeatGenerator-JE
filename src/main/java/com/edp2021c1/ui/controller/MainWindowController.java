@@ -4,6 +4,7 @@ import com.edp2021c1.Main;
 import com.edp2021c1.core.Seat;
 import com.edp2021c1.core.SeatManager;
 import com.edp2021c1.data.SeatRowData;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,6 +38,8 @@ public class MainWindowController {
     @FXML
     private TableView<SeatRowData> seatTable;
 
+    private TableView<SeatRowData> seatRowDataTableView;
+
     @FXML
     void dateAsSeed(ActionEvent event) {
         Date t = new Date();
@@ -54,7 +57,8 @@ public class MainWindowController {
     }
 
     @FXML
-    void generateSeatTable(ActionEvent event) {
+    void generateSeatTable(ActionEvent event) throws Exception {
+        initSeatTable();
         long seed;
         try {
             Long.parseLong(seedInput.getText());
@@ -64,7 +68,7 @@ public class MainWindowController {
         seed = Long.parseLong(seedInput.getText());
         SeatManager.config = Main.seatConfig;
         Seat seat = SeatManager.generate(seed);
-        System.out.println(seat);
+        seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
     }
 
     @FXML
@@ -75,21 +79,25 @@ public class MainWindowController {
     }
 
     @FXML
-    void initialize() {
+    void initialize() throws Exception {
         initSeatTable();
     }
 
-    void initSeatTable() {
-        int rows = Main.seatConfig.getRows(), columns = Main.seatConfig.getColumns();
+    void initSeatTable() throws Exception {
+        seatTable.getColumns().clear();
+        int rowCount = Main.seatConfig.getRowCount(), columnCount = Main.seatConfig.getColumnCount();
         TableColumn<SeatRowData, String> c;
-        for (int i = 0; i < columns; i++) {
-            c = new TableColumn<>("C" + (i + 1));
+        double d = 1d / columnCount;
+        for (int i = 0; i < columnCount; i++) {
+            c = new TableColumn<>("C" + (i + 1)) {{
+                prefWidthProperty().bind(seatTable.widthProperty().multiply(d));
+            }};
             c.setCellValueFactory(new PropertyValueFactory<>("c" + (i + 1)));
             c.setSortable(false);
             seatTable.getColumns().add(c);
         }
-        seatTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         seatTable.setEditable(false);
+        seatTable.setItems(FXCollections.observableArrayList(SeatRowData.emptySeat(rowCount, columnCount)));
     }
 
 }

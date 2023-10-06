@@ -38,8 +38,8 @@ public abstract class SeatManager {
         }
 
         // 获取配置
-        int r = config.getRows();
-        int c = config.getColumns();
+        int r = config.getRowCount();
+        int c = config.getColumnCount();
         int rdr = config.getRandomBetweenRows();
         List<Integer> last = config.getLastRowPosCanBeChoosed();
         List<String> nameList = config.getNameList();
