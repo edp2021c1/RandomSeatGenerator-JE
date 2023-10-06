@@ -21,92 +21,86 @@
             <VBox prefHeight="658.0" prefWidth="1232.0">
                 <Label prefHeight="45.0" prefWidth="1212.0" text="常规" />
                 <HBox alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="1212.0">
-                    <children>
-                        <Label text="界面主题" />
-                        <MenuButton mnemonicParsing="false" text="Light">
-                            <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </HBox.margin>
-                        </MenuButton>
-                    </children>
+                    <Label text="界面主题"/>
+                    <MenuButton mnemonicParsing="false" text="Light">
+                        <HBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </HBox.margin>
+                    </MenuButton>
                 </HBox>
                 <Separator prefWidth="200.0" />
                 <Label prefHeight="45.0" prefWidth="1212.0" text="座位表生成" />
                 <HBox alignment="CENTER" prefHeight="60.0" prefWidth="1212.0">
-                    <children>
-                        <TextField promptText="行数">
-                            <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </HBox.margin>
-                        </TextField>
-                        <TextField promptText="列数">
-                            <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </HBox.margin>
-                        </TextField>
-                        <TextField promptText="随机轮换的行数">
-                            <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </HBox.margin>
-                        </TextField>
-                        <TextField promptText="最后一排可选列数">
-                            <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </HBox.margin>
-                        </TextField>
-                    </children>
+                    <TextField promptText="行数">
+                        <HBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </HBox.margin>
+                    </TextField>
+                    <TextField promptText="列数">
+                        <HBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </HBox.margin>
+                    </TextField>
+                    <TextField promptText="随机轮换的行数">
+                        <HBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </HBox.margin>
+                    </TextField>
+                    <TextField promptText="最后一排可选列数">
+                        <HBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </HBox.margin>
+                    </TextField>
                 </HBox>
                 <HBox alignment="CENTER" prefHeight="60.0" prefWidth="1212.0">
-                    <children>
-                        <TextField promptText="名单 (按身高排序)">
-                            <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </HBox.margin>
-                        </TextField>
-                        <TextField promptText="组长列表">
-                            <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </HBox.margin>
-                        </TextField>
-                        <TextArea prefHeight="75.0" prefWidth="165.0" promptText="拆分列表">
-                            <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </HBox.margin>
-                        </TextArea>
-                        <Button mnemonicParsing="false" text="从文件加载">
-                            <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </HBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" text="应用">
-                            <HBox.margin>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </HBox.margin>
-                        </Button>
-                    </children>
+                    <TextField promptText="名单 (按身高排序)">
+                        <HBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </HBox.margin>
+                    </TextField>
+                    <TextField promptText="组长列表">
+                        <HBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </HBox.margin>
+                    </TextField>
+                    <TextArea prefHeight="75.0" prefWidth="165.0" promptText="拆分列表">
+                        <HBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </HBox.margin>
+                    </TextArea>
+                    <Button mnemonicParsing="false" text="从文件加载">
+                        <HBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button mnemonicParsing="false" text="应用">
+                        <HBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </HBox.margin>
+                    </Button>
                 </HBox>
                 <Separator prefWidth="200.0" />
                 <Label prefHeight="45.0" prefWidth="1212.0" text="关于" />
                 <HBox alignment="CENTER_LEFT" prefHeight="293.0" prefWidth="1212.0">
-                    <children>
-                        <ImageView fitHeight="275.0" fitWidth="275.0" pickOnBounds="true" preserveRatio="true">
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
-                        </ImageView>
-                        <VBox prefHeight="264.0" prefWidth="958.0">
-                            <children>
-                                <Label alignment="CENTER" prefHeight="32.0" prefWidth="237.0" style="-fx-font-family: Impact;" styleClass="middleLabel" text="RandomSeatGenerator">
-                                    <font>
-                                        <Font size="24.0" />
-                                    </font>
-                                </Label>
-                                <Label prefHeight="24.0" prefWidth="219.0" text="版本            1.2.0 (Build 6)" />
-                                <Label prefHeight="23.0" prefWidth="452.0" text="官方仓库    https://github.com/edp2021c1/RandomSeatGenerator-JE.git" />
-                                <TextArea editable="false" prefHeight="244.0" prefWidth="937.0" text="Copyright (c) 2023  EDP2021C1&#10;This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.&#10;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. &#10;See the GNU General Public License for more details. &#10;You should have received a copy of the GNU General Public License along with this program. &#10;If not, see &lt;https://www.gnu.org/licenses/&gt;.&#10;&#10;Libraries that have been used in Qv2ray are listed below (Sorted by date added):&#10;JavaFX v20.0.1 (GPLv3)&#10;Gson v2.10.1 (Apache 2.0)&#10;EasyExcel v3.3.2 (Apache 2.0)" wrapText="true" />
-                            </children>
-                        </VBox>
-                    </children>
+                    <ImageView fitHeight="275.0" fitWidth="275.0" pickOnBounds="true" preserveRatio="true">
+                        <HBox.margin>
+                            <Insets/>
+                        </HBox.margin>
+                    </ImageView>
+                    <VBox prefHeight="264.0" prefWidth="958.0">
+                        <Label alignment="CENTER" prefHeight="32.0" prefWidth="237.0"
+                               style="-fx-font-family: Impact;" styleClass="middleLabel" text="RandomSeatGenerator">
+                            <font>
+                                <Font size="24.0"/>
+                            </font>
+                        </Label>
+                        <Label prefHeight="24.0" prefWidth="219.0" text="版本            1.2.0 (Build 6)"/>
+                        <Label prefHeight="23.0" prefWidth="452.0"
+                               text="官方仓库    https://github.com/edp2021c1/RandomSeatGenerator-JE.git"/>
+                        <TextArea editable="false" prefHeight="244.0" prefWidth="937.0"
+                                  text="Copyright (c) 2023  EDP2021C1&#10;This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.&#10;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. &#10;See the GNU General Public License for more details. &#10;You should have received a copy of the GNU General Public License along with this program. &#10;If not, see &lt;https://www.gnu.org/licenses/&gt;.&#10;&#10;Libraries that have been used in Qv2ray are listed below (Sorted by date added):&#10;JavaFX v20.0.1 (GPLv3)&#10;Gson v2.10.1 (Apache 2.0)&#10;EasyExcel v3.3.2 (Apache 2.0)"
+                                  wrapText="true"/>
+                    </VBox>
                 </HBox>
             <ButtonBar prefHeight="40.0" prefWidth="200.0">
               <buttons>

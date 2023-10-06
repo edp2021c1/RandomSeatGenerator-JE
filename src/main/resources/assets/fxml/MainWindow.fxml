@@ -34,16 +34,12 @@
                 </left>
                 <center>
                     <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                        <children>
-                            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                                <children>
-                                    <TextField fx:id="seedInput" promptText="种子(Long)"/>
-                                    <Button mnemonicParsing="false" onAction="#generateRandomSeed" text="随机种子"/>
-                                    <Button mnemonicParsing="false" onAction="#dateAsSeed" text="填入日期"/>
-                                </children>
-                            </HBox>
-                            <TableView fx:id="seatTable" prefHeight="618.0" prefWidth="967.0"/>
-                        </children>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                            <TextField fx:id="seedInput" promptText="种子(Long)"/>
+                            <Button mnemonicParsing="false" onAction="#generateRandomSeed" text="随机种子"/>
+                            <Button mnemonicParsing="false" onAction="#dateAsSeed" text="填入日期"/>
+                        </HBox>
+                        <TableView fx:id="seatTable" prefHeight="618.0" prefWidth="967.0"/>
                     </VBox>
                 </center>
                 <padding>
