@@ -11,15 +11,13 @@ import static java.lang.Integer.parseUnsignedInt;
 public final class SeatConfig {
     @Deprecated
     public String ot, tf, fs;
-    private String rows;
-    private String columns;
-    private String random_between_rows;
-    private String last_row_pos_can_be_choosed;
-    private String person_sort_by_height;
-    @Getter
-    private String zz;
-    @Getter
-    private String separate;
+    public String rows;
+    public String columns;
+    public String random_between_rows;
+    public String last_row_pos_can_be_choosed;
+    public String person_sort_by_height;
+    public String zz;
+    public String separate;
 
     public int getRowCount() {
         return parseUnsignedInt(rows);
