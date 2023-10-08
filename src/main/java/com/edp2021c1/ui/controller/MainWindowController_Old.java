@@ -138,7 +138,7 @@ public class MainWindowController_Old {
         if (seat == null) {
             generate(event);
         }
-        var fc = new FileChooser();
+        FileChooser fc = new FileChooser();
         fc.setTitle("导出座位表");
         fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("所有文件", "*"),
                 new FileChooser.ExtensionFilter("CSV文件", "*.csv"),

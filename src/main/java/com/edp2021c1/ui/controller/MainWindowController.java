@@ -1,9 +1,11 @@
 package com.edp2021c1.ui.controller;
 
+import com.alibaba.excel.EasyExcel;
 import com.edp2021c1.Main;
 import com.edp2021c1.core.Seat;
 import com.edp2021c1.core.SeatManager;
 import com.edp2021c1.data.SeatRowData;
+import com.edp2021c1.data.SeatRowData_Old;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,8 +14,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
@@ -38,6 +42,8 @@ public class MainWindowController {
     @FXML
     private TableView<SeatRowData> seatTable;
 
+    private static Seat seat;
+
     @FXML
     void dateAsSeed(ActionEvent event) {
         Date t = new Date();
@@ -45,8 +51,20 @@ public class MainWindowController {
     }
 
     @FXML
-    void exportSeatTable(ActionEvent event) {
-
+    void exportSeatTable(ActionEvent event) throws Exception {
+        if(seat==null) generateSeatTable(null);
+        FileChooser fc=new FileChooser();
+        fc.setTitle("导出座位表");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄","*.xlsx"));
+        File f=fc.showSaveDialog(stage);
+        Date date=new Date();
+        if(f==null) {
+            return;
+        } else if(!f.createNewFile()) {
+            f.delete();
+            f.createNewFile();
+        }
+        EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat));
     }
 
     @FXML
@@ -65,7 +83,7 @@ public class MainWindowController {
         }
         seed = Long.parseLong(seedInput.getText());
         SeatManager.config = Main.seatConfig;
-        Seat seat = SeatManager.generate(seed);
+        seat = SeatManager.generate(seed);
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
     }
 

@@ -45,6 +45,7 @@ public class SeatRowData {
             }
             seatRowData.add(new SeatRowData(tmp));
         }
+        seatRowData.add(new SeatRowData("seed",Long.toString(seat.getSeed())));
         return seatRowData;
     }
 
@@ -54,7 +55,7 @@ public class SeatRowData {
 
         SeatRowData emptyRow = new SeatRowData(emptyRowData);
 
-        SeatRowData[] list = new SeatRowData[rowCount];
+        SeatRowData[] list = new SeatRowData[rowCount+1];
         Arrays.fill(list, emptyRow);
 
         return Arrays.asList(list);
