@@ -205,7 +205,7 @@ public class MainWindowController_Old {
 
     @FXML
     void fillGL(ActionEvent event) {
-        groupLeadersInput.setText(defaultConfig.getZz());
+        groupLeadersInput.setText(defaultConfig.zz);
     }
 
     @FXML
@@ -230,7 +230,7 @@ public class MainWindowController_Old {
 
     @FXML
     void fillSP(ActionEvent event) {
-        separatedInput.setText(defaultConfig.getSeparate());
+        separatedInput.setText(defaultConfig.separate);
     }
 
     @FXML
