@@ -5,7 +5,6 @@ import com.edp2021c1.Main;
 import com.edp2021c1.core.Seat;
 import com.edp2021c1.core.SeatManager;
 import com.edp2021c1.data.SeatRowData;
-import com.edp2021c1.data.SeatRowData_Old;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -27,22 +26,17 @@ import java.util.ResourceBundle;
 
 public class MainWindowController {
 
+    private static Seat seat;
     @FXML
     private Stage stage;
-
     @FXML
     private ResourceBundle resources;
-
     @FXML
     private URL location;
-
     @FXML
     private TextField seedInput;
-
     @FXML
     private TableView<SeatRowData> seatTable;
-
-    private static Seat seat;
 
     @FXML
     void dateAsSeed(ActionEvent event) {
@@ -52,15 +46,15 @@ public class MainWindowController {
 
     @FXML
     void exportSeatTable(ActionEvent event) throws Exception {
-        if(seat==null) generateSeatTable(null);
-        FileChooser fc=new FileChooser();
+        if (seat == null) generateSeatTable(null);
+        FileChooser fc = new FileChooser();
         fc.setTitle("导出座位表");
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄","*.xlsx"));
-        File f=fc.showSaveDialog(stage);
-        Date date=new Date();
-        if(f==null) {
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
+        File f = fc.showSaveDialog(stage);
+        Date date = new Date();
+        if (f == null) {
             return;
-        } else if(!f.createNewFile()) {
+        } else if (!f.createNewFile()) {
             f.delete();
             f.createNewFile();
         }

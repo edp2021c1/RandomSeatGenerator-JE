@@ -17,12 +17,11 @@ public final class SeatConfig {
     public String zz;
     public String separate;
 
-    public SeatConfig(){super();}
-    public SeatConfig(String rowCount,String columnCount,String randomBetweenRows,String lastRowPos,String nameList,String groupLeaderList,String separateList){
-
+    public SeatConfig() {
+        super();
     }
 
-    public int getRowCount () throws NumberFormatException{
+    public int getRowCount() throws NumberFormatException {
         return parseUnsignedInt(rows);
     }
 

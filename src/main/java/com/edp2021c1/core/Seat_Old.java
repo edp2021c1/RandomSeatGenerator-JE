@@ -5,10 +5,8 @@ import java.util.ArrayList;
 @Deprecated
 public class Seat_Old {
     public final ArrayList<String> seat;
-    public final long seed;
 
-    public Seat_Old(ArrayList<String> st, long sd) {
+    public Seat_Old(ArrayList<String> st) {
         seat = st;
-        seed = sd;
     }
 }

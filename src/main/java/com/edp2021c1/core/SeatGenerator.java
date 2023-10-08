@@ -135,7 +135,7 @@ public final class SeatGenerator {
             seat.set(t * 7 + i, "*" + seat.get(t * 7 + i) + "*");
         }
 
-        return new Seat_Old(seat, seed);
+        return new Seat_Old(seat);
     }
 
     /**

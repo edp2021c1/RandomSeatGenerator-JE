@@ -60,7 +60,7 @@ public abstract class SeatManager {
         int peopleNum = nameList.size();
         int rp = columnCount * randomBetweenRows;
         int peopleLeft = peopleNum % (rp);
-        boolean tmp_7=peopleLeft>0 && rowCount*columnCount>peopleNum;
+        boolean tmp_7 = peopleLeft > 0 && rowCount * columnCount > peopleNum;
         boolean tmp_8 = peopleLeft <= columnCount;
         List<Integer> tmp;
 
@@ -76,7 +76,7 @@ public abstract class SeatManager {
             tmp = new ArrayList<>(peopleNum % columnCount);
 
             for (tmp_1 = 0, tmp_3 = peopleNum / (rp); tmp_1 < tmp_3; tmp_1++) {
-                if (tmp_1 == tmp_3 - 1 && tmp_7 && tmp_8 ) {    // 如果余位不多于一排，则将最后一排归到前两排中轮换
+                if (tmp_1 == tmp_3 - 1 && tmp_7 && tmp_8) {    // 如果余位不多于一排，则将最后一排归到前两排中轮换
                     for (tmp_2 = tmp_1 * rp, tmp_6 = (tmp_1 + 1) * rp; tmp_2 < tmp_6; tmp_2++) {
                         do {
                             tmp_5 = random.nextInt(tmp_1 * rp, peopleNum);

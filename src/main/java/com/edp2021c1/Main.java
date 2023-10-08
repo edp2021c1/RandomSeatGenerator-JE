@@ -21,7 +21,7 @@ public class Main {
         while ((line = in.readLine()) != null) {
             buffer.append(line);
         }
-        DEFAULT_SEAT_CONFIG=new Gson().fromJson(buffer.toString(), SeatConfig.class);
+        DEFAULT_SEAT_CONFIG = new Gson().fromJson(buffer.toString(), SeatConfig.class);
 
         // Create seat config file if it doesn't exist
         File f = new File("seat_config.json");
@@ -37,7 +37,7 @@ public class Main {
         inputStream.read(bytes);
         inputStream.close();
         String str = new String(bytes, StandardCharsets.UTF_8);
-        seatConfig=new Gson().fromJson(str, SeatConfig.class);
+        seatConfig = new Gson().fromJson(str, SeatConfig.class);
 
         Application.launch(App.class, args);
     }
