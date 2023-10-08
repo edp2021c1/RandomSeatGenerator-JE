@@ -22,7 +22,7 @@
                 <Label prefHeight="45.0" prefWidth="1212.0" text="常规" />
                 <HBox alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="1212.0">
                     <Label text="界面主题"/>
-                    <MenuButton mnemonicParsing="false" text="Light">
+                    <MenuButton mnemonicParsing="false">
                         <HBox.margin>
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                         </HBox.margin>

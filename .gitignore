@@ -5,6 +5,7 @@ build/
 !**/src/test/**/build/
 
 seat_config.json
+rsg_config.json
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

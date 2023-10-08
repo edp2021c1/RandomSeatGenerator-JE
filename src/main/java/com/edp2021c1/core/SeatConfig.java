@@ -62,17 +62,4 @@ public final class SeatConfig {
 
         return s;
     }
-
-    public void set(SeatConfig s) {
-        ot = s.ot;
-        tf = s.tf;
-        fs = s.fs;
-        rows = s.rows;
-        columns = s.columns;
-        random_between_rows = s.random_between_rows;
-        last_row_pos_can_be_choosed = s.last_row_pos_can_be_choosed;
-        person_sort_by_height = s.person_sort_by_height;
-        zz = s.zz;
-        separate = s.separate;
-    }
 }
