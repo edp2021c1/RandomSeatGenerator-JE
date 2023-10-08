@@ -134,7 +134,7 @@ public class MainWindowController_Old {
     }
 
     @FXML
-    void exportToFile(ActionEvent event) throws IOException {
+    void exportToFile(ActionEvent event) throws Exception {
         if (seat == null) {
             generate(event);
         }
@@ -251,7 +251,7 @@ public class MainWindowController_Old {
     }
 
     @FXML
-    void generate(ActionEvent event) {
+    void generate(ActionEvent event) throws Exception {
         if (frontRowsInput.getText().isBlank()) {
             fillFR(event);
         }

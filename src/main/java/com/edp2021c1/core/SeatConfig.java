@@ -1,7 +1,5 @@
 package com.edp2021c1.core;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,19 +17,24 @@ public final class SeatConfig {
     public String zz;
     public String separate;
 
-    public int getRowCount() {
+    public SeatConfig(){super();}
+    public SeatConfig(String rowCount,String columnCount,String randomBetweenRows,String lastRowPos,String nameList,String groupLeaderList,String separateList){
+
+    }
+
+    public int getRowCount () throws NumberFormatException{
         return parseUnsignedInt(rows);
     }
 
-    public int getColumnCount() {
+    public int getColumnCount() throws NumberFormatException {
         return parseUnsignedInt(columns);
     }
 
-    public int getRandomBetweenRows() {
+    public int getRandomBetweenRows() throws NumberFormatException {
         return parseUnsignedInt(random_between_rows);
     }
 
-    public ArrayList<Integer> getLastRowPosCanBeChoosed() {
+    public ArrayList<Integer> getLastRowPos() throws NumberFormatException {
         String[] t = last_row_pos_can_be_choosed.split(" ");
         ArrayList<Integer> i = new ArrayList<>(t.length);
         for (String s : t) {
@@ -48,7 +51,7 @@ public final class SeatConfig {
         return Arrays.asList(zz.split(" "));
     }
 
-    public List<Separate> getSeparatedList() {
+    public List<Separate> getSeparatedList() throws Exception {
         String[] t = separate.split("\n");
         ArrayList<Separate> s = new ArrayList<>(t.length);
 

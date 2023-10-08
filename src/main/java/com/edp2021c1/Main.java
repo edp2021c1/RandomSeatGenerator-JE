@@ -1,7 +1,6 @@
 package com.edp2021c1;
 
 import com.edp2021c1.core.SeatConfig;
-import com.edp2021c1.data.AppConfig;
 import com.edp2021c1.ui.App;
 import com.google.gson.Gson;
 import javafx.application.Application;
@@ -13,7 +12,6 @@ import java.util.Objects;
 public class Main {
     public static SeatConfig DEFAULT_SEAT_CONFIG = new SeatConfig();
     public static SeatConfig seatConfig = new SeatConfig();
-    public static AppConfig appConfig=new AppConfig();
 
     public static void main(String[] args) throws IOException {
         // Load default seat config
@@ -40,22 +38,6 @@ public class Main {
         inputStream.close();
         String str = new String(bytes, StandardCharsets.UTF_8);
         seatConfig=new Gson().fromJson(str, SeatConfig.class);
-
-        // Create seat config file if it doesn't exist
-        f=new File("rsg_config.json");
-        if (f.createNewFile()) {
-            FileOutputStream outputStream = new FileOutputStream(f);
-            outputStream.write("{\"style\":\"light\"}".getBytes());
-            outputStream.close();
-        }
-
-        // Load user app config
-        inputStream = new FileInputStream(f);
-        bytes = new byte[inputStream.available()];
-        inputStream.read(bytes);
-        inputStream.close();
-        str = new String(bytes, StandardCharsets.UTF_8);
-        appConfig=new Gson().fromJson(str, AppConfig.class);
 
         Application.launch(App.class, args);
     }

@@ -28,8 +28,9 @@ public class Separate {
     /**
      * @param s a {@code String} that matches the format "%a %b”.
      */
-    public Separate(String s) {
+    public Separate(String s) throws Exception {
         String[] t = s.split(" ");
+        if(t.length<2) throw new Exception("Invalid separate data");
         a = t[0];
         b = t[1];
     }

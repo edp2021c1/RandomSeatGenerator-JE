@@ -11,7 +11,7 @@ public class SeatConfig_Old {
     public final ArrayList<String> groupLeaders;
     public final ArrayList<Separate> separated;
 
-    public SeatConfig_Old(String fr, String mr, String br, String gl, String sp) {
+    public SeatConfig_Old(String fr, String mr, String br, String gl, String sp) throws Exception {
         frontRows = new ArrayList<>(Arrays.asList(fr.split(" ")));
         middleRows = new ArrayList<>(Arrays.asList(mr.split(" ")));
         backRows = new ArrayList<>(Arrays.asList(br.split(" ")));
