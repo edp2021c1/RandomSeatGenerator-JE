@@ -26,7 +26,7 @@ public class SeatRowData {
 
     public SeatRowData(String... c) throws Exception {
         for (int i = 0, j = c.length; i < j; i++) {
-            if (i > 19) throw new Exception(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));
+            if (!(i < MAX_COLUMN_COUNT)) throw new Exception(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));
             Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
             f.setAccessible(true);
             f.set(this, c[i]);
@@ -41,7 +41,7 @@ public class SeatRowData {
         String[] tmp = new String[c];
         for (int i = 0; i < r; i++) {
             for (int j = 0; j < c; j++) {
-                tmp[j] = s.get(i * 7 + j);
+                tmp[j] = s.get(i * conf.getColumnCount() + j);
             }
             seatRowData.add(new SeatRowData(tmp));
         }

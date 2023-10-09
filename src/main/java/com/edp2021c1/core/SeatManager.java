@@ -45,12 +45,7 @@ public abstract class SeatManager {
         List<String> nameList = config.getNameList();
         List<String> groupLeaderList = config.getGroupLeaderList();
 
-        // 座位表变量
-        seat = Arrays.asList(new String[rowCount * columnCount]);
-
-        List<Boolean> sorted = Arrays.asList(new Boolean[nameList.size()]);
-
-        // 临时变量，提前声明以减少内存操作
+        // 临时变量，提前声明以减少内存和计算操作
         int tmp_1;
         int tmp_2;
         int tmp_3;
@@ -58,16 +53,22 @@ public abstract class SeatManager {
         int tmp_5;
         int tmp_6;
         int peopleNum = nameList.size();
+        int seatNum=rowCount*columnCount;
         int rp = columnCount * randomBetweenRows;
         int peopleLeft = peopleNum % (rp);
-        boolean tmp_7 = peopleLeft > 0 && rowCount * columnCount > peopleNum;
+        boolean tmp_7 = peopleLeft > 0 && seatNum > peopleNum;
         boolean tmp_8 = peopleLeft <= columnCount;
         List<Integer> tmp;
+
+        // 座位表变量
+        seat = Arrays.asList(new String[seatNum]);
+
+        List<Boolean> sorted = Arrays.asList(new Boolean[nameList.size()]);
 
         do {
             // 座位表初始化
             // 只有最后一排会出现空位，因此只填入最后一排
-            for (tmp_1 = (rowCount - 1) * columnCount, tmp_3 = rowCount * columnCount; tmp_1 < tmp_3; tmp_1++) {
+            for (tmp_1 = (rowCount - 1) * columnCount, tmp_3 = seatNum; tmp_1 < tmp_3; tmp_1++) {
                 seat.set(tmp_1, "-");
             }
             for (tmp_1 = 0, tmp_3 = nameList.size(); tmp_1 < tmp_3; tmp_1++) {
@@ -89,7 +90,7 @@ public abstract class SeatManager {
                             tmp_5 = random.nextInt(tmp_1 * rp, peopleNum);
                         } while (sorted.get(tmp_5));
                         do {
-                            tmp_6 = random.nextInt((rowCount - 1) * columnCount, rowCount * columnCount);
+                            tmp_6 = random.nextInt(seatNum-columnCount, seatNum);
                         } while (!lastRowPos.contains(tmp_6 - tmp_3 * rp + 1) || tmp.contains(tmp_6));
                         tmp.add(tmp_6);
                         seat.set(tmp_6, nameList.get(tmp_5));
@@ -109,7 +110,7 @@ public abstract class SeatManager {
                             tmp_5 = random.nextInt(tmp_1 * rp, peopleNum);
                         } while (sorted.get(tmp_5));
                         do {
-                            tmp_6 = random.nextInt((rowCount - 1) * columnCount, rowCount * columnCount);
+                            tmp_6 = random.nextInt(seatNum-columnCount, seatNum);
                         } while (!lastRowPos.contains(tmp_6 - tmp_3 * rp + 1) || tmp.contains(tmp_6));
                         tmp.add(tmp_6);
                         seat.set(tmp_6, nameList.get(tmp_5));
@@ -121,6 +122,7 @@ public abstract class SeatManager {
                     do {
                         tmp_5 = random.nextInt(tmp_1 * rp, (tmp_1 + 1) * rp);
                     } while (sorted.get(tmp_5));
+                    if(!(tmp_2 <seatNum)) break;
                     seat.set(tmp_2, nameList.get(tmp_5));
                     sorted.set(tmp_5, true);
                 }
