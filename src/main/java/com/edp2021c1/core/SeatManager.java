@@ -53,7 +53,7 @@ public abstract class SeatManager {
         int tmp_5;
         int tmp_6;
         int peopleNum = nameList.size();
-        int seatNum=rowCount*columnCount;
+        int seatNum = rowCount * columnCount;
         int rp = columnCount * randomBetweenRows;
         int peopleLeft = peopleNum % (rp);
         boolean tmp_7 = peopleLeft > 0 && seatNum > peopleNum;
@@ -90,7 +90,7 @@ public abstract class SeatManager {
                             tmp_5 = random.nextInt(tmp_1 * rp, peopleNum);
                         } while (sorted.get(tmp_5));
                         do {
-                            tmp_6 = random.nextInt(seatNum-columnCount, seatNum);
+                            tmp_6 = random.nextInt(seatNum - columnCount, seatNum);
                         } while (!lastRowPos.contains(tmp_6 - tmp_3 * rp + 1) || tmp.contains(tmp_6));
                         tmp.add(tmp_6);
                         seat.set(tmp_6, nameList.get(tmp_5));
@@ -110,7 +110,7 @@ public abstract class SeatManager {
                             tmp_5 = random.nextInt(tmp_1 * rp, peopleNum);
                         } while (sorted.get(tmp_5));
                         do {
-                            tmp_6 = random.nextInt(seatNum-columnCount, seatNum);
+                            tmp_6 = random.nextInt(seatNum - columnCount, seatNum);
                         } while (!lastRowPos.contains(tmp_6 - tmp_3 * rp + 1) || tmp.contains(tmp_6));
                         tmp.add(tmp_6);
                         seat.set(tmp_6, nameList.get(tmp_5));
@@ -122,7 +122,7 @@ public abstract class SeatManager {
                     do {
                         tmp_5 = random.nextInt(tmp_1 * rp, (tmp_1 + 1) * rp);
                     } while (sorted.get(tmp_5));
-                    if(!(tmp_2 <seatNum)) break;
+                    if (!(tmp_2 < seatNum)) break;
                     seat.set(tmp_2, nameList.get(tmp_5));
                     sorted.set(tmp_5, true);
                 }

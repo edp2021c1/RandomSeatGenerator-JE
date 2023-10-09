@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class Main {
-    public static SeatConfig DEFAULT_SEAT_CONFIG = new SeatConfig();
     public static SeatConfig seatConfig = new SeatConfig();
 
     public static void main(String[] args) throws IOException {
@@ -21,7 +20,6 @@ public class Main {
         while ((line = in.readLine()) != null) {
             buffer.append(line);
         }
-        DEFAULT_SEAT_CONFIG = new Gson().fromJson(buffer.toString(), SeatConfig.class);
 
         // Create seat config file if it doesn't exist
         File f = new File("seat_config.json");

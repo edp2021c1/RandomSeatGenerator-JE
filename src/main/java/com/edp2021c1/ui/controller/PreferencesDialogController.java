@@ -64,11 +64,11 @@ public class PreferencesDialogController {
 
     @FXML
     void loadConfigFromFile(ActionEvent event) throws IOException {
-        FileChooser fc=new FileChooser();
+        FileChooser fc = new FileChooser();
         fc.setTitle("加载配置文件");
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件","*.json"));
-        File f=fc.showOpenDialog(stage);
-        if (f==null) {
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
+        File f = fc.showOpenDialog(stage);
+        if (f == null) {
             return;
         }
 
@@ -89,13 +89,13 @@ public class PreferencesDialogController {
     }
 
     @FXML
-    void confirm(ActionEvent event){
+    void confirm(ActionEvent event) {
         applySeatConfig(null);
         stage.close();
     }
 
     @FXML
-    void cancel(ActionEvent event){
+    void cancel(ActionEvent event) {
         stage.close();
     }
 
