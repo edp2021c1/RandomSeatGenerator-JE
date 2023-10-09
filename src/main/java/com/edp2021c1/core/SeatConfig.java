@@ -7,8 +7,6 @@ import java.util.List;
 import static java.lang.Integer.parseUnsignedInt;
 
 public final class SeatConfig {
-    @Deprecated
-    public String ot, tf, fs;
     public String rows;
     public String columns;
     public String random_between_rows;

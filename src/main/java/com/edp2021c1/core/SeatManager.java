@@ -12,13 +12,6 @@ public abstract class SeatManager {
     private static final Random random = new Random();
     /**
      * Saves the config of an instance.
-     *
-     * @deprecated Use config instead.
-     */
-    @Deprecated
-    public static SeatConfig_Old conf;
-    /**
-     * Saves the config of an instance.
      */
     public static SeatConfig config;
     /**
