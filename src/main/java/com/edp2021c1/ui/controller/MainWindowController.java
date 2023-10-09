@@ -59,6 +59,7 @@ public class MainWindowController {
             f.createNewFile();
         }
         EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat));
+        f.setReadOnly();
     }
 
     @FXML
