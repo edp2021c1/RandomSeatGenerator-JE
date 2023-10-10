@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -101,6 +102,9 @@ public class PreferencesDialogController {
 
     @FXML
     void initialize() {
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setResizable(false);
+
         SeatConfig seatConfig = Main.seatConfig;
         rowCountInput.setText(seatConfig.rows);
         columnCountInput.setText(seatConfig.columns);

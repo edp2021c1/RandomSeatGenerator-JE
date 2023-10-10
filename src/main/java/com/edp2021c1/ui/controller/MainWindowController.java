@@ -13,6 +13,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -37,6 +39,14 @@ public class MainWindowController {
     private TextField seedInput;
     @FXML
     private TableView<SeatRowData> seatTable;
+    @FXML
+    private HBox box_1;
+    @FXML
+    private VBox box_2;
+    @FXML
+    private VBox box_3;
+    @FXML
+    private HBox box_4;
 
     @FXML
     void dateAsSeed(ActionEvent event) {
@@ -91,6 +101,8 @@ public class MainWindowController {
 
     @FXML
     void initialize() throws Exception {
+        stage.setResizable(false);
+
         initSeatTable();
     }
 

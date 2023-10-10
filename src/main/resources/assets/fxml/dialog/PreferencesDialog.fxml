@@ -15,10 +15,10 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.stage.Stage?>
 
-<Stage fx:id="stage" resizable="false" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edp2021c1.ui.controller.PreferencesDialogController">
+<Stage fx:id="stage" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edp2021c1.ui.controller.PreferencesDialogController">
     <scene>
-        <Scene>
-            <VBox prefHeight="565.0" prefWidth="1232.0">
+        <Scene stylesheets="@../../css/dark.css">
+            <VBox prefHeight="598.0" prefWidth="1232.0">
                 <Label prefHeight="45.0" prefWidth="1212.0" text="座位表生成" />
                 <HBox alignment="CENTER" prefHeight="60.0" prefWidth="1212.0">
                     <TextField fx:id="rowCountInput" promptText="行数">
@@ -42,7 +42,7 @@
                         </HBox.margin>
                     </TextField>
                 </HBox>
-                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="1212.0">
+                <HBox alignment="CENTER" prefHeight="69.0" prefWidth="1212.0">
                     <TextField fx:id="nameListInput" promptText="名单 (按身高排序)">
                         <HBox.margin>
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -53,17 +53,17 @@
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                         </HBox.margin>
                     </TextField>
-                    <TextArea fx:id="separateListInput" prefHeight="75.0" prefWidth="165.0" promptText="拆分列表">
+                    <TextArea fx:id="separateListInput" prefHeight="56.0" prefWidth="165.0" promptText="拆分列表">
                         <HBox.margin>
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                         </HBox.margin>
                     </TextArea>
-                    <Button mnemonicParsing="false" onAction="#loadConfigFromFile" text="从文件加载">
+                    <Button mnemonicParsing="false" onAction="#loadConfigFromFile" prefHeight="26.0" prefWidth="80.0" text="从文件加载">
                         <HBox.margin>
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                         </HBox.margin>
                     </Button>
-                    <Button mnemonicParsing="false" onAction="#applySeatConfig" text="应用">
+                    <Button mnemonicParsing="false" onAction="#applySeatConfig" prefHeight="26.0" prefWidth="80.0" text="应用">
                         <HBox.margin>
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                         </HBox.margin>
@@ -71,7 +71,7 @@
                 </HBox>
                 <Separator prefWidth="200.0" />
                 <Label prefHeight="45.0" prefWidth="1212.0" text="关于" />
-                <HBox alignment="CENTER_LEFT" prefHeight="293.0" prefWidth="1212.0">
+                <HBox alignment="CENTER_LEFT" prefHeight="316.0" prefWidth="1212.0">
                     <ImageView fitHeight="275.0" fitWidth="275.0" pickOnBounds="true" preserveRatio="true">
                         <HBox.margin>
                             <Insets />
@@ -91,8 +91,8 @@
                 </HBox>
                 <ButtonBar prefHeight="40.0" prefWidth="200.0">
                     <buttons>
-                        <Button mnemonicParsing="false" onAction="#confirm" text="确定" />
-                        <Button mnemonicParsing="false" onAction="#cancel" text="取消" />
+                        <Button mnemonicParsing="false" onAction="#confirm" prefHeight="26.0" prefWidth="80.0" text="确定" />
+                        <Button mnemonicParsing="false" onAction="#cancel" prefHeight="20.0" prefWidth="80.0" text="取消" />
                     </buttons>
                 </ButtonBar>
                 <padding>

@@ -1,7 +1,58 @@
-.button {
-    -fx-padding: -1;
+.root {
+    -fx-background-color: #1e1f22;
+}
+
+.button,
+.text-field,
+.text-area {
+    -fx-padding: 2;
+    -fx-text-fill: white;
+    -fx-border-width: 2px;
+    -fx-border-color: white;
+    -fx-border-radius: 3px;
+    -fx-background-color: #1e1f22;
+}
+
+.button:hover,
+.text-field:hover,
+.text-area:hover {
+    -fx-border-color: #0088ff;
+}
+
+.content {
+    -fx-background-color: #1e1f22;
+    -fx-background-radius: 0;
 }
 
 .label {
-    -fx-padding: 2 10 2 10;
+    -fx-padding: 1;
+    -fx-text-fill: white;
+}
+
+.table-view {
+    -fx-background-color: #1e1f22;
+    -fx-background-color: #1d1d1f;
+    -fx-background-radius: 2;
+    -fx-border-color: #1e1f22;
+    -fx-border-radius: 2;
+}
+
+.column-header {
+    -fx-background-color: black;
+}
+
+.table-row-cell {
+    -fx-background-color: #414145;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #2d2d30;
+}
+
+.table-cell {
+    -fx-text-fill: white;
+}
+
+.scroll-bar {
+    -fx-backgound-color: #1e1f22;
 }
