@@ -69,7 +69,7 @@ public abstract class SeatManager {
             }
             tmp = new ArrayList<>(peopleNum % columnCount);
 
-            for (tmp_1 = 0, tmp_3 = peopleNum / (rp); tmp_1 < tmp_3; tmp_1++) {
+            for (tmp_1 = 0, tmp_3 = seatNum / (rp); tmp_1 < tmp_3; tmp_1++) {
                 if (tmp_1 == tmp_3 - 1 && tmp_7 && tmp_8) {    // 如果余位不多于一排，则将最后一排归到前两排中轮换
                     for (tmp_2 = tmp_1 * rp, tmp_6 = (tmp_1 + 1) * rp; tmp_2 < tmp_6; tmp_2++) {
                         do {
@@ -91,20 +91,20 @@ public abstract class SeatManager {
                     }
                     break;
                 } else if (tmp_1 == tmp_3 - 1 && tmp_7 && !tmp_8) {   // 如果余位多于一排，则在余位中进行随机轮换
-                    for (tmp_2 = 0, tmp_4 = peopleLeft - peopleNum % columnCount; tmp_2 < tmp_4; tmp_2++) {
+                    for (tmp_2 = tmp_1*rp, tmp_4 = seatNum-columnCount; tmp_2 < tmp_4; tmp_2++) {
                         do {
                             tmp_5 = random.nextInt(tmp_1 * rp, peopleNum);
                         } while (sorted.get(tmp_5));
-                        seat.set(tmp_2 + tmp_4, nameList.get(tmp_5));
+                        seat.set(tmp_2, nameList.get(tmp_5));
                         sorted.set(tmp_5, true);
                     }
-                    for (tmp_2 = 0; tmp_2 < peopleLeft; tmp_2++) {
+                    for (tmp_2 = 0,tmp_4=peopleLeft%columnCount; tmp_2 < tmp_4; tmp_2++) {
                         do {
                             tmp_5 = random.nextInt(tmp_1 * rp, peopleNum);
                         } while (sorted.get(tmp_5));
                         do {
                             tmp_6 = random.nextInt(seatNum - columnCount, seatNum);
-                        } while (!lastRowPos.contains(tmp_6 - tmp_3 * rp + 1) || tmp.contains(tmp_6));
+                        } while (!lastRowPos.contains(tmp_6 - seatNum+columnCount + 1) || tmp.contains(tmp_6));
                         tmp.add(tmp_6);
                         seat.set(tmp_6, nameList.get(tmp_5));
                         sorted.set(tmp_5, true);
