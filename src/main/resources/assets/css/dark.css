@@ -1,5 +1,11 @@
 .root {
     -fx-background-color: #1e1f22;
+    -fx-text-fill: white;
+}
+
+.label {
+    -fx-padding: 1;
+    -fx-text-fill: white;
 }
 
 .button,
@@ -19,13 +25,12 @@
     -fx-border-color: #0088ff;
 }
 
-.content {
+.text-area .content {
     -fx-background-color: #1e1f22;
     -fx-background-radius: 0;
 }
 
-.label {
-    -fx-padding: 1;
+.check-box {
     -fx-text-fill: white;
 }
 
@@ -51,8 +56,4 @@
 
 .table-cell {
     -fx-text-fill: white;
-}
-
-.scroll-bar {
-    -fx-backgound-color: #1e1f22;
 }

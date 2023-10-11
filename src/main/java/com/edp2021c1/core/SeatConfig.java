@@ -14,6 +14,7 @@ public final class SeatConfig {
     public String person_sort_by_height;
     public String zz;
     public String separate;
+    public boolean lucky_option;
 
     public SeatConfig() {
         super();
@@ -59,5 +60,9 @@ public final class SeatConfig {
         }
 
         return s;
+    }
+
+    public boolean getLuckyOption(){
+        return lucky_option;
     }
 }

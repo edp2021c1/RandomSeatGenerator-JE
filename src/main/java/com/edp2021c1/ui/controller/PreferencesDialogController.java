@@ -5,15 +5,14 @@ import com.edp2021c1.core.SeatConfig;
 import com.google.gson.Gson;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
@@ -51,7 +50,10 @@ public class PreferencesDialogController {
     private TextArea separateListInput;
 
     @FXML
-    void applySeatConfig(ActionEvent event) {
+    private CheckBox luckyOption;
+
+    @FXML
+    void applySeatConfig(ActionEvent event) throws IOException {
         SeatConfig c = new SeatConfig();
         c.rows = rowCountInput.getText();
         c.columns = columnCountInput.getText();
@@ -60,7 +62,12 @@ public class PreferencesDialogController {
         c.person_sort_by_height = nameListInput.getText();
         c.zz = groupLeaderListInput.getText();
         c.separate = separateListInput.getText();
+        c.lucky_option =luckyOption.isSelected();
         Main.seatConfig = c;
+
+        FileOutputStream out=new FileOutputStream("seat_config.json");
+        out.write(new Gson().toJson(c).getBytes(StandardCharsets.UTF_8));
+        out.close();
     }
 
     @FXML
@@ -90,7 +97,7 @@ public class PreferencesDialogController {
     }
 
     @FXML
-    void confirm(ActionEvent event) {
+    void confirm(ActionEvent event) throws IOException {
         applySeatConfig(null);
         stage.close();
     }
@@ -113,6 +120,7 @@ public class PreferencesDialogController {
         nameListInput.setText(seatConfig.person_sort_by_height);
         groupLeaderListInput.setText(seatConfig.zz);
         separateListInput.setText(seatConfig.separate);
+        luckyOption.setSelected(seatConfig.lucky_option);
     }
 
 }

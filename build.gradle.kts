@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.edp2021c1"
-version = "1.2.0"
+version = "1.2.1"
 
 repositories {
     mavenCentral()

@@ -39,24 +39,25 @@ public abstract class SeatManager {
         List<String> groupLeaderList = config.getGroupLeaderList();
 
         // 临时变量，提前声明以减少内存和计算操作
+        int peopleNum = nameList.size();
+        int seatNum = rowCount * columnCount;
+        int rp = columnCount * randomBetweenRows;
+        int peopleLeft = peopleNum % (rp);
+        boolean luckyOption=config.lucky_option;
         int tmp_1;
         int tmp_2;
         int tmp_3;
         int tmp_4;
         int tmp_5;
         int tmp_6;
-        int peopleNum = nameList.size();
-        int seatNum = rowCount * columnCount;
-        int rp = columnCount * randomBetweenRows;
-        int peopleLeft = peopleNum % (rp);
         boolean tmp_7 = peopleLeft > 0 && seatNum > peopleNum;
         boolean tmp_8 = peopleLeft <= columnCount;
         List<Integer> tmp;
 
         // 座位表变量
         seat = Arrays.asList(new String[seatNum]);
-
         List<Boolean> sorted = Arrays.asList(new Boolean[nameList.size()]);
+        String luckyPerson= null;
 
         do {
             // 座位表初始化
@@ -122,6 +123,17 @@ public abstract class SeatManager {
 
             }
 
+            if(luckyOption){
+                tmp_1=seatNum-1;
+                while (tmp_1>0) {
+                    tmp_1--;
+                    if(!"-".equals(seat.get(tmp_1))){
+                        luckyPerson=seat.set(tmp_1,"-");
+                        break;
+                    }
+                }
+            }
+
         } while (!check());
 
         //组长
@@ -132,7 +144,7 @@ public abstract class SeatManager {
             seat.set(tmp_5 * columnCount + tmp_1, "*" + seat.get(tmp_5 * columnCount + tmp_1) + "*");
         }
 
-        return new Seat(seat, config, seed);
+        return new Seat(seat, config, seed,luckyPerson);
     }
 
     /**
