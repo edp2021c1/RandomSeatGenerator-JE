@@ -11,11 +11,11 @@ public class Seat {
     private final long seed;
     private final String luckyPerson;
 
-    public Seat(List<String> seat, SeatConfig config, long seed,String luckyPerson) {
+    public Seat(List<String> seat, SeatConfig config, long seed, String luckyPerson) {
         this.seat = seat;
         this.config = config;
         this.seed = seed;
-        if (luckyPerson==null) luckyPerson="";
-        this.luckyPerson=luckyPerson;
+        if (luckyPerson == null) luckyPerson = "";
+        this.luckyPerson = luckyPerson;
     }
 }

@@ -62,7 +62,4 @@ public final class SeatConfig {
         return s;
     }
 
-    public boolean getLuckyOption(){
-        return lucky_option;
-    }
 }

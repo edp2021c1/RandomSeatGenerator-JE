@@ -43,7 +43,7 @@ public abstract class SeatManager {
         int seatNum = rowCount * columnCount;
         int rp = columnCount * randomBetweenRows;
         int peopleLeft = peopleNum % (rp);
-        boolean luckyOption=config.lucky_option;
+        boolean luckyOption = config.lucky_option;
         int tmp_1;
         int tmp_2;
         int tmp_3;
@@ -57,7 +57,7 @@ public abstract class SeatManager {
         // 座位表变量
         seat = Arrays.asList(new String[seatNum]);
         List<Boolean> sorted = Arrays.asList(new Boolean[nameList.size()]);
-        String luckyPerson= null;
+        String luckyPerson = null;
 
         do {
             // 座位表初始化
@@ -92,20 +92,20 @@ public abstract class SeatManager {
                     }
                     break;
                 } else if (tmp_1 == tmp_3 - 1 && tmp_7 && !tmp_8) {   // 如果余位多于一排，则在余位中进行随机轮换
-                    for (tmp_2 = tmp_1*rp, tmp_4 = seatNum-columnCount; tmp_2 < tmp_4; tmp_2++) {
+                    for (tmp_2 = tmp_1 * rp, tmp_4 = seatNum - columnCount; tmp_2 < tmp_4; tmp_2++) {
                         do {
                             tmp_5 = random.nextInt(tmp_1 * rp, peopleNum);
                         } while (sorted.get(tmp_5));
                         seat.set(tmp_2, nameList.get(tmp_5));
                         sorted.set(tmp_5, true);
                     }
-                    for (tmp_2 = 0,tmp_4=peopleLeft%columnCount; tmp_2 < tmp_4; tmp_2++) {
+                    for (tmp_2 = 0, tmp_4 = peopleLeft % columnCount; tmp_2 < tmp_4; tmp_2++) {
                         do {
                             tmp_5 = random.nextInt(tmp_1 * rp, peopleNum);
                         } while (sorted.get(tmp_5));
                         do {
                             tmp_6 = random.nextInt(seatNum - columnCount, seatNum);
-                        } while (!lastRowPos.contains(tmp_6 - seatNum+columnCount + 1) || tmp.contains(tmp_6));
+                        } while (!lastRowPos.contains(tmp_6 - seatNum + columnCount + 1) || tmp.contains(tmp_6));
                         tmp.add(tmp_6);
                         seat.set(tmp_6, nameList.get(tmp_5));
                         sorted.set(tmp_5, true);
@@ -123,12 +123,12 @@ public abstract class SeatManager {
 
             }
 
-            if(luckyOption){
-                tmp_1=seatNum-1;
-                while (tmp_1>0) {
+            if (luckyOption) {
+                tmp_1 = seatNum - 1;
+                while (tmp_1 > 0) {
                     tmp_1--;
-                    if(!"-".equals(seat.get(tmp_1))){
-                        luckyPerson=seat.set(tmp_1,"-");
+                    if (!"-".equals(seat.get(tmp_1))) {
+                        luckyPerson = seat.set(tmp_1, "-");
                         break;
                     }
                 }
@@ -144,7 +144,7 @@ public abstract class SeatManager {
             seat.set(tmp_5 * columnCount + tmp_1, "*" + seat.get(tmp_5 * columnCount + tmp_1) + "*");
         }
 
-        return new Seat(seat, config, seed,luckyPerson);
+        return new Seat(seat, config, seed, luckyPerson);
     }
 
     /**

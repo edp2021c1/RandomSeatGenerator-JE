@@ -12,7 +12,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
@@ -62,10 +65,10 @@ public class PreferencesDialogController {
         c.person_sort_by_height = nameListInput.getText();
         c.zz = groupLeaderListInput.getText();
         c.separate = separateListInput.getText();
-        c.lucky_option =luckyOption.isSelected();
+        c.lucky_option = luckyOption.isSelected();
         Main.seatConfig = c;
 
-        FileOutputStream out=new FileOutputStream("seat_config.json");
+        FileOutputStream out = new FileOutputStream("seat_config.json");
         out.write(new Gson().toJson(c).getBytes(StandardCharsets.UTF_8));
         out.close();
     }
