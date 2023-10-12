@@ -11,7 +11,7 @@ public abstract class SeatManager {
      */
     private static final Random random = new Random();
     /**
-     * Saves the config of an instance.
+     * Saves the config.
      */
     public static SeatConfig config;
     /**
@@ -22,7 +22,7 @@ public abstract class SeatManager {
     /**
      * Generate a seat table using the pre-set config and the seed.
      *
-     * @return an instance of {@code Seat_Old}.
+     * @return an instance of {@code Seat}.
      */
     public static Seat generate(long seed) throws Exception {
         random.setSeed(seed);
@@ -31,12 +31,12 @@ public abstract class SeatManager {
         }
 
         // 获取配置
-        int rowCount = config.getRowCount();
         int columnCount = config.getColumnCount();
         int randomBetweenRows = config.getRandomBetweenRows();
         List<Integer> lastRowPos = config.getLastRowPos();
         List<String> nameList = config.getNameList();
         List<String> groupLeaderList = config.getGroupLeaderList();
+        int rowCount = nameList.size() % columnCount == 0 ? nameList.size() / columnCount : nameList.size() / columnCount + 1;
 
         // 临时变量，提前声明以减少内存和计算操作
         int peopleNum = nameList.size();
@@ -58,6 +58,7 @@ public abstract class SeatManager {
         seat = Arrays.asList(new String[seatNum]);
         List<Boolean> sorted = Arrays.asList(new Boolean[nameList.size()]);
         String luckyPerson = null;
+
 
         do {
             // 座位表初始化
@@ -150,7 +151,7 @@ public abstract class SeatManager {
     /**
      * Check if the seat table fits the config.
      *
-     * @return {@code true} if the seat table fits the config and {@code false} if not.
+     * @return {@code true} if the seat table fits the config.
      */
     private static boolean check() throws Exception {
         boolean hasLeader = false;

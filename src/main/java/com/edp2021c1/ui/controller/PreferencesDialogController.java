@@ -58,13 +58,13 @@ public class PreferencesDialogController {
     @FXML
     void applySeatConfig(ActionEvent event) throws IOException {
         SeatConfig c = new SeatConfig();
-        c.rows = rowCountInput.getText();
-        c.columns = columnCountInput.getText();
+        c.row_count = rowCountInput.getText();
+        c.column_count = columnCountInput.getText();
         c.random_between_rows = rbrInput.getText();
         c.last_row_pos_can_be_choosed = lastRowPosInput.getText();
         c.person_sort_by_height = nameListInput.getText();
-        c.zz = groupLeaderListInput.getText();
-        c.separate = separateListInput.getText();
+        c.group_leader_list = groupLeaderListInput.getText();
+        c.separate_list = separateListInput.getText();
         c.lucky_option = luckyOption.isSelected();
         Main.seatConfig = c;
 
@@ -90,13 +90,13 @@ public class PreferencesDialogController {
         String str = new String(bytes, StandardCharsets.UTF_8);
         SeatConfig seatConfig = new Gson().fromJson(str, SeatConfig.class);
 
-        rowCountInput.setText(seatConfig.rows);
-        columnCountInput.setText(seatConfig.columns);
+        rowCountInput.setText(seatConfig.row_count);
+        columnCountInput.setText(seatConfig.column_count);
         rbrInput.setText(seatConfig.random_between_rows);
         lastRowPosInput.setText(seatConfig.last_row_pos_can_be_choosed);
         nameListInput.setText(seatConfig.person_sort_by_height);
-        groupLeaderListInput.setText(seatConfig.zz);
-        separateListInput.setText(seatConfig.separate);
+        groupLeaderListInput.setText(seatConfig.group_leader_list);
+        separateListInput.setText(seatConfig.separate_list);
     }
 
     @FXML
@@ -116,13 +116,13 @@ public class PreferencesDialogController {
         stage.setResizable(false);
 
         SeatConfig seatConfig = Main.seatConfig;
-        rowCountInput.setText(seatConfig.rows);
-        columnCountInput.setText(seatConfig.columns);
+        rowCountInput.setText(seatConfig.row_count);
+        columnCountInput.setText(seatConfig.column_count);
         rbrInput.setText(seatConfig.random_between_rows);
         lastRowPosInput.setText(seatConfig.last_row_pos_can_be_choosed);
         nameListInput.setText(seatConfig.person_sort_by_height);
-        groupLeaderListInput.setText(seatConfig.zz);
-        separateListInput.setText(seatConfig.separate);
+        groupLeaderListInput.setText(seatConfig.group_leader_list);
+        separateListInput.setText(seatConfig.separate_list);
         luckyOption.setSelected(seatConfig.lucky_option);
     }
 

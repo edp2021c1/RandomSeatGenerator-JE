@@ -36,13 +36,15 @@ public class SeatRowData {
 
     public static List<SeatRowData> fromSeat(Seat seat) throws Exception {
         SeatConfig conf = seat.getConfig();
-        int r = conf.getRowCount(), c = conf.getColumnCount();
+        int rowCount = conf.getRowCount(), columnCount = conf.getColumnCount();
         List<String> s = seat.getSeat();
-        List<SeatRowData> seatRowData = new ArrayList<>(r);
-        String[] tmp = new String[c];
-        for (int i = 0; i < r; i++) {
-            for (int j = 0; j < c; j++) {
-                tmp[j] = s.get(i * conf.getColumnCount() + j);
+        List<SeatRowData> seatRowData = new ArrayList<>(rowCount);
+        String[] tmp = new String[columnCount];
+        outer:
+        for (int i = 0; i < rowCount; i++) {
+            for (int j = 0; j < columnCount; j++) {
+                if (i * columnCount + j >= s.size()) break outer;
+                tmp[j] = s.get(i * columnCount + j);
             }
             seatRowData.add(new SeatRowData(tmp));
         }

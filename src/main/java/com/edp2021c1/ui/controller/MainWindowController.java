@@ -101,8 +101,6 @@ public class MainWindowController {
 
     @FXML
     void initialize() throws Exception {
-        stage.setResizable(false);
-
         initSeatTable();
     }
 
@@ -110,8 +108,8 @@ public class MainWindowController {
         seatTable.getColumns().clear();
         int rowCount = Main.seatConfig.getRowCount(), columnCount = Main.seatConfig.getColumnCount();
         TableColumn<SeatRowData, String> c;
-        double d = 1d / columnCount;
-        for (int i = 0; i < columnCount; i++) {
+        double d = 1.0 / (Math.max(columnCount, 2));
+        for (int i = 0; i < columnCount || i < 2; i++) {
             c = new TableColumn<>("C" + (i + 1)) {{
                 prefWidthProperty().bind(seatTable.widthProperty().multiply(d));
             }};

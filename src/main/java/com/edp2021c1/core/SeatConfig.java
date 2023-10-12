@@ -7,13 +7,13 @@ import java.util.List;
 import static java.lang.Integer.parseUnsignedInt;
 
 public final class SeatConfig {
-    public String rows;
-    public String columns;
+    public String row_count;
+    public String column_count;
     public String random_between_rows;
     public String last_row_pos_can_be_choosed;
     public String person_sort_by_height;
-    public String zz;
-    public String separate;
+    public String group_leader_list;
+    public String separate_list;
     public boolean lucky_option;
 
     public SeatConfig() {
@@ -21,11 +21,11 @@ public final class SeatConfig {
     }
 
     public int getRowCount() throws NumberFormatException {
-        return parseUnsignedInt(rows);
+        return parseUnsignedInt(row_count);
     }
 
     public int getColumnCount() throws NumberFormatException {
-        return parseUnsignedInt(columns);
+        return parseUnsignedInt(column_count);
     }
 
     public int getRandomBetweenRows() throws NumberFormatException {
@@ -46,11 +46,11 @@ public final class SeatConfig {
     }
 
     public List<String> getGroupLeaderList() {
-        return Arrays.asList(zz.split(" "));
+        return Arrays.asList(group_leader_list.split(" "));
     }
 
     public List<Separate> getSeparatedList() throws Exception {
-        String[] t = separate.split("\n");
+        String[] t = separate_list.split("\n");
         ArrayList<Separate> s = new ArrayList<>(t.length);
 
         for (String m : t) {

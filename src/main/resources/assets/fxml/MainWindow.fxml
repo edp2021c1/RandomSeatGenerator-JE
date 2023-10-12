@@ -9,7 +9,7 @@
        xmlns="http://javafx.com/javafx/20.0.1" fx:controller="com.edp2021c1.ui.controller.MainWindowController">
     <scene>
         <Scene stylesheets="@../css/dark.css">
-            <HBox fx:id="box_1" alignment="CENTER" prefHeight="711.0" prefWidth="1100.0">
+            <HBox fx:id="box_1" alignment="CENTER" prefHeight="634.0" prefWidth="1100.0">
                 <VBox fx:id="box_2" alignment="CENTER" prefHeight="711.0" prefWidth="91.0">
                     <Button mnemonicParsing="false" onAction="#openPreferencesDialog" prefHeight="26.0" prefWidth="70.0"
                             text="首选项">
@@ -30,9 +30,9 @@
                         </VBox.margin>
                     </Button>
                 </VBox>
-                <Separator orientation="VERTICAL" prefHeight="200.0"/>
-                <VBox fx:id="box_3" alignment="CENTER" prefHeight="698.0" prefWidth="1003.0">
-                    <HBox fx:id="box_4" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                <Separator orientation="VERTICAL" prefHeight="200.0" HBox.hgrow="NEVER"/>
+                <VBox fx:id="box_3" alignment="CENTER" prefHeight="698.0" prefWidth="1003.0" HBox.hgrow="ALWAYS">
+                    <HBox fx:id="box_4" alignment="CENTER" prefHeight="100.0" prefWidth="998.0">
                         <TextField fx:id="seedInput" promptText="种子(Long)">
                             <HBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
@@ -51,9 +51,9 @@
                             </HBox.margin>
                         </Button>
                     </HBox>
-                    <TableView fx:id="seatTable" prefHeight="618.0" prefWidth="552.0"/>
+                    <TableView fx:id="seatTable" prefHeight="618.0" prefWidth="552.0" VBox.vgrow="ALWAYS"/>
                     <HBox.margin>
-                        <Insets bottom="5.0"/>
+                        <Insets bottom="5.0" right="10.0"/>
                     </HBox.margin>
                 </VBox>
             </HBox>
