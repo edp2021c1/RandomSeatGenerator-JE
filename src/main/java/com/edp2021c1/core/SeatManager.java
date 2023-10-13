@@ -11,7 +11,7 @@ public abstract class SeatManager {
      */
     private static final Random random = new Random();
     /**
-     * Saves the config.
+     * Stores the config.
      */
     public static SeatConfig config;
     /**
