@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -112,6 +113,7 @@ public class PreferencesDialogController {
 
     @FXML
     void initialize() {
+        stage.getIcons().add(new Image("assets/img/icon.png"));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);
 

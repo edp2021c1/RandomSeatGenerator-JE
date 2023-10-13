@@ -13,6 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -101,6 +102,8 @@ public class MainWindowController {
 
     @FXML
     void initialize() throws Exception {
+        stage.getIcons().add(new Image("assets/img/icon.png"));
+
         initSeatTable();
     }
 
