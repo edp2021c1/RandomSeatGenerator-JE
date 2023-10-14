@@ -20,7 +20,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Objects;
@@ -51,6 +50,9 @@ public class MainWindowController {
     @FXML
     private HBox box_4;
 
+    /**
+     * Decides whether the config is changed after opening {@code PreferencesDialog}.
+     */
     public static boolean configIsChanged=false;
 
     @FXML

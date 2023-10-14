@@ -121,6 +121,10 @@ public final class SeatConfig {
         return s;
     }
 
+    /**
+     * @param c another {@code SeatConfig}.
+     * @return whether these who instances are equal.
+     */
     public boolean equals(SeatConfig c) {
         return  Objects.equals(row_count, c.row_count)
                 &&Objects.equals(column_count,c.column_count)
