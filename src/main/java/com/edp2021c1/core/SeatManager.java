@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 
 /**
  * This class manages the generation of seat tables.
@@ -38,12 +39,12 @@ public final class SeatManager {
         }
 
         // 获取配置
+        int rowCount= config.getRowCount();
         int columnCount = config.getColumnCount();
         int randomBetweenRows = config.getRandomBetweenRows();
         List<Integer> lastRowPos = config.getLastRowPos();
         List<String> nameList = config.getNameList();
         List<String> groupLeaderList = config.getGroupLeaderList();
-        int rowCount = nameList.size() % columnCount == 0 ? nameList.size() / columnCount : nameList.size() / columnCount + 1;
 
         // 临时变量，提前声明以减少内存和计算操作
         int peopleNum = nameList.size();
@@ -60,6 +61,11 @@ public final class SeatManager {
         boolean tmp_7 = peopleLeft > 0 && seatNum > peopleNum;
         boolean tmp_8 = peopleLeft <= columnCount;
         List<Integer> tmp;
+
+        // 防止行数过多引发无限递归
+        while (rowCount*columnCount-peopleNum>columnCount){
+            rowCount--;
+        }
 
         // 座位表变量
         seat = Arrays.asList(new String[seatNum]);
@@ -164,13 +170,13 @@ public final class SeatManager {
     private static boolean check() throws Exception {
         boolean hasLeader = false;
         boolean isSeparated = true;
-        int i, j, len;
+        int i, j, splen,len=config.getNameList().size(),c=config.getColumnCount(),r= len % c == 0 ? len / c : len / c + 1;
         List<String> gl = config.getGroupLeaderList();
         List<Separate> sp = config.getSeparatedList();
         // 检查每列是否都有组长
-        for (i = 0; i < config.getColumnCount(); i++) {
-            for (j = 0; j < config.getRowCount(); j++) {
-                hasLeader = gl.contains(seat.get(j * config.getColumnCount() + i));
+        for (i = 0; i < c; i++) {
+            for (j = 0; j < r; j++) {
+                hasLeader = gl.contains(seat.get(j * c + i));
                 if (hasLeader) {
                     break;
                 }
@@ -181,7 +187,7 @@ public final class SeatManager {
             hasLeader = false;
         }
         // 检查是否分开
-        for (i = 0, len = sp.size(); i < len; i++) {
+        for (i = 0, splen = sp.size(); i < splen; i++) {
             if (isSeparated) {
                 isSeparated = sp.get(i).check(seat);
                 continue;

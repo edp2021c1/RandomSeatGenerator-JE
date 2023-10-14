@@ -3,6 +3,7 @@ package com.edp2021c1.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static java.lang.Integer.parseUnsignedInt;
 
@@ -120,4 +121,14 @@ public final class SeatConfig {
         return s;
     }
 
+    public boolean equals(SeatConfig c) {
+        return  Objects.equals(row_count, c.row_count)
+                &&Objects.equals(column_count,c.column_count)
+                &&Objects.equals(random_between_rows,c.random_between_rows)
+                &&Objects.equals(last_row_pos_can_be_choosed,c.last_row_pos_can_be_choosed)
+                &&Objects.equals(person_sort_by_height,c.person_sort_by_height)
+                &&Objects.equals(group_leader_list,c.group_leader_list)
+                &&Objects.equals(separate_list,c.separate_list)
+                &&Objects.equals(lucky_option,c.lucky_option);
+    }
 }

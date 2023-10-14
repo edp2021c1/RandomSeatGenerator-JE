@@ -14,20 +14,24 @@
     -fx-padding: 2;
     -fx-text-fill: white;
     -fx-border-width: 2;
-    -fx-border-color: white;
+    -fx-border-color: #737b84;
     -fx-border-radius: 3;
     -fx-background-color: #1e1f22;
 }
 
-.button:hover,
+.button:hover {
+    -fx-border-color: white;
+}
+
 .text-field:hover,
 .text-area:hover {
-    -fx-border-color: #0088ff;
+    -fx-border-color: #2b64cf;
 }
 
 .text-area .content {
     -fx-background-color: #1e1f22;
     -fx-background-radius: 0;
+    -fx-padding: 0;
 }
 
 .check-box {
@@ -61,4 +65,8 @@
 .large-box {
     -fx-border-color: black;
     -fx-border-width: 1;
+}
+
+.license-text-area {
+    -fx-font-family: monospace;
 }

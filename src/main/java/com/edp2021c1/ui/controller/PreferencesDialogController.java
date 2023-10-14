@@ -70,11 +70,13 @@ public class PreferencesDialogController {
         c.group_leader_list = groupLeaderListInput.getText();
         c.separate_list = separateListInput.getText();
         c.lucky_option = luckyOption.isSelected();
-        Main.seatConfig = c;
-
-        FileOutputStream out = new FileOutputStream("seat_config.json");
-        out.write(new Gson().toJson(c).getBytes(StandardCharsets.UTF_8));
-        out.close();
+        if (!Main.seatConfig.equals(c)) {
+            Main.seatConfig = c;
+            FileOutputStream out = new FileOutputStream("seat_config.json");
+            out.write(new Gson().toJson(c).getBytes(StandardCharsets.UTF_8));
+            out.close();
+            MainWindowController.configIsChanged = true;
+        }
     }
 
     @FXML

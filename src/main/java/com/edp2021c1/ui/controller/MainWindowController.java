@@ -31,7 +31,6 @@ import java.util.ResourceBundle;
  * Controller of {@code assets/fxml/MainWindow.fxml}
  */
 public class MainWindowController {
-
     private static Seat seat;
     @FXML
     private Stage stage;
@@ -51,6 +50,8 @@ public class MainWindowController {
     private VBox box_3;
     @FXML
     private HBox box_4;
+
+    public static boolean configIsChanged=false;
 
     @FXML
     void dateAsSeed(ActionEvent event) {
@@ -84,6 +85,7 @@ public class MainWindowController {
     @FXML
     void generateSeatTable(ActionEvent event) throws Exception {
         initSeatTable();
+
         long seed;
         try {
             Long.parseLong(seedInput.getText());
@@ -97,10 +99,14 @@ public class MainWindowController {
     }
 
     @FXML
-    void openPreferencesDialog(ActionEvent event) throws IOException {
+    void openPreferencesDialog(ActionEvent event) throws Exception {
         Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/PreferencesDialog.fxml")));
         s.initOwner(stage);
-        s.show();
+        s.showAndWait();
+        if(configIsChanged) {
+            initSeatTable();
+            configIsChanged=false;
+        }
     }
 
     @FXML
@@ -111,19 +117,23 @@ public class MainWindowController {
     }
 
     void initSeatTable() throws Exception {
-        seatTable.getColumns().clear();
         int rowCount = Main.seatConfig.getRowCount(), columnCount = Main.seatConfig.getColumnCount();
         TableColumn<SeatRowData, String> c;
-        double d = 1.0 / (Math.max(columnCount, 2));
-        for (int i = 0; i < columnCount || i < 2; i++) {
-            c = new TableColumn<>("C" + (i + 1)) {{
-                prefWidthProperty().bind(seatTable.widthProperty().multiply(d));
-            }};
-            c.setCellValueFactory(new PropertyValueFactory<>("c" + (i + 1)));
-            c.setSortable(false);
-            seatTable.getColumns().add(c);
+
+        if (seatTable.getColumns().size() != columnCount) {
+            double d = 1.0 / (Math.max(columnCount, 2));
+            seatTable.getColumns().clear();
+            for (int i = 0; i < columnCount || i < 2; i++) {
+                c = new TableColumn<>("C" + (i + 1)) {{
+                    prefWidthProperty().bind(seatTable.widthProperty().multiply(d));
+                }};
+                c.setCellValueFactory(new PropertyValueFactory<>("c" + (i + 1)));
+                c.setSortable(false);
+                seatTable.getColumns().add(c);
+            }
+            seatTable.setEditable(false);
         }
-        seatTable.setEditable(false);
+
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.emptySeat(rowCount, columnCount)));
     }
 
