@@ -8,6 +8,7 @@ import static java.lang.Integer.parseUnsignedInt;
 
 /**
  * Stores config used to generate a seat table.
+ * @author Calboot
  * @since 1.2.0
  */
 public final class SeatConfig {
@@ -44,12 +45,15 @@ public final class SeatConfig {
      */
     public boolean lucky_option;
 
+    /**
+     * Nothing to say…
+     */
     public SeatConfig() {
         super();
     }
 
     /**
-     * @return {@link SeatConfig#row_count} in the format of an integer.
+     * @return {@link #row_count} in the format of an integer.
      * @throws NumberFormatException if the {@code String} does not contain a parsable unsigned integer.
      */
     public int getRowCount() throws NumberFormatException {
@@ -57,7 +61,7 @@ public final class SeatConfig {
     }
 
     /**
-     * @return {@link SeatConfig#column_count} in the format of an integer.
+     * @return {@link #column_count} in the format of an integer.
      * @throws NumberFormatException if the {@code String} does not contain a parsable unsigned integer.
      */
     public int getColumnCount() throws NumberFormatException {
@@ -65,7 +69,7 @@ public final class SeatConfig {
     }
 
     /**
-     * @return {@link SeatConfig#random_between_rows} in the format of an integer.
+     * @return {@link #random_between_rows} in the format of an integer.
      * @throws NumberFormatException if the {@code String} does not contain a parsable unsigned integer.
      */
     public int getRandomBetweenRows() throws NumberFormatException {
@@ -73,7 +77,7 @@ public final class SeatConfig {
     }
 
     /**
-     * @return {@link SeatConfig#last_row_pos_can_be_choosed} in the format of a list of {@code int}.
+     * @return {@link #last_row_pos_can_be_choosed} in the format of a list of {@code int}.
      * @throws NumberFormatException if the {@code String}s does not contain a parsable unsigned integer.
      */
     public ArrayList<Integer> getLastRowPos() throws NumberFormatException {
@@ -86,21 +90,22 @@ public final class SeatConfig {
     }
 
     /**
-     * @return {@link SeatConfig#person_sort_by_height} in the format of a list of {@code String}.
+     * @return {@link #person_sort_by_height} in the format of a list of {@code String}.
      */
     public List<String> getNameList() {
         return Arrays.asList(person_sort_by_height.split(" "));
     }
 
     /**
-     * @return {@link SeatConfig#group_leader_list} in the format of a list of {@code String}.
+     * @return {@link #group_leader_list} in the format of a list of {@code String}.
      */
     public List<String> getGroupLeaderList() {
         return Arrays.asList(group_leader_list.split(" "));
     }
 
     /**
-     * @return {@link SeatConfig#separate_list} in the format of a list of {@code Separate}.
+     * @return {@link #separate_list} in the format of a list of {@code Separate}.
+     * @throws Exception if there are less than two names in the one of the name pairs.
      */
     public List<Separate> getSeparatedList() throws Exception {
         String[] t = separate_list.split("\n");

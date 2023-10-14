@@ -27,6 +27,9 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+/**
+ * Controller of {@code assets/fxml/MainWindow.fxml}
+ */
 public class MainWindowController {
 
     private static Seat seat;

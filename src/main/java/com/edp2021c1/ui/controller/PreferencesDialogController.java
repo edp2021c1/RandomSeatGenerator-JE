@@ -21,6 +21,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
+/**
+ * Controller of {@code assets/fxml/dialog/PreferencesDialog.fxml}
+ */
 public class PreferencesDialogController {
 
     @FXML

@@ -19,11 +19,18 @@ import java.util.List;
 
 @Getter
 public class SeatRowData {
+    /**
+     * Max count of column in a {@code SeatRowData}.
+     */
     @ExcelIgnore
     public static final int MAX_COLUMN_COUNT = 20;
 
     private String c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20;
 
+    /**
+     * @param c array of names in a row of a seat table.
+     * @throws Exception if length of {@code c} is larger than {@link #MAX_COLUMN_COUNT}.
+     */
     public SeatRowData(String... c) throws Exception {
         for (int i = 0, j = c.length; i < j; i++) {
             if (!(i < MAX_COLUMN_COUNT))
@@ -34,6 +41,11 @@ public class SeatRowData {
         }
     }
 
+    /**
+     * @param seat an instance of {@link Seat} being transferred.
+     * @return a {@code List} storing {@code SeatRowData} transferred from a {@code Seat}.
+     * @throws Exception if {@link SeatConfig#getColumnCount()} of {@code seat} is larger than {@link #MAX_COLUMN_COUNT}
+     */
     public static List<SeatRowData> fromSeat(Seat seat) throws Exception {
         SeatConfig conf = seat.getConfig();
         int rowCount = conf.getRowCount(), columnCount = conf.getColumnCount();
@@ -53,6 +65,12 @@ public class SeatRowData {
         return seatRowData;
     }
 
+    /**
+     * @param rowCount of the empty seat table.
+     * @param columnCount of the empty seat table.
+     * @return a {@code List} storing {@code SeatRowData} of an empty seat table.
+     * @throws Exception if {@code columnCount} is larger than {@link #MAX_COLUMN_COUNT}.
+     */
     public static List<SeatRowData> emptySeat(int rowCount, int columnCount) throws Exception {
         String[] emptyRowData = new String[columnCount];
         Arrays.fill(emptyRowData, "-");

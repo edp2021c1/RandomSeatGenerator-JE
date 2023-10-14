@@ -5,7 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public abstract class SeatManager {
+/**
+ * This class manages the generation of seat tables.
+ * @author Calboot
+ * @since 1.2.0
+ */
+public final class SeatManager {
     /**
      * The instance of {@code Random} used to generate random numbers.
      */
@@ -23,6 +28,8 @@ public abstract class SeatManager {
      * Generate a seat table using the pre-set config and the seed.
      *
      * @return an instance of {@code Seat}.
+     * @param seed used to generate the seat table.
+     * @throws Exception if there are less than two names in the one of the name pairs.
      */
     public static Seat generate(long seed) throws Exception {
         random.setSeed(seed);
@@ -152,6 +159,7 @@ public abstract class SeatManager {
      * Check if the seat table fits the config.
      *
      * @return {@code true} if the seat table fits the config.
+     * @throws Exception if there are less than two names in the one of the name pairs.
      */
     private static boolean check() throws Exception {
         boolean hasLeader = false;

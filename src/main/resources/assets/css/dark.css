@@ -13,9 +13,9 @@
 .text-area {
     -fx-padding: 2;
     -fx-text-fill: white;
-    -fx-border-width: 2px;
+    -fx-border-width: 2;
     -fx-border-color: white;
-    -fx-border-radius: 3px;
+    -fx-border-radius: 3;
     -fx-background-color: #1e1f22;
 }
 
@@ -51,9 +51,14 @@
 }
 
 .table-row-cell:odd {
-    -fx-background-color: #2d2d30;
+    -fx-background-color: #303035;
 }
 
 .table-cell {
     -fx-text-fill: white;
+}
+
+.large-box {
+    -fx-border-color: black;
+    -fx-border-width: 1;
 }

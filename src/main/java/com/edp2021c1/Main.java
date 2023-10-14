@@ -9,9 +9,19 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+/**
+ * Application intro, loads seat config.
+ */
 public class Main {
+    /**
+     * Stores the seat config.
+     */
     public static SeatConfig seatConfig = new SeatConfig();
 
+    /**
+     * @param args app startup arguments.
+     * @throws IOException if fails to create or load seat config file.
+     */
     public static void main(String[] args) throws IOException {
         // Load default seat config
         BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/conf/seat_config.json"))));
