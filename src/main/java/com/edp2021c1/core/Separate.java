@@ -27,6 +27,7 @@ public class Separate {
 
     /**
      * Create an instance from a {@code String}, names after the second will be ignored.
+     *
      * @param s a {@code String} contains the names of the two people separated, divided by a {@code space}.
      * @throws Exception if there are less than two names in the {@code String}.
      */

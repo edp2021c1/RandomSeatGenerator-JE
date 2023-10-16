@@ -7,6 +7,7 @@ import java.util.Random;
 
 /**
  * This class manages the generation of seat tables.
+ *
  * @author Calboot
  * @since 1.2.0
  */
@@ -27,8 +28,8 @@ public final class SeatManager {
     /**
      * Generate a seat table using the pre-set config and the seed.
      *
-     * @return an instance of {@code Seat}.
      * @param seed used to generate the seat table.
+     * @return an instance of {@code Seat}.
      * @throws Exception if there are less than two names in the one of the name pairs.
      */
     public static Seat generate(long seed) throws Exception {
@@ -38,7 +39,7 @@ public final class SeatManager {
         }
 
         // 获取配置
-        int rowCount= config.getRowCount();
+        int rowCount = config.getRowCount();
         int columnCount = config.getColumnCount();
         int randomBetweenRows = config.getRandomBetweenRows();
         List<Integer> lastRowPos = config.getLastRowPos();
@@ -62,7 +63,7 @@ public final class SeatManager {
         List<Integer> tmp;
 
         // 防止行数过多引发无限递归
-        while (rowCount*columnCount-peopleNum>columnCount){
+        while (rowCount * columnCount - peopleNum > columnCount) {
             rowCount--;
         }
 
@@ -169,7 +170,7 @@ public final class SeatManager {
     private static boolean check() throws Exception {
         boolean hasLeader = false;
         boolean isSeparated = true;
-        int i, j, splen,len=config.getNameList().size(),c=config.getColumnCount(),r= len % c == 0 ? len / c : len / c + 1;
+        int i, j, splen, len = config.getNameList().size(), c = config.getColumnCount(), r = len % c == 0 ? len / c : len / c + 1;
         List<String> gl = config.getGroupLeaderList();
         List<Separate> sp = config.getSeparatedList();
         // 检查每列是否都有组长

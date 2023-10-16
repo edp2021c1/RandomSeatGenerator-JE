@@ -30,6 +30,10 @@ import java.util.ResourceBundle;
  * Controller of {@code assets/fxml/MainWindow.fxml}
  */
 public class MainWindowController {
+    /**
+     * Decides whether the config is changed after opening {@code PreferencesDialog}.
+     */
+    public static boolean configIsChanged = false;
     private static Seat seat;
     @FXML
     private Stage stage;
@@ -49,11 +53,6 @@ public class MainWindowController {
     private VBox box_3;
     @FXML
     private HBox box_4;
-
-    /**
-     * Decides whether the config is changed after opening {@code PreferencesDialog}.
-     */
-    public static boolean configIsChanged=false;
 
     @FXML
     void dateAsSeed(ActionEvent event) {
@@ -106,9 +105,9 @@ public class MainWindowController {
         Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/PreferencesDialog.fxml")));
         s.initOwner(stage);
         s.showAndWait();
-        if(configIsChanged) {
+        if (configIsChanged) {
             initSeatTable();
-            configIsChanged=false;
+            configIsChanged = false;
         }
     }
 

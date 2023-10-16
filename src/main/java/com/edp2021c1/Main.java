@@ -52,7 +52,7 @@ public class Main {
         inputStream.read(bytes);
         inputStream.close();
         String str = new String(bytes, StandardCharsets.UTF_8);
-        return (seatConfig=new Gson().fromJson(str, SeatConfig.class));
+        return (seatConfig = new Gson().fromJson(str, SeatConfig.class));
     }
 
     /**
@@ -60,7 +60,7 @@ public class Main {
      * @throws IOException if didn't successfully save the config to file.
      */
     public static void saveConfig(SeatConfig config) throws IOException {
-        seatConfig=config;
+        seatConfig = config;
         FileOutputStream out = new FileOutputStream("seat_config.json");
         out.write(new Gson().toJson(seatConfig).getBytes(StandardCharsets.UTF_8));
         out.close();

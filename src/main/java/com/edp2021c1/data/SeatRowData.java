@@ -66,7 +66,7 @@ public class SeatRowData {
     }
 
     /**
-     * @param rowCount of the empty seat table.
+     * @param rowCount    of the empty seat table.
      * @param columnCount of the empty seat table.
      * @return a {@code List} storing {@code SeatRowData} of an empty seat table.
      * @throws Exception if {@code columnCount} is larger than {@link #MAX_COLUMN_COUNT}.

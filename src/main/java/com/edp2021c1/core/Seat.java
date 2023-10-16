@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Used to pack some useful data related to a seat table.
+ *
  * @author Calboot
  * @since 1.2.0
  */
@@ -25,14 +26,15 @@ public class Seat {
     private final long seed;
     /**
      * The lucky person specially chosen.
+     *
      * @since 1.2.1
      */
     private final String luckyPerson;
 
     /**
-     * @param seat {@link #seat}
-     * @param config {@link #config}
-     * @param seed {@link #seed}
+     * @param seat        {@link #seat}
+     * @param config      {@link #config}
+     * @param seed        {@link #seed}
      * @param luckyPerson {@link #luckyPerson}
      */
     public Seat(List<String> seat, SeatConfig config, long seed, String luckyPerson) {
