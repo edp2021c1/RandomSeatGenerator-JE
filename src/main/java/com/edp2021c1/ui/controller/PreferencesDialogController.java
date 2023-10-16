@@ -71,10 +71,7 @@ public class PreferencesDialogController {
         c.separate_list = separateListInput.getText();
         c.lucky_option = luckyOption.isSelected();
         if (!Main.seatConfig.equals(c)) {
-            Main.seatConfig = c;
-            FileOutputStream out = new FileOutputStream("seat_config.json");
-            out.write(new Gson().toJson(c).getBytes(StandardCharsets.UTF_8));
-            out.close();
+            Main.saveConfig(c);
             MainWindowController.configIsChanged = true;
         }
     }
@@ -117,12 +114,12 @@ public class PreferencesDialogController {
     }
 
     @FXML
-    void initialize() {
+    void initialize() throws IOException {
         stage.getIcons().add(new Image("assets/img/icon.png"));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);
 
-        SeatConfig seatConfig = Main.seatConfig;
+        SeatConfig seatConfig = Main.reloadConfig();
         rowCountInput.setText(seatConfig.row_count);
         columnCountInput.setText(seatConfig.column_count);
         rbrInput.setText(seatConfig.random_between_rows);

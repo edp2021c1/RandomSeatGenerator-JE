@@ -86,6 +86,7 @@ public class MainWindowController {
 
     @FXML
     void generateSeatTable(ActionEvent event) throws Exception {
+        Main.reloadConfig();
         initSeatTable();
 
         long seed;
@@ -115,6 +116,7 @@ public class MainWindowController {
     void initialize() throws Exception {
         stage.getIcons().add(new Image("assets/img/icon.png"));
 
+        seatTable.setEditable(false);
         initSeatTable();
     }
 
@@ -123,8 +125,8 @@ public class MainWindowController {
         TableColumn<SeatRowData, String> c;
 
         if (seatTable.getColumns().size() != columnCount) {
-            double d = 1.0 / (Math.max(columnCount, 2));
             seatTable.getColumns().clear();
+            double d = 1.0 / (Math.max(columnCount, 2));
             for (int i = 0; i < columnCount || i < 2; i++) {
                 c = new TableColumn<>("C" + (i + 1)) {{
                     prefWidthProperty().bind(seatTable.widthProperty().multiply(d));
@@ -133,7 +135,6 @@ public class MainWindowController {
                 c.setSortable(false);
                 seatTable.getColumns().add(c);
             }
-            seatTable.setEditable(false);
         }
 
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.emptySeat(rowCount, columnCount)));
