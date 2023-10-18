@@ -39,9 +39,8 @@ public final class SeatGenerator {
      *
      * @param seed used to generate the seat table.
      * @return an instance of {@code Seat}.
-     * @throws Exception if there are less than two names in the one of the name pairs.
      */
-    public Seat generate(long seed) throws Exception {
+    public Seat generate(long seed) {
         random.setSeed(seed);
         if (config == null) {
             throw new NullPointerException("Config cannot be null.");
@@ -174,9 +173,8 @@ public final class SeatGenerator {
      * Check if the seat table fits the config.
      *
      * @return {@code true} if the seat table fits the config.
-     * @throws Exception if there are less than two names in the one of the name pairs.
      */
-    private boolean check() throws Exception {
+    private boolean check() {
         boolean hasLeader = false;
         boolean isSeparated = true;
         int i, j, splen, len = config.getNameList().size(), c = config.getColumnCount(), r = len % c == 0 ? len / c : len / c + 1;

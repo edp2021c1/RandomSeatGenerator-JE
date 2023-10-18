@@ -29,11 +29,10 @@ public class Separate {
      * Create an instance from a {@code String}, names after the second will be ignored.
      *
      * @param s a {@code String} contains the names of the two people separated, divided by a {@code space}.
-     * @throws Exception if there are less than two names in the {@code String}.
      */
-    public Separate(String s) throws Exception {
+    public Separate(String s) {
         String[] t = s.split(" ");
-        if (t.length < 2) throw new Exception("Invalid separate data");
+        if (t.length < 2) throw new RuntimeException("Invalid separate data");
         a = t[0];
         b = t[1];
     }

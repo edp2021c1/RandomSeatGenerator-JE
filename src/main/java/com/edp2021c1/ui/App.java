@@ -11,8 +11,13 @@ import java.util.Objects;
  * JavaFX application intro.
  */
 public class App extends Application {
-    public void start(Stage primaryStage) throws IOException {
-        Stage stage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/MainWindow.fxml")));
+    public void start(Stage primaryStage) {
+        Stage stage;
+        try {
+            stage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/MainWindow.fxml")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         stage.show();
     }
 }

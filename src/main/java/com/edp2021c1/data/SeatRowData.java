@@ -29,24 +29,27 @@ public class SeatRowData {
 
     /**
      * @param c array of names in a row of a seat table.
-     * @throws Exception if length of {@code c} is larger than {@link #MAX_COLUMN_COUNT}.
      */
-    public SeatRowData(String... c) throws Exception {
+    public SeatRowData(String... c) {
         for (int i = 0, j = c.length; i < j; i++) {
-            if (!(i < MAX_COLUMN_COUNT))
-                throw new Exception(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));
-            Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
-            f.setAccessible(true);
-            f.set(this, c[i]);
+            if (!(i < MAX_COLUMN_COUNT)) {
+                throw new RuntimeException(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));
+            }
+            try{
+                Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
+                f.setAccessible(true);
+                f.set(this, c[i]);
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
         }
     }
 
     /**
      * @param seat an instance of {@link Seat} being transferred.
      * @return a {@code List} storing {@code SeatRowData} transferred from a {@code Seat}.
-     * @throws Exception if {@link SeatConfig#getColumnCount()} of {@code seat} is larger than {@link #MAX_COLUMN_COUNT}
      */
-    public static List<SeatRowData> fromSeat(Seat seat) throws Exception {
+    public static List<SeatRowData> fromSeat(Seat seat) {
         SeatConfig conf = seat.getConfig();
         int rowCount = conf.getRowCount(), columnCount = conf.getColumnCount();
         List<String> s = seat.getSeat();
@@ -69,9 +72,8 @@ public class SeatRowData {
      * @param rowCount    of the empty seat table.
      * @param columnCount of the empty seat table.
      * @return a {@code List} storing {@code SeatRowData} of an empty seat table.
-     * @throws Exception if {@code columnCount} is larger than {@link #MAX_COLUMN_COUNT}.
      */
-    public static List<SeatRowData> emptySeat(int rowCount, int columnCount) throws Exception {
+    public static List<SeatRowData> emptySeat(int rowCount, int columnCount) {
         String[] emptyRowData = new String[columnCount];
         Arrays.fill(emptyRowData, "-");
 

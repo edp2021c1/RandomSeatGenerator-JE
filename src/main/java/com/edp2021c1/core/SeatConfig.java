@@ -56,37 +56,49 @@ public final class SeatConfig {
 
     /**
      * @return {@link #row_count} in the format of an integer.
-     * @throws NumberFormatException if the {@code String} does not contain a parsable unsigned integer.
      */
-    public int getRowCount() throws NumberFormatException {
-        return parseUnsignedInt(row_count);
+    public int getRowCount() {
+        try {
+            return parseUnsignedInt(row_count);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * @return {@link #column_count} in the format of an integer.
-     * @throws NumberFormatException if the {@code String} does not contain a parsable unsigned integer.
      */
-    public int getColumnCount() throws NumberFormatException {
-        return parseUnsignedInt(column_count);
+    public int getColumnCount() {
+        try {
+            return parseUnsignedInt(column_count);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * @return {@link #random_between_rows} in the format of an integer.
-     * @throws NumberFormatException if the {@code String} does not contain a parsable unsigned integer.
      */
-    public int getRandomBetweenRows() throws NumberFormatException {
-        return parseUnsignedInt(random_between_rows);
+    public int getRandomBetweenRows() {
+        try {
+            return parseUnsignedInt(random_between_rows);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * @return {@link #last_row_pos_can_be_choosed} in the format of a list of {@code int}.
-     * @throws NumberFormatException if the {@code String}s does not contain a parsable unsigned integer.
      */
-    public ArrayList<Integer> getLastRowPos() throws NumberFormatException {
+    public ArrayList<Integer> getLastRowPos() {
         String[] t = last_row_pos_can_be_choosed.split(" ");
         ArrayList<Integer> i = new ArrayList<>(t.length);
-        for (String s : t) {
-            i.add(parseUnsignedInt(s));
+        try {
+            for (String s : t) {
+                i.add(parseUnsignedInt(s));
+            }
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
         }
         return i;
     }
@@ -107,9 +119,8 @@ public final class SeatConfig {
 
     /**
      * @return {@link #separate_list} in the format of a list of {@code Separate}.
-     * @throws Exception if there are less than two names in the one of the name pairs.
      */
-    public List<Separate> getSeparatedList() throws Exception {
+    public List<Separate> getSeparatedList() {
         String[] t = separate_list.split("\n");
         ArrayList<Separate> s = new ArrayList<>(t.length);
 

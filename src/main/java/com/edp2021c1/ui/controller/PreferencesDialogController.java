@@ -56,7 +56,7 @@ public class PreferencesDialogController {
     private CheckBox luckyOption;
 
     @FXML
-    void applySeatConfig(ActionEvent event) throws IOException {
+    void applySeatConfig(ActionEvent event) {
         SeatConfig c = new SeatConfig();
         c.row_count = rowCountInput.getText();
         c.column_count = columnCountInput.getText();
@@ -73,7 +73,7 @@ public class PreferencesDialogController {
     }
 
     @FXML
-    void loadConfigFromFile(ActionEvent event) throws IOException {
+    void loadConfigFromFile(ActionEvent event) {
         FileChooser fc = new FileChooser();
         fc.setTitle("加载配置文件");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
@@ -94,7 +94,7 @@ public class PreferencesDialogController {
     }
 
     @FXML
-    void confirm(ActionEvent event) throws IOException {
+    void confirm(ActionEvent event) {
         applySeatConfig(null);
         stage.close();
     }
@@ -105,7 +105,7 @@ public class PreferencesDialogController {
     }
 
     @FXML
-    void initialize() throws IOException {
+    void initialize() {
         stage.getIcons().add(new Image("assets/img/icon.png"));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);

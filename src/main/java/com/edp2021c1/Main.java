@@ -14,9 +14,9 @@ import java.util.Objects;
  */
 public class Main {
     /**
-     * @param args app startup arguments.
+     * @param args used to start the application.
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args){
         reloadConfig();
         Application.launch(App.class, args);
     }
@@ -24,45 +24,55 @@ public class Main {
     /**
      * @param file to load config from.
      * @return seat config loaded from path.
-     * @throws IOException if didn't successfully load config from file.
      */
-    public static SeatConfig loadConfigFromFile(File file) throws IOException {
-        FileInputStream inputStream = new FileInputStream(file);
-        byte[] bytes = new byte[inputStream.available()];
-        inputStream.read(bytes);
-        inputStream.close();
+    public static SeatConfig loadConfigFromFile(File file) {
+        byte[] bytes;
+        try {
+            FileInputStream inputStream = new FileInputStream(file);
+            bytes = new byte[inputStream.available()];
+            inputStream.read(bytes);
+            inputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         String str = new String(bytes, StandardCharsets.UTF_8);
         return new Gson().fromJson(str, SeatConfig.class);
     }
 
     /**
      * @return default seat config loaded from file.
-     * @throws IOException if didn't successfully load config from file.
      */
-    public static SeatConfig reloadConfig() throws IOException {
-        File f = new File("seat_config.json");
-        if (f.createNewFile()) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/conf/seat_config.json"))));
-            StringBuilder buffer = new StringBuilder();
-            String line;
-            while ((line = in.readLine()) != null) {
-                buffer.append(line);
+    public static SeatConfig reloadConfig() {
+        try {
+            File f = new File("seat_config.json");
+            if (f.createNewFile()) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/conf/seat_config.json"))));
+                StringBuilder buffer = new StringBuilder();
+                String line;
+                while ((line = in.readLine()) != null) {
+                    buffer.append(line);
+                }
+                FileOutputStream outputStream = new FileOutputStream(f);
+                outputStream.write(buffer.toString().getBytes(StandardCharsets.UTF_8));
+                outputStream.close();
             }
-            FileOutputStream outputStream = new FileOutputStream(f);
-            outputStream.write(buffer.toString().getBytes(StandardCharsets.UTF_8));
-            outputStream.close();
-        }
 
-        return loadConfigFromFile(f);
+            return loadConfigFromFile(f);
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * @param config {@code SeatConfig} to set as the default seat config and save to file.
-     * @throws IOException if didn't successfully save the config to file.
      */
-    public static void saveConfig(SeatConfig config) throws IOException {
-        FileOutputStream out = new FileOutputStream("seat_config.json");
-        out.write(new Gson().toJson(config).getBytes(StandardCharsets.UTF_8));
-        out.close();
+    public static void saveConfig(SeatConfig config) {
+        try {
+            FileOutputStream out = new FileOutputStream("seat_config.json");
+            out.write(new Gson().toJson(config).getBytes(StandardCharsets.UTF_8));
+            out.close();
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
     }
 }

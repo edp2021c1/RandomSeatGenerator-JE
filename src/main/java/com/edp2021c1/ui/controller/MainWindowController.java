@@ -21,6 +21,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Objects;
@@ -62,7 +63,7 @@ public class MainWindowController {
     }
 
     @FXML
-    void exportSeatTable(ActionEvent event) throws Exception {
+    void exportSeatTable(ActionEvent event) {
         if (seat == null) generateSeatTable(null);
         FileChooser fc = new FileChooser();
         fc.setTitle("导出座位表");
@@ -71,9 +72,15 @@ public class MainWindowController {
         Date date = new Date();
         if (f == null) {
             return;
-        } else if (!f.createNewFile()) {
-            f.delete();
-            f.createNewFile();
+        } else {
+            try {
+                if (!f.createNewFile()) {
+                    f.delete();
+                    f.createNewFile();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat));
         f.setReadOnly();
@@ -85,7 +92,7 @@ public class MainWindowController {
     }
 
     @FXML
-    void generateSeatTable(ActionEvent event) throws Exception {
+    void generateSeatTable(ActionEvent event) {
         Main.reloadConfig();
         initSeatTable();
 
@@ -101,8 +108,13 @@ public class MainWindowController {
     }
 
     @FXML
-    void openPreferencesDialog(ActionEvent event) throws Exception {
-        Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/PreferencesDialog.fxml")));
+    void openPreferencesDialog(ActionEvent event) {
+        Stage s;
+        try {
+            s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/PreferencesDialog.fxml")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         s.initOwner(stage);
         s.showAndWait();
         if (configIsChanged) {
@@ -112,14 +124,14 @@ public class MainWindowController {
     }
 
     @FXML
-    void initialize() throws Exception {
+    void initialize() {
         stage.getIcons().add(new Image("assets/img/icon.png"));
 
         seatTable.setEditable(false);
         initSeatTable();
     }
 
-    void initSeatTable() throws Exception {
+    void initSeatTable() {
         SeatConfig conf=Main.reloadConfig();
         int rowCount = conf.getRowCount(), columnCount = conf.getColumnCount();
         TableColumn<SeatRowData, String> c;
