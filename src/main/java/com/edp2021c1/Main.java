@@ -16,7 +16,7 @@ public class Main {
     /**
      * @param args used to start the application.
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
         reloadConfig();
         Application.launch(App.class, args);
     }
@@ -58,7 +58,7 @@ public class Main {
             }
 
             return loadConfigFromFile(f);
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -71,7 +71,7 @@ public class Main {
             FileOutputStream out = new FileOutputStream("seat_config.json");
             out.write(new Gson().toJson(config).getBytes(StandardCharsets.UTF_8));
             out.close();
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

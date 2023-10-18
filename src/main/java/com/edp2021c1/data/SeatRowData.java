@@ -35,11 +35,11 @@ public class SeatRowData {
             if (!(i < MAX_COLUMN_COUNT)) {
                 throw new RuntimeException(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));
             }
-            try{
+            try {
                 Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
                 f.setAccessible(true);
                 f.set(this, c[i]);
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }

@@ -30,8 +30,8 @@ public final class SeatGenerator {
      *
      * @param config used to generate seat table with this instance.
      */
-    public SeatGenerator(SeatConfig config){
-        this.config =config;
+    public SeatGenerator(SeatConfig config) {
+        this.config = config;
     }
 
     /**

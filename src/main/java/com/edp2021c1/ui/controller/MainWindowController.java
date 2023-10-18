@@ -132,7 +132,7 @@ public class MainWindowController {
     }
 
     void initSeatTable() {
-        SeatConfig conf=Main.reloadConfig();
+        SeatConfig conf = Main.reloadConfig();
         int rowCount = conf.getRowCount(), columnCount = conf.getColumnCount();
         TableColumn<SeatRowData, String> c;
 
