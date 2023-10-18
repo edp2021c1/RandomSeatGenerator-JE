@@ -3,7 +3,8 @@ package com.edp2021c1.ui.controller;
 import com.alibaba.excel.EasyExcel;
 import com.edp2021c1.Main;
 import com.edp2021c1.core.Seat;
-import com.edp2021c1.core.SeatManager;
+import com.edp2021c1.core.SeatConfig;
+import com.edp2021c1.core.SeatGenerator;
 import com.edp2021c1.data.SeatRowData;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -95,8 +96,7 @@ public class MainWindowController {
             generateRandomSeed(null);
         }
         seed = Long.parseLong(seedInput.getText());
-        SeatManager.config = Main.seatConfig;
-        seat = SeatManager.generate(seed);
+        seat = new SeatGenerator(Main.reloadConfig()).generate(seed);
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
     }
 
@@ -120,7 +120,8 @@ public class MainWindowController {
     }
 
     void initSeatTable() throws Exception {
-        int rowCount = Main.seatConfig.getRowCount(), columnCount = Main.seatConfig.getColumnCount();
+        SeatConfig conf=Main.reloadConfig();
+        int rowCount = conf.getRowCount(), columnCount = conf.getColumnCount();
         TableColumn<SeatRowData, String> c;
 
         if (seatTable.getColumns().size() != columnCount) {

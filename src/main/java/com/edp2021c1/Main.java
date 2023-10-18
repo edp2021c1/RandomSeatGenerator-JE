@@ -14,19 +14,25 @@ import java.util.Objects;
  */
 public class Main {
     /**
-     * Stores the seat config.
-     */
-    public static SeatConfig seatConfig = new SeatConfig();
-
-    /**
      * @param args app startup arguments.
-     * @throws IOException if fails to create or load seat config file.
      */
     public static void main(String[] args) throws IOException {
-        // Load user seat config
-        seatConfig = reloadConfig();
-
+        reloadConfig();
         Application.launch(App.class, args);
+    }
+
+    /**
+     * @param file to load config from.
+     * @return seat config loaded from path.
+     * @throws IOException if didn't successfully load config from file.
+     */
+    public static SeatConfig loadConfigFromFile(File file) throws IOException {
+        FileInputStream inputStream = new FileInputStream(file);
+        byte[] bytes = new byte[inputStream.available()];
+        inputStream.read(bytes);
+        inputStream.close();
+        String str = new String(bytes, StandardCharsets.UTF_8);
+        return new Gson().fromJson(str, SeatConfig.class);
     }
 
     /**
@@ -47,12 +53,7 @@ public class Main {
             outputStream.close();
         }
 
-        FileInputStream inputStream = new FileInputStream(f);
-        byte[] bytes = new byte[inputStream.available()];
-        inputStream.read(bytes);
-        inputStream.close();
-        String str = new String(bytes, StandardCharsets.UTF_8);
-        return (seatConfig = new Gson().fromJson(str, SeatConfig.class));
+        return loadConfigFromFile(f);
     }
 
     /**
@@ -60,9 +61,8 @@ public class Main {
      * @throws IOException if didn't successfully save the config to file.
      */
     public static void saveConfig(SeatConfig config) throws IOException {
-        seatConfig = config;
         FileOutputStream out = new FileOutputStream("seat_config.json");
-        out.write(new Gson().toJson(seatConfig).getBytes(StandardCharsets.UTF_8));
+        out.write(new Gson().toJson(config).getBytes(StandardCharsets.UTF_8));
         out.close();
     }
 }

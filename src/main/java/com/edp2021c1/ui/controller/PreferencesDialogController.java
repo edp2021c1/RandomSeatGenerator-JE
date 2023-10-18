@@ -2,7 +2,6 @@ package com.edp2021c1.ui.controller;
 
 import com.edp2021c1.Main;
 import com.edp2021c1.core.SeatConfig;
-import com.google.gson.Gson;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -14,10 +13,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 /**
@@ -69,7 +66,7 @@ public class PreferencesDialogController {
         c.group_leader_list = groupLeaderListInput.getText();
         c.separate_list = separateListInput.getText();
         c.lucky_option = luckyOption.isSelected();
-        if (!Main.seatConfig.equals(c)) {
+        if (!Main.reloadConfig().equals(c)) {
             Main.saveConfig(c);
             MainWindowController.configIsChanged = true;
         }
@@ -85,12 +82,7 @@ public class PreferencesDialogController {
             return;
         }
 
-        FileInputStream inputStream = new FileInputStream(f);
-        byte[] bytes = new byte[inputStream.available()];
-        inputStream.read(bytes);
-        inputStream.close();
-        String str = new String(bytes, StandardCharsets.UTF_8);
-        SeatConfig seatConfig = new Gson().fromJson(str, SeatConfig.class);
+        SeatConfig seatConfig = Main.loadConfigFromFile(f);
 
         rowCountInput.setText(seatConfig.row_count);
         columnCountInput.setText(seatConfig.column_count);

@@ -11,19 +11,28 @@ import java.util.Random;
  * @author Calboot
  * @since 1.2.0
  */
-public final class SeatManager {
+public final class SeatGenerator {
     /**
      * The instance of {@code Random} used to generate random numbers.
      */
-    private static final Random random = new Random();
+    private final Random random = new Random();
     /**
      * Stores the config.
      */
-    public static SeatConfig config;
+    private final SeatConfig config;
     /**
      * Buffers the seat table.
      */
-    private static List<String> seat;
+    private List<String> seat;
+
+    /**
+     * Create an instance with {@code config}
+     *
+     * @param config used to generate seat table with this instance.
+     */
+    public SeatGenerator(SeatConfig config){
+        this.config =config;
+    }
 
     /**
      * Generate a seat table using the pre-set config and the seed.
@@ -32,7 +41,7 @@ public final class SeatManager {
      * @return an instance of {@code Seat}.
      * @throws Exception if there are less than two names in the one of the name pairs.
      */
-    public static Seat generate(long seed) throws Exception {
+    public Seat generate(long seed) throws Exception {
         random.setSeed(seed);
         if (config == null) {
             throw new NullPointerException("Config cannot be null.");
@@ -167,7 +176,7 @@ public final class SeatManager {
      * @return {@code true} if the seat table fits the config.
      * @throws Exception if there are less than two names in the one of the name pairs.
      */
-    private static boolean check() throws Exception {
+    private boolean check() throws Exception {
         boolean hasLeader = false;
         boolean isSeparated = true;
         int i, j, splen, len = config.getNameList().size(), c = config.getColumnCount(), r = len % c == 0 ? len / c : len / c + 1;
