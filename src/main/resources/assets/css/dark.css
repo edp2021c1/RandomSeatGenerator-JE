@@ -23,8 +23,8 @@
     -fx-border-color: white;
 }
 
-.text-field:hover,
-.text-area:hover {
+.text-field:focused,
+.text-area:focused {
     -fx-border-color: #2b64cf;
 }
 
