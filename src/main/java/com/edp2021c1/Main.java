@@ -1,13 +1,17 @@
 package com.edp2021c1;
 
+import com.edp2021c1.core.Seat;
 import com.edp2021c1.core.SeatConfig;
+import com.edp2021c1.core.SeatGenerator;
 import com.edp2021c1.ui.App;
 import com.google.gson.Gson;
 import javafx.application.Application;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Scanner;
 
 /**
  * Application intro, loads seat config.
@@ -17,26 +21,16 @@ public class Main {
      * @param args used to start the application.
      */
     public static void main(String[] args) {
-        reloadConfig();
-        Application.launch(App.class, args);
-    }
-
-    /**
-     * @param file to load config from.
-     * @return seat config loaded from path.
-     */
-    public static SeatConfig loadConfigFromFile(File file) {
-        byte[] bytes;
-        try {
-            FileInputStream inputStream = new FileInputStream(file);
-            bytes = new byte[inputStream.available()];
-            inputStream.read(bytes);
-            inputStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if(!Arrays.asList(args).contains("--nogui")) {
+            reloadConfig();
+            Application.launch(App.class, args);
+            return;
         }
-        String str = new String(bytes, StandardCharsets.UTF_8);
-        return new Gson().fromJson(str, SeatConfig.class);
+        System.out.print("Input seed: ");
+        long seed=new Scanner(System.in).nextLong();
+        Seat seat=new SeatGenerator(reloadConfig()).generate(seed);
+        File f=new File("seat_table.xlsx");
+        seat.exportToExcelDocument(f);
     }
 
     /**
@@ -57,7 +51,7 @@ public class Main {
                 outputStream.close();
             }
 
-            return loadConfigFromFile(f);
+            return SeatConfig.fromJsonFile(f);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

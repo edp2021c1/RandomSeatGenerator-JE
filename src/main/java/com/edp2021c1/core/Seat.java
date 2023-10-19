@@ -1,8 +1,13 @@
 package com.edp2021c1.core;
 
+import com.alibaba.excel.EasyExcel;
 import lombok.Getter;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Used to pack some useful data related to a seat table.
@@ -44,4 +49,35 @@ public class Seat {
         if (luckyPerson == null) luckyPerson = "";
         this.luckyPerson = luckyPerson;
     }
+
+    /**
+     * @param file to export seat table to.
+     */
+    public void exportToExcelDocument(File file){
+        Objects.requireNonNull(file);
+        Date date=new Date();
+        try {
+            if (!file.createNewFile()) {
+                file.delete();
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        EasyExcel.write(file, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(this));
+        file.setReadOnly();
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder str=new StringBuilder();
+        List<SeatRowData> seat=SeatRowData.fromSeat(this);
+        for (SeatRowData seatRowData : seat) {
+            str.append(seatRowData.toString());
+            str.append("\n");
+        }
+
+        return str.toString();
+    }
+
 }

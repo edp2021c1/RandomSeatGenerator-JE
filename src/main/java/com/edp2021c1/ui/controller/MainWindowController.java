@@ -1,11 +1,10 @@
 package com.edp2021c1.ui.controller;
 
-import com.alibaba.excel.EasyExcel;
 import com.edp2021c1.Main;
 import com.edp2021c1.core.Seat;
 import com.edp2021c1.core.SeatConfig;
 import com.edp2021c1.core.SeatGenerator;
-import com.edp2021c1.data.SeatRowData;
+import com.edp2021c1.core.SeatRowData;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -73,17 +72,8 @@ public class MainWindowController {
         if (f == null) {
             return;
         } else {
-            try {
-                if (!f.createNewFile()) {
-                    f.delete();
-                    f.createNewFile();
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            seat.exportToExcelDocument(f);
         }
-        EasyExcel.write(f, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seat));
-        f.setReadOnly();
     }
 
     @FXML

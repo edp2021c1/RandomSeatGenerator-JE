@@ -1,8 +1,6 @@
-package com.edp2021c1.data;
+package com.edp2021c1.core;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
-import com.edp2021c1.core.Seat;
-import com.edp2021c1.core.SeatConfig;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
@@ -83,5 +81,21 @@ public class SeatRowData {
         Arrays.fill(list, emptyRow);
 
         return Arrays.asList(list);
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder str=new StringBuilder();
+        for(int i=0;i<MAX_COLUMN_COUNT;i++){
+            try {
+                Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
+                f.setAccessible(true);
+                str.append(f.get(this));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return str.toString();
     }
 }

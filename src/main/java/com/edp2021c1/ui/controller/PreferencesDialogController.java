@@ -81,7 +81,7 @@ public class PreferencesDialogController {
             return;
         }
 
-        SeatConfig seatConfig = Main.loadConfigFromFile(f);
+        SeatConfig seatConfig = SeatConfig.fromJsonFile(f);
 
         rowCountInput.setText(seatConfig.row_count);
         columnCountInput.setText(seatConfig.column_count);
