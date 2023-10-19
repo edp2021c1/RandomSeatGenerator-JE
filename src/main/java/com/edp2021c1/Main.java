@@ -21,15 +21,15 @@ public class Main {
      * @param args used to start the application.
      */
     public static void main(String[] args) {
-        if(!Arrays.asList(args).contains("--nogui")) {
+        if (!Arrays.asList(args).contains("--nogui")) {
             reloadConfig();
             Application.launch(App.class, args);
             return;
         }
         System.out.print("Input seed: ");
-        long seed=new Scanner(System.in).nextLong();
-        Seat seat=new SeatGenerator(reloadConfig()).generate(seed);
-        File f=new File("seat_table.xlsx");
+        long seed = new Scanner(System.in).nextLong();
+        Seat seat = new SeatGenerator(reloadConfig()).generate(seed);
+        File f = new File("seat_table.xlsx");
         seat.exportToExcelDocument(f);
     }
 

@@ -53,9 +53,9 @@ public class Seat {
     /**
      * @param file to export seat table to.
      */
-    public void exportToExcelDocument(File file){
+    public void exportToExcelDocument(File file) {
         Objects.requireNonNull(file);
-        Date date=new Date();
+        Date date = new Date();
         try {
             if (!file.createNewFile()) {
                 file.delete();
@@ -69,9 +69,9 @@ public class Seat {
     }
 
     @Override
-    public String toString(){
-        StringBuilder str=new StringBuilder();
-        List<SeatRowData> seat=SeatRowData.fromSeat(this);
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        List<SeatRowData> seat = SeatRowData.fromSeat(this);
         for (SeatRowData seatRowData : seat) {
             str.append(seatRowData.toString());
             str.append("\n");

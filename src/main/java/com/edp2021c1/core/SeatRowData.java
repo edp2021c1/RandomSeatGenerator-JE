@@ -84,9 +84,9 @@ public class SeatRowData {
     }
 
     @Override
-    public String toString(){
-        StringBuilder str=new StringBuilder();
-        for(int i=0;i<MAX_COLUMN_COUNT;i++){
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < MAX_COLUMN_COUNT; i++) {
             try {
                 Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
                 f.setAccessible(true);

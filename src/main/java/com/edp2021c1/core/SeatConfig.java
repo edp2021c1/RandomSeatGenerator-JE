@@ -61,6 +61,24 @@ public final class SeatConfig {
     }
 
     /**
+     * @param file to load from.
+     * @return {@code SeatConfig} loaded from file.
+     */
+    public static SeatConfig fromJsonFile(File file) {
+        byte[] bytes;
+        try {
+            FileInputStream inputStream = new FileInputStream(file);
+            bytes = new byte[inputStream.available()];
+            inputStream.read(bytes);
+            inputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        String str = new String(bytes, StandardCharsets.UTF_8);
+        return new Gson().fromJson(str, SeatConfig.class);
+    }
+
+    /**
      * @return {@link #row_count} in the format of an integer.
      */
     public int getRowCount() {
@@ -152,23 +170,5 @@ public final class SeatConfig {
                 && Objects.equals(group_leader_list, c.group_leader_list)
                 && Objects.equals(separate_list, c.separate_list)
                 && Objects.equals(lucky_option, c.lucky_option);
-    }
-
-    /**
-     * @param file to load from.
-     * @return {@code SeatConfig} loaded from file.
-     */
-    public static SeatConfig fromJsonFile(File file){
-        byte[] bytes;
-        try {
-            FileInputStream inputStream = new FileInputStream(file);
-            bytes = new byte[inputStream.available()];
-            inputStream.read(bytes);
-            inputStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        String str = new String(bytes, StandardCharsets.UTF_8);
-        return new Gson().fromJson(str, SeatConfig.class);
     }
 }

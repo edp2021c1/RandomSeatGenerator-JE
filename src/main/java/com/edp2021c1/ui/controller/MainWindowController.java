@@ -63,15 +63,14 @@ public class MainWindowController {
 
     @FXML
     void exportSeatTable(ActionEvent event) {
-        if (seat == null) generateSeatTable(null);
+        if (seat == null) {
+            generateSeatTable(null);
+        }
         FileChooser fc = new FileChooser();
         fc.setTitle("导出座位表");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
         File f = fc.showSaveDialog(stage);
-        Date date = new Date();
-        if (f == null) {
-            return;
-        } else {
+        if (f != null) {
             seat.exportToExcelDocument(f);
         }
     }
