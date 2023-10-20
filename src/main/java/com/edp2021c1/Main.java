@@ -9,9 +9,7 @@ import javafx.application.Application;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Application intro, loads seat config.
@@ -21,16 +19,47 @@ public class Main {
      * @param args used to start the application.
      */
     public static void main(String[] args) {
-        if (!Arrays.asList(args).contains("--nogui")) {
+        List<String> arguments = Arrays.asList(args);
+        // 如果不是命令行模式则启动JavaFX程序
+        if (!arguments.contains("--nogui")) {
             reloadConfig();
             Application.launch(App.class, args);
             return;
         }
-        System.out.print("Input seed: ");
-        long seed = new Scanner(System.in).nextLong();
+
+        // 命令行参数有关
+        int i;
+        long seed = new Random().nextLong();  // 种子，默认为随机数
+        Date date = new Date();
+        String outputPath = String.format("%tF.xlsx", date); //导出路径，默认为当前路径
+
+        // 获取配置文件路径
+        if ((i = arguments.lastIndexOf("--config-path")) != -1 && i < arguments.size() - 1) {
+            saveConfig(SeatConfig.fromJsonFile(new File(arguments.get(i + 1))));
+        }
+
+        // 获取种子
+        if ((i = arguments.lastIndexOf("--seed")) != -1 && i < arguments.size() - 1) {
+            seed = Long.parseLong(arguments.get(i + 1));
+        }
+
+        //获取导出路径
+        if ((i = arguments.lastIndexOf("--output-path")) != -1 && i < arguments.size() - 1) {
+            File tmp = new File(arguments.get(i + 1));
+            if (tmp.isDirectory()) {
+                outputPath = new File(tmp, outputPath).getAbsolutePath();
+            } else {
+                outputPath = tmp.getAbsolutePath();
+                if (!outputPath.endsWith(".xlsx")) {
+                    outputPath += ".xlsx";
+                }
+            }
+        }
+
+        File f = new File(outputPath);
         Seat seat = new SeatGenerator(reloadConfig()).generate(seed);
-        File f = new File("seat_table.xlsx");
         seat.exportToExcelDocument(f);
+        System.out.println("Seat table successfully exported to" + f.getAbsolutePath() + ".");
     }
 
     /**

@@ -5,6 +5,7 @@ build/
 !**/src/test/**/build/
 
 seat_config.json
+seat_table.xlsx
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

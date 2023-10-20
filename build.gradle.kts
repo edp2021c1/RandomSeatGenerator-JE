@@ -3,17 +3,18 @@ plugins {
 }
 
 group = "com.edp2021c1"
-version = "1.2.4"
+version = "1.2.5"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // https://mavenlibs.com/maven/dependency/com.alibaba/easyexcel
     implementation("com.alibaba:easyexcel:3.3.2")
-    // https://mavenlibs.com/maven/dependency/com.google.code.gson/gson
+    implementation("org.slf4j:slf4j-simple:2.0.5") // EasyExcel不加这个就会报错。。。
     implementation("com.google.code.gson:gson:2.10.1")
+
+
     compileOnly("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
 }

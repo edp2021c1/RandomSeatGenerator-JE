@@ -90,7 +90,10 @@ public class SeatRowData {
             try {
                 Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
                 f.setAccessible(true);
-                str.append(f.get(this));
+                if (f.get(this) != null) {
+                    str.append(f.get(this));
+                    str.append("\t");
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
