@@ -3,9 +3,8 @@ package com.edp2021c1.core;
 import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,17 +64,12 @@ public final class SeatConfig {
      * @return {@code SeatConfig} loaded from file.
      */
     public static SeatConfig fromJsonFile(File file) {
-        byte[] bytes;
         try {
-            FileInputStream inputStream = new FileInputStream(file);
-            bytes = new byte[inputStream.available()];
-            inputStream.read(bytes);
-            inputStream.close();
+            return new Gson().fromJson(new FileReader(file), SeatConfig.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        String str = new String(bytes, StandardCharsets.UTF_8);
-        return new Gson().fromJson(str, SeatConfig.class);
+        //String str = new String(bytes, StandardCharsets.UTF_8);
     }
 
     /**
@@ -170,5 +164,14 @@ public final class SeatConfig {
                 && Objects.equals(group_leader_list, c.group_leader_list)
                 && Objects.equals(separate_list, c.separate_list)
                 && Objects.equals(lucky_option, c.lucky_option);
+    }
+
+    /**
+     * Translate the object into {@code Json}.
+     *
+     * @return a {@code Json} representation of the object.
+     */
+    public String toJson(){
+        return new Gson().toJson(this);
     }
 }

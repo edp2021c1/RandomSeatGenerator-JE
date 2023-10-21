@@ -64,21 +64,27 @@ public class Main {
     }
 
     /**
+     * Reload config from {@code seat_config.json} under the current directory.
+     * If the file does nod exist, it will be created and containing the built-in config.
+     *
      * @return default seat config loaded from file.
      */
     public static SeatConfig reloadConfig() {
         try {
             File f = new File("seat_config.json");
             if (f.createNewFile()) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/conf/seat_config.json"))));
+                // 获取jar内文件信息的特殊方法
+                BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/conf/seat_config.json"))));
                 StringBuilder buffer = new StringBuilder();
-                String line;
-                while ((line = in.readLine()) != null) {
-                    buffer.append(line);
+                String str;
+                while ((str = reader.readLine()) != null) {
+                    buffer.append(str);
                 }
-                FileOutputStream outputStream = new FileOutputStream(f);
-                outputStream.write(buffer.toString().getBytes(StandardCharsets.UTF_8));
-                outputStream.close();
+                FileWriter writer = new FileWriter(f);
+                str=buffer.toString();
+                writer.write(str);
+                writer.close();
+                return new Gson().fromJson(str,SeatConfig.class);
             }
 
             return SeatConfig.fromJsonFile(f);
@@ -88,12 +94,14 @@ public class Main {
     }
 
     /**
+     * Writes {@code SeatConfig} to {@code seat_config.json} under the current directory.
+     *
      * @param config {@code SeatConfig} to set as the default seat config and save to file.
      */
     public static void saveConfig(SeatConfig config) {
         try {
-            FileOutputStream out = new FileOutputStream("seat_config.json");
-            out.write(new Gson().toJson(config).getBytes(StandardCharsets.UTF_8));
+            FileWriter out = new FileWriter("seat_config.json");
+            out.write(config.toJson());
             out.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
