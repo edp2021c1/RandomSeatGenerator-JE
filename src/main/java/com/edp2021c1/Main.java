@@ -27,15 +27,16 @@ public class Main {
             return;
         }
 
-        // 命令行参数有关
+        // 命令行参数相关
         int i;
         long seed = new Random().nextLong();  // 种子，默认为随机数
         Date date = new Date();
-        String outputPath = String.format("%tF.xlsx", date); //导出路径，默认为当前路径
+        String outputPath = String.format("%tF.xlsx", date); // 导出路径，默认为当前路径
+        SeatConfig conf=reloadConfig(); // 座位表生成配置，默认为当前目录下的seat_config.json中的配置
 
         // 获取配置文件路径
         if ((i = arguments.lastIndexOf("--config-path")) != -1 && i < arguments.size() - 1) {
-            saveConfig(SeatConfig.fromJsonFile(new File(arguments.get(i + 1))));
+            conf=SeatConfig.fromJsonFile(new File(arguments.get(i + 1)));
         }
 
         // 获取种子
@@ -57,9 +58,9 @@ public class Main {
         }
 
         File f = new File(outputPath);
-        Seat seat = new SeatGenerator(reloadConfig()).generate(seed);
+        Seat seat = new SeatGenerator(conf).generate(seed);
         seat.exportToExcelDocument(f);
-        System.out.println("Seat table successfully exported to" + f.getAbsolutePath() + ".");
+        System.out.println("Seat table successfully exported to " + f.getAbsolutePath() + ".");
     }
 
     /**

@@ -90,6 +90,7 @@ public class PreferencesDialogController {
         nameListInput.setText(seatConfig.person_sort_by_height);
         groupLeaderListInput.setText(seatConfig.group_leader_list);
         separateListInput.setText(seatConfig.separate_list);
+        luckyOption.setSelected(seatConfig.lucky_option);
     }
 
     @FXML
