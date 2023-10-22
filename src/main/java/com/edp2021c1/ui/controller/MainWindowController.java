@@ -70,7 +70,7 @@ public class MainWindowController {
         fc.setTitle("导出座位表");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
         fc.setInitialDirectory(new File("./"));
-        fc.setInitialFileName(String.format("%tF",new Date()));
+        fc.setInitialFileName(String.format("%tF", new Date()));
         File f = fc.showSaveDialog(stage);
         if (f != null) {
             seat.exportToExcelDocument(f);

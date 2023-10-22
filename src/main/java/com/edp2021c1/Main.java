@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import javafx.application.Application;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -21,9 +20,9 @@ public class Main {
     public static void main(String[] args) {
         List<String> arguments = Arrays.asList(args);
         // 如果有“--help”参数则打印帮助信息
-        if(arguments.contains("--help")){
+        if (arguments.contains("--help")) {
             System.out.println(
-                            """
+                    """
                             OPTIONS:
                                 --help                  Print this message and then quit.
                                 --license               Print the license of this application and then quit.
@@ -37,10 +36,10 @@ public class Main {
         }
 
         // 如果有“--license”参数则打印许可证
-        if(arguments.contains("--license")){
+        if (arguments.contains("--license")) {
             System.out.println(
-                            """
-                            
+                    """
+                                                        
                             Copyright (c) 2023  EDP2021C1
                             This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
                             This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -55,7 +54,7 @@ public class Main {
 
                             Contributors:
                             Calboot <calboot39@outlook.com>
-                            
+                                                        
                             """
             );
             System.exit(0);
@@ -72,11 +71,11 @@ public class Main {
         int i;
         long seed = new Random().nextLong();  // 种子，默认为随机数
         String outputPath = String.format("%tF.xlsx", new Date()); // 导出路径，默认为当前路径
-        SeatConfig conf=reloadConfig(); // 座位表生成配置，默认为当前目录下的seat_config.json中的配置
+        SeatConfig conf = reloadConfig(); // 座位表生成配置，默认为当前目录下的seat_config.json中的配置
 
         // 获取配置文件路径
         if ((i = arguments.lastIndexOf("--config-path")) != -1 && i < arguments.size() - 1) {
-            conf=SeatConfig.fromJsonFile(new File(arguments.get(i + 1)));
+            conf = SeatConfig.fromJsonFile(new File(arguments.get(i + 1)));
         }
 
         // 获取种子
@@ -122,10 +121,10 @@ public class Main {
                     buffer.append(str);
                 }
                 FileWriter writer = new FileWriter(f);
-                str=buffer.toString();
+                str = buffer.toString();
                 writer.write(str);
                 writer.close();
-                return new Gson().fromJson(str,SeatConfig.class);
+                return new Gson().fromJson(str, SeatConfig.class);
             }
 
             return SeatConfig.fromJsonFile(f);

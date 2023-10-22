@@ -171,7 +171,7 @@ public final class SeatConfig {
      *
      * @return a {@code Json} representation of the object.
      */
-    public String toJson(){
+    public String toJson() {
         return new Gson().toJson(this);
     }
 }
