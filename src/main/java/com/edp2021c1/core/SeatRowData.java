@@ -61,8 +61,10 @@ public class SeatRowData {
             }
             seatRowData.add(new SeatRowData(tmp));
         }
+        if (seat.getConfig().lucky_option) {
+            seatRowData.add(new SeatRowData("lucky person", seat.getLuckyPerson()));
+        }
         seatRowData.add(new SeatRowData("seed", Long.toString(seat.getSeed())));
-        if (seat.getConfig().lucky_option) seatRowData.add(new SeatRowData("lucky person", seat.getLuckyPerson()));
         return seatRowData;
     }
 

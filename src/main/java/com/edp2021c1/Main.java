@@ -20,18 +20,58 @@ public class Main {
      */
     public static void main(String[] args) {
         List<String> arguments = Arrays.asList(args);
+        // 如果有“--help”参数则打印帮助信息
+        if(arguments.contains("--help")){
+            System.out.println(
+                            """
+                            OPTIONS:
+                                --help                  Print this message and then quit.
+                                --license               Print the license of this application and then quit.
+                                --nogui                 Start the application in console mode.
+                                --config-path <path>    Path of a specific Json config file (default to seat_config.json under the current directory).
+                                --seed <value>          Seed used to generate seat table (default to a random number), must be in the format of a number.
+                                --output-path <path>    Path to export seat table to (default to yyyy-mm-dd.xlsx under the current directory).
+                            """
+            );
+            System.exit(0);
+        }
+
+        // 如果有“--license”参数则打印许可证
+        if(arguments.contains("--license")){
+            System.out.println(
+                            """
+                            
+                            Copyright (c) 2023  EDP2021C1
+                            This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+                            This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+                            See the GNU General Public License for more details.
+                            You should have received a copy of the GNU General Public License along with this program.
+                            If not, see <https://www.gnu.org/licenses/>.
+
+                            Libraries that have been used in RandomSeatGenerator are listed below (Sorted by date added):
+                            JavaFX v20.0.1 (GPLv2)
+                            Gson v2.10.1 (Apache 2.0)
+                            EasyExcel v3.3.2 (Apache 2.0)
+
+                            Contributors:
+                            Calboot <calboot39@outlook.com>
+                            
+                            """
+            );
+            System.exit(0);
+        }
+
         // 如果不是命令行模式则启动JavaFX程序
         if (!arguments.contains("--nogui")) {
             reloadConfig();
             Application.launch(App.class, args);
-            return;
+            System.exit(0);
         }
 
         // 命令行参数相关
         int i;
         long seed = new Random().nextLong();  // 种子，默认为随机数
-        Date date = new Date();
-        String outputPath = String.format("%tF.xlsx", date); // 导出路径，默认为当前路径
+        String outputPath = String.format("%tF.xlsx", new Date()); // 导出路径，默认为当前路径
         SeatConfig conf=reloadConfig(); // 座位表生成配置，默认为当前目录下的seat_config.json中的配置
 
         // 获取配置文件路径
@@ -61,6 +101,7 @@ public class Main {
         Seat seat = new SeatGenerator(conf).generate(seed);
         seat.exportToExcelDocument(f);
         System.out.println("Seat table successfully exported to " + f.getAbsolutePath() + ".");
+        System.exit(0);
     }
 
     /**
