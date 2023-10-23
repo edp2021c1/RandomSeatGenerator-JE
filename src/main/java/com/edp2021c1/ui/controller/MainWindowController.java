@@ -94,7 +94,7 @@ public class MainWindowController {
             generateRandomSeed(null);
         }
         seed = Long.parseLong(seedInput.getText());
-        seat = new SeatGenerator(Main.reloadConfig()).generate(seed);
+        seat = new SeatGenerator().generate(Main.reloadConfig(), seed);
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
     }
 

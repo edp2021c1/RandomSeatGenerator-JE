@@ -30,9 +30,11 @@ public class Separate {
      *
      * @param s a {@code String} contains the names of the two people separated, divided by a {@code space}.
      */
-    public Separate(String s) {
+    public Separate(String s) throws IllegalSeatConfigException {
         String[] t = s.split(" ");
-        if (t.length < 2) throw new RuntimeException("Invalid separate data");
+        if (t.length < 2) {
+            throw new IllegalSeatConfigException(String.format("Invalid separate pair: {%s}", s));
+        }
         a = t[0];
         b = t[1];
     }

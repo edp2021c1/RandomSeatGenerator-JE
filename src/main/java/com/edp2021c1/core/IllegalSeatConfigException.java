@@ -1,0 +1,49 @@
+package com.edp2021c1.core;
+
+/**
+ * Thrown if {@code SeatConfig} has an illegal format.
+ *
+ * @author Calboot
+ */
+public class IllegalSeatConfigException extends RuntimeException {
+    /**
+     * Default message.
+     */
+    static final String DEFAULT_MESSAGE = "Invalid seat config.";
+
+    /**
+     * Constructs a new exception with {@link #DEFAULT_MESSAGE}.
+     */
+    public IllegalSeatConfigException() {
+        super(DEFAULT_MESSAGE);
+    }
+
+    /**
+     * Constructs an {@code IllegalSeatConfigException} with the specified detail message.
+     *
+     * @param message the detail message.
+     */
+    public IllegalSeatConfigException(String message) {
+        super(message);
+    }
+
+    /**
+     * Constructs a new exception with the specified detail message and
+     * cause.
+     *
+     * <p>Note that the detail message associated with {@code cause} is
+     * <i>not</i> automatically incorporated in this exception's detail
+     * message.
+     *
+     * @param message the detail message (which is saved for later retrieval
+     *                by the {@link Throwable#getMessage()} method).
+     * @param cause   the cause (which is saved for later retrieval by the
+     *                {@link Throwable#getCause()} method).  (A {@code null} value
+     *                is permitted, and indicates that the cause is nonexistent or
+     *                unknown.)
+     */
+    public IllegalSeatConfigException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+}

@@ -12,39 +12,22 @@ import java.util.Random;
  * @since 1.2.0
  */
 public final class SeatGenerator {
-    /**
-     * The instance of {@code Random} used to generate random numbers.
-     */
-    private final Random random = new Random();
-    /**
-     * Stores the config.
-     */
-    private final SeatConfig config;
-    /**
-     * Buffers the seat table.
-     */
-    private List<String> seat;
-
-    /**
-     * Create an instance with {@code config}
-     *
-     * @param config used to generate seat table with this instance.
-     */
-    public SeatGenerator(SeatConfig config) {
-        this.config = config;
-    }
 
     /**
      * Generate a seat table using the pre-set config and the seed.
      *
-     * @param seed used to generate the seat table.
+     * @param config used to generate the seat table.
+     * @param seed   used to generate the seat table.
      * @return an instance of {@code Seat}.
      */
-    public Seat generate(long seed) {
-        random.setSeed(seed);
+    public Seat generate(SeatConfig config, long seed) throws NullPointerException, IllegalSeatConfigException {
         if (config == null) {
-            throw new NullPointerException("Config cannot be null.");
+            throw new NullPointerException("Seat config cannot be null");
         }
+        if (!checkConfigFormat(config)) {
+            throw new IllegalSeatConfigException();
+        }
+        Random random = new Random(seed);
 
         // 获取配置
         int rowCount = config.getRowCount();
@@ -76,7 +59,7 @@ public final class SeatGenerator {
         }
 
         // 座位表变量
-        seat = Arrays.asList(new String[seatNum]);
+        List<String> seat = Arrays.asList(new String[seatNum]);
         List<Boolean> sorted = Arrays.asList(new Boolean[nameList.size()]);
         String luckyPerson = null;
 
@@ -156,7 +139,7 @@ public final class SeatGenerator {
                 }
             }
 
-        } while (!check());
+        } while (!checkSeatFormat(seat, config));
 
         //组长
         for (tmp_1 = 0; tmp_1 < columnCount; tmp_1++) {
@@ -174,7 +157,8 @@ public final class SeatGenerator {
      *
      * @return {@code true} if the seat table fits the config.
      */
-    private boolean check() {
+    private boolean checkSeatFormat(List<String> seatTable, SeatConfig config) throws IllegalSeatConfigException {
+        checkConfigFormat(config);
         boolean hasLeader = false;
         boolean isSeparated = true;
         int i, j, splen, len = config.getNameList().size(), c = config.getColumnCount(), r = len % c == 0 ? len / c : len / c + 1;
@@ -183,7 +167,7 @@ public final class SeatGenerator {
         // 检查每列是否都有组长
         for (i = 0; i < c; i++) {
             for (j = 0; j < r; j++) {
-                hasLeader = gl.contains(seat.get(j * c + i));
+                hasLeader = gl.contains(seatTable.get(j * c + i));
                 if (hasLeader) {
                     break;
                 }
@@ -196,13 +180,32 @@ public final class SeatGenerator {
         // 检查是否分开
         for (i = 0, splen = sp.size(); i < splen; i++) {
             if (isSeparated) {
-                isSeparated = sp.get(i).check(seat);
+                isSeparated = sp.get(i).check(seatTable);
                 continue;
             }
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Check if the specific {@code SeatConfig} is in a right format.
+     *
+     * @param config to be checked.
+     * @return true if the format of the config is okay.
+     */
+    public boolean checkConfigFormat(SeatConfig config) throws IllegalSeatConfigException {
+        boolean b = true;
+        try {
+            config.getRowCount();
+            config.getColumnCount();
+            config.getRandomBetweenRows();
+            config.getLastRowPos();
+        } catch (IllegalSeatConfigException e) {
+            b = false;
+        }
+        return b;
     }
 
 }

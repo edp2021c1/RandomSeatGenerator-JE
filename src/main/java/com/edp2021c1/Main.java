@@ -4,11 +4,13 @@ import com.edp2021c1.core.Seat;
 import com.edp2021c1.core.SeatConfig;
 import com.edp2021c1.core.SeatGenerator;
 import com.edp2021c1.ui.App;
-import com.google.gson.Gson;
 import javafx.application.Application;
 
 import java.io.*;
 import java.util.*;
+
+import static java.lang.System.exit;
+import static java.lang.System.out;
 
 /**
  * Application intro, loads seat config.
@@ -21,7 +23,7 @@ public class Main {
         List<String> arguments = Arrays.asList(args);
         // 如果有“--help”参数则打印帮助信息
         if (arguments.contains("--help")) {
-            System.out.println(
+            out.println(
                     """
                             OPTIONS:
                                 --help                  Print this message and then quit.
@@ -32,12 +34,12 @@ public class Main {
                                 --output-path <path>    Path to export seat table to (default to yyyy-mm-dd.xlsx under the current directory).
                             """
             );
-            System.exit(0);
+            exit(0);
         }
 
         // 如果有“--license”参数则打印许可证
         if (arguments.contains("--license")) {
-            System.out.println(
+            out.println(
                     """
                                                         
                             Copyright (c) 2023  EDP2021C1
@@ -57,14 +59,14 @@ public class Main {
                                                         
                             """
             );
-            System.exit(0);
+            exit(0);
         }
 
         // 如果不是命令行模式则启动JavaFX程序
         if (!arguments.contains("--nogui")) {
             reloadConfig();
             Application.launch(App.class, args);
-            System.exit(0);
+            exit(0);
         }
 
         // 命令行参数相关
@@ -75,7 +77,11 @@ public class Main {
 
         // 获取配置文件路径
         if ((i = arguments.lastIndexOf("--config-path")) != -1 && i < arguments.size() - 1) {
-            conf = SeatConfig.fromJsonFile(new File(arguments.get(i + 1)));
+            try {
+                conf = SeatConfig.fromJsonFile(new File(arguments.get(i + 1)));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         // 获取种子
@@ -97,10 +103,11 @@ public class Main {
         }
 
         File f = new File(outputPath);
-        Seat seat = new SeatGenerator(conf).generate(seed);
+        Seat seat;
+        seat = new SeatGenerator().generate(conf, seed);
         seat.exportToExcelDocument(f);
-        System.out.println("Seat table successfully exported to " + f.getAbsolutePath() + ".");
-        System.exit(0);
+        out.println("Seat table successfully exported to " + f.getAbsolutePath() + ".");
+        exit(0);
     }
 
     /**
@@ -110,8 +117,8 @@ public class Main {
      * @return default seat config loaded from file.
      */
     public static SeatConfig reloadConfig() {
+        File f = new File("seat_config.json");
         try {
-            File f = new File("seat_config.json");
             if (f.createNewFile()) {
                 // 获取jar内文件信息的特殊方法
                 BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/conf/seat_config.json"))));
@@ -120,11 +127,11 @@ public class Main {
                 while ((str = reader.readLine()) != null) {
                     buffer.append(str);
                 }
-                FileWriter writer = new FileWriter(f);
                 str = buffer.toString();
+                FileWriter writer = new FileWriter(f);
                 writer.write(str);
                 writer.close();
-                return new Gson().fromJson(str, SeatConfig.class);
+                return SeatConfig.fromJsonFile(f);
             }
 
             return SeatConfig.fromJsonFile(f);
@@ -140,9 +147,9 @@ public class Main {
      */
     public static void saveConfig(SeatConfig config) {
         try {
-            FileWriter out = new FileWriter("seat_config.json");
-            out.write(config.toJson());
-            out.close();
+            FileWriter writer = new FileWriter("seat_config.json");
+            writer.write(config.toJson());
+            writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

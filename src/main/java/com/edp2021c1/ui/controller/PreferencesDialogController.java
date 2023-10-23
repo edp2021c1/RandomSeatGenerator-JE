@@ -13,6 +13,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -81,7 +82,12 @@ public class PreferencesDialogController {
             return;
         }
 
-        SeatConfig seatConfig = SeatConfig.fromJsonFile(f);
+        SeatConfig seatConfig;
+        try {
+            seatConfig = SeatConfig.fromJsonFile(f);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
         rowCountInput.setText(seatConfig.row_count);
         columnCountInput.setText(seatConfig.column_count);

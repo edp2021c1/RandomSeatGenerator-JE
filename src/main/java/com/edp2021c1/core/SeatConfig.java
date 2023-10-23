@@ -3,8 +3,8 @@ package com.edp2021c1.core;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,61 +62,63 @@ public final class SeatConfig {
     /**
      * @param file to load from.
      * @return {@code SeatConfig} loaded from file.
+     * @throws FileNotFoundException if the file does not exist, is a directory rather than a regular file, or for some other reason cannot be opened for reading.
      */
-    public static SeatConfig fromJsonFile(File file) {
-        try {
-            return new Gson().fromJson(new FileReader(file), SeatConfig.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        //String str = new String(bytes, StandardCharsets.UTF_8);
+    public static SeatConfig fromJsonFile(File file) throws FileNotFoundException {
+        return new Gson().fromJson(new FileReader(file), SeatConfig.class);
     }
 
     /**
      * @return {@link #row_count} in the format of an integer.
      */
-    public int getRowCount() {
+    public int getRowCount() throws IllegalSeatConfigException {
+        int r;
         try {
-            return parseUnsignedInt(row_count);
+            r = parseUnsignedInt(row_count);
         } catch (NumberFormatException e) {
-            throw new RuntimeException(e);
+            throw new IllegalSeatConfigException(String.format("Invalid row_count: %s.", row_count), e);
         }
+        return r;
     }
 
     /**
      * @return {@link #column_count} in the format of an integer.
      */
-    public int getColumnCount() {
+    public int getColumnCount() throws IllegalSeatConfigException {
+        int c;
         try {
-            return parseUnsignedInt(column_count);
+            c = parseUnsignedInt(column_count);
         } catch (NumberFormatException e) {
-            throw new RuntimeException(e);
+            throw new IllegalSeatConfigException(String.format("Invalid column_count: %s.", column_count), e);
         }
+        return c;
     }
 
     /**
      * @return {@link #random_between_rows} in the format of an integer.
      */
-    public int getRandomBetweenRows() {
+    public int getRandomBetweenRows() throws IllegalSeatConfigException {
+        int r;
         try {
-            return parseUnsignedInt(random_between_rows);
+            r = parseUnsignedInt(random_between_rows);
         } catch (NumberFormatException e) {
-            throw new RuntimeException(e);
+            throw new IllegalSeatConfigException(String.format("Invalid random_between_rows: %s.", random_between_rows), e);
         }
+        return r;
     }
 
     /**
      * @return {@link #last_row_pos_can_be_choosed} in the format of a list of {@code int}.
      */
-    public ArrayList<Integer> getLastRowPos() {
+    public ArrayList<Integer> getLastRowPos() throws IllegalSeatConfigException {
         String[] t = last_row_pos_can_be_choosed.split(" ");
         ArrayList<Integer> i = new ArrayList<>(t.length);
         try {
             for (String s : t) {
                 i.add(parseUnsignedInt(s));
             }
-        } catch (NumberFormatException e) {
-            throw new RuntimeException(e);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalSeatConfigException(String.format("Invalid last row positions: %s.", last_row_pos_can_be_choosed), e);
         }
         return i;
     }
@@ -138,7 +140,7 @@ public final class SeatConfig {
     /**
      * @return {@link #separate_list} in the format of a list of {@code Separate}.
      */
-    public List<Separate> getSeparatedList() {
+    public List<Separate> getSeparatedList() throws IllegalSeatConfigException {
         String[] t = separate_list.split("\n");
         ArrayList<Separate> s = new ArrayList<>(t.length);
 
@@ -152,18 +154,18 @@ public final class SeatConfig {
     }
 
     /**
-     * @param c another {@code SeatConfig}.
+     * @param another another {@code SeatConfig} to compare with.
      * @return whether these who instances are equal.
      */
-    public boolean equals(SeatConfig c) {
-        return Objects.equals(row_count, c.row_count)
-                && Objects.equals(column_count, c.column_count)
-                && Objects.equals(random_between_rows, c.random_between_rows)
-                && Objects.equals(last_row_pos_can_be_choosed, c.last_row_pos_can_be_choosed)
-                && Objects.equals(person_sort_by_height, c.person_sort_by_height)
-                && Objects.equals(group_leader_list, c.group_leader_list)
-                && Objects.equals(separate_list, c.separate_list)
-                && Objects.equals(lucky_option, c.lucky_option);
+    public boolean equals(SeatConfig another) {
+        return Objects.equals(row_count, another.row_count)
+                && Objects.equals(column_count, another.column_count)
+                && Objects.equals(random_between_rows, another.random_between_rows)
+                && Objects.equals(last_row_pos_can_be_choosed, another.last_row_pos_can_be_choosed)
+                && Objects.equals(person_sort_by_height, another.person_sort_by_height)
+                && Objects.equals(group_leader_list, another.group_leader_list)
+                && Objects.equals(separate_list, another.separate_list)
+                && Objects.equals(lucky_option, another.lucky_option);
     }
 
     /**
