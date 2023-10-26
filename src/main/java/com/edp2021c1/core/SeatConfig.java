@@ -176,4 +176,15 @@ public final class SeatConfig {
     public String toJson() {
         return new Gson().toJson(this);
     }
+
+    /**
+     * Check format.
+     */
+    public void checkFormat() throws IllegalSeatConfigException {
+        getRowCount();
+        getColumnCount();
+        getRandomBetweenRows();
+        getLastRowPos();
+        getSeparatedList();
+    }
 }

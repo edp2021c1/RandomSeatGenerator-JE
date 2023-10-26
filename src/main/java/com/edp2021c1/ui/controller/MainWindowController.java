@@ -89,11 +89,12 @@ public class MainWindowController {
 
         long seed;
         try {
-            Long.parseLong(seedInput.getText());
+            seed = Long.parseLong(seedInput.getText());
         } catch (NumberFormatException e) {
+            System.err.println("WARNING: Invalid seed.");
             generateRandomSeed(null);
+            seed = Long.parseLong(seedInput.getText());
         }
-        seed = Long.parseLong(seedInput.getText());
         seat = new SeatGenerator().generate(Main.reloadConfig(), seed);
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
     }

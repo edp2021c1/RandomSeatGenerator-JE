@@ -1,6 +1,7 @@
 package com.edp2021c1.ui.controller;
 
 import com.edp2021c1.Main;
+import com.edp2021c1.core.IllegalSeatConfigException;
 import com.edp2021c1.core.SeatConfig;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -57,17 +58,24 @@ public class PreferencesDialogController {
 
     @FXML
     void applySeatConfig(ActionEvent event) {
-        SeatConfig c = new SeatConfig();
-        c.row_count = rowCountInput.getText();
-        c.column_count = columnCountInput.getText();
-        c.random_between_rows = rbrInput.getText();
-        c.last_row_pos_can_be_choosed = lastRowPosInput.getText();
-        c.person_sort_by_height = nameListInput.getText();
-        c.group_leader_list = groupLeaderListInput.getText();
-        c.separate_list = separateListInput.getText();
-        c.lucky_option = luckyOption.isSelected();
-        if (!Main.reloadConfig().equals(c)) {
-            Main.saveConfig(c);
+        SeatConfig seatConfig = new SeatConfig();
+        seatConfig.row_count = rowCountInput.getText();
+        seatConfig.column_count = columnCountInput.getText();
+        seatConfig.random_between_rows = rbrInput.getText();
+        seatConfig.last_row_pos_can_be_choosed = lastRowPosInput.getText();
+        seatConfig.person_sort_by_height = nameListInput.getText();
+        seatConfig.group_leader_list = groupLeaderListInput.getText();
+        seatConfig.separate_list = separateListInput.getText();
+        seatConfig.lucky_option = luckyOption.isSelected();
+
+        if (!Main.reloadConfig().equals(seatConfig)) {
+            try {
+                Main.saveConfig(seatConfig);
+            } catch (IllegalSeatConfigException e) {
+                System.err.printf("WARNING: %s Will discard changes.%n", e.getMessage());
+                initConfig(Main.reloadConfig());
+                return;
+            }
             MainWindowController.configIsChanged = true;
         }
     }
@@ -82,11 +90,11 @@ public class PreferencesDialogController {
             return;
         }
 
-        SeatConfig seatConfig;
+        SeatConfig seatConfig = Main.reloadConfig();
         try {
             seatConfig = SeatConfig.fromJsonFile(f);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            System.err.println("WARNING: Failed to load seat config from file.");
         }
 
         rowCountInput.setText(seatConfig.row_count);
@@ -116,7 +124,10 @@ public class PreferencesDialogController {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);
 
-        SeatConfig seatConfig = Main.reloadConfig();
+        initConfig(Main.reloadConfig());
+    }
+
+    void initConfig(SeatConfig seatConfig) {
         rowCountInput.setText(seatConfig.row_count);
         columnCountInput.setText(seatConfig.column_count);
         rbrInput.setText(seatConfig.random_between_rows);

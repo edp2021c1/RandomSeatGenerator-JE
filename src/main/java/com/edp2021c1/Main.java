@@ -4,6 +4,7 @@ import com.edp2021c1.core.Seat;
 import com.edp2021c1.core.SeatConfig;
 import com.edp2021c1.core.SeatGenerator;
 import com.edp2021c1.ui.App;
+import com.google.gson.Gson;
 import javafx.application.Application;
 
 import java.io.*;
@@ -16,6 +17,9 @@ import static java.lang.System.out;
  * Application intro, loads seat config.
  */
 public class Main {
+
+    private static final SeatConfig DEFAULT_CONFIG = loadDefaultConfig();
+
     /**
      * @param args used to start the application.
      */
@@ -119,22 +123,19 @@ public class Main {
     public static SeatConfig reloadConfig() {
         File f = new File("seat_config.json");
         try {
+            SeatConfig config;
             if (f.createNewFile()) {
-                // 获取jar内文件信息的特殊方法
-                BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/conf/seat_config.json"))));
-                StringBuilder buffer = new StringBuilder();
-                String str;
-                while ((str = reader.readLine()) != null) {
-                    buffer.append(str);
-                }
-                str = buffer.toString();
-                FileWriter writer = new FileWriter(f);
-                writer.write(str);
-                writer.close();
-                return SeatConfig.fromJsonFile(f);
+                saveConfig(DEFAULT_CONFIG);
             }
-
-            return SeatConfig.fromJsonFile(f);
+            config = SeatConfig.fromJsonFile(f);
+            try {
+                config.checkFormat();
+            } catch (RuntimeException e) {
+                System.err.println("WARNING: Invalid seat_config.json, will reset to default.");
+                saveConfig(DEFAULT_CONFIG);
+                config = SeatConfig.fromJsonFile(f);
+            }
+            return config;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -146,6 +147,7 @@ public class Main {
      * @param config {@code SeatConfig} to set as the default seat config and save to file.
      */
     public static void saveConfig(SeatConfig config) {
+        config.checkFormat();
         try {
             FileWriter writer = new FileWriter("seat_config.json");
             writer.write(config.toJson());
@@ -153,5 +155,20 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static SeatConfig loadDefaultConfig() {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/assets/conf/seat_config.json"))));
+        StringBuilder buffer = new StringBuilder();
+        String str;
+        try {
+            while ((str = reader.readLine()) != null) {
+                buffer.append(str);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        str = buffer.toString();
+        return new Gson().fromJson(str, SeatConfig.class);
     }
 }

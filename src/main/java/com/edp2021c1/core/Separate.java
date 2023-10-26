@@ -33,7 +33,7 @@ public class Separate {
     public Separate(String s) throws IllegalSeatConfigException {
         String[] t = s.split(" ");
         if (t.length < 2) {
-            throw new IllegalSeatConfigException(String.format("Invalid separate pair: {%s}", s));
+            throw new IllegalSeatConfigException(String.format("Invalid separate pair: {%s}.", s));
         }
         a = t[0];
         b = t[1];
