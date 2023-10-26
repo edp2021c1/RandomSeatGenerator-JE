@@ -52,17 +52,14 @@ public class Seat {
 
     /**
      * @param file to export seat table to.
+     * @throws IOException if an I/O error occurred.
      */
-    public void exportToExcelDocument(File file) {
+    public void exportToExcelDocument(File file) throws IOException {
         Objects.requireNonNull(file);
         Date date = new Date();
-        try {
-            if (!file.createNewFile()) {
-                file.delete();
-                file.createNewFile();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (!file.createNewFile()) {
+            file.delete();
+            file.createNewFile();
         }
         EasyExcel.write(file, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(this));
         file.setReadOnly();
@@ -71,10 +68,28 @@ public class Seat {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        List<SeatRowData> seat = SeatRowData.fromSeat(this);
-        for (SeatRowData seatRowData : seat) {
-            str.append(seatRowData.toString());
+
+        int rowCount = config.getRowCount(), columnCount = config.getColumnCount();
+
+        str.append("Seed: ");
+        str.append(seed);
+        str.append("\n");
+
+        str.append("Seat Table:\n");
+        for (int i = 0; i < rowCount; i++) {
+            for (int j = 0; j < columnCount; j++) {
+                if (i * columnCount + j >= seat.size()) return str.toString();
+                str.append(seat.get(i * columnCount + j));
+                str.append("\t");
+            }
             str.append("\n");
+        }
+
+        if (config.lucky_option) {
+            str.append("Lucky Person: ");
+            str.append(luckyPerson);
+        } else {
+            str.deleteCharAt(str.length() - 1);
         }
 
         return str.toString();

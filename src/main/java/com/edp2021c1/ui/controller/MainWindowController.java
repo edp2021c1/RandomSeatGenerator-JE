@@ -27,6 +27,8 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+import static java.lang.System.err;
+
 /**
  * Controller of {@code assets/fxml/MainWindow.fxml}
  */
@@ -71,9 +73,13 @@ public class MainWindowController {
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
         fc.setInitialDirectory(new File("./"));
         fc.setInitialFileName(String.format("%tF", new Date()));
-        File f = fc.showSaveDialog(stage);
-        if (f != null) {
-            seat.exportToExcelDocument(f);
+        File outputFile = fc.showSaveDialog(stage);
+        if (outputFile != null) {
+            try {
+                seat.exportToExcelDocument(outputFile);
+            } catch (IOException e) {
+                err.printf("ERROR: Failed to export seat table to %s.%n", outputFile.getAbsolutePath());
+            }
         }
     }
 

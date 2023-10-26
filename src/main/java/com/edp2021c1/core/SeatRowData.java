@@ -53,6 +53,7 @@ public class SeatRowData {
         List<String> s = seat.getSeat();
         List<SeatRowData> seatRowData = new ArrayList<>(rowCount);
         String[] tmp = new String[columnCount];
+
         outer:
         for (int i = 0; i < rowCount; i++) {
             for (int j = 0; j < columnCount; j++) {
@@ -62,9 +63,9 @@ public class SeatRowData {
             seatRowData.add(new SeatRowData(tmp));
         }
         if (seat.getConfig().lucky_option) {
-            seatRowData.add(new SeatRowData("lucky person", seat.getLuckyPerson()));
+            seatRowData.add(new SeatRowData("Lucky Person", seat.getLuckyPerson()));
         }
-        seatRowData.add(new SeatRowData("seed", Long.toString(seat.getSeed())));
+        seatRowData.add(new SeatRowData("Seed", Long.toString(seat.getSeed())));
         return seatRowData;
     }
 
@@ -83,24 +84,5 @@ public class SeatRowData {
         Arrays.fill(list, emptyRow);
 
         return Arrays.asList(list);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder str = new StringBuilder();
-        for (int i = 0; i < MAX_COLUMN_COUNT; i++) {
-            try {
-                Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
-                f.setAccessible(true);
-                if (f.get(this) != null) {
-                    str.append(f.get(this));
-                    str.append("\t");
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return str.toString();
     }
 }

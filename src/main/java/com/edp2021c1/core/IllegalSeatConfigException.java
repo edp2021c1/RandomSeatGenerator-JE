@@ -6,17 +6,6 @@ package com.edp2021c1.core;
  * @author Calboot
  */
 public class IllegalSeatConfigException extends RuntimeException {
-    /**
-     * Default message.
-     */
-    static final String DEFAULT_MESSAGE = "Invalid seat config.";
-
-    /**
-     * Constructs a new exception with {@link #DEFAULT_MESSAGE}.
-     */
-    public IllegalSeatConfigException() {
-        super(DEFAULT_MESSAGE);
-    }
 
     /**
      * Constructs an {@code IllegalSeatConfigException} with the specified detail message.

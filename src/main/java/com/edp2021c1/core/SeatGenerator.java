@@ -146,7 +146,10 @@ public final class SeatGenerator {
             seat.set(tmp_5 * columnCount + tmp_1, "*" + seat.get(tmp_5 * columnCount + tmp_1) + "*");
         }
 
-        return new Seat(seat, config, seed, luckyPerson);
+        Seat s = new Seat(seat, config, seed, luckyPerson);
+        System.out.println(s);
+
+        return s;
     }
 
     /**

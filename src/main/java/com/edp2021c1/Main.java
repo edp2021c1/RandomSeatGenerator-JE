@@ -10,8 +10,7 @@ import javafx.application.Application;
 import java.io.*;
 import java.util.*;
 
-import static java.lang.System.exit;
-import static java.lang.System.out;
+import static java.lang.System.*;
 
 /**
  * Application intro, loads seat config.
@@ -84,13 +83,17 @@ public class Main {
             try {
                 conf = SeatConfig.fromJsonFile(new File(arguments.get(i + 1)));
             } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
+                err.println("WARNING: Failed to load config from specific file, will use default config.");
             }
         }
 
         // 获取种子
         if ((i = arguments.lastIndexOf("--seed")) != -1 && i < arguments.size() - 1) {
-            seed = Long.parseLong(arguments.get(i + 1));
+            try {
+                seed = Long.parseLong(arguments.get(i + 1));
+            } catch (NumberFormatException e) {
+                err.printf("WARNING: Invalid seed: \"%s\", will ignore.%n", arguments.get(i + 1));
+            }
         }
 
         //获取导出路径
@@ -106,11 +109,23 @@ public class Main {
             }
         }
 
-        File f = new File(outputPath);
+        //检查座位表生成配置
+        try {
+            conf.checkFormat();
+        } catch (RuntimeException e) {
+            err.println("WARNING: Invalid seat config, will use default value.");
+            conf = reloadConfig();
+        }
+
+        File outputFile = new File(outputPath);
         Seat seat;
         seat = new SeatGenerator().generate(conf, seed);
-        seat.exportToExcelDocument(f);
-        out.println("Seat table successfully exported to " + f.getAbsolutePath() + ".");
+        try {
+            seat.exportToExcelDocument(outputFile);
+        } catch (IOException e) {
+            err.printf("ERROR: Failed to export seat table to %s.%n", outputFile.getAbsolutePath());
+        }
+        out.printf("Seat table successfully exported to %s.%n", outputFile.getAbsolutePath());
         exit(0);
     }
 
@@ -131,7 +146,7 @@ public class Main {
             try {
                 config.checkFormat();
             } catch (RuntimeException e) {
-                System.err.println("WARNING: Invalid seat_config.json, will reset to default.");
+                err.println("WARNING: Invalid seat_config.json, will reset to default.");
                 saveConfig(DEFAULT_CONFIG);
                 config = SeatConfig.fromJsonFile(f);
             }
