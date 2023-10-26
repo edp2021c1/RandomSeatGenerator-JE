@@ -12,13 +12,20 @@ v1.2.0+ 在所有平台上都需要JavaFX来运行
 
 **种子只能是long值**
 
+---
+
 ## 命令行模式
 v1.2.4+ 启动时加上“--nogui”参数可启动无命令行模式，但 v1.2.4 无更多参数
 
 v1.2.5+ 可用参数：
- - --config-path 默认为当前目录下的“seat_config.json”
- - --seed 默认为随机数
- - --output-path 默认在当前目录下
+ - --config-path value 默认为当前目录下的“seat_config.json”
+ - --seed value 默认为随机数
+ - --output-path value 默认在当前目录下
+
+v1.2.6+ 可用参数：
+ - --help 打印帮助信息
+ - --license 打印开源声明，内容与“首选项”页面里的相同
+
 参数名后加上空格再传入参数值
 
 ## 配置文件格式：
