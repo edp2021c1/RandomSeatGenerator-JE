@@ -32,9 +32,9 @@ public class Main {
                                 --help                  Print this message and then quit.
                                 --license               Print the license of this application and then quit.
                                 --nogui                 Start the application in console mode.
-                                --config-path <path>    Path of a specific Json config file (default to seat_config.json under the current directory).
-                                --seed <value>          Seed used to generate seat table (default to a random number), must be in the format of a number.
-                                --output-path <path>    Path to export seat table to (default to yyyy-mm-dd.xlsx under the current directory).
+                                --config-path <path>    Path of a specific Json config file. (optional, default to seat_config.json under the current directory)
+                                --seed <value>          Seed used to generate seat table, must be in the format of a number. (optional, default to a random number)
+                                --output-path <path>    File or directory to export seat table to. If the path is a directory, seat table will be exported to yyyy-mm-dd.xlsx under it. (optional, default to yyyy-mm-dd.xlsx under the current directory)
                             """
             );
             exit(0);
@@ -96,7 +96,7 @@ public class Main {
             }
         }
 
-        //获取导出路径
+        // 获取导出路径
         if ((i = arguments.lastIndexOf("--output-path")) != -1 && i < arguments.size() - 1) {
             File tmp = new File(arguments.get(i + 1));
             if (tmp.isDirectory()) {
@@ -109,11 +109,11 @@ public class Main {
             }
         }
 
-        //检查座位表生成配置
+        // 检查座位表生成配置
         try {
             conf.checkFormat();
         } catch (RuntimeException e) {
-            err.println("WARNING: Invalid seat config, will use default value.");
+            err.println("WARNING: Invalid seat config, will use built-in sample value.");
             conf = reloadConfig();
         }
 

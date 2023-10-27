@@ -38,6 +38,8 @@ public class MainWindowController {
      */
     public static boolean configIsChanged = false;
     private static Seat seat;
+
+    private static long previousSeed=0;
     @FXML
     private Stage stage;
     @FXML
@@ -90,19 +92,22 @@ public class MainWindowController {
 
     @FXML
     void generateSeatTable(ActionEvent event) {
-        Main.reloadConfig();
+        SeatConfig config=Main.reloadConfig();
         initSeatTable();
 
         long seed;
         try {
-            seed = Long.parseLong(seedInput.getText());
+            if (Long.parseLong(seedInput.getText())==previousSeed) {
+                generateRandomSeed(null);
+            }
         } catch (NumberFormatException e) {
             System.err.println("WARNING: Invalid seed.");
             generateRandomSeed(null);
-            seed = Long.parseLong(seedInput.getText());
         }
-        seat = new SeatGenerator().generate(Main.reloadConfig(), seed);
+        seed = Long.parseLong(seedInput.getText());
+        seat = new SeatGenerator().generate(config, seed);
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
+        previousSeed=seed;
     }
 
     @FXML
