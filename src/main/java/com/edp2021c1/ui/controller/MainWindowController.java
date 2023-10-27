@@ -39,7 +39,7 @@ public class MainWindowController {
     public static boolean configIsChanged = false;
     private static Seat seat;
 
-    private static long previousSeed=0;
+    private static long previousSeed = 0;
     @FXML
     private Stage stage;
     @FXML
@@ -92,12 +92,12 @@ public class MainWindowController {
 
     @FXML
     void generateSeatTable(ActionEvent event) {
-        SeatConfig config=Main.reloadConfig();
+        SeatConfig config = Main.reloadConfig();
         initSeatTable();
 
         long seed;
         try {
-            if (Long.parseLong(seedInput.getText())==previousSeed) {
+            if (Long.parseLong(seedInput.getText()) == previousSeed) {
                 generateRandomSeed(null);
             }
         } catch (NumberFormatException e) {
@@ -107,7 +107,7 @@ public class MainWindowController {
         seed = Long.parseLong(seedInput.getText());
         seat = new SeatGenerator().generate(config, seed);
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
-        previousSeed=seed;
+        previousSeed = seed;
     }
 
     @FXML
