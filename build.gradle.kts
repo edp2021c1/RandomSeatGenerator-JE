@@ -5,13 +5,14 @@ plugins {
 group = "com.edp2021c1"
 version = "1.2.7"
 
+var mainClass="com.edp2021c1.Main"
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     implementation("com.alibaba:easyexcel:3.3.2")
-    implementation("org.slf4j:slf4j-simple:2.0.5") // EasyExcel不加这个就会报错。。。
     implementation("com.google.code.gson:gson:2.10.1")
 
 
@@ -21,7 +22,7 @@ dependencies {
 
 tasks.jar {
     manifest {
-        attributes("Main-Class" to "com.edp2021c1.Main")
+        attributes("Main-Class" to mainClass)
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
