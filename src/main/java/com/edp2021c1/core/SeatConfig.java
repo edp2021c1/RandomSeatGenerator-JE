@@ -20,6 +20,10 @@ import static java.lang.Integer.parseUnsignedInt;
  */
 public final class SeatConfig {
     /**
+     * Max count of column in a {@code SeatRowData}.
+     */
+    public static final int MAX_COLUMN_COUNT = 20;
+    /**
      * Row count (int).
      */
     public String row_count;
@@ -90,6 +94,9 @@ public final class SeatConfig {
             c = parseUnsignedInt(column_count);
         } catch (NumberFormatException e) {
             throw new IllegalSeatConfigException(String.format("Invalid column_count: %s.", column_count), e);
+        }
+        if(c>MAX_COLUMN_COUNT){
+            throw new IllegalSeatConfigException(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));
         }
         return c;
     }

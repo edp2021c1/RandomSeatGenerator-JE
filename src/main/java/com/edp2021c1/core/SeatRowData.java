@@ -1,12 +1,13 @@
 package com.edp2021c1.core;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.edp2021c1.core.SeatConfig.MAX_COLUMN_COUNT;
 
 /**
  * An instance of this class saves a row of a seat table. This class also provides a method to
@@ -17,11 +18,6 @@ import java.util.List;
 
 @Getter
 public class SeatRowData {
-    /**
-     * Max count of column in a {@code SeatRowData}.
-     */
-    @ExcelIgnore
-    public static final int MAX_COLUMN_COUNT = 20;
 
     private String c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20;
 
@@ -31,7 +27,7 @@ public class SeatRowData {
     public SeatRowData(String... c) {
         for (int i = 0, j = c.length; i < j; i++) {
             if (!(i < MAX_COLUMN_COUNT)) {
-                throw new RuntimeException(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));
+                throw new IllegalSeatConfigException(String.format("Count of people in a row cannot be larger than %d.", MAX_COLUMN_COUNT));
             }
             try {
                 Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
