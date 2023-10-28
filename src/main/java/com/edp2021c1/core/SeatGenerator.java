@@ -1,9 +1,6 @@
 package com.edp2021c1.core;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * This class manages the generation of seat tables.
@@ -74,7 +71,7 @@ public final class SeatGenerator {
             }
             tmp = new ArrayList<>(peopleNum % columnCount);
 
-            for (i = 0, c = seatNum % randomPeopleCount == 0 ? seatNum / randomPeopleCount : seatNum / randomPeopleCount + 1; i < c; i++) {
+            for (i = 0, c = seatNum / randomPeopleCount; i < c; i++) {
                 if (i == c - 1 && hasSeatLeft && tmp_8) {    // 如果余位不多于一排，则将最后一排归到前两排中轮换
                     for (j = i * randomPeopleCount, f = (i + 1) * randomPeopleCount; j < f; j++) {
                         do {
@@ -116,11 +113,15 @@ public final class SeatGenerator {
                     }
                     break;
                 }
+                List<String> sub = nameList.subList(i * randomPeopleCount, (i + 1) * randomPeopleCount);
+                Collections.shuffle(sub, random);
                 for (j = i * randomPeopleCount, f = (i + 1) * randomPeopleCount; j < f; j++) {
                     do {
                         e = random.nextInt(i * randomPeopleCount, (i + 1) * randomPeopleCount);
                     } while (sorted.get(e));
-                    if (!(j < seatNum)) break;
+                    if (j >= seatNum) {
+                        break;
+                    }
                     seat.set(j, nameList.get(e));
                     sorted.set(e, true);
                 }
@@ -136,9 +137,7 @@ public final class SeatGenerator {
                         break;
                     }
                 }
-                break;
-            }
-            if (luckyOption) {
+            } else if (luckyOption) {
                 for (i = 0; i < peopleNum; i++) {
                     if (!seat.contains(nameList.get(i))) {
                         luckyPerson = nameList.get(i);

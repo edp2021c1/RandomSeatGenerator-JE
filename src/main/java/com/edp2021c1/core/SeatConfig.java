@@ -105,6 +105,9 @@ public final class SeatConfig {
      * @return {@link #random_between_rows} in the format of an integer.
      */
     public int getRandomBetweenRows() throws IllegalSeatConfigException {
+        if (random_between_rows.isBlank()) {
+            return getRowCount();
+        }
         int r;
         try {
             r = parseUnsignedInt(random_between_rows);
