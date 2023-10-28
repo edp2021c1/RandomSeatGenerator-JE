@@ -140,6 +140,7 @@ public class Main {
         try {
             SeatConfig config;
             if (f.createNewFile()) {
+                err.println("WARNING: seat_config.json not found, will use default value.");
                 saveConfig(DEFAULT_CONFIG);
             }
             config = SeatConfig.fromJsonFile(f);

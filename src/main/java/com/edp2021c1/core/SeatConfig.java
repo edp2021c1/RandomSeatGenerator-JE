@@ -110,9 +110,12 @@ public final class SeatConfig {
     /**
      * @return {@link #last_row_pos_cannot_be_choosed} in the format of a list of {@code int}.
      */
-    public ArrayList<Integer> getNotAllowedLastRowPos() throws IllegalSeatConfigException {
+    public List<Integer> getNotAllowedLastRowPos() throws IllegalSeatConfigException {
+        if (last_row_pos_cannot_be_choosed.isBlank()) {
+            return new ArrayList<>();
+        }
         String[] t = last_row_pos_cannot_be_choosed.split(" ");
-        ArrayList<Integer> i = new ArrayList<>(t.length);
+        List<Integer> i = new ArrayList<>(t.length);
         try {
             for (String s : t) {
                 i.add(parseUnsignedInt(s));
