@@ -138,10 +138,10 @@ public final class SeatGenerator {
                 }
                 break;
             }
-            if(luckyOption){
-                for(i=0;i<peopleNum;i++){
-                    if(!seat.contains(nameList.get(i))){
-                        luckyPerson=nameList.get(i);
+            if (luckyOption) {
+                for (i = 0; i < peopleNum; i++) {
+                    if (!seat.contains(nameList.get(i))) {
+                        luckyPerson = nameList.get(i);
                         break;
                     }
                 }

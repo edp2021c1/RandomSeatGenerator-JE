@@ -95,7 +95,7 @@ public final class SeatConfig {
         } catch (NumberFormatException e) {
             throw new IllegalSeatConfigException(String.format("Invalid column_count: %s.", column_count), e);
         }
-        if(c>MAX_COLUMN_COUNT){
+        if (c > MAX_COLUMN_COUNT) {
             throw new IllegalSeatConfigException(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));
         }
         return c;
