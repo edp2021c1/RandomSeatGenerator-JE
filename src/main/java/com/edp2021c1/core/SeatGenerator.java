@@ -30,12 +30,19 @@ public final class SeatGenerator {
         int rowCount = config.getRowCount();
         int columnCount = config.getColumnCount();
         int randomBetweenRows = config.getRandomBetweenRows();
-        List<Integer> lastRowPos = config.getLastRowPos();
+        List<Integer> notAllowedLastRowPos = config.getNotAllowedLastRowPos();
         List<String> nameList = config.getNameList();
         List<String> groupLeaderList = config.getGroupLeaderList();
 
         // 临时变量，提前声明以减少内存和计算操作
         int peopleNum = nameList.size();
+
+        // 防止行数过多引发无限递归
+        while (rowCount * columnCount - peopleNum > columnCount) {
+            rowCount--;
+        }
+
+        // 临时变量，提前声明以减少内存和计算操作
         int seatNum = rowCount * columnCount;
         int rp = columnCount * randomBetweenRows;
         int peopleLeft = peopleNum % (rp);
@@ -49,11 +56,6 @@ public final class SeatGenerator {
         boolean tmp_7 = peopleLeft > 0 && seatNum > peopleNum;
         boolean tmp_8 = peopleLeft <= columnCount;
         List<Integer> tmp;
-
-        // 防止行数过多引发无限递归
-        while (rowCount * columnCount - peopleNum > columnCount) {
-            rowCount--;
-        }
 
         // 座位表变量
         List<String> seat = Arrays.asList(new String[seatNum]);
@@ -87,7 +89,7 @@ public final class SeatGenerator {
                         } while (sorted.get(tmp_5));
                         do {
                             tmp_6 = random.nextInt(seatNum - columnCount, seatNum);
-                        } while (!lastRowPos.contains(tmp_6 - tmp_3 * rp + 1) || tmp.contains(tmp_6));
+                        } while (notAllowedLastRowPos.contains(tmp_6 - tmp_3 * rp + 1) || tmp.contains(tmp_6));
                         tmp.add(tmp_6);
                         seat.set(tmp_6, nameList.get(tmp_5));
                         sorted.set(tmp_5, true);
@@ -107,7 +109,7 @@ public final class SeatGenerator {
                         } while (sorted.get(tmp_5));
                         do {
                             tmp_6 = random.nextInt(seatNum - columnCount, seatNum);
-                        } while (!lastRowPos.contains(tmp_6 - seatNum + columnCount + 1) || tmp.contains(tmp_6));
+                        } while (notAllowedLastRowPos.contains(tmp_6 - seatNum + columnCount + 1) || tmp.contains(tmp_6));
                         tmp.add(tmp_6);
                         seat.set(tmp_6, nameList.get(tmp_5));
                         sorted.set(tmp_5, true);
@@ -126,7 +128,7 @@ public final class SeatGenerator {
             }
 
             if (luckyOption) {
-                tmp_1 = seatNum - 1;
+                tmp_1 = seatNum;
                 while (tmp_1 > 0) {
                     tmp_1--;
                     if (!"-".equals(seat.get(tmp_1))) {

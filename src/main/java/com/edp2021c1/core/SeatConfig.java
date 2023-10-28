@@ -32,9 +32,9 @@ public final class SeatConfig {
      */
     public String random_between_rows;
     /**
-     * Positions in the last row that can be chosen, in case something blocks the last row ({@code space} between two numbers).
+     * Positions in the last row that cannot be chosen, in case something blocks the last row ({@code space} between two numbers).
      */
-    public String last_row_pos_can_be_choosed;
+    public String last_row_pos_cannot_be_choosed;
     /**
      * Name list sorted by height ({@code space} between two people).
      */
@@ -108,17 +108,17 @@ public final class SeatConfig {
     }
 
     /**
-     * @return {@link #last_row_pos_can_be_choosed} in the format of a list of {@code int}.
+     * @return {@link #last_row_pos_cannot_be_choosed} in the format of a list of {@code int}.
      */
-    public ArrayList<Integer> getLastRowPos() throws IllegalSeatConfigException {
-        String[] t = last_row_pos_can_be_choosed.split(" ");
+    public ArrayList<Integer> getNotAllowedLastRowPos() throws IllegalSeatConfigException {
+        String[] t = last_row_pos_cannot_be_choosed.split(" ");
         ArrayList<Integer> i = new ArrayList<>(t.length);
         try {
             for (String s : t) {
                 i.add(parseUnsignedInt(s));
             }
         } catch (IllegalArgumentException e) {
-            throw new IllegalSeatConfigException(String.format("Invalid last row positions: %s.", last_row_pos_can_be_choosed), e);
+            throw new IllegalSeatConfigException(String.format("Invalid last row positions: %s.", last_row_pos_cannot_be_choosed), e);
         }
         return i;
     }
@@ -161,7 +161,7 @@ public final class SeatConfig {
         return Objects.equals(row_count, another.row_count)
                 && Objects.equals(column_count, another.column_count)
                 && Objects.equals(random_between_rows, another.random_between_rows)
-                && Objects.equals(last_row_pos_can_be_choosed, another.last_row_pos_can_be_choosed)
+                && Objects.equals(last_row_pos_cannot_be_choosed, another.last_row_pos_cannot_be_choosed)
                 && Objects.equals(person_sort_by_height, another.person_sort_by_height)
                 && Objects.equals(group_leader_list, another.group_leader_list)
                 && Objects.equals(separate_list, another.separate_list)
@@ -184,7 +184,7 @@ public final class SeatConfig {
         getRowCount();
         getColumnCount();
         getRandomBetweenRows();
-        getLastRowPos();
+        getNotAllowedLastRowPos();
         getSeparatedList();
     }
 }

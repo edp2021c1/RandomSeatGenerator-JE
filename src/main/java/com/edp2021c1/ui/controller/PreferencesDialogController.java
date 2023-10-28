@@ -62,7 +62,7 @@ public class PreferencesDialogController {
         seatConfig.row_count = rowCountInput.getText();
         seatConfig.column_count = columnCountInput.getText();
         seatConfig.random_between_rows = rbrInput.getText();
-        seatConfig.last_row_pos_can_be_choosed = lastRowPosInput.getText();
+        seatConfig.last_row_pos_cannot_be_choosed = lastRowPosInput.getText();
         seatConfig.person_sort_by_height = nameListInput.getText();
         seatConfig.group_leader_list = groupLeaderListInput.getText();
         seatConfig.separate_list = separateListInput.getText();
@@ -100,7 +100,7 @@ public class PreferencesDialogController {
         rowCountInput.setText(seatConfig.row_count);
         columnCountInput.setText(seatConfig.column_count);
         rbrInput.setText(seatConfig.random_between_rows);
-        lastRowPosInput.setText(seatConfig.last_row_pos_can_be_choosed);
+        lastRowPosInput.setText(seatConfig.last_row_pos_cannot_be_choosed);
         nameListInput.setText(seatConfig.person_sort_by_height);
         groupLeaderListInput.setText(seatConfig.group_leader_list);
         separateListInput.setText(seatConfig.separate_list);
@@ -131,7 +131,7 @@ public class PreferencesDialogController {
         rowCountInput.setText(seatConfig.row_count);
         columnCountInput.setText(seatConfig.column_count);
         rbrInput.setText(seatConfig.random_between_rows);
-        lastRowPosInput.setText(seatConfig.last_row_pos_can_be_choosed);
+        lastRowPosInput.setText(seatConfig.last_row_pos_cannot_be_choosed);
         nameListInput.setText(seatConfig.person_sort_by_height);
         groupLeaderListInput.setText(seatConfig.group_leader_list);
         separateListInput.setText(seatConfig.separate_list);
