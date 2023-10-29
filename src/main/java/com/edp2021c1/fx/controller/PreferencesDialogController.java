@@ -1,4 +1,4 @@
-package com.edp2021c1.ui.controller;
+package com.edp2021c1.fx.controller;
 
 import com.edp2021c1.Main;
 import com.edp2021c1.core.IllegalSeatConfigException;
@@ -73,7 +73,7 @@ public class PreferencesDialogController {
                 Main.saveConfig(seatConfig);
             } catch (IllegalSeatConfigException e) {
                 System.err.printf("WARNING: %s Will discard changes.%n", e.getMessage());
-                initConfig(Main.reloadConfig());
+                initConfigPane(Main.reloadConfig());
                 return;
             }
             MainWindowController.configIsChanged = true;
@@ -97,14 +97,7 @@ public class PreferencesDialogController {
             System.err.println("WARNING: Failed to load seat config from file.");
         }
 
-        rowCountInput.setText(seatConfig.row_count);
-        columnCountInput.setText(seatConfig.column_count);
-        rbrInput.setText(seatConfig.random_between_rows);
-        lastRowPosInput.setText(seatConfig.last_row_pos_cannot_be_choosed);
-        nameListInput.setText(seatConfig.person_sort_by_height);
-        groupLeaderListInput.setText(seatConfig.group_leader_list);
-        separateListInput.setText(seatConfig.separate_list);
-        luckyOption.setSelected(seatConfig.lucky_option);
+        initConfigPane(seatConfig);
     }
 
     @FXML
@@ -124,10 +117,10 @@ public class PreferencesDialogController {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);
 
-        initConfig(Main.reloadConfig());
+        initConfigPane(Main.reloadConfig());
     }
 
-    void initConfig(SeatConfig seatConfig) {
+    void initConfigPane(SeatConfig seatConfig) {
         rowCountInput.setText(seatConfig.row_count);
         columnCountInput.setText(seatConfig.column_count);
         rbrInput.setText(seatConfig.random_between_rows);

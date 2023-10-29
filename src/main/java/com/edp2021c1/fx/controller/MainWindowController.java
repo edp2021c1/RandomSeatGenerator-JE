@@ -1,4 +1,4 @@
-package com.edp2021c1.ui.controller;
+package com.edp2021c1.fx.controller;
 
 import com.edp2021c1.Main;
 import com.edp2021c1.core.Seat;

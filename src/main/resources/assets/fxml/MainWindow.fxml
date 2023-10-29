@@ -6,7 +6,7 @@
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
 <Stage xmlns:fx="http://javafx.com/fxml/1" fx:id="stage" title="Random Seat Generator - 随机座位生成器"
-       xmlns="http://javafx.com/javafx/20.0.1" fx:controller="com.edp2021c1.ui.controller.MainWindowController">
+       xmlns="http://javafx.com/javafx/20.0.1" fx:controller="com.edp2021c1.fx.controller.MainWindowController">
     <scene>
         <Scene stylesheets="@../css/dark.css">
             <HBox fx:id="box_1" alignment="CENTER" prefHeight="634.0" prefWidth="1100.0">
@@ -33,7 +33,8 @@
                 <VBox fx:id="box_3" alignment="CENTER" prefHeight="698.0" prefWidth="1003.0" styleClass="large-box"
                       HBox.hgrow="ALWAYS">
                     <HBox fx:id="box_4" alignment="CENTER" prefHeight="100.0" prefWidth="998.0">
-                        <TextField fx:id="seedInput" onAction="#generateSeatTable" promptText="种子(Long)">
+                        <TextField fx:id="seedInput" onAction="#generateSeatTable" prefHeight="26.0" prefWidth="191.0"
+                                   promptText="种子(Long)">
                             <HBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                             </HBox.margin>

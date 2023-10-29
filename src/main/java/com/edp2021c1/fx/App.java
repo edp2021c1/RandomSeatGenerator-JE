@@ -1,4 +1,4 @@
-package com.edp2021c1.ui;
+package com.edp2021c1.fx;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

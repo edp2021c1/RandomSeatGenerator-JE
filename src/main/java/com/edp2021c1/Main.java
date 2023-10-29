@@ -3,7 +3,7 @@ package com.edp2021c1;
 import com.edp2021c1.core.Seat;
 import com.edp2021c1.core.SeatConfig;
 import com.edp2021c1.core.SeatGenerator;
-import com.edp2021c1.ui.App;
+import com.edp2021c1.fx.App;
 import com.google.gson.Gson;
 import javafx.application.Application;
 

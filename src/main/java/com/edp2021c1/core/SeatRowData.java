@@ -76,7 +76,7 @@ public class SeatRowData {
 
         SeatRowData emptyRow = new SeatRowData(emptyRowData);
 
-        SeatRowData[] list = new SeatRowData[rowCount + 1];
+        SeatRowData[] list = new SeatRowData[rowCount];
         Arrays.fill(list, emptyRow);
 
         return Arrays.asList(list);
