@@ -41,7 +41,7 @@ v1.2.6+ 可用参数：
 {
   // 行数
   "row_count": "7",
-  // 列数
+  // 列数，不可大于20
   "column_count": "7",
   // 随机轮换的行数
   "random_between_rows": "2",
