@@ -10,8 +10,6 @@ import javafx.application.Application;
 import java.io.*;
 import java.util.*;
 
-import static java.lang.System.*;
-
 /**
  * Application intro, loads seat config.
  */
@@ -26,7 +24,7 @@ public class Main {
         List<String> arguments = Arrays.asList(args);
         // 如果有“--help”参数则打印帮助信息
         if (arguments.contains("--help")) {
-            out.println(
+            System.out.println(
                     """
                             OPTIONS:
                                 --help                  Print this message and then quit.
@@ -37,12 +35,12 @@ public class Main {
                                 --output-path <path>    File or directory to export seat table to. If the path is a directory, seat table will be exported to yyyy-mm-dd.xlsx under it. (optional, default to yyyy-mm-dd.xlsx under the current directory)
                             """
             );
-            exit(0);
+            System.exit(0);
         }
 
         // 如果有“--license”参数则打印许可证
         if (arguments.contains("--license")) {
-            out.println(
+            System.out.println(
                     """
                                                         
                             Copyright (c) 2023  EDP2021C1
@@ -62,29 +60,25 @@ public class Main {
                                                         
                             """
             );
-            exit(0);
+            System.exit(0);
         }
 
         // 如果不是命令行模式则启动JavaFX程序
         if (!arguments.contains("--nogui")) {
             reloadConfig();
             Application.launch(App.class, args);
-            exit(0);
+            System.exit(0);
         }
 
         // 命令行参数相关
         int i;
         long seed = new Random().nextLong();  // 种子，默认为随机数
+        String configPath = "seat_config.json"; // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
         String outputPath = String.format("%tF.xlsx", new Date()); // 导出路径，默认为当前路径
-        SeatConfig conf = reloadConfig(); // 座位表生成配置，默认为当前目录下的seat_config.json中的配置
 
         // 获取配置文件路径
         if ((i = arguments.lastIndexOf("--config-path")) != -1 && i < arguments.size() - 1) {
-            try {
-                conf = SeatConfig.fromJsonFile(new File(arguments.get(i + 1)));
-            } catch (FileNotFoundException e) {
-                err.println("WARNING: Failed to load config from specific file, will use default config.");
-            }
+            configPath = arguments.get(i + 1);
         }
 
         // 获取种子
@@ -92,7 +86,7 @@ public class Main {
             try {
                 seed = Long.parseLong(arguments.get(i + 1));
             } catch (NumberFormatException e) {
-                err.printf("WARNING: Invalid seed: \"%s\", will ignore.%n", arguments.get(i + 1));
+                System.err.printf("WARNING: Invalid seed: \"%s\", will ignore.%n", arguments.get(i + 1));
             }
         }
 
@@ -109,24 +103,39 @@ public class Main {
             }
         }
 
-        // 检查座位表生成配置
+        // 处理座位表生成配置
+        File configFile = new File(configPath);
+        SeatConfig config;
         try {
-            conf.checkFormat();
-        } catch (RuntimeException e) {
-            err.println("WARNING: Invalid seat config, will use built-in sample value.");
-            conf = reloadConfig();
+            config = SeatConfig.fromJsonFile(configFile);
+        } catch (FileNotFoundException e) {
+            System.err.println("WARNING: Failed to load config from specific file, will use default config.");
+            configFile = new File("seat_config.json");
+            config = reloadConfig();
         }
+        try {
+            config.checkFormat();
+        } catch (RuntimeException e) {
+            System.err.println("WARNING: Invalid seat config, will use default value.");
+            config = reloadConfig();
+        }
+        System.out.printf("Config path: %s%n", configFile.getAbsolutePath());
 
-        File outputFile = new File(outputPath);
+        // 生成座位表
         Seat seat;
-        seat = new SeatGenerator().generate(conf, seed);
+        seat = new SeatGenerator().generate(config, seed);
+
+        // 导出
+        File outputFile = new File(outputPath);
+        System.out.printf("Output path: %s%n", outputFile.getAbsolutePath());
         try {
             seat.exportToExcelDocument(outputFile);
         } catch (IOException e) {
-            err.printf("ERROR: Failed to export seat table to %s.%n", outputFile.getAbsolutePath());
+            System.err.printf("ERROR: Failed to export seat table to %s.%n", outputFile.getAbsolutePath());
         }
-        out.printf("Seat table successfully exported to %s.%n", outputFile.getAbsolutePath());
-        exit(0);
+        System.out.printf("Seat table successfully exported to %s.%n", outputFile.getAbsolutePath());
+
+        System.exit(0);
     }
 
     /**
@@ -140,14 +149,14 @@ public class Main {
         try {
             SeatConfig config;
             if (f.createNewFile()) {
-                err.println("WARNING: seat_config.json not found, will use default value.");
+                System.err.println("WARNING: seat_config.json not found, will use default value.");
                 saveConfig(DEFAULT_CONFIG);
             }
             config = SeatConfig.fromJsonFile(f);
             try {
                 config.checkFormat();
             } catch (RuntimeException e) {
-                err.println("WARNING: Invalid seat_config.json, will reset to default.");
+                System.err.println("WARNING: Invalid seat_config.json, will reset to default.");
                 saveConfig(DEFAULT_CONFIG);
                 config = SeatConfig.fromJsonFile(f);
             }
