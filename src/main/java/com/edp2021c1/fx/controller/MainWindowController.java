@@ -128,7 +128,7 @@ public class MainWindowController {
 
     @FXML
     void initialize() {
-        stage.getIcons().add(new Image("assets/img/icon.png"));
+        stage.getIcons().add(new Image("assets/img/logo.png"));
 
         seatTable.setEditable(false);
         initSeatTable();

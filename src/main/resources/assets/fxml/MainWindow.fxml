@@ -8,7 +8,7 @@
 <Stage xmlns:fx="http://javafx.com/fxml/1" fx:id="stage" title="Random Seat Generator - 随机座位生成器"
        xmlns="http://javafx.com/javafx/20.0.1" fx:controller="com.edp2021c1.fx.controller.MainWindowController">
     <scene>
-        <Scene stylesheets="@../css/dark.css">
+        <Scene stylesheets="@../css/light.css">
             <HBox fx:id="box_1" alignment="CENTER" prefHeight="634.0" prefWidth="1100.0">
                 <VBox fx:id="box_2" alignment="CENTER" prefHeight="711.0" prefWidth="91.0" styleClass="large-box">
                     <Button mnemonicParsing="false" onAction="#openPreferencesDialog" prefHeight="26.0" prefWidth="70.0"

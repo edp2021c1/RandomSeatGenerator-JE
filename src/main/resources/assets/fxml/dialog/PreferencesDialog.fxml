@@ -11,7 +11,7 @@
 <Stage xmlns:fx="http://javafx.com/fxml/1" fx:id="stage" title="RandomSeatGenerator - 首选项"
        xmlns="http://javafx.com/javafx/20.0.1" fx:controller="com.edp2021c1.fx.controller.PreferencesDialogController">
     <scene>
-        <Scene stylesheets="@../../css/dark.css">
+        <Scene stylesheets="@../../css/light.css">
             <VBox prefHeight="736.0" prefWidth="1232.0">
                 <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="large-box">
                     <padding>
@@ -83,7 +83,7 @@
                             <HBox.margin>
                                 <Insets/>
                             </HBox.margin>
-                            <Image url="@../../img/icon.png"/>
+                            <Image url="@../../img/logo.png"/>
                         </ImageView>
                         <VBox prefHeight="264.0" prefWidth="958.0">
                             <Label alignment="CENTER" prefHeight="32.0" prefWidth="237.0"

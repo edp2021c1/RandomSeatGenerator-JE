@@ -5,9 +5,11 @@ import com.edp2021c1.core.SeatConfig;
 import com.edp2021c1.core.SeatGenerator;
 import com.edp2021c1.fx.App;
 import com.google.gson.Gson;
-import javafx.application.Application;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
+import java.util.List;
 import java.util.*;
 
 /**
@@ -65,8 +67,18 @@ public class Main {
 
         // 如果不是命令行模式则启动JavaFX程序
         if (!arguments.contains("--nogui")) {
+            try {
+                Class.forName("javafx.application.Application");
+            } catch (ClassNotFoundException e) {
+                JOptionPane.showMessageDialog(null, "请安装 JavaFX 以启动 RandomSeatGenerator");
+            }
+
+            if (System.getProperty("os.name").contains("Mac")) {
+                Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("/assets/img/icon.png")));
+            }
+
             reloadConfig();
-            Application.launch(App.class, args);
+            javafx.application.Application.launch(App.class, args);
             System.exit(0);
         }
 

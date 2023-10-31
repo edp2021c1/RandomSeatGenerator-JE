@@ -113,7 +113,7 @@ public class PreferencesDialogController {
 
     @FXML
     void initialize() {
-        stage.getIcons().add(new Image("assets/img/icon.png"));
+        stage.getIcons().add(new Image("assets/img/logo.png"));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);
 
