@@ -74,7 +74,7 @@ public class Main {
             }
 
             if (System.getProperty("os.name").contains("Mac")) {
-                Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("/assets/img/icon.png")));
+                Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("/assets/img/mac_icon.png")));
             }
 
             reloadConfig();
