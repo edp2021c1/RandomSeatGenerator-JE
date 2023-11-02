@@ -66,7 +66,7 @@ public class PreferencesDialogController {
         seatConfig.row_count = rowCountInput.getText();
         seatConfig.column_count = columnCountInput.getText();
         seatConfig.random_between_rows = rbrInput.getText();
-        seatConfig.last_row_pos_cannot_be_choosed = disabledLastRowPosInput.getText();
+        seatConfig.last_row_pos_cannot_be_chosen = disabledLastRowPosInput.getText();
         seatConfig.person_sort_by_height = nameListInput.getText();
         seatConfig.group_leader_list = groupLeaderListInput.getText();
         seatConfig.separate_list = separateListInput.getText();
@@ -133,7 +133,7 @@ public class PreferencesDialogController {
         rbrInput.textProperty().addListener((observable, oldValue, newValue) ->
                 applyBtn.setDisable(Main.reloadConfig().random_between_rows.equals(newValue)));
         disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(Main.reloadConfig().last_row_pos_cannot_be_choosed.equals(newValue)));
+                applyBtn.setDisable(Main.reloadConfig().last_row_pos_cannot_be_chosen.equals(newValue)));
         nameListInput.textProperty().addListener((observable, oldValue, newValue) ->
                 applyBtn.setDisable(Main.reloadConfig().person_sort_by_height.equals(newValue)));
         groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) ->
@@ -148,7 +148,7 @@ public class PreferencesDialogController {
         rowCountInput.setText(seatConfig.row_count);
         columnCountInput.setText(seatConfig.column_count);
         rbrInput.setText(seatConfig.random_between_rows);
-        disabledLastRowPosInput.setText(seatConfig.last_row_pos_cannot_be_choosed);
+        disabledLastRowPosInput.setText(seatConfig.last_row_pos_cannot_be_chosen);
         nameListInput.setText(seatConfig.person_sort_by_height);
         groupLeaderListInput.setText(seatConfig.group_leader_list);
         separateListInput.setText(seatConfig.separate_list);

@@ -41,7 +41,7 @@ public final class SeatConfig {
     /**
      * Positions in the last row that cannot be chosen, in case something blocks the last row ({@code space} between two numbers).
      */
-    public String last_row_pos_cannot_be_choosed;
+    public String last_row_pos_cannot_be_chosen;
     /**
      * Name list sorted by height ({@code space} between two people).
      */
@@ -137,24 +137,24 @@ public final class SeatConfig {
     }
 
     /**
-     * Returns {@link #last_row_pos_cannot_be_choosed} as a list of {@code int}.
+     * Returns {@link #last_row_pos_cannot_be_chosen} as a list of {@code int}.
      *
      * @return {@code  last_row_pos_cannot_be_choosed} as a list of {@code int}.
      * @throws IllegalSeatConfigException if failed to parse {@code last_row_pos_cannot_be_choosed}.
-     * @see #last_row_pos_cannot_be_choosed
+     * @see #last_row_pos_cannot_be_chosen
      */
     public List<Integer> getNotAllowedLastRowPos() throws IllegalSeatConfigException {
-        if (last_row_pos_cannot_be_choosed.isBlank()) {
+        if (last_row_pos_cannot_be_chosen.isBlank()) {
             return new ArrayList<>();
         }
-        String[] t = last_row_pos_cannot_be_choosed.split(" ");
+        String[] t = last_row_pos_cannot_be_chosen.split(" ");
         List<Integer> i = new ArrayList<>(t.length);
         try {
             for (String s : t) {
                 i.add(parseUnsignedInt(s));
             }
         } catch (IllegalArgumentException e) {
-            throw new IllegalSeatConfigException(String.format("Invalid last row positions: %s.", last_row_pos_cannot_be_choosed), e);
+            throw new IllegalSeatConfigException(String.format("Invalid last row positions: %s.", last_row_pos_cannot_be_chosen), e);
         }
         return i;
     }
@@ -209,7 +209,7 @@ public final class SeatConfig {
         return Objects.equals(row_count, another.row_count)
                 && Objects.equals(column_count, another.column_count)
                 && Objects.equals(random_between_rows, another.random_between_rows)
-                && Objects.equals(last_row_pos_cannot_be_choosed, another.last_row_pos_cannot_be_choosed)
+                && Objects.equals(last_row_pos_cannot_be_chosen, another.last_row_pos_cannot_be_chosen)
                 && Objects.equals(person_sort_by_height, another.person_sort_by_height)
                 && Objects.equals(group_leader_list, another.group_leader_list)
                 && Objects.equals(separate_list, another.separate_list)
