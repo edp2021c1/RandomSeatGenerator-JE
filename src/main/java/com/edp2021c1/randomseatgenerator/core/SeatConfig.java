@@ -29,6 +29,9 @@ public final class SeatConfig {
     public String row_count;
     /**
      * Column count (int).
+     * Cannot be larger than {@link #MAX_COLUMN_COUNT}.
+     *
+     * @see #MAX_COLUMN_COUNT
      */
     public String column_count;
     /**
@@ -48,7 +51,7 @@ public final class SeatConfig {
      */
     public String group_leader_list;
     /**
-     * A list of people pairs separated ({@code \n} between two pairs, and {@code space} between two names of a pair).
+     * A list of people pairs separated (a pair of names each line, and {@code space} between two names of a pair).
      */
     public String separate_list;
     /**
@@ -64,6 +67,8 @@ public final class SeatConfig {
     }
 
     /**
+     * Load an instance from a JSON file.
+     *
      * @param file to load from.
      * @return {@code SeatConfig} loaded from file.
      * @throws FileNotFoundException if the file does not exist, is a directory rather than a regular file, or for some other reason cannot be opened for reading.
@@ -73,7 +78,11 @@ public final class SeatConfig {
     }
 
     /**
-     * @return {@link #row_count} in the format of an integer.
+     * Returns {@link #row_count} as an integer.
+     *
+     * @return {@code  row_count} as an integer.
+     * @throws IllegalSeatConfigException if {@code row_count} cannot be parsed into an unsigned integer.
+     * @see #row_count
      */
     public int getRowCount() throws IllegalSeatConfigException {
         int r;
@@ -86,7 +95,13 @@ public final class SeatConfig {
     }
 
     /**
-     * @return {@link #column_count} in the format of an integer.
+     * Returns {@link #column_count} as an integer.
+     *
+     * @return {@code  column_count} as an integer.
+     * @throws IllegalSeatConfigException if {@code column_count} cannot be parsed into an unsigned integer
+     *                                    or is larger than {@link #MAX_COLUMN_COUNT}
+     * @see #column_count
+     * @see #MAX_COLUMN_COUNT
      */
     public int getColumnCount() throws IllegalSeatConfigException {
         int c;
@@ -102,7 +117,11 @@ public final class SeatConfig {
     }
 
     /**
-     * @return {@link #random_between_rows} in the format of an integer.
+     * Returns {@link #random_between_rows} as an integer.
+     *
+     * @return {@code  random_between_rows} as an integer.
+     * @throws IllegalSeatConfigException if {@code random_between_rows} cannot be parsed into an unsigned integer.
+     * @see #random_between_rows
      */
     public int getRandomBetweenRows() throws IllegalSeatConfigException {
         if (random_between_rows.isBlank()) {
@@ -118,7 +137,11 @@ public final class SeatConfig {
     }
 
     /**
-     * @return {@link #last_row_pos_cannot_be_choosed} in the format of a list of {@code int}.
+     * Returns {@link #last_row_pos_cannot_be_choosed} as a list of {@code int}.
+     *
+     * @return {@code  last_row_pos_cannot_be_choosed} as a list of {@code int}.
+     * @throws IllegalSeatConfigException if failed to parse {@code last_row_pos_cannot_be_choosed}.
+     * @see #last_row_pos_cannot_be_choosed
      */
     public List<Integer> getNotAllowedLastRowPos() throws IllegalSeatConfigException {
         if (last_row_pos_cannot_be_choosed.isBlank()) {
@@ -137,21 +160,31 @@ public final class SeatConfig {
     }
 
     /**
-     * @return {@link #person_sort_by_height} in the format of a list of {@code String}.
+     * Returns {@link #person_sort_by_height} as a list of {@code String}.
+     *
+     * @return {@code  person_sort_by_height} as a list of {@code String}.
+     * @see #person_sort_by_height
      */
     public List<String> getNameList() {
         return Arrays.asList(person_sort_by_height.split(" "));
     }
 
     /**
-     * @return {@link #group_leader_list} in the format of a list of {@code String}.
+     * Returns {@link #group_leader_list} as a list of {@code String}.
+     *
+     * @return {@code  group_leader_list} as a list of {@code String}.
+     * @see #group_leader_list
      */
     public List<String> getGroupLeaderList() {
         return Arrays.asList(group_leader_list.split(" "));
     }
 
     /**
-     * @return {@link #separate_list} in the format of a list of {@code Separate}.
+     * Returns {@link #separate_list} as a list of {@code Separate}.
+     *
+     * @return {@code  separate_list} as a list of {@code Separate}.
+     * @throws IllegalSeatConfigException if {@code separate_list} contains one or more invalid pairs.
+     * @see #separate_list
      */
     public List<Separate> getSeparatedList() throws IllegalSeatConfigException {
         String[] t = separate_list.split("\n");
@@ -167,8 +200,10 @@ public final class SeatConfig {
     }
 
     /**
+     * Check if another instance equals to this one.
+     *
      * @param another another {@code SeatConfig} to compare with.
-     * @return whether these who instances are equal.
+     * @return if these two instances are equal.
      */
     public boolean equals(SeatConfig another) {
         return Objects.equals(row_count, another.row_count)
@@ -192,6 +227,8 @@ public final class SeatConfig {
 
     /**
      * Check format.
+     *
+     * @throws IllegalSeatConfigException if this instance has an illegal format.
      */
     public void checkFormat() throws IllegalSeatConfigException {
         getRowCount();

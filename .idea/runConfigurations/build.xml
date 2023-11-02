@@ -11,8 +11,8 @@
       <option name="taskNames">
         <list>
           <option value="clean" />
-          <option value="build" />
           <option value="javadoc" />
+          <option value="build" />
         </list>
       </option>
       <option name="vmOptions" />

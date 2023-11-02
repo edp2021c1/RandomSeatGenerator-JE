@@ -11,40 +11,37 @@ import java.util.List;
  * @since 1.0.0
  */
 public class Separate {
-    /**
-     * If contains the difference between the index of {@code a} and {@code b} in a seat table,
-     * then they are next to each other.
-     */
-    private static final List<Integer> NOT_SEPARATED = Arrays.asList(-1, -6, -7, -8, 1, 6, 7, 8);
-    /**
-     * The first person.
-     */
-    private final String a;
-    /**
-     * The second person.
-     */
-    private final String b;
+    private final String name_1;
+    private final String name_2;
 
     /**
-     * Create an instance from a {@code String}, names after the second will be ignored.
+     * Create an instance from a {@code String}.
+     * <p>
+     * The format of the {@code String} should be "name_1 name_2".
+     * <p>
+     * Note that every character after the first space will be taken as the second name.
      *
      * @param s a {@code String} contains the names of the two people separated, divided by a {@code space}.
+     * @throws IllegalSeatConfigException if the {@code String} contains only one name.
      */
     public Separate(String s) throws IllegalSeatConfigException {
-        String[] t = s.split(" ");
+        String[] t = s.split(" ", 2);
         if (t.length < 2) {
             throw new IllegalSeatConfigException(String.format("Invalid separate pair: \"%s\".", s));
         }
-        a = t[0];
-        b = t[1];
+        name_1 = t[0];
+        name_2 = t[1];
     }
 
     /**
-     * @param seat the seat table checked.
-     * @return true if {@code a} and {@code b} are separated in the seat table, and false if not.
-     * @see #NOT_SEPARATED
+     * Check if {@code name_1} and {@code name_2} are separated in the specified seat table.
+     *
+     * @param seat        the seat table checked.
+     * @param columnCount count of columns of the seat table.
+     * @return if {@code name_1} and {@code name_2} are separated in the seat table.
      */
-    public boolean check(List<String> seat) {
-        return !NOT_SEPARATED.contains(seat.indexOf(a) - seat.indexOf(b));
+    public boolean check(List<String> seat, int columnCount) {
+        List<Integer> notSeparated = Arrays.asList(-columnCount - 1, -columnCount, -columnCount + 1, -1, 1, columnCount - 1, columnCount, columnCount + 1);
+        return !notSeparated.contains(seat.indexOf(name_1) - seat.indexOf(name_2));
     }
 }

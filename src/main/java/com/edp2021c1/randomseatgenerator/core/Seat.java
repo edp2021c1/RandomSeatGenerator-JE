@@ -31,12 +31,12 @@ public class Seat {
     private final long seed;
     /**
      * The lucky person specially chosen.
-     *
-     * @since 1.2.1
      */
     private final String luckyPerson;
 
     /**
+     * Creates an instance.
+     *
      * @param seat        {@link #seat}
      * @param config      {@link #config}
      * @param seed        {@link #seed}
@@ -51,6 +51,8 @@ public class Seat {
     }
 
     /**
+     * Exports this instance to an Excel form file (.xlsx).
+     *
      * @param file to export seat table to.
      * @throws IOException if an I/O error occurred.
      */

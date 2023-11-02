@@ -14,16 +14,20 @@ import java.util.Random;
 public final class SeatGenerator {
 
     /**
-     * Generate a seat table using the pre-set config and the seed.
+     * Generate a seat table using the specified config and the seed.
      *
      * @param config used to generate the seat table.
      * @param seed   used to generate the seat table.
      * @return an instance of {@code Seat}.
+     * @throws NullPointerException       if the config is null.
+     * @throws IllegalSeatConfigException if the config has an illegal format.
      */
     public Seat generate(SeatConfig config, long seed) throws NullPointerException, IllegalSeatConfigException {
         if (config == null) {
             throw new NullPointerException("Seat config cannot be null");
         }
+        config.checkFormat();
+
         Random random = new Random(seed);
 
         // 获取配置
@@ -163,13 +167,7 @@ public final class SeatGenerator {
         return s;
     }
 
-    /**
-     * Check if the seat table fits the config.
-     *
-     * @return {@code true} if the seat table fits the config.
-     */
     private boolean checkSeatFormat(List<String> seatTable, SeatConfig config) throws IllegalSeatConfigException {
-        config.checkFormat();
         List<String> gl = config.getGroupLeaderList();
         List<Separate> sp = config.getSeparatedList();
         boolean hasLeader = false;
@@ -191,7 +189,7 @@ public final class SeatGenerator {
         // 检查是否分开
         for (i = 0; i < spNum; i++) {
             if (isSeparated) {
-                isSeparated = sp.get(i).check(seatTable);
+                isSeparated = sp.get(i).check(seatTable, config.getColumnCount());
                 continue;
             }
             return false;
