@@ -1,4 +1,4 @@
-package com.edp2021c1.core;
+package com.edp2021c1.randomseatgenerator.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;

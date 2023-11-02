@@ -1,4 +1,4 @@
-import com.edp2021c1.Main;
+import com.edp2021c1.randomseatgenerator.Main;
 
 public class Test {
     public static void main(String[] args) {

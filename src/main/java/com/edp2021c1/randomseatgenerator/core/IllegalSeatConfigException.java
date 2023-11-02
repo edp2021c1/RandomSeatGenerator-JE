@@ -1,4 +1,4 @@
-package com.edp2021c1.core;
+package com.edp2021c1.randomseatgenerator.core;
 
 /**
  * Thrown if {@code SeatConfig} has an illegal format.

@@ -1,4 +1,4 @@
-package com.edp2021c1.core;
+package com.edp2021c1.randomseatgenerator.core;
 
 import com.google.gson.Gson;
 

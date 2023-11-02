@@ -9,7 +9,8 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.stage.Stage?>
 <Stage xmlns:fx="http://javafx.com/fxml/1" fx:id="stage" title="RandomSeatGenerator - 首选项"
-       xmlns="http://javafx.com/javafx/20.0.1" fx:controller="com.edp2021c1.fx.controller.PreferencesDialogController">
+       xmlns="http://javafx.com/javafx/20.0.1"
+       fx:controller="com.edp2021c1.randomseatgenerator.fx.controller.PreferencesDialogController">
     <scene>
         <Scene stylesheets="@../../css/light.css">
             <VBox prefHeight="736.0" prefWidth="1232.0">

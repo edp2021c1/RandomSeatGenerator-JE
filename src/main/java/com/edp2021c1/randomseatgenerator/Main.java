@@ -1,9 +1,9 @@
-package com.edp2021c1;
+package com.edp2021c1.randomseatgenerator;
 
-import com.edp2021c1.core.Seat;
-import com.edp2021c1.core.SeatConfig;
-import com.edp2021c1.core.SeatGenerator;
-import com.edp2021c1.fx.App;
+import com.edp2021c1.randomseatgenerator.core.Seat;
+import com.edp2021c1.randomseatgenerator.core.SeatConfig;
+import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
+import com.edp2021c1.randomseatgenerator.fx.App;
 import com.google.gson.Gson;
 
 import javax.swing.*;

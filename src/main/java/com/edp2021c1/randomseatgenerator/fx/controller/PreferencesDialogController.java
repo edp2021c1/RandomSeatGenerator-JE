@@ -1,8 +1,8 @@
-package com.edp2021c1.fx.controller;
+package com.edp2021c1.randomseatgenerator.fx.controller;
 
-import com.edp2021c1.Main;
-import com.edp2021c1.core.IllegalSeatConfigException;
-import com.edp2021c1.core.SeatConfig;
+import com.edp2021c1.randomseatgenerator.Main;
+import com.edp2021c1.randomseatgenerator.core.IllegalSeatConfigException;
+import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;

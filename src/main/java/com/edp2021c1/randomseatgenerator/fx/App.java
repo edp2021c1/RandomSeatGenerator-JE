@@ -1,4 +1,4 @@
-package com.edp2021c1.fx;
+package com.edp2021c1.randomseatgenerator.fx;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

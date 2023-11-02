@@ -1,4 +1,4 @@
-package com.edp2021c1.core;
+package com.edp2021c1.randomseatgenerator.core;
 
 import lombok.Getter;
 
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.edp2021c1.core.SeatConfig.MAX_COLUMN_COUNT;
+import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT;
 
 /**
  * An instance of this class saves a row of a seat table. This class also provides a method to

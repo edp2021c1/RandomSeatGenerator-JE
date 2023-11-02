@@ -1,10 +1,10 @@
-package com.edp2021c1.fx.controller;
+package com.edp2021c1.randomseatgenerator.fx.controller;
 
-import com.edp2021c1.Main;
-import com.edp2021c1.core.Seat;
-import com.edp2021c1.core.SeatConfig;
-import com.edp2021c1.core.SeatGenerator;
-import com.edp2021c1.core.SeatRowData;
+import com.edp2021c1.randomseatgenerator.Main;
+import com.edp2021c1.randomseatgenerator.core.Seat;
+import com.edp2021c1.randomseatgenerator.core.SeatConfig;
+import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
+import com.edp2021c1.randomseatgenerator.core.SeatRowData;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
