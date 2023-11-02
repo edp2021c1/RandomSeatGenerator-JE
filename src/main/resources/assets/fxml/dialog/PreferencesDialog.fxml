@@ -8,7 +8,7 @@
 <?import javafx.scene.Scene?>
 <?import javafx.scene.text.Font?>
 <?import javafx.stage.Stage?>
-<Stage xmlns:fx="http://javafx.com/fxml/1" fx:id="stage" title="RandomSeatGenerator - 首选项"
+<Stage xmlns:fx="http://javafx.com/fxml/1" fx:id="stage" resizable="false" title="RandomSeatGenerator - 首选项"
        xmlns="http://javafx.com/javafx/20.0.1"
        fx:controller="com.edp2021c1.randomseatgenerator.fx.controller.PreferencesDialogController">
     <scene>
@@ -35,7 +35,7 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                             </HBox.margin>
                         </TextField>
-                        <TextField fx:id="lastRowPosInput" promptText="最后一排不可选位置">
+                        <TextField fx:id="disabledLastRowPosInput" promptText="最后一排不可选位置">
                             <HBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                             </HBox.margin>
@@ -66,8 +66,8 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                             </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#applySeatConfig" prefHeight="26.0" prefWidth="80.0"
-                                text="应用">
+                        <Button fx:id="applyBtn" disable="true" mnemonicParsing="false" onAction="#applySeatConfig"
+                                prefHeight="26.0" prefWidth="80.0" text="应用">
                             <HBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                             </HBox.margin>
@@ -108,10 +108,10 @@
                     </HBox>
                     <ButtonBar prefHeight="40.0" prefWidth="200.0">
                         <buttons>
-                            <Button mnemonicParsing="false" onAction="#confirm" prefHeight="26.0" prefWidth="80.0"
-                                    text="确定"/>
-                            <Button mnemonicParsing="false" onAction="#cancel" prefHeight="26.0" prefWidth="80.0"
-                                    text="取消"/>
+                            <Button defaultButton="true" mnemonicParsing="false" onAction="#confirm" prefHeight="26.0"
+                                    prefWidth="80.0" text="确定"/>
+                            <Button cancelButton="true" mnemonicParsing="false" onAction="#cancel" prefHeight="26.0"
+                                    prefWidth="80.0" text="取消"/>
                         </buttons>
                     </ButtonBar>
                 </VBox>

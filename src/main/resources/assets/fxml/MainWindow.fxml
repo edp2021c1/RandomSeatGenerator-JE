@@ -18,8 +18,8 @@
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                         </VBox.margin>
                     </Button>
-                    <Button mnemonicParsing="false" onAction="#generateSeatTable" prefHeight="26.0" prefWidth="70.0"
-                            text="生成">
+                    <Button defaultButton="true" mnemonicParsing="false" onAction="#generateSeatTable" prefHeight="26.0"
+                            prefWidth="70.0" text="生成">
                         <VBox.margin>
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                         </VBox.margin>

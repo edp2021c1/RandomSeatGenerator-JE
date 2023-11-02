@@ -38,24 +38,32 @@ public class MainWindowController {
      */
     public static boolean configIsChanged = false;
     private static Seat seat;
-
     private static long previousSeed = 0;
+
     @FXML
     private Stage stage;
+
     @FXML
     private ResourceBundle resources;
+
     @FXML
     private URL location;
+
     @FXML
     private TextField seedInput;
+
     @FXML
     private TableView<SeatRowData> seatTable;
+
     @FXML
     private HBox box_1;
+
     @FXML
     private VBox box_2;
+
     @FXML
     private VBox box_3;
+
     @FXML
     private HBox box_4;
 
@@ -75,13 +83,15 @@ public class MainWindowController {
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
         fc.setInitialDirectory(new File("./"));
         fc.setInitialFileName(String.format("%tF", new Date()));
+
         File outputFile = fc.showSaveDialog(stage);
-        if (outputFile != null) {
-            try {
-                seat.exportToExcelDocument(outputFile);
-            } catch (IOException e) {
-                err.printf("ERROR: Failed to export seat table to %s.%n", outputFile.getAbsolutePath());
-            }
+        if (outputFile == null) {
+            return;
+        }
+        try {
+            seat.exportToExcelDocument(outputFile);
+        } catch (IOException e) {
+            err.printf("ERROR: Failed to export seat table to %s.%n", outputFile.getAbsolutePath());
         }
     }
 
@@ -130,7 +140,6 @@ public class MainWindowController {
     void initialize() {
         stage.getIcons().add(new Image("assets/img/logo.png"));
 
-        seatTable.setEditable(false);
         initSeatTable();
     }
 

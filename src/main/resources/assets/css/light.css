@@ -13,13 +13,18 @@
 .text-area {
     -fx-text-fill: inherit;
     -fx-border-width: 1.5;
-    -fx-border-color: #a8a8a8;
+    -fx-border-color: #7c7c7c;
     -fx-border-radius: 3;
     -fx-background-color: inherit;
 }
 
 .button {
     -fx-padding: 2;
+}
+
+.button:disabled {
+    -fx-border-color: #9b9b9b;
+    -fx-text-fill: #9b9b9b;
 }
 
 .text-field,
