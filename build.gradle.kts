@@ -5,7 +5,7 @@ plugins {
 group = "com.edp2021c1"
 version = "1.2.7"
 
-var mainClass = "com.edp2021c1.Main"
+var mainClass = "com.edp2021c1.randomseatgenerator.Main"
 
 repositories {
     mavenCentral()
