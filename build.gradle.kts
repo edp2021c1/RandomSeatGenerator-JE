@@ -1,5 +1,11 @@
 plugins {
     id("java")
+    id("org.openjfx.javafxplugin") version "0.1.0"
+}
+
+javafx {
+    version = "20.0.1"
+    modules("javafx.controls", "javafx.fxml")
 }
 
 group = "com.edp2021c1"

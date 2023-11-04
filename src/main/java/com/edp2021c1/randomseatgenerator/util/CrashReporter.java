@@ -37,10 +37,18 @@ import javafx.stage.Stage;
 public class CrashReporter implements Thread.UncaughtExceptionHandler {
     private final boolean showStackTrace;
 
+    /**
+     * Creates an instance
+     */
     public CrashReporter() {
         showStackTrace = false;
     }
 
+    /**
+     * Creates an instance
+     *
+     * @param showStackTrace if stack traces of the exception shall be shown.
+     */
     public CrashReporter(boolean showStackTrace) {
         this.showStackTrace = showStackTrace;
     }
