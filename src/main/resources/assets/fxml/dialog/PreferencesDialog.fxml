@@ -10,10 +10,10 @@
 <?import javafx.stage.Stage?>
 <Stage xmlns:fx="http://javafx.com/fxml/1" fx:id="stage" resizable="false" title="RandomSeatGenerator - 首选项"
        xmlns="http://javafx.com/javafx/20.0.1"
-       fx:controller="com.edp2021c1.randomseatgenerator.fx.controller.PreferencesDialogController">
+       fx:controller="com.edp2021c1.randomseatgenerator.ui.controller.PreferencesDialogController">
     <scene>
         <Scene stylesheets="@../../css/light.css">
-            <VBox prefHeight="736.0" prefWidth="1232.0">
+            <VBox prefHeight="678.0" prefWidth="1232.0">
                 <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="large-box">
                     <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
@@ -79,7 +79,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </padding>
                     <Label prefHeight="45.0" prefWidth="1212.0" text="关于"/>
-                    <HBox alignment="CENTER" prefHeight="454.0" prefWidth="1210.0">
+                    <HBox alignment="CENTER" prefHeight="384.0" prefWidth="1210.0">
                         <ImageView fitHeight="275.0" fitWidth="275.0" pickOnBounds="true" preserveRatio="true">
                             <HBox.margin>
                                 <Insets/>
@@ -96,7 +96,7 @@
                             <Label prefHeight="24.0" prefWidth="219.0" text="版本            1.2.0 (Build 6)"/>
                             <Label prefHeight="23.0" prefWidth="452.0"
                                    text="官方仓库    https://github.com/edp2021c1/RandomSeatGenerator-JE.git"/>
-                            <TextArea editable="false" prefHeight="361.0" prefWidth="935.0"
+                            <TextArea editable="false" prefHeight="292.0" prefWidth="935.0"
                                       styleClass="license-text-area"
                                       text="Copyright (c) 2023  EDP2021C1&#10;This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.&#10;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. &#10;See the GNU General Public License for more details. &#10;You should have received a copy of the GNU General Public License along with this program. &#10;If not, see &lt;https://www.gnu.org/licenses/&gt;.&#10;&#10;Libraries that have been used in RandomSeatGenerator are listed below (Sorted by date added):&#10;JavaFX v20.0.1 (GPLv2)&#10;Gson v2.10.1 (Apache 2.0)&#10;EasyExcel v3.3.2 (Apache 2.0)&#10;&#10;Contributors:&#10;Calboot &lt;calboot39@outlook.com&gt;"
                                       wrapText="true">

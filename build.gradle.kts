@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.edp2021c1"
-version = "1.2.7"
+version = "1.2.8"
 
 var mainClass = "com.edp2021c1.randomseatgenerator.Main"
 
@@ -17,7 +17,10 @@ dependencies {
 
 
     compileOnly("org.projectlombok:lombok:1.18.28")
+
     annotationProcessor("org.projectlombok:lombok:1.18.28")
+
+    testImplementation("junit:junit:4.13.2")
 }
 
 tasks.jar {

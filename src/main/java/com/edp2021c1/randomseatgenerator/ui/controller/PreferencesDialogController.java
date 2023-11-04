@@ -1,8 +1,27 @@
-package com.edp2021c1.randomseatgenerator.fx.controller;
+/*
+ * RandomSeatGenerator
+ * Copyright (C) 2023  EDP2021C1
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package com.edp2021c1.randomseatgenerator.ui.controller;
 
 import com.edp2021c1.randomseatgenerator.Main;
 import com.edp2021c1.randomseatgenerator.core.IllegalSeatConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
+import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -78,10 +97,9 @@ public class PreferencesDialogController {
         try {
             Main.saveConfig(seatConfig);
         } catch (IllegalSeatConfigException e) {
-            System.err.printf("WARNING: %s Will discard changes.%n", e.getMessage());
-            initConfigPane(Main.reloadConfig());
-            return;
+            new CrashReporter().uncaughtException(Thread.currentThread(), e);
         }
+
         MainWindowController.configIsChanged = true;
         applyBtn.setDisable(true);
     }
@@ -96,11 +114,11 @@ public class PreferencesDialogController {
             return;
         }
 
-        SeatConfig seatConfig = null;
+        SeatConfig seatConfig;
         try {
             seatConfig = SeatConfig.fromJsonFile(f);
         } catch (FileNotFoundException e) {
-            System.err.println("WARNING: Failed to load seat config from file.");
+            throw new RuntimeException("Failed to load seat config from file.", e);
         }
 
         if (seatConfig != null) {

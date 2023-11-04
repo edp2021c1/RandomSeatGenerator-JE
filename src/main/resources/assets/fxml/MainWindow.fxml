@@ -7,11 +7,11 @@
 <?import javafx.stage.Stage?>
 <Stage xmlns:fx="http://javafx.com/fxml/1" fx:id="stage" title="Random Seat Generator - 随机座位生成器"
        xmlns="http://javafx.com/javafx/20.0.1"
-       fx:controller="com.edp2021c1.randomseatgenerator.fx.controller.MainWindowController">
+       fx:controller="com.edp2021c1.randomseatgenerator.ui.controller.MainWindowController">
     <scene>
         <Scene stylesheets="@../css/light.css">
             <HBox fx:id="box_1" alignment="CENTER" prefHeight="634.0" prefWidth="1100.0">
-                <VBox fx:id="box_2" alignment="CENTER" prefHeight="711.0" prefWidth="91.0" styleClass="large-box">
+                <VBox fx:id="box_2" alignment="CENTER" prefHeight="711.0" prefWidth="91.0">
                     <Button mnemonicParsing="false" onAction="#openPreferencesDialog" prefHeight="26.0" prefWidth="70.0"
                             text="首选项">
                         <VBox.margin>
@@ -31,8 +31,7 @@
                         </VBox.margin>
                     </Button>
                 </VBox>
-                <VBox fx:id="box_3" alignment="CENTER" prefHeight="698.0" prefWidth="1003.0" styleClass="large-box"
-                      HBox.hgrow="ALWAYS">
+                <VBox fx:id="box_3" alignment="CENTER" prefHeight="698.0" prefWidth="1003.0" HBox.hgrow="ALWAYS">
                     <HBox fx:id="box_4" alignment="CENTER" prefHeight="100.0" prefWidth="998.0">
                         <TextField fx:id="seedInput" onAction="#generateSeatTable" prefHeight="26.0" prefWidth="191.0"
                                    promptText="种子(Long)">
