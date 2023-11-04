@@ -87,6 +87,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
 
             Button button = new Button("确定");
             button.setOnAction(event -> close());
+            button.setDefaultButton(true);
 
             ButtonBar buttonBar = new ButtonBar();
             buttonBar.getButtons().add(button);

@@ -16,8 +16,9 @@
  */
 
 .root {
-    -fx-background-color: #f2f2f2;
     -fx-text-fill: black;
+
+    -fx-background-color: #f2f2f2;
 }
 
 .label {
@@ -29,10 +30,12 @@
 .text-field,
 .text-area {
     -fx-text-fill: inherit;
+
+    -fx-background-color: inherit;
+
     -fx-border-width: 1.5;
     -fx-border-color: #7c7c7c;
     -fx-border-radius: 3;
-    -fx-background-color: inherit;
 }
 
 .button {
@@ -40,13 +43,15 @@
 }
 
 .button:disabled {
-    -fx-border-color: #9b9b9b;
     -fx-text-fill: #9b9b9b;
+
+    -fx-border-color: #9b9b9b;
 }
 
 .text-field,
 .text-area {
     -fx-padding: 3;
+
     -fx-highlight-fill: #2571d5;
 }
 
@@ -57,9 +62,10 @@
 }
 
 .text-area .content {
+    -fx-padding: 0;
+
     -fx-background-color: inherit;
     -fx-background-radius: 0;
-    -fx-padding: 0;
 }
 
 .check-box {
@@ -68,6 +74,7 @@
 
 .check-box .box {
     -fx-background-color: inherit;
+
     -fx-border-width: 1;
     -fx-border-color: black;
     -fx-border-radius: 2;
@@ -76,8 +83,19 @@
 .table-view {
     -fx-background-color: inherit;
     -fx-background-radius: 2;
+
     -fx-border-color: #e1e0dd;
     -fx-border-radius: 2;
+}
+
+.table-view .scroll-bar:horizontal * {
+    -fx-min-width: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+
+    -fx-min-height: 0;
+    -fx-pref-height: 0;
+    -fx-max-height: 0;
 }
 
 .column-header {

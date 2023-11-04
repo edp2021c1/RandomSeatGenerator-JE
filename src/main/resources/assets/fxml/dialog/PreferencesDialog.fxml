@@ -14,7 +14,7 @@
     <scene>
         <Scene stylesheets="@../../css/light.css">
             <VBox prefHeight="678.0" prefWidth="1232.0">
-                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="large-box">
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                     <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </padding>
@@ -74,7 +74,7 @@
                         </Button>
                     </HBox>
                 </VBox>
-                <VBox alignment="CENTER" prefHeight="539.0" prefWidth="1232.0" styleClass="large-box">
+                <VBox alignment="CENTER" prefHeight="539.0" prefWidth="1232.0">
                     <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </padding>
