@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Main [--nogui]" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="com.edp2021c1.randomseatgenerator.Main" />
+    <option name="MAIN_CLASS_NAME" value="com.edp2021c1.randomseatgenerator.RandomSeatGenerator" />
     <module name="RandomSeatGenerator.main" />
     <option name="PROGRAM_PARAMETERS" value="--nogui" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.edp2021c1.randomseatgenerator.*" />
+        <option name="PATTERN" value="com.edp2021c1.randomseatgenerator.launcher.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

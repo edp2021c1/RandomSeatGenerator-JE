@@ -18,11 +18,12 @@
 
 package com.edp2021c1.randomseatgenerator.ui.controller;
 
-import com.edp2021c1.randomseatgenerator.Main;
 import com.edp2021c1.randomseatgenerator.core.Seat;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
 import com.edp2021c1.randomseatgenerator.core.SeatRowData;
+import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.DataUtils;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -72,6 +73,9 @@ public class MainWindowController {
     private TableView<SeatRowData> seatTable;
 
     @FXML
+    private VBox mainBox;
+
+    @FXML
     private HBox box_1;
 
     @FXML
@@ -118,7 +122,7 @@ public class MainWindowController {
 
     @FXML
     void generateSeatTable(ActionEvent event) {
-        SeatConfig config = Main.reloadConfig();
+        SeatConfig config = ConfigUtils.reloadConfig();
         initSeatTable();
 
         long seed;
@@ -140,7 +144,7 @@ public class MainWindowController {
     void openPreferencesDialog(ActionEvent event) {
         Stage s;
         try {
-            s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/dialog/PreferencesDialog.fxml")));
+            s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/PreferencesDialog.fxml")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -154,13 +158,14 @@ public class MainWindowController {
 
     @FXML
     void initialize() {
-        stage.getIcons().add(new Image("assets/img/logo.png"));
+        stage.getIcons().add(new Image(DataUtils.ICON_URL));
+        stage.getScene().getStylesheets().add(DataUtils.STYLESHEET_URL_LIGHT);
 
         initSeatTable();
     }
 
     void initSeatTable() {
-        SeatConfig conf = Main.reloadConfig();
+        SeatConfig conf = ConfigUtils.reloadConfig();
         int rowCount = conf.getRowCount(), columnCount = conf.getColumnCount();
         TableColumn<SeatRowData, String> c;
 

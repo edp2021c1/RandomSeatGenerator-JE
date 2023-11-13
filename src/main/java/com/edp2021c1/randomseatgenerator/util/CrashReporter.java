@@ -108,14 +108,14 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
             Scene scene = new Scene(vBox);
-            scene.getStylesheets().add("assets/css/light.css");
+            scene.getStylesheets().add(DataUtils.STYLESHEET_URL_LIGHT);
 
             setScene(scene);
             setResizable(false);
             setTitle("出错啦");
             setWidth(960);
             setMaxHeight(1080);
-            getIcons().add(new Image("assets/img/logo.png"));
+            getIcons().add(new Image(DataUtils.ERROR_ICON_URL));
         }
     }
 }

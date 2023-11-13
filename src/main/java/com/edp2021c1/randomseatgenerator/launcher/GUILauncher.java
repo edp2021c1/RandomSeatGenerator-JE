@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator;
+package com.edp2021c1.randomseatgenerator.launcher;
 
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import javafx.application.Application;
@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * JavaFX application intro.
  */
-public class Launcher extends Application {
+public class GUILauncher extends Application {
     private static final CrashReporter CRASH_REPORTER = new CrashReporter(true);
 
     public void start(Stage primaryStage) {

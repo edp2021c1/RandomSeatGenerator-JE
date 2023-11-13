@@ -18,10 +18,11 @@
 
 package com.edp2021c1.randomseatgenerator.ui.controller;
 
-import com.edp2021c1.randomseatgenerator.Main;
 import com.edp2021c1.randomseatgenerator.core.IllegalSeatConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
+import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
+import com.edp2021c1.randomseatgenerator.util.DataUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -91,11 +92,11 @@ public class PreferencesDialogController {
         seatConfig.separate_list = separateListInput.getText();
         seatConfig.lucky_option = luckyOption.isSelected();
 
-        if (Main.reloadConfig().equals(seatConfig)) {
+        if (ConfigUtils.reloadConfig().equals(seatConfig)) {
             return;
         }
         try {
-            Main.saveConfig(seatConfig);
+            ConfigUtils.saveConfig(seatConfig);
         } catch (IllegalSeatConfigException e) {
             new CrashReporter().uncaughtException(Thread.currentThread(), e);
         }
@@ -139,27 +140,29 @@ public class PreferencesDialogController {
 
     @FXML
     void initialize() {
-        stage.getIcons().add(new Image("assets/img/logo.png"));
+        stage.getIcons().add(new Image(DataUtils.ICON_URL));
         stage.initModality(Modality.APPLICATION_MODAL);
 
-        initConfigPane(Main.reloadConfig());
+        stage.getScene().getStylesheets().add(DataUtils.STYLESHEET_URL_LIGHT);
+
+        initConfigPane(ConfigUtils.reloadConfig());
 
         rowCountInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(Main.reloadConfig().row_count.equals(newValue)));
+                applyBtn.setDisable(ConfigUtils.reloadConfig().row_count.equals(newValue)));
         columnCountInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(Main.reloadConfig().column_count.equals(newValue)));
+                applyBtn.setDisable(ConfigUtils.reloadConfig().column_count.equals(newValue)));
         rbrInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(Main.reloadConfig().random_between_rows.equals(newValue)));
+                applyBtn.setDisable(ConfigUtils.reloadConfig().random_between_rows.equals(newValue)));
         disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(Main.reloadConfig().last_row_pos_cannot_be_chosen.equals(newValue)));
+                applyBtn.setDisable(ConfigUtils.reloadConfig().last_row_pos_cannot_be_chosen.equals(newValue)));
         nameListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(Main.reloadConfig().person_sort_by_height.equals(newValue)));
+                applyBtn.setDisable(ConfigUtils.reloadConfig().person_sort_by_height.equals(newValue)));
         groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(Main.reloadConfig().group_leader_list.equals(newValue)));
+                applyBtn.setDisable(ConfigUtils.reloadConfig().group_leader_list.equals(newValue)));
         separateListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(Main.reloadConfig().separate_list.equals(newValue)));
+                applyBtn.setDisable(ConfigUtils.reloadConfig().separate_list.equals(newValue)));
         luckyOption.selectedProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(newValue == Main.reloadConfig().lucky_option));
+                applyBtn.setDisable(newValue == ConfigUtils.reloadConfig().lucky_option));
     }
 
     void initConfigPane(SeatConfig seatConfig) {

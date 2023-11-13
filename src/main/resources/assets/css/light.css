@@ -23,6 +23,7 @@
 
 .label {
     -fx-padding: 1;
+
     -fx-text-fill: inherit;
 }
 
@@ -59,6 +60,20 @@
 .text-field:focused,
 .text-area:focused {
     -fx-border-color: black;
+}
+
+.button:default {
+    -fx-text-fill: white;
+
+    -fx-background-color: #398bfa;
+
+    -fx-border-color: #398bfa;
+}
+
+.button:default:hover {
+    -fx-background-color: #589eff;
+
+    -fx-border-color: #589eff;
 }
 
 .text-area .content {

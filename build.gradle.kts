@@ -3,9 +3,9 @@ plugins {
 }
 
 group = "com.edp2021c1"
-version = "1.2.8"
+version = "1.2.9"
 
-var mainClass = "com.edp2021c1.randomseatgenerator.Main"
+var mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
 
 repositories {
     mavenCentral()
