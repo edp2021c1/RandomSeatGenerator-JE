@@ -103,6 +103,7 @@ public class PreferencesDialogController {
             ConfigUtils.saveConfig(seatConfig);
         } catch (IllegalSeatConfigException e) {
             CrashReporter.SMALLER_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+            return;
         }
 
         MainWindowController.configIsChanged = true;

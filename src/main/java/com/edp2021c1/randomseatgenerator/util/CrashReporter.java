@@ -82,14 +82,15 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        CrashReporterApp.message = getString(t, e);
+        String str = CrashReporterApp.message = getString(t, e);
 
-        if (OperatingSystemUtils.isOnMac()) {
+        if (OperatingSystemUtils.isOnMac() && Taskbar.getTaskbar().getIconImage() == null) {
             Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(MetaData.ERROR_ICON_URL)));
         }
         try {
             Application.launch(CrashReporterApp.class);
-        } catch (IllegalStateException ignored) {
+        } catch (IllegalStateException exception) {
+            new CrashReporterWindow(str).show();
         }
 
     }
