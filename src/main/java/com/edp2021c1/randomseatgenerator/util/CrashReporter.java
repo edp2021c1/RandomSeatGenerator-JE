@@ -82,7 +82,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        CrashReporterApp.stringBuilder = getStringBuilder(t, e);
+        CrashReporterApp.message = getString(t, e);
 
         if (OperatingSystemUtils.isOnMac()) {
             Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(MetaData.ERROR_ICON_URL)));
@@ -94,7 +94,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
 
     }
 
-    private StringBuilder getStringBuilder(Thread t, Throwable e) {
+    private String getString(Thread t, Throwable e) {
         String message = e.getMessage();
         StringBuilder str = new StringBuilder();
         str.append(String.format("Exception in thread \"%s\":", t.getName()));
@@ -110,13 +110,10 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
                 str.append(String.format("\n        at: %s", s.toString()));
             }
         }
-        return str;
+        return str.toString();
     }
 
     private static class CrashReporterWindow extends Stage {
-        public CrashReporterWindow(Object message) {
-            this(message.toString());
-        }
 
         private CrashReporterWindow(String message) {
             Label label = new Label(message);
@@ -148,12 +145,18 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
         }
     }
 
+    /**
+     * JavaFX application used to launch {@code CrashReporterWindow}.
+     */
     public static class CrashReporterApp extends Application {
-        public static StringBuilder stringBuilder;
+        /**
+         * Message shown in the window.
+         */
+        public static String message;
 
         @Override
         public void start(Stage primaryStage) {
-            new CrashReporterWindow(stringBuilder).show();
+            new CrashReporterWindow(message).show();
         }
     }
 }
