@@ -20,9 +20,8 @@ package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.launcher.ConsoleLauncher;
 import com.edp2021c1.randomseatgenerator.launcher.GUILauncher;
-import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.DataUtils;
+import com.edp2021c1.randomseatgenerator.util.MetaData;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystemUtils;
 import javafx.application.Application;
 
@@ -34,24 +33,23 @@ import java.util.List;
  * Application intro, loads seat config.
  */
 public class RandomSeatGenerator {
-    private static final CrashReporter CRASH_REPORTER = new CrashReporter(true);
 
     /**
      * @param args used to start the application.
      */
     public static void main(String[] args) {
-        Thread.currentThread().setUncaughtExceptionHandler(CRASH_REPORTER);
+        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.DEFAULT_CRASH_REPORTER);
 
         List<String> arguments = Arrays.asList(args);
-        // 如果有“--help”参数则打印帮助信息
+        // 如果有“--help”参数则打印帮助信息然后退出
         if (arguments.contains("--help")) {
-            System.out.println(DataUtils.HELP_INFO);
+            System.out.println(MetaData.HELP_INFO);
             System.exit(0);
         }
 
-        // 如果有“--license”参数则打印许可证
+        // 如果有“--license”参数则打印许可证然后退出
         if (arguments.contains("--license")) {
-            System.out.println(DataUtils.LICENSE);
+            System.out.println(MetaData.LICENSE_INFO);
             System.exit(0);
         }
 
@@ -63,11 +61,9 @@ public class RandomSeatGenerator {
 
         // 如果不是命令行模式则启动JavaFX程序
         if (OperatingSystemUtils.isOnMac()) {
-            Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(DataUtils.MAC_ICON_URL)));
+            Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(MetaData.MAC_ICON_URL)));
         }
-        ConfigUtils.reloadConfig();
-        Application.launch(GUILauncher.class, args);
-        System.exit(0);
+        Application.launch(GUILauncher.class);
 
     }
 }

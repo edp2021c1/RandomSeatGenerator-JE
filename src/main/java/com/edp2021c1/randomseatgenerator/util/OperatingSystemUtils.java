@@ -27,7 +27,6 @@ public class OperatingSystemUtils {
      * @return if runs on macOS
      */
     public static boolean isOnMac() {
-        String name = System.getProperty("os.name");
-        return name != null && name.contains("Mac");
+        return System.getProperty("os.name").startsWith("Mac");
     }
 }

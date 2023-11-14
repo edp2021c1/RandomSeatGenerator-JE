@@ -30,16 +30,15 @@ import java.util.Objects;
  * JavaFX application intro.
  */
 public class GUILauncher extends Application {
-    private static final CrashReporter CRASH_REPORTER = new CrashReporter(true);
 
+    @Override
     public void start(Stage primaryStage) {
-        Thread.currentThread().setUncaughtExceptionHandler(CRASH_REPORTER);
+        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.DEFAULT_CRASH_REPORTER);
 
-        Stage stage;
+        Stage stage = new Stage();
         try {
             stage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/MainWindow.fxml")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ignored) {
         }
         stage.show();
     }

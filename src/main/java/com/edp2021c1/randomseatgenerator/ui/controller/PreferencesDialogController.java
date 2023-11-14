@@ -22,7 +22,7 @@ import com.edp2021c1.randomseatgenerator.core.IllegalSeatConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.DataUtils;
+import com.edp2021c1.randomseatgenerator.util.MetaData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -30,6 +30,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -81,6 +82,9 @@ public class PreferencesDialogController {
     private Button applyBtn;
 
     @FXML
+    private ImageView iconView;
+
+    @FXML
     void applySeatConfig(ActionEvent event) {
         SeatConfig seatConfig = new SeatConfig();
         seatConfig.row_count = rowCountInput.getText();
@@ -98,7 +102,7 @@ public class PreferencesDialogController {
         try {
             ConfigUtils.saveConfig(seatConfig);
         } catch (IllegalSeatConfigException e) {
-            new CrashReporter().uncaughtException(Thread.currentThread(), e);
+            CrashReporter.SMALLER_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
         }
 
         MainWindowController.configIsChanged = true;
@@ -140,10 +144,12 @@ public class PreferencesDialogController {
 
     @FXML
     void initialize() {
-        stage.getIcons().add(new Image(DataUtils.ICON_URL));
+        stage.getIcons().add(new Image(MetaData.ICON_URL));
+        stage.setTitle("RandomSeatGenerator - 首选项");
         stage.initModality(Modality.APPLICATION_MODAL);
+        stage.getScene().getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
 
-        stage.getScene().getStylesheets().add(DataUtils.STYLESHEET_URL_LIGHT);
+        iconView.setImage(new Image(MetaData.ICON_URL));
 
         initConfigPane(ConfigUtils.reloadConfig());
 

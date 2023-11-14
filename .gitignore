@@ -44,3 +44,4 @@ bin/
 
 seat_config.json
 *.xlsx
+*.log

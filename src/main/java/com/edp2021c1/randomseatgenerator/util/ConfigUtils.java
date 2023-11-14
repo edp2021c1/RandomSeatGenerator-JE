@@ -28,7 +28,27 @@ import java.util.Objects;
  * Includes several methods related to config.
  */
 public class ConfigUtils {
-    private static final SeatConfig DEFAULT_CONFIG = loadDefaultConfig();
+
+    private static final SeatConfig DEFAULT_CONFIG;
+
+    static {
+        DEFAULT_CONFIG = loadDefaultConfig();
+    }
+
+    private static SeatConfig loadDefaultConfig() {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(RandomSeatGenerator.class.getResourceAsStream("/assets/conf/default.json"))));
+        StringBuilder buffer = new StringBuilder();
+        String str;
+        try {
+            while ((str = reader.readLine()) != null) {
+                buffer.append(str);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        str = buffer.toString();
+        return new Gson().fromJson(str, SeatConfig.class);
+    }
 
     /**
      * Writes {@code SeatConfig} to {@code seat_config.json} under the current directory.
@@ -72,20 +92,5 @@ public class ConfigUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static SeatConfig loadDefaultConfig() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(RandomSeatGenerator.class.getResourceAsStream("/assets/conf/default.json"))));
-        StringBuilder buffer = new StringBuilder();
-        String str;
-        try {
-            while ((str = reader.readLine()) != null) {
-                buffer.append(str);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        str = buffer.toString();
-        return new Gson().fromJson(str, SeatConfig.class);
     }
 }

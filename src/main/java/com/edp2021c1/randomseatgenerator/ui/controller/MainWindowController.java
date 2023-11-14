@@ -23,7 +23,7 @@ import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
 import com.edp2021c1.randomseatgenerator.core.SeatRowData;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
-import com.edp2021c1.randomseatgenerator.util.DataUtils;
+import com.edp2021c1.randomseatgenerator.util.MetaData;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -71,9 +71,6 @@ public class MainWindowController {
 
     @FXML
     private TableView<SeatRowData> seatTable;
-
-    @FXML
-    private VBox mainBox;
 
     @FXML
     private HBox box_1;
@@ -134,6 +131,7 @@ public class MainWindowController {
             System.err.println("WARNING: Invalid seed.");
             generateRandomSeed(null);
         }
+
         seed = Long.parseLong(seedInput.getText());
         seat = new SeatGenerator().generate(config, seed);
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
@@ -142,11 +140,10 @@ public class MainWindowController {
 
     @FXML
     void openPreferencesDialog(ActionEvent event) {
-        Stage s;
+        Stage s = new Stage();
         try {
             s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/PreferencesDialog.fxml")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ignored) {
         }
         s.initOwner(stage);
         s.showAndWait();
@@ -158,8 +155,9 @@ public class MainWindowController {
 
     @FXML
     void initialize() {
-        stage.getIcons().add(new Image(DataUtils.ICON_URL));
-        stage.getScene().getStylesheets().add(DataUtils.STYLESHEET_URL_LIGHT);
+        stage.getIcons().add(new Image(MetaData.ICON_URL));
+        stage.setTitle("Random Seat Generator - 随机座位生成器");
+        stage.getScene().getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
 
         initSeatTable();
     }

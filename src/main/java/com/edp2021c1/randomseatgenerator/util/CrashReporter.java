@@ -18,6 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import com.edp2021c1.randomseatgenerator.RandomSeatGenerator;
+import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -29,19 +31,35 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.awt.*;
+
 /**
- * Reports runtime exceptions in a javafx stage.
+ * Reports runtime exceptions.
  *
  * @author Calboot
  */
 public class CrashReporter implements Thread.UncaughtExceptionHandler {
+    /**
+     * Default crash reporter.
+     */
+    public static final CrashReporter DEFAULT_CRASH_REPORTER;
+    /**
+     * Smaller crash reporter that does not show stack traces info.
+     */
+    public static final CrashReporter SMALLER_CRASH_REPORTER;
+
+    static {
+        DEFAULT_CRASH_REPORTER = new CrashReporter(true);
+        SMALLER_CRASH_REPORTER = new CrashReporter();
+    }
+
     private final boolean showStackTrace;
 
     /**
      * Creates an instance
      */
     public CrashReporter() {
-        showStackTrace = false;
+        this(false);
     }
 
     /**
@@ -64,6 +82,19 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(Thread t, Throwable e) {
+        CrashReporterApp.stringBuilder = getStringBuilder(t, e);
+
+        if (OperatingSystemUtils.isOnMac()) {
+            Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(MetaData.ERROR_ICON_URL)));
+        }
+        try {
+            Application.launch(CrashReporterApp.class);
+        } catch (IllegalStateException ignored) {
+        }
+
+    }
+
+    private StringBuilder getStringBuilder(Thread t, Throwable e) {
         String message = e.getMessage();
         StringBuilder str = new StringBuilder();
         str.append(String.format("Exception in thread \"%s\":", t.getName()));
@@ -79,9 +110,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
                 str.append(String.format("\n        at: %s", s.toString()));
             }
         }
-
-        Stage s = new CrashReporterWindow(str);
-        s.showAndWait();
+        return str;
     }
 
     private static class CrashReporterWindow extends Stage {
@@ -108,14 +137,23 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
             Scene scene = new Scene(vBox);
-            scene.getStylesheets().add(DataUtils.STYLESHEET_URL_LIGHT);
+            scene.getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
 
             setScene(scene);
             setResizable(false);
             setTitle("出错啦");
             setWidth(960);
             setMaxHeight(1080);
-            getIcons().add(new Image(DataUtils.ERROR_ICON_URL));
+            getIcons().add(new Image(MetaData.ERROR_ICON_URL));
+        }
+    }
+
+    public static class CrashReporterApp extends Application {
+        public static StringBuilder stringBuilder;
+
+        @Override
+        public void start(Stage primaryStage) {
+            new CrashReporterWindow(stringBuilder).show();
         }
     }
 }
