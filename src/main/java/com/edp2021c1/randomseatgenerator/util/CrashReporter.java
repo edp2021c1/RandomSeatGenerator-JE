@@ -109,7 +109,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
         }
 
         if (useSwing) {
-            JOptionPane.showMessageDialog(null, str, "出错啦", JOptionPane.ERROR_MESSAGE, new ImageIcon(MetaData.ERROR_ICON_URL));
+            JOptionPane.showMessageDialog(null, str, "出错啦", JOptionPane.ERROR_MESSAGE);
             return;
         }
 

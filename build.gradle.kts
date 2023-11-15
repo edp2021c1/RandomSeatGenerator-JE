@@ -14,7 +14,7 @@ repositories {
 dependencies {
     implementation("com.alibaba:easyexcel:3.3.2")
     implementation("com.google.code.gson:gson:2.10.1")
-
+    implementation("org.slf4j:slf4j-simple:2.0.5") // EasyExcel不加这个就会报错。。。
 
     compileOnly("org.projectlombok:lombok:1.18.28")
 

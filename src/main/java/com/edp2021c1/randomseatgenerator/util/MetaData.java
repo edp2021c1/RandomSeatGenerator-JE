@@ -90,6 +90,6 @@ public class MetaData {
 
         ERROR_ICON_URL = "/assets/img/error_icon.png";
 
-        DEFAULT_STYLESHEET_URL = "/assets/css/light.css";
+        DEFAULT_STYLESHEET_URL = "/assets/stylesheet/light.css";
     }
 }
