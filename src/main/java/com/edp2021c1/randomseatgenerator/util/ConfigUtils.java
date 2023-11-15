@@ -18,6 +18,7 @@
 package com.edp2021c1.randomseatgenerator.util;
 
 import com.edp2021c1.randomseatgenerator.RandomSeatGenerator;
+import com.edp2021c1.randomseatgenerator.core.IllegalSeatConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.google.gson.Gson;
 
@@ -84,9 +85,7 @@ public class ConfigUtils {
             try {
                 config.checkFormat();
             } catch (RuntimeException e) {
-                System.err.println("WARNING: Invalid seat_config.json, will reset to default.");
-                saveConfig(DEFAULT_CONFIG);
-                config = SeatConfig.fromJsonFile(f);
+                throw new IllegalSeatConfigException("Invalid seat_config.json.", e);
             }
             return config;
         } catch (IOException e) {

@@ -22,7 +22,7 @@ import com.edp2021c1.randomseatgenerator.launcher.ConsoleLauncher;
 import com.edp2021c1.randomseatgenerator.launcher.GUILauncher;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
-import com.edp2021c1.randomseatgenerator.util.OperatingSystemUtils;
+import com.edp2021c1.randomseatgenerator.util.PlatformUtils;
 import javafx.application.Application;
 
 import java.awt.*;
@@ -38,7 +38,7 @@ public class RandomSeatGenerator {
      * @param args used to start the application.
      */
     public static void main(String[] args) {
-        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.DEFAULT_CRASH_REPORTER);
+        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.SWING_CRASH_REPORTER);
 
         List<String> arguments = Arrays.asList(args);
         // 如果有“--help”参数则打印帮助信息然后退出
@@ -60,7 +60,7 @@ public class RandomSeatGenerator {
         }
 
         // 如果不是命令行模式则启动JavaFX程序
-        if (OperatingSystemUtils.isOnMac()) {
+        if (PlatformUtils.isOnMac()) {
             Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(MetaData.MAC_ICON_URL)));
         }
         Application.launch(GUILauncher.class);

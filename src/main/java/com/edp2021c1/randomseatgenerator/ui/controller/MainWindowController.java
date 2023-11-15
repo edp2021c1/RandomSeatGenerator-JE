@@ -18,11 +18,9 @@
 
 package com.edp2021c1.randomseatgenerator.ui.controller;
 
-import com.edp2021c1.randomseatgenerator.core.Seat;
-import com.edp2021c1.randomseatgenerator.core.SeatConfig;
-import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
-import com.edp2021c1.randomseatgenerator.core.SeatRowData;
+import com.edp2021c1.randomseatgenerator.core.*;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -163,7 +161,14 @@ public class MainWindowController {
     }
 
     void initSeatTable() {
-        SeatConfig conf = ConfigUtils.reloadConfig();
+        SeatConfig conf;
+        try {
+            conf = ConfigUtils.reloadConfig();
+        } catch (IllegalSeatConfigException e) {
+            CrashReporter.SMALLER_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+            System.exit(0);
+            return;
+        }
         int rowCount = conf.getRowCount(), columnCount = conf.getColumnCount();
         TableColumn<SeatRowData, String> c;
 

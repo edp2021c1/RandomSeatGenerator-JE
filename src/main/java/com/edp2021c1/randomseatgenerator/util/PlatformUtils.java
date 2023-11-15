@@ -20,13 +20,19 @@ package com.edp2021c1.randomseatgenerator.util;
 /**
  * Contains methods related to the operating system.
  */
-public class OperatingSystemUtils {
+public class PlatformUtils {
+    private static final boolean MAC;
+
+    static {
+        MAC = System.getProperty("os.name").startsWith("Mac");
+    }
+
     /**
      * Check if the application runs on macOS.
      *
      * @return if runs on macOS
      */
     public static boolean isOnMac() {
-        return System.getProperty("os.name").startsWith("Mac");
+        return MAC;
     }
 }

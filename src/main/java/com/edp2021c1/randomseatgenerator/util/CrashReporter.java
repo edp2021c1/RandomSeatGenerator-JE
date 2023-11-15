@@ -31,6 +31,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -48,12 +49,20 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     public static final CrashReporter SMALLER_CRASH_REPORTER;
 
+    /**
+     * Shows error message in a {@code Swing} window rather than an {@code JavaFX} window.
+     */
+    public static final CrashReporter SWING_CRASH_REPORTER;
+
     static {
         DEFAULT_CRASH_REPORTER = new CrashReporter(true);
         SMALLER_CRASH_REPORTER = new CrashReporter();
+        SWING_CRASH_REPORTER = new CrashReporter(true, true);
     }
 
-    private final boolean showStackTrace;
+    private final boolean showDetailMessage;
+
+    private final boolean useSwing;
 
     /**
      * Creates an instance
@@ -65,10 +74,21 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     /**
      * Creates an instance
      *
-     * @param showStackTrace if stack traces of the exception shall be shown.
+     * @param showDetailMessage if detail of the exception shall be shown.
      */
-    public CrashReporter(boolean showStackTrace) {
-        this.showStackTrace = showStackTrace;
+    public CrashReporter(boolean showDetailMessage) {
+        this(showDetailMessage, false);
+    }
+
+    /**
+     * Creates an instance.
+     *
+     * @param showDetailMessage if detail of the exception shall be shown.
+     * @param useSwing          if the reporter will be shown in a {@code Swing} window.
+     */
+    public CrashReporter(boolean showDetailMessage, boolean useSwing) {
+        this.showDetailMessage = showDetailMessage;
+        this.useSwing = useSwing;
     }
 
     /**
@@ -82,20 +102,26 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        String str = CrashReporterApp.message = getString(t, e);
+        String str = getDetailMessage(t, e);
 
-        if (OperatingSystemUtils.isOnMac() && Taskbar.getTaskbar().getIconImage() == null) {
+        if (PlatformUtils.isOnMac() && Taskbar.getTaskbar().getIconImage() == null) {
             Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(MetaData.ERROR_ICON_URL)));
         }
+
+        if (useSwing) {
+            JOptionPane.showMessageDialog(null, str, "出错啦", JOptionPane.ERROR_MESSAGE, new ImageIcon(MetaData.ERROR_ICON_URL));
+            return;
+        }
+
         try {
-            Application.launch(CrashReporterApp.class);
+            Application.launch(CrashReporterApp.class, str);
         } catch (IllegalStateException exception) {
-            new CrashReporterWindow(str).show();
+            new CrashReporterWindow(str).showAndWait();
         }
 
     }
 
-    private String getString(Thread t, Throwable e) {
+    private String getDetailMessage(Thread t, Throwable e) {
         String message = e.getMessage();
         StringBuilder str = new StringBuilder();
         str.append(String.format("Exception in thread \"%s\":", t.getName()));
@@ -105,7 +131,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             str.append(message);
         }
 
-        if (showStackTrace) {
+        if (showDetailMessage) {
             StackTraceElement[] stackTraceElements = e.getStackTrace();
             for (StackTraceElement s : stackTraceElements) {
                 str.append(String.format("\n        at: %s", s.toString()));
@@ -150,14 +176,10 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      * JavaFX application used to launch {@code CrashReporterWindow}.
      */
     public static class CrashReporterApp extends Application {
-        /**
-         * Message shown in the window.
-         */
-        public static String message;
 
         @Override
         public void start(Stage primaryStage) {
-            new CrashReporterWindow(message).show();
+            new CrashReporterWindow(getParameters().getRaw().get(0)).show();
         }
     }
 }
