@@ -17,9 +17,10 @@
 
 package com.edp2021c1.randomseatgenerator.launcher;
 
-import com.edp2021c1.randomseatgenerator.core.Seat;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
+import com.edp2021c1.randomseatgenerator.core.SeatTable;
+import com.edp2021c1.randomseatgenerator.util.SeatUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -95,14 +96,14 @@ public class ConsoleLauncher {
         System.out.printf("Config path: %s%n", configFile.getAbsolutePath());
 
         // 生成座位表
-        Seat seat;
-        seat = new SeatGenerator().generate(config, seed);
+        SeatTable seatTable;
+        seatTable = new SeatGenerator().generate(config, seed);
 
         // 导出
         File outputFile = new File(outputPath);
         System.out.printf("Output path: %s%n", outputFile.getAbsolutePath());
         try {
-            seat.exportToExcelDocument(outputFile);
+            SeatUtils.exportToExcelDocument(seatTable, outputFile);
         } catch (IOException e) {
             System.err.printf("ERROR: Failed to export seat table to %s.%n", outputFile.getAbsolutePath());
         }

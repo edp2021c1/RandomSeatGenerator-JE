@@ -36,13 +36,13 @@ public final class SeatGenerator {
      *
      * @param config used to generate the seat table.
      * @param seed   used to generate the seat table.
-     * @return an instance of {@code Seat}.
+     * @return an instance of {@code SeatTable}.
      * @throws NullPointerException       if the config is null.
      * @throws IllegalSeatConfigException if the config has an illegal format.
      */
-    public Seat generate(SeatConfig config, long seed) throws NullPointerException, IllegalSeatConfigException {
+    public SeatTable generate(SeatConfig config, long seed) throws NullPointerException, IllegalSeatConfigException {
         if (config == null) {
-            throw new NullPointerException("Seat config cannot be null");
+            throw new NullPointerException("Config cannot be null");
         }
         config.checkFormat();
 
@@ -83,6 +83,8 @@ public final class SeatGenerator {
         List<String> seat = Arrays.asList(new String[seatNum]);
         List<Boolean> sorted = Arrays.asList(new Boolean[nameList.size()]);
         String luckyPerson = null;
+
+        List<String> tNameList = nameList;
 
 
         do {
@@ -179,7 +181,7 @@ public final class SeatGenerator {
             seat.set(e * columnCount + i, "*" + seat.get(e * columnCount + i) + "*");
         }
 
-        Seat s = new Seat(seat, config, seed, luckyPerson);
+        SeatTable s = new SeatTable(seat, config, seed, luckyPerson);
         System.out.println(s);
 
         return s;

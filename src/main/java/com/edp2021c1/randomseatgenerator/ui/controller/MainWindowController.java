@@ -22,6 +22,7 @@ import com.edp2021c1.randomseatgenerator.core.*;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
+import com.edp2021c1.randomseatgenerator.util.SeatUtils;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -52,7 +53,7 @@ public class MainWindowController {
      * Decides whether the config is changed after opening {@code PreferencesDialog}.
      */
     public static boolean configIsChanged = false;
-    private static Seat seat;
+    private static SeatTable seat;
     private static long previousSeed = 0;
 
     @FXML
@@ -104,7 +105,7 @@ public class MainWindowController {
             return;
         }
         try {
-            seat.exportToExcelDocument(outputFile);
+            SeatUtils.exportToExcelDocument(seat, outputFile);
         } catch (IOException e) {
             throw new RuntimeException(String.format("Failed to export seat table to %s.", outputFile.getAbsolutePath()), e);
         }

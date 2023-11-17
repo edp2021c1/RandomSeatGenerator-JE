@@ -26,7 +26,7 @@ import java.io.*;
 import java.util.Objects;
 
 /**
- * Includes several methods related to config.
+ * Includes several methods related to {@link SeatConfig}.
  */
 public class ConfigUtils {
 

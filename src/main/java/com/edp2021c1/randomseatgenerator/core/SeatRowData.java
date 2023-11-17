@@ -81,13 +81,13 @@ public class SeatRowData {
     /**
      * Returns a list of {@code SeatRowData} containing data of a seat table.
      *
-     * @param seat an instance of {@link Seat} being transferred.
-     * @return a {@code List} storing {@code SeatRowData} transferred from a {@code Seat}.
+     * @param seatTable an instance of {@link SeatTable} being transferred.
+     * @return a {@code List} storing {@code SeatRowData} transferred from a {@code SeatTable}.
      */
-    public static List<SeatRowData> fromSeat(Seat seat) {
-        SeatConfig conf = seat.getConfig();
+    public static List<SeatRowData> fromSeat(SeatTable seatTable) {
+        SeatConfig conf = seatTable.getConfig();
         int rowCount = conf.getRowCount(), columnCount = conf.getColumnCount();
-        List<String> s = seat.getSeat();
+        List<String> s = seatTable.getSeatTable();
         List<SeatRowData> seatRowData = new ArrayList<>(rowCount);
         String[] tmp = new String[columnCount];
 
@@ -102,10 +102,10 @@ public class SeatRowData {
             seatRowData.add(new SeatRowData(tmp));
         }
 
-        if (seat.getConfig().lucky_option) {
-            seatRowData.add(new SeatRowData("Lucky Person", seat.getLuckyPerson()));
+        if (seatTable.getConfig().lucky_option) {
+            seatRowData.add(new SeatRowData("Lucky Person", seatTable.getLuckyPerson()));
         }
-        seatRowData.add(new SeatRowData("Seed", Long.toString(seat.getSeed())));
+        seatRowData.add(new SeatRowData("Seed", Long.toString(seatTable.getSeed())));
         return seatRowData;
     }
 
