@@ -107,7 +107,10 @@ public class MainWindowController {
         try {
             SeatUtils.exportToExcelDocument(seat, outputFile);
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Failed to export seat table to %s.", outputFile.getAbsolutePath()), e);
+            CrashReporter.SMALLER_CRASH_REPORTER.uncaughtException(
+                    Thread.currentThread(),
+                    new RuntimeException(String.format("Failed to export seat table to %s.", outputFile.getAbsolutePath()), e)
+            );
         }
     }
 
@@ -132,7 +135,12 @@ public class MainWindowController {
         }
 
         seed = Long.parseLong(seedInput.getText());
-        seat = new SeatGenerator().generate(config, seed);
+        try {
+            seat = new SeatGenerator().generate(config, seed);
+        } catch (IllegalSeatConfigException e) {
+            CrashReporter.SMALLER_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+            return;
+        }
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
         previousSeed = seed;
     }

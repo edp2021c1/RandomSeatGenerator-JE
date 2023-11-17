@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.launcher;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
+import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.SeatUtils;
 
 import java.io.File;
@@ -29,8 +30,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-
-import static com.edp2021c1.randomseatgenerator.util.ConfigUtils.reloadConfig;
 
 /**
  * Launches the application in console mode.
@@ -85,13 +84,13 @@ public class ConsoleLauncher {
         } catch (FileNotFoundException e) {
             System.err.println("WARNING: Failed to load config from specific file, will use default config.");
             configFile = new File("seat_config.json");
-            config = reloadConfig();
+            config = ConfigUtils.reloadConfig();
         }
         try {
             config.checkFormat();
         } catch (RuntimeException e) {
             System.err.println("WARNING: Invalid seat config, will use default value.");
-            config = reloadConfig();
+            config = ConfigUtils.reloadConfig();
         }
         System.out.printf("Config path: %s%n", configFile.getAbsolutePath());
 
