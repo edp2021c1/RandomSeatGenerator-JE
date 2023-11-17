@@ -84,9 +84,6 @@ public final class SeatGenerator {
         List<Boolean> sorted = Arrays.asList(new Boolean[nameList.size()]);
         String luckyPerson = null;
 
-        List<String> tNameList = nameList;
-
-
         do {
             // 座位表初始化
             // 只有最后一排会出现空位，因此只填入最后一排
@@ -144,6 +141,7 @@ public final class SeatGenerator {
                     if (j >= seatNum) {
                         break;
                     }
+
                     do {
                         e = random.nextInt(i * randomPeopleCount, (i + 1) * randomPeopleCount);
                     } while (sorted.get(e));

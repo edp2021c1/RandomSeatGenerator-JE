@@ -50,7 +50,7 @@ public class SeatTable {
     /**
      * Creates an instance.
      *
-     * @param seatTable        {@link #seatTable}
+     * @param seatTable   {@link #seatTable}
      * @param config      {@link #config}
      * @param seed        {@link #seed}
      * @param luckyPerson {@link #luckyPerson}
