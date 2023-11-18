@@ -38,7 +38,7 @@ public final class SeatGenerator {
      * @param config used to generate the seat table.
      * @param seed   used to generate the seat table.
      * @return an instance of {@code SeatTable}.
-     * @throws NullPointerException       if the config is null.
+     * @throws NullPointerException   if the config is null.
      * @throws IllegalConfigException if the config has an illegal format.
      */
     private SeatTable generateTask(SeatConfig config, long seed) throws NullPointerException, IllegalConfigException {
@@ -192,7 +192,7 @@ public final class SeatGenerator {
      * @param config used to generate the seat table.
      * @param seed   used to generate the seat table.
      * @return an instance of {@code SeatTable}.
-     * @throws NullPointerException       if the config is null.
+     * @throws NullPointerException   if the config is null.
      * @throws IllegalConfigException if the config has an illegal format, or if it costs too much time to generate the seat table.
      */
     public SeatTable generate(SeatConfig config, long seed) {

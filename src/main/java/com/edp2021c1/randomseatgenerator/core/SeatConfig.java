@@ -99,7 +99,7 @@ public final class SeatConfig {
      *
      * @return {@code  column_count} as an integer.
      * @throws IllegalConfigException if {@code column_count} cannot be parsed into an unsigned integer
-     *                                    or is larger than {@link #MAX_COLUMN_COUNT}
+     *                                or is larger than {@link #MAX_COLUMN_COUNT}
      * @see #column_count
      * @see #MAX_COLUMN_COUNT
      */

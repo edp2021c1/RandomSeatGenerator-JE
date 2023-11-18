@@ -22,7 +22,7 @@ import com.edp2021c1.randomseatgenerator.launcher.ConsoleLauncher;
 import com.edp2021c1.randomseatgenerator.launcher.GUILauncher;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
-import com.edp2021c1.randomseatgenerator.util.PlatformUtils;
+import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import javafx.application.Application;
 
 import java.awt.*;
@@ -60,7 +60,7 @@ public class RandomSeatGenerator {
         }
 
         // 如果不是命令行模式则启动JavaFX程序
-        if (PlatformUtils.isOnMac()) {
+        if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
             Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(MetaData.MAC_ICON_URL)));
         }
         Application.launch(GUILauncher.class);

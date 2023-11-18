@@ -92,7 +92,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     public void uncaughtException(Thread t, Throwable e) {
         String str = getDetailMessage(t, e);
 
-        if (PlatformUtils.isOnMac() && Taskbar.getTaskbar().getIconImage() == null) {
+        if (OperatingSystem.CURRENT == OperatingSystem.MAC && Taskbar.getTaskbar().getIconImage() == null) {
             Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(MetaData.ERROR_ICON_URL)));
         }
 

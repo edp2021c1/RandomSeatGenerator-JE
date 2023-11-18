@@ -18,7 +18,9 @@
 
 package com.edp2021c1.randomseatgenerator.launcher;
 
+import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
+import com.edp2021c1.randomseatgenerator.util.MetaData;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -37,6 +39,9 @@ public class GUILauncher extends Application {
     @Override
     public void start(Stage primaryStage) {
         Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.DEFAULT_CRASH_REPORTER);
+
+        System.out.println("Working dir: " + MetaData.WORKING_DIR);
+        System.out.println("Config path: " + ConfigUtils.getConfigPath());
 
         Stage stage = new Stage();
         try {

@@ -22,6 +22,9 @@ import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.google.gson.Gson;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 /**
@@ -31,10 +34,35 @@ import java.util.Objects;
  * @since 1.2.9
  */
 public class ConfigUtils {
-    private static final SeatConfig DEFAULT_CONFIG;
+    private static final SeatConfig DEFAULT_CONFIG = loadDefaultConfig();
+    private static final Path CONFIG_PATH;
 
     static {
-        DEFAULT_CONFIG = loadDefaultConfig();
+        Path configDir = MetaData.WORKING_DIR;
+
+        if (OperatingSystem.CURRENT == OperatingSystem.WINDOWS) {
+            configDir = Paths.get(System.getenv("APPDATA"), "RandomSeatGenerator");
+        } else if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
+            configDir = Paths.get(System.getProperty("user.home"), "Library/Application Support", "RandomSeatGenerator");
+        }
+
+        configDir = configDir.toAbsolutePath();
+        if (!Files.isDirectory(configDir)) {
+            try {
+                Files.delete(configDir);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (Files.notExists(configDir)) {
+            try {
+                Files.createDirectory(configDir);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        CONFIG_PATH = Paths.get(configDir.toString(), "seat_config.json");
     }
 
     /**
@@ -81,7 +109,7 @@ public class ConfigUtils {
     public static void saveConfig(SeatConfig config) {
         config.checkFormat();
         try {
-            FileWriter writer = new FileWriter("seat_config.json");
+            FileWriter writer = new FileWriter(CONFIG_PATH.toFile());
             writer.write(parseJson(config));
             writer.close();
         } catch (IOException e) {
@@ -96,7 +124,7 @@ public class ConfigUtils {
      * @return default seat config loaded from file.
      */
     public static SeatConfig reloadConfig() {
-        File f = new File("seat_config.json");
+        File f = CONFIG_PATH.toFile();
         try {
             SeatConfig config;
             if (f.createNewFile()) {
@@ -113,5 +141,14 @@ public class ConfigUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Returns path of the config file.
+     *
+     * @return path of the config file.
+     */
+    public static Path getConfigPath() {
+        return CONFIG_PATH;
     }
 }
