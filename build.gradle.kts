@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "com.edp2021c1"
-version = "1.2.9"
+version = "1.3.0"
 
 var mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
 
