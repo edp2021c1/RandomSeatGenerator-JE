@@ -24,7 +24,6 @@ import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.SeatUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -87,7 +86,7 @@ public class ConsoleLauncher {
         SeatConfig config;
         try {
             config = ConfigUtils.fromJsonFile(configFile);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             System.err.println("WARNING: Failed to load config from specific file, will use default config.");
             configFile = ConfigUtils.getConfigPath().toFile();
             config = ConfigUtils.reloadConfig();

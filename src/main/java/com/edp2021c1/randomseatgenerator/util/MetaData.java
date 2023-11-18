@@ -83,6 +83,9 @@ public class MetaData {
      */
     public static final String DEFAULT_STYLESHEET_URL = "/assets/stylesheet/light.css";
 
+    /**
+     * Current working directory.
+     */
     public static final Path WORKING_DIR = Paths.get("").toAbsolutePath();
 
 }
