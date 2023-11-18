@@ -56,8 +56,9 @@ public class MainWindowController {
      * Decides whether the config is changed after opening {@code PreferencesDialog}.
      */
     public static boolean configIsChanged = false;
-    private static SeatTable seat;
-    private static long previousSeed = 0;
+    private SeatTable seat;
+    private long previousSeed = 0;
+    private File export;
 
     @FXML
     private Stage stage;
@@ -97,10 +98,11 @@ public class MainWindowController {
         if (seat == null) {
             generateSeatTable(null);
         }
+
         FileChooser fc = new FileChooser();
         fc.setTitle("导出座位表");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
-        fc.setInitialDirectory(new File("./"));
+        fc.setInitialDirectory(export == null ? new File("./") : export);
         fc.setInitialFileName(String.format("%tF", new Date()));
 
         File outputFile = fc.showSaveDialog(stage);
@@ -115,6 +117,8 @@ public class MainWindowController {
                     new RuntimeException(String.format("Failed to export seat table to %s.", outputFile.getAbsolutePath()), e)
             );
         }
+
+        export = outputFile.getParentFile();
     }
 
     @FXML
