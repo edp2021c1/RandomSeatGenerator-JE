@@ -19,6 +19,9 @@ package com.edp2021c1.randomseatgenerator.util;
 
 /**
  * Contains methods related to the operating system.
+ *
+ * @author Calboot
+ * @since 1.2.9
  */
 public class PlatformUtils {
     private static final boolean MAC;

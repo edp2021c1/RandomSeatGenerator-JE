@@ -18,7 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui.controller;
 
-import com.edp2021c1.randomseatgenerator.core.IllegalSeatConfigException;
+import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
@@ -42,6 +42,9 @@ import java.util.ResourceBundle;
 
 /**
  * Controller of {@code assets/fxml/dialog/PreferencesDialog.fxml}
+ *
+ * @author Calboot
+ * @since 1.2.0
  */
 public class PreferencesDialogController {
 
@@ -101,8 +104,8 @@ public class PreferencesDialogController {
         }
         try {
             ConfigUtils.saveConfig(seatConfig);
-        } catch (IllegalSeatConfigException e) {
-            CrashReporter.SMALLER_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+        } catch (IllegalConfigException e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
             return;
         }
 
@@ -122,7 +125,7 @@ public class PreferencesDialogController {
 
         SeatConfig seatConfig;
         try {
-            seatConfig = SeatConfig.fromJsonFile(f);
+            seatConfig = ConfigUtils.fromJsonFile(f);
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Failed to load seat config from file.", e);
         }

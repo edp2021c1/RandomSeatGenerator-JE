@@ -11,6 +11,9 @@ import java.util.Objects;
 
 /**
  * Contains methods related to {@link SeatTable}.
+ *
+ * @author Calboot
+ * @since 1.2.9
  */
 public class SeatUtils {
     /**

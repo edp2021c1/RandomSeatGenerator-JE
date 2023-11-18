@@ -18,17 +18,10 @@
 
 package com.edp2021c1.randomseatgenerator.core;
 
-import com.google.gson.Gson;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import static java.lang.Integer.parseUnsignedInt;
 
 /**
  * Stores config used to generate a seat table.
@@ -85,29 +78,18 @@ public final class SeatConfig {
     }
 
     /**
-     * Load an instance from a JSON file.
-     *
-     * @param file to load from.
-     * @return {@code SeatConfig} loaded from file.
-     * @throws FileNotFoundException if the file does not exist, is a directory rather than a regular file, or for some other reason cannot be opened for reading.
-     */
-    public static SeatConfig fromJsonFile(File file) throws FileNotFoundException {
-        return new Gson().fromJson(new FileReader(file), SeatConfig.class);
-    }
-
-    /**
      * Returns {@link #row_count} as an integer.
      *
      * @return {@code  row_count} as an integer.
-     * @throws IllegalSeatConfigException if {@code row_count} cannot be parsed into an unsigned integer.
+     * @throws IllegalConfigException if {@code row_count} cannot be parsed into an unsigned integer.
      * @see #row_count
      */
-    public int getRowCount() throws IllegalSeatConfigException {
+    public int getRowCount() throws IllegalConfigException {
         int r;
         try {
-            r = parseUnsignedInt(row_count);
+            r = Integer.parseUnsignedInt(row_count);
         } catch (NumberFormatException e) {
-            throw new IllegalSeatConfigException(String.format("Invalid row_count: %s.", row_count), e);
+            throw new IllegalConfigException(String.format("Invalid row_count: %s.", row_count), e);
         }
         return r;
     }
@@ -116,20 +98,20 @@ public final class SeatConfig {
      * Returns {@link #column_count} as an integer.
      *
      * @return {@code  column_count} as an integer.
-     * @throws IllegalSeatConfigException if {@code column_count} cannot be parsed into an unsigned integer
+     * @throws IllegalConfigException if {@code column_count} cannot be parsed into an unsigned integer
      *                                    or is larger than {@link #MAX_COLUMN_COUNT}
      * @see #column_count
      * @see #MAX_COLUMN_COUNT
      */
-    public int getColumnCount() throws IllegalSeatConfigException {
+    public int getColumnCount() throws IllegalConfigException {
         int c;
         try {
-            c = parseUnsignedInt(column_count);
+            c = Integer.parseUnsignedInt(column_count);
         } catch (NumberFormatException e) {
-            throw new IllegalSeatConfigException(String.format("Invalid column_count: %s.", column_count), e);
+            throw new IllegalConfigException(String.format("Invalid column_count: %s.", column_count), e);
         }
         if (c > MAX_COLUMN_COUNT) {
-            throw new IllegalSeatConfigException(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));
+            throw new IllegalConfigException(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));
         }
         return c;
     }
@@ -138,18 +120,18 @@ public final class SeatConfig {
      * Returns {@link #random_between_rows} as an integer.
      *
      * @return {@code  random_between_rows} as an integer.
-     * @throws IllegalSeatConfigException if {@code random_between_rows} cannot be parsed into an unsigned integer.
+     * @throws IllegalConfigException if {@code random_between_rows} cannot be parsed into an unsigned integer.
      * @see #random_between_rows
      */
-    public int getRandomBetweenRows() throws IllegalSeatConfigException {
+    public int getRandomBetweenRows() throws IllegalConfigException {
         if (random_between_rows.isBlank()) {
             return getRowCount();
         }
         int r;
         try {
-            r = parseUnsignedInt(random_between_rows);
+            r = Integer.parseUnsignedInt(random_between_rows);
         } catch (NumberFormatException e) {
-            throw new IllegalSeatConfigException(String.format("Invalid random_between_rows: %s.", random_between_rows), e);
+            throw new IllegalConfigException(String.format("Invalid random_between_rows: %s.", random_between_rows), e);
         }
         return r;
     }
@@ -158,10 +140,10 @@ public final class SeatConfig {
      * Returns {@link #last_row_pos_cannot_be_chosen} as a list of {@code int}.
      *
      * @return {@code  last_row_pos_cannot_be_choosed} as a list of {@code int}.
-     * @throws IllegalSeatConfigException if failed to parse {@code last_row_pos_cannot_be_choosed}.
+     * @throws IllegalConfigException if failed to parse {@code last_row_pos_cannot_be_choosed}.
      * @see #last_row_pos_cannot_be_chosen
      */
-    public List<Integer> getNotAllowedLastRowPos() throws IllegalSeatConfigException {
+    public List<Integer> getNotAllowedLastRowPos() throws IllegalConfigException {
         if (last_row_pos_cannot_be_chosen.isBlank()) {
             return new ArrayList<>();
         }
@@ -169,10 +151,10 @@ public final class SeatConfig {
         List<Integer> i = new ArrayList<>(t.length);
         try {
             for (String s : t) {
-                i.add(parseUnsignedInt(s));
+                i.add(Integer.parseUnsignedInt(s));
             }
         } catch (IllegalArgumentException e) {
-            throw new IllegalSeatConfigException(String.format("Invalid last row positions: %s.", last_row_pos_cannot_be_chosen), e);
+            throw new IllegalConfigException(String.format("Invalid last row positions: %s.", last_row_pos_cannot_be_chosen), e);
         }
         return i;
     }
@@ -201,10 +183,10 @@ public final class SeatConfig {
      * Returns {@link #separate_list} as a list of {@code Separate}.
      *
      * @return {@code  separate_list} as a list of {@code Separate}.
-     * @throws IllegalSeatConfigException if {@code separate_list} contains one or more invalid pairs.
+     * @throws IllegalConfigException if {@code separate_list} contains one or more invalid pairs.
      * @see #separate_list
      */
-    public List<Separate> getSeparatedList() throws IllegalSeatConfigException {
+    public List<Separate> getSeparatedList() throws IllegalConfigException {
         String[] t = separate_list.split("\n");
         ArrayList<Separate> s = new ArrayList<>(t.length);
 
@@ -235,20 +217,11 @@ public final class SeatConfig {
     }
 
     /**
-     * Translate the object into {@code Json}.
-     *
-     * @return a {@code Json} representation of the object.
-     */
-    public String toJson() {
-        return new Gson().toJson(this);
-    }
-
-    /**
      * Check format.
      *
-     * @throws IllegalSeatConfigException if this instance has an illegal format.
+     * @throws IllegalConfigException if this instance has an illegal format.
      */
-    public void checkFormat() throws IllegalSeatConfigException {
+    public void checkFormat() throws IllegalConfigException {
         getRowCount();
         getColumnCount();
         getRandomBetweenRows();

@@ -33,6 +33,9 @@ import java.util.Random;
 
 /**
  * Launches the application in console mode.
+ *
+ * @author Calboot
+ * @since 1.2.9
  */
 public class ConsoleLauncher {
     /**
@@ -80,7 +83,7 @@ public class ConsoleLauncher {
         File configFile = new File(configPath);
         SeatConfig config;
         try {
-            config = SeatConfig.fromJsonFile(configFile);
+            config = ConfigUtils.fromJsonFile(configFile);
         } catch (FileNotFoundException e) {
             System.err.println("WARNING: Failed to load config from specific file, will use default config.");
             configFile = new File("seat_config.json");

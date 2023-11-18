@@ -65,7 +65,7 @@ public class SeatRowData {
     private SeatRowData(String... c) {
         this();
         if (c.length > MAX_COLUMN_COUNT) {
-            throw new IllegalSeatConfigException(String.format("Count of people in a row cannot be larger than %d.", MAX_COLUMN_COUNT));
+            throw new IllegalConfigException(String.format("Count of people in a row cannot be larger than %d.", MAX_COLUMN_COUNT));
         }
         for (int i = 0, j = c.length; i < j; i++) {
             try {

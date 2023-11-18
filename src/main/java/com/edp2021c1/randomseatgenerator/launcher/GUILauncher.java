@@ -28,6 +28,9 @@ import java.util.Objects;
 
 /**
  * JavaFX application intro.
+ *
+ * @author Calboot
+ * @since 1.2.0
  */
 public class GUILauncher extends Application {
 

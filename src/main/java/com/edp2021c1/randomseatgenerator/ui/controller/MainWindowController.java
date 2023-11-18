@@ -47,6 +47,9 @@ import java.util.ResourceBundle;
 
 /**
  * Controller of {@code assets/fxml/MainWindow.fxml}
+ *
+ * @author Calboot
+ * @since 1.0.0
  */
 public class MainWindowController {
     /**
@@ -107,7 +110,7 @@ public class MainWindowController {
         try {
             SeatUtils.exportToExcelDocument(seat, outputFile);
         } catch (IOException e) {
-            CrashReporter.SMALLER_CRASH_REPORTER.uncaughtException(
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(
                     Thread.currentThread(),
                     new RuntimeException(String.format("Failed to export seat table to %s.", outputFile.getAbsolutePath()), e)
             );
@@ -137,8 +140,8 @@ public class MainWindowController {
         seed = Long.parseLong(seedInput.getText());
         try {
             seat = new SeatGenerator().generate(config, seed);
-        } catch (IllegalSeatConfigException e) {
-            CrashReporter.SMALLER_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+        } catch (IllegalConfigException e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
             return;
         }
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
@@ -173,8 +176,8 @@ public class MainWindowController {
         SeatConfig conf;
         try {
             conf = ConfigUtils.reloadConfig();
-        } catch (IllegalSeatConfigException e) {
-            CrashReporter.SMALLER_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+        } catch (IllegalConfigException e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
             System.exit(0);
             return;
         }

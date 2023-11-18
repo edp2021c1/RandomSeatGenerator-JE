@@ -18,7 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.RandomSeatGenerator;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -38,16 +37,13 @@ import java.awt.*;
  * Reports runtime exceptions.
  *
  * @author Calboot
+ * @since 1.2.8
  */
 public class CrashReporter implements Thread.UncaughtExceptionHandler {
     /**
      * Default crash reporter.
      */
     public static final CrashReporter DEFAULT_CRASH_REPORTER;
-    /**
-     * Smaller crash reporter that does not show stack traces info.
-     */
-    public static final CrashReporter SMALLER_CRASH_REPORTER;
 
     /**
      * Shows error message in a {@code Swing} window rather than an {@code JavaFX} window.
@@ -56,20 +52,12 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
 
     static {
         DEFAULT_CRASH_REPORTER = new CrashReporter(true);
-        SMALLER_CRASH_REPORTER = new CrashReporter();
         SWING_CRASH_REPORTER = new CrashReporter(true, true);
     }
 
     private final boolean showDetailMessage;
 
     private final boolean useSwing;
-
-    /**
-     * Creates an instance
-     */
-    public CrashReporter() {
-        this(false);
-    }
 
     /**
      * Creates an instance
@@ -105,7 +93,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
         String str = getDetailMessage(t, e);
 
         if (PlatformUtils.isOnMac() && Taskbar.getTaskbar().getIconImage() == null) {
-            Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(MetaData.ERROR_ICON_URL)));
+            Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(MetaData.ERROR_ICON_URL)));
         }
 
         if (useSwing) {
@@ -167,7 +155,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             setResizable(false);
             setTitle("出错啦");
             setWidth(960);
-            setMaxHeight(1080);
+            setMaxHeight(960);
             getIcons().add(new Image(MetaData.ERROR_ICON_URL));
         }
     }

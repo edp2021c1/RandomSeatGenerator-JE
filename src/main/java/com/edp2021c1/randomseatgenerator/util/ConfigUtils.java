@@ -17,8 +17,7 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.RandomSeatGenerator;
-import com.edp2021c1.randomseatgenerator.core.IllegalSeatConfigException;
+import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.google.gson.Gson;
 
@@ -26,18 +25,41 @@ import java.io.*;
 import java.util.Objects;
 
 /**
- * Includes several methods related to {@link SeatConfig}.
+ * Contains several methods related to {@link SeatConfig}.
+ *
+ * @author Calboot
+ * @since 1.2.9
  */
 public class ConfigUtils {
-
     private static final SeatConfig DEFAULT_CONFIG;
 
     static {
         DEFAULT_CONFIG = loadDefaultConfig();
     }
 
+    /**
+     * Load an instance from a JSON file.
+     *
+     * @param file to load from.
+     * @return {@code SeatConfig} loaded from file.
+     * @throws FileNotFoundException if the file does not exist, is a directory rather than a regular file, or for some other reason cannot be opened for reading.
+     */
+    public static SeatConfig fromJsonFile(File file) throws FileNotFoundException {
+        return new Gson().fromJson(new FileReader(file), SeatConfig.class);
+    }
+
+    /**
+     * Translates an instance of {@link SeatConfig} into {@code Json}.
+     *
+     * @param config to translate into Json.
+     * @return a {@code Json} representation of the object.
+     */
+    public static String parseJson(SeatConfig config) {
+        return new Gson().toJson(config);
+    }
+
     private static SeatConfig loadDefaultConfig() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(RandomSeatGenerator.class.getResourceAsStream("/assets/conf/default.json"))));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/conf/default.json"))));
         StringBuilder buffer = new StringBuilder();
         String str;
         try {
@@ -60,7 +82,7 @@ public class ConfigUtils {
         config.checkFormat();
         try {
             FileWriter writer = new FileWriter("seat_config.json");
-            writer.write(config.toJson());
+            writer.write(parseJson(config));
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -81,11 +103,11 @@ public class ConfigUtils {
                 System.err.println("WARNING: seat_config.json not found, will use default value.");
                 saveConfig(DEFAULT_CONFIG);
             }
-            config = SeatConfig.fromJsonFile(f);
+            config = ConfigUtils.fromJsonFile(f);
             try {
                 config.checkFormat();
             } catch (RuntimeException e) {
-                throw new IllegalSeatConfigException("Invalid seat_config.json.", e);
+                throw new IllegalConfigException("Invalid seat_config.json.", e);
             }
             return config;
         } catch (IOException e) {

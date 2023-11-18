@@ -22,15 +22,16 @@ package com.edp2021c1.randomseatgenerator.core;
  * Thrown if {@code SeatConfig} has an illegal format.
  *
  * @author Calboot
+ * @since 1.2.6
  */
-public class IllegalSeatConfigException extends RuntimeException {
+public class IllegalConfigException extends RuntimeException {
 
     /**
-     * Constructs an {@code IllegalSeatConfigException} with the specified detail message.
+     * Constructs an {@code IllegalConfigException} with the specified detail message.
      *
      * @param message the detail message.
      */
-    public IllegalSeatConfigException(String message) {
+    public IllegalConfigException(String message) {
         super(message);
     }
 
@@ -49,7 +50,7 @@ public class IllegalSeatConfigException extends RuntimeException {
      *                is permitted, and indicates that the cause is nonexistent or
      *                unknown.)
      */
-    public IllegalSeatConfigException(String message, Throwable cause) {
+    public IllegalConfigException(String message, Throwable cause) {
         super(message, cause);
     }
 

@@ -40,12 +40,12 @@ public class Separate {
      * Note that every character after the first space will be taken as the second name.
      *
      * @param s a {@code String} contains the names of the two people separated, divided by a {@code space}.
-     * @throws IllegalSeatConfigException if the {@code String} contains only one name.
+     * @throws IllegalConfigException if the {@code String} contains only one name.
      */
-    public Separate(String s) throws IllegalSeatConfigException {
+    public Separate(String s) throws IllegalConfigException {
         String[] t = s.split(" ", 2);
         if (t.length < 2) {
-            throw new IllegalSeatConfigException(String.format("Invalid separate pair: \"%s\".", s));
+            throw new IllegalConfigException(String.format("Invalid separate pair: \"%s\".", s));
         }
         name_1 = t[0];
         name_2 = t[1];

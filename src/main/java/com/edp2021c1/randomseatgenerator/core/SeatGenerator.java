@@ -25,7 +25,7 @@ import java.util.Random;
 import java.util.concurrent.*;
 
 /**
- * This class manages the generation of seat tables.
+ * Manages the generation of seat tables.
  *
  * @author Calboot
  * @since 1.2.0
@@ -39,9 +39,9 @@ public final class SeatGenerator {
      * @param seed   used to generate the seat table.
      * @return an instance of {@code SeatTable}.
      * @throws NullPointerException       if the config is null.
-     * @throws IllegalSeatConfigException if the config has an illegal format.
+     * @throws IllegalConfigException if the config has an illegal format.
      */
-    private SeatTable generateTask(SeatConfig config, long seed) throws NullPointerException, IllegalSeatConfigException {
+    private SeatTable generateTask(SeatConfig config, long seed) throws NullPointerException, IllegalConfigException {
         if (config == null) {
             throw new NullPointerException("Config cannot be null");
         }
@@ -193,25 +193,23 @@ public final class SeatGenerator {
      * @param seed   used to generate the seat table.
      * @return an instance of {@code SeatTable}.
      * @throws NullPointerException       if the config is null.
-     * @throws IllegalSeatConfigException if the config has an illegal format, or if it costs too much time to generate the seat table.
+     * @throws IllegalConfigException if the config has an illegal format, or if it costs too much time to generate the seat table.
      */
     public SeatTable generate(SeatConfig config, long seed) {
         Callable<SeatTable> task = () -> generateTask(config, seed);
         ExecutorService service = Executors.newSingleThreadExecutor();
         Future<SeatTable> future = service.submit(task);
 
-        SeatTable seatTable = null;
         try {
-            seatTable = future.get(5, TimeUnit.SECONDS);
-        } catch (ExecutionException | InterruptedException ignored) {
+            return future.get(3, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
-            throw new IllegalSeatConfigException("Unlucky or invalid config/seed, please check your config or use another seed.");
+            throw new IllegalConfigException("Unlucky or invalid config/seed, please check your config or use another seed.");
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
-
-        return seatTable;
     }
 
-    private boolean checkSeatFormat(List<String> seatTable, SeatConfig config) throws IllegalSeatConfigException {
+    private boolean checkSeatFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
         List<String> gl = config.getGroupLeaderList();
         List<Separate> sp = config.getSeparatedList();
         boolean hasLeader = false;
