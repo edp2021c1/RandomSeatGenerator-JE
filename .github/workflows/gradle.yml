@@ -9,8 +9,13 @@ permissions:
   contents: write
 
 jobs:
-  jar:
-    runs-on: ubuntu-latest
+  pack:
+    strategy:
+      matrix:
+        version: [ 10, 12, 14 ]
+        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3

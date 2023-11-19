@@ -91,8 +91,10 @@ task("pack") {
 
     val args: ArrayList<String> = if (isMac) {
         getMacPackingArguments(jarFile)
-    } else {
+    } else if (isWin) {
         getWinPackingArguments(jarFile)
+    } else {
+        getLinuxPackingArguments(jarFile)
     }
 
     val arguments = StringBuilder("jpackage")
@@ -124,7 +126,14 @@ fun getMacPackingArguments(jarFile: File): ArrayList<String> {
 fun getWinPackingArguments(jarFile: File): ArrayList<String> {
     val args = getDefaultPackingArguments(jarFile)
     args.add("-t")
-    args.add("exe")
+    args.add("msi")
+    return args
+}
+
+fun getLinuxPackingArguments(jarFile: File): ArrayList<String> {
+    val args = getDefaultPackingArguments(jarFile)
+    args.add("-t")
+    args.add("deb")
     return args
 }
 
