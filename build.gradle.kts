@@ -77,7 +77,7 @@ task("package") {
     val jarDir = Paths.get(projectPath, "build/libs").toAbsolutePath()
     val jarFile = Paths.get(jarDir.toString(), jarDir.toFile().list()?.get(0)).toFile()
 
-    var args = ArrayList<String>()
+    val args = ArrayList<String>()
     args.addAll(Arrays.asList("jpackage", "--app-version", version.toString(), "-n", project.name, "-i", jarDir.toString(), "--main-jar", jarFile.name))
 
     val name = System.getProperty("os.name").lowercase()
