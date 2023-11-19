@@ -1,6 +1,6 @@
-import java.nio.file.Path
+import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
+import java.nio.file.StandardCopyOption
 
 /*
  * Copyright (C) 2023  EDP2021C1
@@ -34,9 +34,9 @@ version = "1.3.0"
 
 val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
 
-val projectPath: String = projectDir.path
-val jarDir: Path = Paths.get(projectPath, "build/libs").toAbsolutePath()
-val jarFile: File = Paths.get(jarDir.toString(), jarDir.toFile().list()?.get(0)).toFile()
+val osname = System.getProperty("os.name").lowercase()
+val isMac = osname.startsWith("mac")
+val isWin = osname.startsWith("win")
 
 repositories {
     mavenCentral()
@@ -78,15 +78,18 @@ tasks.jar {
 task("pack") {
     dependsOn.add(tasks.build)
 
-    val args: ArrayList<String>
+    val projectPath = projectDir.path
+    val jarFile = Paths.get(projectPath, "build/libs").toFile().listFiles()!![0]
 
-    val name = System.getProperty("os.name").lowercase()
-    args = if (name.startsWith("mac")) {
-        getMacPackingArguments()
-    } else if (name.startsWith("windows")) {
-        getWinPackingArguments()
+    val packageDir = Paths.get(projectPath, "build/packages")
+    if (Files.notExists(packageDir)) {
+        Files.createDirectory(packageDir)
+    }
+
+    val args: ArrayList<String> = if (isMac) {
+        getMacPackingArguments(jarFile)
     } else {
-        getPackingArguments()
+        getWinPackingArguments(jarFile)
     }
 
     val arguments = StringBuilder("jpackage")
@@ -95,17 +98,20 @@ task("pack") {
         arguments.append(i)
     }
 
-    Runtime.getRuntime().exec(arguments.toString())
+    Runtime.getRuntime().exec(arguments.toString()).waitFor()
+
+    val packagePath = Paths.get(projectPath, getPackageName(jarFile))
+    Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
 }
 
-fun getPackingArguments(): ArrayList<String> {
+fun getDefaultPackingArguments(jarFile: File): ArrayList<String> {
     val args = ArrayList<String>()
-    args.addAll(Arrays.asList("--app-version", version.toString(), "-n", project.name, "-i", jarDir.toString(), "--main-jar", jarFile.name))
+    args.addAll(listOf("--app-version", version.toString(), "-n", project.name, "-i", jarFile.parent, "--main-jar", jarFile.name))
     return args
 }
 
-fun getMacPackingArguments(): ArrayList<String> {
-    val args = getPackingArguments()
+fun getMacPackingArguments(jarFile: File): ArrayList<String> {
+    val args = getDefaultPackingArguments(jarFile)
     args.add("--mac-package-name")
     args.add("RandomSeatGenerator")
     args.add("-t")
@@ -113,9 +119,22 @@ fun getMacPackingArguments(): ArrayList<String> {
     return args
 }
 
-fun getWinPackingArguments(): ArrayList<String> {
-    val args = getPackingArguments()
+fun getWinPackingArguments(jarFile: File): ArrayList<String> {
+    val args = getDefaultPackingArguments(jarFile)
     args.add("-t")
     args.add("exe")
     return args
+}
+
+fun getPackageName(jarFile: File): String {
+    val str = StringBuilder(jarFile.name)
+    str.delete(str.length - 3, str.length)
+
+    return if (isMac) {
+        str.append("dmg").toString()
+    } else if (isWin) {
+        str.append("exe").toString()
+    } else {
+        str.append("deb").toString()
+    }
 }
