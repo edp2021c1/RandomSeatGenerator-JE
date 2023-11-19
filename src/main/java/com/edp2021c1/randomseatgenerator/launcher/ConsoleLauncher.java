@@ -52,7 +52,7 @@ public class ConsoleLauncher {
         int i;
         long seed = new Random().nextLong();  // 种子，默认为随机数
         Path configPath = ConfigUtils.getConfigPath(); // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
-        Path outputPath = Paths.get(String.format("%tF.xlsx", new Date())); // 导出路径，默认为当前路径
+        Path outputPath = Paths.get(System.getProperty("user.home"), String.format("%tF.xlsx", new Date())); // 导出路径，默认为用户根目录当前路径
 
         // 获取配置文件路径
         if ((i = arguments.lastIndexOf("--config-path")) != -1 && i < arguments.size() - 1) {

@@ -88,4 +88,9 @@ public class MetaData {
      */
     public static final Path WORKING_DIR = Paths.get("").toAbsolutePath();
 
+    /**
+     * User home.
+     */
+    public static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
+
 }

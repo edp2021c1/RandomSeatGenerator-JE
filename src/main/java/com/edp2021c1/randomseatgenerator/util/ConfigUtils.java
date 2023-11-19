@@ -38,7 +38,7 @@ public class ConfigUtils {
     private static final Path CONFIG_PATH;
 
     static {
-        Path configDir = MetaData.WORKING_DIR;
+        Path configDir = MetaData.USER_HOME;
 
         if (OperatingSystem.CURRENT == OperatingSystem.WINDOWS) {
             configDir = Paths.get(System.getenv("APPDATA"), "RandomSeatGenerator");
