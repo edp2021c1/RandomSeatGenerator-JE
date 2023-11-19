@@ -1,3 +1,4 @@
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
@@ -32,6 +33,10 @@ group = "com.edp2021c1"
 version = "1.3.0"
 
 val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
+
+val projectPath: String = projectDir.path
+val jarDir: Path = Paths.get(projectPath, "build/libs").toAbsolutePath()
+val jarFile: File = Paths.get(jarDir.toString(), jarDir.toFile().list()?.get(0)).toFile()
 
 repositories {
     mavenCentral()
@@ -70,33 +75,47 @@ tasks.jar {
     })
 }
 
-task("package") {
+task("pack") {
     dependsOn.add(tasks.build)
 
-    val projectPath = projectDir.path
-    val jarDir = Paths.get(projectPath, "build/libs").toAbsolutePath()
-    val jarFile = Paths.get(jarDir.toString(), jarDir.toFile().list()?.get(0)).toFile()
-
-    val args = ArrayList<String>()
-    args.addAll(Arrays.asList("jpackage", "--app-version", version.toString(), "-n", project.name, "-i", jarDir.toString(), "--main-jar", jarFile.name))
+    val args: ArrayList<String>
 
     val name = System.getProperty("os.name").lowercase()
-    if (name.startsWith("mac")) {
-        args.add("--mac-package-name")
-        args.add("RandomSeatGenerator")
-        args.add("-t")
-        args.add("dmg")
+    args = if (name.startsWith("mac")) {
+        getMacPackingArguments()
     } else if (name.startsWith("windows")) {
-        args.add("-t")
-        args.add("exe")
+        getWinPackingArguments()
+    } else {
+        getPackingArguments()
     }
 
-    val arguments = StringBuilder()
-
+    val arguments = StringBuilder("jpackage")
     for (i in args) {
         arguments.append(" ")
         arguments.append(i)
     }
 
     Runtime.getRuntime().exec(arguments.toString())
+}
+
+fun getPackingArguments(): ArrayList<String> {
+    val args = ArrayList<String>()
+    args.addAll(Arrays.asList("--app-version", version.toString(), "-n", project.name, "-i", jarDir.toString(), "--main-jar", jarFile.name))
+    return args
+}
+
+fun getMacPackingArguments(): ArrayList<String> {
+    val args = getPackingArguments()
+    args.add("--mac-package-name")
+    args.add("RandomSeatGenerator")
+    args.add("-t")
+    args.add("dmg")
+    return args
+}
+
+fun getWinPackingArguments(): ArrayList<String> {
+    val args = getPackingArguments()
+    args.add("-t")
+    args.add("exe")
+    return args
 }
