@@ -1,6 +1,8 @@
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import kotlin.io.path.createDirectory
+import kotlin.io.path.notExists
 
 /*
  * Copyright (C) 2023  EDP2021C1
@@ -80,10 +82,11 @@ task("pack") {
 
     val projectPath = projectDir.path
     val jarFile = Paths.get(projectPath, "build/libs").toFile().listFiles()!![0]
-
     val packageDir = Paths.get(projectPath, "build/packages")
-    if (Files.notExists(packageDir)) {
-        Files.createDirectory(packageDir)
+    val packagePath = Paths.get(projectPath, getPackageName(jarFile))
+
+    if (packageDir.notExists()) {
+        packageDir.createDirectory()
     }
 
     val args: ArrayList<String> = if (isMac) {
@@ -100,7 +103,6 @@ task("pack") {
 
     Runtime.getRuntime().exec(arguments.toString()).waitFor()
 
-    val packagePath = Paths.get(projectPath, getPackageName(jarFile))
     Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
 }
 
