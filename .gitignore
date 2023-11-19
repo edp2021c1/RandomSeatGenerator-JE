@@ -42,6 +42,13 @@ bin/
 ### Mac OS ###
 .DS_Store
 
+### RandomSeatGenerator ###
 seat_config.json
 *.xlsx
+
+### Package ###
+*.dmg
+*.exe
+
+### Log ###
 *.log

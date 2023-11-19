@@ -1,3 +1,6 @@
+import java.nio.file.Paths
+import java.util.*
+
 /*
  * Copyright (C) 2023  EDP2021C1
  *
@@ -17,12 +20,18 @@
 
 plugins {
     id("java")
+    id("org.openjfx.javafxplugin") version "0.1.0"
+}
+
+javafx {
+    version = "20.0.1"
+    modules("javafx.controls", "javafx.fxml")
 }
 
 group = "com.edp2021c1"
 version = "1.3.0"
 
-var mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
+val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
 
 repositories {
     mavenCentral()
@@ -59,4 +68,35 @@ tasks.jar {
     from({
         configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
     })
+}
+
+task("package") {
+    dependsOn.add(tasks.build)
+
+    val projectPath = projectDir.path
+    val jarDir = Paths.get(projectPath, "build/libs").toAbsolutePath()
+    val jarFile = Paths.get(jarDir.toString(), jarDir.toFile().list()?.get(0)).toFile()
+
+    var args = ArrayList<String>()
+    args.addAll(Arrays.asList("jpackage", "--app-version", version.toString(), "-n", project.name, "-i", jarDir.toString(), "--main-jar", jarFile.name))
+
+    val name = System.getProperty("os.name").lowercase()
+    if (name.startsWith("mac")) {
+        args.add("--mac-package-name")
+        args.add("RandomSeatGenerator")
+        args.add("-t")
+        args.add("dmg")
+    } else if (name.startsWith("windows")) {
+        args.add("-t")
+        args.add("exe")
+    }
+
+    val arguments = StringBuilder()
+
+    for (i in args) {
+        arguments.append(" ")
+        arguments.append(i)
+    }
+
+    Runtime.getRuntime().exec(arguments.toString())
 }
