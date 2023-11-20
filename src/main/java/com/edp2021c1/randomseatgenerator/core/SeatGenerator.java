@@ -230,8 +230,8 @@ public final class SeatGenerator {
         }
         // 检查是否分开
         for (i = 0; i < spNum; i++) {
+            isSeparated = sp.get(i).check(seatTable, config.getColumnCount());
             if (isSeparated) {
-                isSeparated = sp.get(i).check(seatTable, config.getColumnCount());
                 continue;
             }
             return false;
