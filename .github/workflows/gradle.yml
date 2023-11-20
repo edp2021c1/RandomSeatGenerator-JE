@@ -39,7 +39,7 @@ jobs:
           path: build/packages
 
   release:
-    needs: [ jar ]
+    needs: [ pack ]
     
     runs-on: ubuntu-latest
     
