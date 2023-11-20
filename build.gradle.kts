@@ -80,10 +80,15 @@ tasks.jar {
 task("pack") {
     dependsOn.add(tasks.build)
 
+    println("Packing...")
+
     val projectPath = projectDir.path
+    println("Project path: $projectPath")
     val jarFile = Paths.get(projectPath, "build/libs").toFile().listFiles()!![0]
+    println("Jar: $jarFile")
     val packageDir = Paths.get(projectPath, "build/packages")
     val packagePath = Paths.get(projectPath, getPackageName(jarFile))
+    println("Package: $packagePath")
 
     if (packageDir.notExists()) {
         packageDir.createDirectory()
@@ -103,9 +108,13 @@ task("pack") {
         arguments.append(i)
     }
 
+    println("Packing arguments: $arguments")
+
     Runtime.getRuntime().exec(arguments.toString()).waitFor()
 
     Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
+
+    println("Packing successful")
 }
 
 fun getDefaultPackingArguments(jarFile: File): ArrayList<String> {
