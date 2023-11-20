@@ -31,6 +31,9 @@ import java.util.concurrent.*;
  * @since 1.2.0
  */
 public final class SeatGenerator {
+    private static int ceil(double d) {
+        return (int) Math.ceil(d);
+    }
 
     /**
      * Generates a seat table.
@@ -85,6 +88,11 @@ public final class SeatGenerator {
         List<Boolean> sorted = Arrays.asList(new Boolean[nameList.size()]);
         String luckyPerson = null;
 
+        int forTimes = seatNum / (columnCount * Math.min(rowCount, randomRowCount));
+        if (!hasSeatLeft) {
+            forTimes = ceil((double) seatNum / (columnCount * Math.min(rowCount, randomRowCount)));
+        }
+
         do {
             // 座位表初始化
             // 只有最后一排会出现空位，因此只填入最后一排
@@ -96,8 +104,8 @@ public final class SeatGenerator {
             }
             tmp = new ArrayList<>(peopleNum % columnCount);
 
-            for (i = 0, c = seatNum / (columnCount * Math.min(rowCount, randomRowCount)); i < c; i++) {
-                if (i == c - 1 && hasSeatLeft && tmp_8) {    // 如果余位不多于一排，则将最后一排归到前两排中轮换
+            for (i = 0; i < forTimes; i++) {
+                if (i == forTimes - 1 && hasSeatLeft && tmp_8) {    // 如果余位不多于一排，则将最后一排归到前两排中轮换
                     for (j = i * randomPeopleCount, f = (i + 1) * randomPeopleCount; j < f; j++) {
                         do {
                             e = random.nextInt(i * randomPeopleCount, peopleNum);
@@ -111,13 +119,13 @@ public final class SeatGenerator {
                         } while (sorted.get(e));
                         do {
                             f = random.nextInt(seatNum - columnCount, seatNum);
-                        } while (notAllowedLastRowPos.contains(f - c * randomPeopleCount + 1) || tmp.contains(f));
+                        } while (notAllowedLastRowPos.contains(f - forTimes * randomPeopleCount + 1) || tmp.contains(f));
                         tmp.add(f);
                         seat.set(f, nameList.get(e));
                         sorted.set(e, true);
                     }
                     break;
-                } else if (i == c - 1 && hasSeatLeft && !tmp_8) {   // 如果余位多于一排，则在余位中进行随机轮换
+                } else if (i == forTimes - 1 && hasSeatLeft && !tmp_8) {   // 如果余位多于一排，则在余位中进行随机轮换
                     for (j = i * randomPeopleCount, d = seatNum - columnCount; j < d; j++) {
                         do {
                             e = random.nextInt(i * randomPeopleCount, peopleNum);
@@ -201,12 +209,20 @@ public final class SeatGenerator {
         Future<SeatTable> future = service.submit(task);
 
         try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+/*
+        try {
             return future.get(3, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             throw new IllegalConfigException("Unlucky or invalid config/seed, please check your config or use another seed.");
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+ */
     }
 
     private boolean checkSeatFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
@@ -214,7 +230,12 @@ public final class SeatGenerator {
         List<Separate> sp = config.getSeparatedList();
         boolean hasLeader = false;
         boolean isSeparated;
-        int i, j, spNum = sp.size(), seatNum = seatTable.size(), columnCount = config.getColumnCount(), rowCount = seatNum % columnCount == 0 ? seatNum / columnCount : seatNum / columnCount + 1;
+        int i, j;
+        int spNum = sp.size();
+        int seatNum = seatTable.size();
+        int columnCount = config.getColumnCount();
+        int rowCount = ceil((double) seatNum / columnCount);
+        //int rowCount = seatNum % columnCount == 0 ? seatNum / columnCount : seatNum / columnCount + 1;
         // 检查每列是否都有组长
         for (i = 0; i < columnCount; i++) {
             for (j = 0; j < rowCount; j++) {
@@ -230,7 +251,7 @@ public final class SeatGenerator {
         }
         // 检查是否分开
         for (i = 0; i < spNum; i++) {
-            isSeparated = sp.get(i).check(seatTable, config.getColumnCount());
+            isSeparated = sp.get(i).check(seatTable, columnCount);
             if (isSeparated) {
                 continue;
             }
