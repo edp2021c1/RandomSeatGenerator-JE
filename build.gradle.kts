@@ -84,7 +84,13 @@ task("pack") {
 
     val projectPath = projectDir.path
     println("Project path: $projectPath")
-    val jarFile = Paths.get(projectPath, "build/libs").toFile().listFiles()!![0]
+    val jarFile: File
+    try {
+        jarFile = Paths.get(projectPath, "build/libs").toFile().listFiles()!![0]
+    } catch (e: NullPointerException) {
+        return@task
+    }
+
     println("Jar: $jarFile")
     val packageDir = Paths.get(projectPath, "build/packages")
     val packagePath = Paths.get(projectPath, getPackageName(jarFile))
