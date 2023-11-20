@@ -143,7 +143,7 @@ fun getWinPackingArguments(jarFile: File): ArrayList<String> {
     val args = getDefaultPackingArguments(jarFile)
     args.add("-t")
     args.add("msi")
-    return getDefaultPackingArguments(jarFile)
+    return args
 }
 
 fun getLinuxPackingArguments(jarFile: File): ArrayList<String> {
@@ -160,7 +160,7 @@ fun getPackageName(jarName: String): String {
     return if (isMac) {
         str.append("dmg").toString()
     } else if (isWin) {
-        str.append("msi").toString()
+        str.append("exe").toString()
     } else {
         str.append("deb").toString()
     }
