@@ -29,7 +29,12 @@ jobs:
         uses: gradle/gradle-build-action@v2.8.0
         with:
           gradle-version: 8.2.1
-          arguments: pack
+
+      - run:
+          gradle build
+
+      - run:
+          gradle pack
 
       - name: Upload
         uses: actions/upload-artifact@v3.1.3
