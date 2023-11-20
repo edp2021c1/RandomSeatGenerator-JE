@@ -93,7 +93,7 @@ task("pack") {
 
     println("Jar: $jarFile")
     val packageDir = Paths.get(projectPath, "build/packages")
-    val packagePath = Paths.get(projectPath, getPackageName(jarFile))
+    val packagePath = Paths.get(projectPath, getPackageName(jarFile.name))
 
     if (packageDir.notExists()) {
         packageDir.createDirectory()
@@ -124,9 +124,9 @@ task("pack") {
     println("Packing successful")
 }
 
-fun getDefaultPackingArguments(jarFile: File): ArrayList<String> {
+fun getDefaultPackingArguments(jarName: File): ArrayList<String> {
     val args = ArrayList<String>()
-    args.addAll(listOf("--app-version", version.toString(), "-n", project.name, "-i", jarFile.parent, "--main-jar", jarFile.name))
+    args.addAll(listOf("--app-version", version.toString(), "-n", project.name, "-i", jarName.parent, "--main-jar", jarName.name))
     return args
 }
 
@@ -140,6 +140,9 @@ fun getMacPackingArguments(jarFile: File): ArrayList<String> {
 }
 
 fun getWinPackingArguments(jarFile: File): ArrayList<String> {
+    val args = getDefaultPackingArguments(jarFile)
+    args.add("-t")
+    args.add("msi")
     return getDefaultPackingArguments(jarFile)
 }
 
@@ -150,14 +153,14 @@ fun getLinuxPackingArguments(jarFile: File): ArrayList<String> {
     return args
 }
 
-fun getPackageName(jarFile: File): String {
-    val str = StringBuilder(jarFile.name)
+fun getPackageName(jarName: String): String {
+    val str = StringBuilder(jarName)
     str.delete(str.length - 3, str.length)
 
     return if (isMac) {
         str.append("dmg").toString()
     } else if (isWin) {
-        str.append("exe").toString()
+        str.append("msi").toString()
     } else {
         str.append("deb").toString()
     }
