@@ -94,7 +94,6 @@ task("pack") {
     println("Jar: $jarFile")
     val packageDir = Paths.get(projectPath, "build/packages")
     val packagePath = Paths.get(projectPath, getPackageName(jarFile))
-    println("Package: $packagePath")
 
     if (packageDir.notExists()) {
         packageDir.createDirectory()
@@ -118,8 +117,10 @@ task("pack") {
 
     Runtime.getRuntime().exec(arguments.toString()).waitFor()
 
+    println("Moving package to $packageDir")
     Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
 
+    println("Package: $packagePath")
     println("Packing successful")
 }
 
@@ -139,10 +140,7 @@ fun getMacPackingArguments(jarFile: File): ArrayList<String> {
 }
 
 fun getWinPackingArguments(jarFile: File): ArrayList<String> {
-    val args = getDefaultPackingArguments(jarFile)
-    args.add("-t")
-    args.add("msi")
-    return args
+    return getDefaultPackingArguments(jarFile)
 }
 
 fun getLinuxPackingArguments(jarFile: File): ArrayList<String> {
