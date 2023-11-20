@@ -160,7 +160,7 @@ fun getPackageName(jarName: String): String {
     return if (isMac) {
         str.append("dmg").toString()
     } else if (isWin) {
-        str.append("exe").toString()
+        str.append("msi").toString()
     } else {
         str.append("deb").toString()
     }
