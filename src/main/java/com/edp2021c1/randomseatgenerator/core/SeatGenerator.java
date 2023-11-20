@@ -213,7 +213,7 @@ public final class SeatGenerator {
         List<String> gl = config.getGroupLeaderList();
         List<Separate> sp = config.getSeparatedList();
         boolean hasLeader = false;
-        boolean isSeparated = true;
+        boolean isSeparated;
         int i, j, spNum = sp.size(), seatNum = seatTable.size(), columnCount = config.getColumnCount(), rowCount = seatNum % columnCount == 0 ? seatNum / columnCount : seatNum / columnCount + 1;
         // 检查每列是否都有组长
         for (i = 0; i < columnCount; i++) {
