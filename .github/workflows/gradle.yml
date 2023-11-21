@@ -60,5 +60,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files:
-            ./**/**.jar
+          files: |
+            ./**/**.dmg
+            ./**/**.msi

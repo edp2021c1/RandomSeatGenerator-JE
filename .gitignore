@@ -7,7 +7,6 @@ build/
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
-.idea/gradle.xml
 .idea/compiler.xml
 .idea/libraries/
 *.iws
@@ -52,3 +51,5 @@ seat_config.json
 
 ### Log ###
 *.log
+.idea/gradle.xml
+.idea/misc.xml
