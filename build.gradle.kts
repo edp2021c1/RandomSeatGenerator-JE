@@ -18,7 +18,6 @@
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import java.util.jar.JarFile
 import kotlin.io.path.createDirectory
 import kotlin.io.path.notExists
 
@@ -63,16 +62,16 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 }
 
-tasks.compileJava{
-    options.encoding="UTF-8"
+tasks.compileJava {
+    options.encoding = "UTF-8"
 }
 
-tasks.compileJava{
-    options.encoding="UTF-8"
+tasks.compileJava {
+    options.encoding = "UTF-8"
 }
 
-tasks.javadoc{
-    options.encoding="UTF-8"
+tasks.javadoc {
+    options.encoding = "UTF-8"
 }
 
 tasks.jar {
@@ -93,7 +92,7 @@ tasks.jar {
 task("pack") {
     dependsOn.add(tasks.build)
 
-    try{
+    try {
         println("Packing...")
 
         val projectPath = projectDir.path
@@ -106,7 +105,7 @@ task("pack") {
             packageDir.createDirectory()
         }
 
-        if(!(isMac || isWin)){
+        if (!(isMac || isWin)) {
             System.err.println("[WARNING] Not running on Windows or macOS, will use generated jar file as the package.")
             println("Packing arguments: null")
             println("Moving package to $packageDir")
@@ -139,7 +138,7 @@ task("pack") {
 
         println("Package: $packagePath")
         println("Packing successful")
-    }catch (e:Exception){
+    } catch (e: Exception) {
         System.err.println("Packing failed with an exception")
         e.printStackTrace()
         return@task
