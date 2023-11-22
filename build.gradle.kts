@@ -97,12 +97,7 @@ task("pack") {
 
         val projectPath = projectDir.path
         println("Project path: $projectPath")
-        val jarFile: File
-        try {
-            jarFile = Paths.get(projectPath, "build/libs").toFile().listFiles()!![0]
-        } catch (e: NullPointerException) {
-            return@task
-        }
+        val jarFile = Paths.get(projectPath, "build/libs").toFile().listFiles()!![0]
 
         println("Jar: $jarFile")
         val packageDir = Paths.get(projectPath, "build/packages")
@@ -131,16 +126,12 @@ task("pack") {
         Runtime.getRuntime().exec(arguments.toString()).waitFor()
 
         println("Moving package to $packageDir")
-        try{
-            Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
-        }catch (e:Exception){
-            System.err.println("ERROR: Failed to create package")
-            return@task
-        }
+        Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
 
         println("Package: $packagePath")
         println("Packing successful")
     }catch (e:Exception){
+        e.printStackTrace()
         System.err.println("Failed packing")
         return@task
     }
