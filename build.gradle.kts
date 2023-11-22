@@ -62,6 +62,18 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 }
 
+tasks.compileJava{
+    options.encoding="UTF-8"
+}
+
+tasks.compileJava{
+    options.encoding="UTF-8"
+}
+
+tasks.javadoc{
+    options.encoding="UTF-8"
+}
+
 tasks.jar {
     manifest {
         attributes("Main-Class" to mainClass)
@@ -80,48 +92,58 @@ tasks.jar {
 task("pack") {
     dependsOn.add(tasks.build)
 
-    println("Packing...")
+    try{
+        println("Packing...")
 
-    val projectPath = projectDir.path
-    println("Project path: $projectPath")
-    val jarFile: File
-    try {
-        jarFile = Paths.get(projectPath, "build/libs").toFile().listFiles()!![0]
-    } catch (e: NullPointerException) {
+        val projectPath = projectDir.path
+        println("Project path: $projectPath")
+        val jarFile: File
+        try {
+            jarFile = Paths.get(projectPath, "build/libs").toFile().listFiles()!![0]
+        } catch (e: NullPointerException) {
+            return@task
+        }
+
+        println("Jar: $jarFile")
+        val packageDir = Paths.get(projectPath, "build/packages")
+        val packagePath = Paths.get(projectPath, getPackageName(jarFile.name))
+
+        if (packageDir.notExists()) {
+            packageDir.createDirectory()
+        }
+
+        val args: ArrayList<String> = if (isMac) {
+            getMacPackingArguments(jarFile)
+        } else if (isWin) {
+            getWinPackingArguments(jarFile)
+        } else {
+            getLinuxPackingArguments(jarFile)
+        }
+
+        val arguments = StringBuilder("jpackage")
+        for (i in args) {
+            arguments.append(" ")
+            arguments.append(i)
+        }
+
+        println("Packing arguments: $arguments")
+
+        Runtime.getRuntime().exec(arguments.toString()).waitFor()
+
+        println("Moving package to $packageDir")
+        try{
+            Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
+        }catch (e:Exception){
+            System.err.println("ERROR: Failed to create package")
+            return@task
+        }
+
+        println("Package: $packagePath")
+        println("Packing successful")
+    }catch (e:Exception){
+        System.err.println("Failed packing")
         return@task
     }
-
-    println("Jar: $jarFile")
-    val packageDir = Paths.get(projectPath, "build/packages")
-    val packagePath = Paths.get(projectPath, getPackageName(jarFile.name))
-
-    if (packageDir.notExists()) {
-        packageDir.createDirectory()
-    }
-
-    val args: ArrayList<String> = if (isMac) {
-        getMacPackingArguments(jarFile)
-    } else if (isWin) {
-        getWinPackingArguments(jarFile)
-    } else {
-        getLinuxPackingArguments(jarFile)
-    }
-
-    val arguments = StringBuilder("jpackage")
-    for (i in args) {
-        arguments.append(" ")
-        arguments.append(i)
-    }
-
-    println("Packing arguments: $arguments")
-
-    Runtime.getRuntime().exec(arguments.toString()).waitFor()
-
-    println("Moving package to $packageDir")
-    Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
-
-    println("Package: $packagePath")
-    println("Packing successful")
 }
 
 fun getDefaultPackingArguments(jarName: File): ArrayList<String> {

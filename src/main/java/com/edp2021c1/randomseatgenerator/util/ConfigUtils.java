@@ -47,16 +47,16 @@ public class ConfigUtils {
         }
 
         configDir = configDir.toAbsolutePath();
-        if (!Files.isDirectory(configDir)) {
+        if (Files.notExists(configDir)) {
             try {
-                Files.delete(configDir);
+                Files.createDirectory(configDir);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        if (Files.notExists(configDir)) {
+        if (!Files.isDirectory(configDir)) {
             try {
-                Files.createDirectory(configDir);
+                Files.delete(configDir);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
