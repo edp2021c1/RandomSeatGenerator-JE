@@ -147,7 +147,7 @@ task("pack") {
 
 fun getDefaultPackingArguments(jarName: File): ArrayList<String> {
     val args = ArrayList<String>()
-    args.addAll(listOf("--app-version", version.toString(), "-n", project.name, "-i", jarName.parent, "--main-jar", jarName.name))
+    args.addAll(listOf("--app-version", version.toString(), "-n", project.name, "-i", jarName.parent, "--main-jar", jarName.name, "--vendor", "EDP-2021-C1"))
     return args
 }
 
@@ -157,6 +157,8 @@ fun getMacPackingArguments(jarFile: File): ArrayList<String> {
     args.add("RandomSeatGenerator")
     args.add("-t")
     args.add("dmg")
+    args.add("--icon")
+    args.add(Paths.get(projectDir.path, "build_resources/app_icon/mac_icon.icns").toString())
     return args
 }
 
@@ -164,6 +166,8 @@ fun getWinPackingArguments(jarFile: File): ArrayList<String> {
     val args = getDefaultPackingArguments(jarFile)
     args.add("-t")
     args.add("msi")
+    args.add("--icon")
+    args.add(Paths.get(projectDir.path, "build_resources/app_icon/icon.ico").toString())
     return args
 }
 
