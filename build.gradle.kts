@@ -18,6 +18,7 @@
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.util.jar.JarFile
 import kotlin.io.path.createDirectory
 import kotlin.io.path.notExists
 
@@ -101,18 +102,26 @@ task("pack") {
 
         println("Jar: $jarFile")
         val packageDir = Paths.get(projectPath, "build/packages")
-        val packagePath = Paths.get(projectPath, getPackageName(jarFile.name))
-
         if (packageDir.notExists()) {
             packageDir.createDirectory()
         }
 
+        if(!(isMac || isWin)){
+            System.err.println("[WARNING] Not running on Windows or macOS, will use generated jar file as the package.")
+            println("Packing arguments: null")
+            println("Moving package to $packageDir")
+            Files.move(Paths.get(jarFile.path), packageDir.resolve(jarFile.name), StandardCopyOption.REPLACE_EXISTING)
+            println("Package: $jarFile")
+            println("Packing successful")
+            return@task
+        }
+
+        val packagePath = Paths.get(projectPath, getPackageName(jarFile.name))
+
         val args: ArrayList<String> = if (isMac) {
             getMacPackingArguments(jarFile)
-        } else if (isWin) {
-            getWinPackingArguments(jarFile)
         } else {
-            getLinuxPackingArguments(jarFile)
+            getWinPackingArguments(jarFile)
         }
 
         val arguments = StringBuilder("jpackage")
@@ -131,8 +140,8 @@ task("pack") {
         println("Package: $packagePath")
         println("Packing successful")
     }catch (e:Exception){
+        System.err.println("Packing failed with an exception")
         e.printStackTrace()
-        System.err.println("Failed packing")
         return@task
     }
 }
@@ -159,13 +168,6 @@ fun getWinPackingArguments(jarFile: File): ArrayList<String> {
     return args
 }
 
-fun getLinuxPackingArguments(jarFile: File): ArrayList<String> {
-    val args = getDefaultPackingArguments(jarFile)
-    args.add("-t")
-    args.add("deb")
-    return args
-}
-
 fun getPackageName(jarName: String): String {
     val str = StringBuilder(jarName)
     str.delete(str.length - 3, str.length)
@@ -175,6 +177,6 @@ fun getPackageName(jarName: String): String {
     } else if (isWin) {
         str.append("msi").toString()
     } else {
-        str.append("deb").toString()
+        str.append("jar").toString()
     }
 }

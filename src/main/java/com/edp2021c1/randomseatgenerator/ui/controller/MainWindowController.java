@@ -25,6 +25,7 @@ import com.edp2021c1.randomseatgenerator.util.MetaData;
 import com.edp2021c1.randomseatgenerator.util.SeatUtils;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
@@ -36,6 +37,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,7 +104,7 @@ public class MainWindowController {
         FileChooser fc = new FileChooser();
         fc.setTitle("导出座位表");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
-        fc.setInitialDirectory(export == null ? new File("./") : export);
+        fc.setInitialDirectory(export == null ? MetaData.USER_HOME.toFile() : export);
         fc.setInitialFileName(String.format("%tF", new Date()));
 
         File outputFile = fc.showSaveDialog(stage);
@@ -172,6 +174,7 @@ public class MainWindowController {
         stage.getIcons().add(new Image(MetaData.ICON_URL));
         stage.setTitle("Random Seat Generator - 随机座位生成器");
         stage.getScene().getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
+        stage.setOnCloseRequest(event -> System.exit(0));
 
         initSeatTable();
     }
