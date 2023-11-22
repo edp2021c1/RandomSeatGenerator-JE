@@ -12,7 +12,7 @@ jobs:
   pack:
     strategy:
       matrix:
-        os: [ windows-latest, macOS-latest ]
+        os: [ windows-latest, macOS-latest, ubuntu-latest ]
 
     runs-on: ${{ matrix.os }}
 
