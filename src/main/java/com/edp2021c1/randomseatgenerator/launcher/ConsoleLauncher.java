@@ -59,7 +59,7 @@ public class ConsoleLauncher {
 
         // 获取配置文件路径
         if ((i = arguments.lastIndexOf("--config-path")) != -1 && i < arguments.size() - 1) {
-            configPath = Paths.get(arguments.get(i + 1));
+            configPath = Paths.get(arguments.get(i + 1)).toAbsolutePath();
         }
 
         // 获取种子
@@ -85,13 +85,12 @@ public class ConsoleLauncher {
         }
 
         // 处理座位表生成配置
-        File configFile = configPath.toFile();
         SeatConfig config;
         try {
-            config = ConfigUtils.fromJsonFile(configFile);
+            config = ConfigUtils.fromJson(configPath);
         } catch (IOException e) {
             LOGGER.warning("Failed to load config from specific file, will use default config.");
-            configFile = ConfigUtils.getConfigPath().toFile();
+            configPath = ConfigUtils.getConfigPath();
             config = ConfigUtils.reloadConfig();
         }
         try {
@@ -100,7 +99,7 @@ public class ConsoleLauncher {
             LOGGER.warning("Invalid seat config, will use default value.");
             config = ConfigUtils.reloadConfig();
         }
-        LOGGER.info(String.format("Config path: %s", configFile.getAbsolutePath()));
+        LOGGER.info(String.format("Config path: %s", configPath));
 
         // 生成座位表
         SeatTable seatTable;

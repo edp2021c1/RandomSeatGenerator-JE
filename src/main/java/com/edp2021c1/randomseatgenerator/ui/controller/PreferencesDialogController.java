@@ -36,8 +36,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 /**
@@ -130,8 +131,8 @@ public class PreferencesDialogController {
 
             SeatConfig seatConfig;
             try {
-                seatConfig = ConfigUtils.fromJsonFile(f);
-            } catch (FileNotFoundException e) {
+                seatConfig = ConfigUtils.fromJson(Paths.get(f.getAbsolutePath()));
+            } catch (IOException e) {
                 throw new RuntimeException("Failed to load seat config from file.", e);
             }
 

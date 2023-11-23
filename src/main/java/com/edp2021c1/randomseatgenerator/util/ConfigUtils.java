@@ -58,23 +58,39 @@ public class ConfigUtils {
         if (!Files.isDirectory(configDir)) {
             try {
                 Files.delete(configDir);
+                Files.createDirectory(configDir);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
 
         CONFIG_PATH = Paths.get(configDir.toString(), "seat_config.json");
+        if(Files.notExists(CONFIG_PATH)){
+            try {
+                Files.createFile(CONFIG_PATH);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if(!Files.isRegularFile(CONFIG_PATH)){
+            try {
+                Files.delete(CONFIG_PATH);
+                Files.createFile(CONFIG_PATH);
+            }catch (IOException e){
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**
-     * Load an instance from a JSON file.
+     * Load an instance from a JSON path.
      *
-     * @param file to load from.
-     * @return {@code SeatConfig} loaded from file.
-     * @throws FileNotFoundException if the file does not exist, is a directory rather than a regular file, or for some other reason cannot be opened for reading.
+     * @param path to load from.
+     * @return {@code SeatConfig} loaded from path.
+     * @throws FileNotFoundException if the path does not exist, is a directory rather than a regular path, or for some other reason cannot be opened for reading.
      */
-    public static SeatConfig fromJsonFile(File file) throws FileNotFoundException {
-        return new Gson().fromJson(new FileReader(file), SeatConfig.class);
+    public static SeatConfig fromJson(Path path) throws IOException {
+        return new Gson().fromJson(Files.readString(path), SeatConfig.class);
     }
 
     /**
@@ -125,14 +141,14 @@ public class ConfigUtils {
      * @return default seat config loaded from file.
      */
     public static SeatConfig reloadConfig() {
-        File f = CONFIG_PATH.toFile();
         try {
             SeatConfig config;
-            if (f.createNewFile()) {
+            if (Files.notExists(CONFIG_PATH)) {
                 Logger.getGlobal().warning("Seat_config.json not found, will use default value.");
+                Files.createFile(CONFIG_PATH);
                 saveConfig(DEFAULT_CONFIG);
             }
-            config = ConfigUtils.fromJsonFile(f);
+            config = ConfigUtils.fromJson(CONFIG_PATH);
             try {
                 config.checkFormat();
             } catch (RuntimeException e) {
