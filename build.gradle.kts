@@ -66,7 +66,7 @@ tasks.compileJava {
     options.encoding = "UTF-8"
 }
 
-tasks.compileJava {
+tasks.compileTestJava {
     options.encoding = "UTF-8"
 }
 
