@@ -188,10 +188,7 @@ public final class SeatGenerator {
             seat.set(e * columnCount + i, "*" + seat.get(e * columnCount + i) + "*");
         }
 
-        SeatTable s = new SeatTable(seat, config, seed, luckyPerson);
-        System.out.println(s);
-
-        return s;
+        return new SeatTable(seat, config, seed, luckyPerson);
     }
 
     /**
@@ -209,20 +206,12 @@ public final class SeatGenerator {
         Future<SeatTable> future = service.submit(task);
 
         try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-/*
-        try {
             return future.get(3, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             throw new IllegalConfigException("Unlucky or invalid config/seed, please check your config or use another seed.");
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-
- */
     }
 
     private boolean checkSeatFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
@@ -235,7 +224,7 @@ public final class SeatGenerator {
         int seatNum = seatTable.size();
         int columnCount = config.getColumnCount();
         int rowCount = ceil((double) seatNum / columnCount);
-        //int rowCount = seatNum % columnCount == 0 ? seatNum / columnCount : seatNum / columnCount + 1;
+
         // 检查每列是否都有组长
         for (i = 0; i < columnCount; i++) {
             for (j = 0; j < rowCount; j++) {

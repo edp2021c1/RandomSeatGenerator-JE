@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 /**
  * Launches the application in console mode.
@@ -40,6 +41,7 @@ import java.util.Random;
  * @since 1.2.9
  */
 public class ConsoleLauncher {
+    private static final Logger LOGGER = Logger.getGlobal();
     /**
      * Launches the application.
      *
@@ -64,7 +66,7 @@ public class ConsoleLauncher {
             try {
                 seed = Long.parseLong(arguments.get(i + 1));
             } catch (NumberFormatException e) {
-                System.err.printf("WARNING: Invalid seed: \"%s\", will ignore.%n", arguments.get(i + 1));
+                LOGGER.warning(String.format("Invalid seed: \"%s\", will ignore.", arguments.get(i + 1)));
             }
         }
 
@@ -76,7 +78,7 @@ public class ConsoleLauncher {
             } else {
                 outputPath = tmp.toAbsolutePath();
                 if (!outputPath.endsWith(".xlsx")) {
-                    System.err.printf("ERROR: Invalid output path: %s.%n", outputPath);
+                    LOGGER.severe(String.format("Invalid output path: %s.", outputPath));
                 }
             }
         }
@@ -87,30 +89,32 @@ public class ConsoleLauncher {
         try {
             config = ConfigUtils.fromJsonFile(configFile);
         } catch (IOException e) {
-            System.err.println("WARNING: Failed to load config from specific file, will use default config.");
+            LOGGER.warning("Failed to load config from specific file, will use default config.");
             configFile = ConfigUtils.getConfigPath().toFile();
             config = ConfigUtils.reloadConfig();
         }
         try {
             config.checkFormat();
         } catch (RuntimeException e) {
-            System.err.println("WARNING: Invalid seat config, will use default value.");
+            LOGGER.warning("Invalid seat config, will use default value.");
             config = ConfigUtils.reloadConfig();
         }
-        System.out.printf("Config path: %s%n", configFile.getAbsolutePath());
+        LOGGER.info(String.format("Config path: %s", configFile.getAbsolutePath()));
 
         // 生成座位表
         SeatTable seatTable;
         seatTable = new SeatGenerator().generate(config, seed);
 
+        LOGGER.info("\n" + seatTable);
+
         // 导出
         File outputFile = outputPath.toFile();
-        System.out.printf("Output path: %s%n", outputFile.getAbsolutePath());
+        LOGGER.info(String.format("Output path: %s", outputFile.getAbsolutePath()));
         try {
             SeatUtils.exportToExcelDocument(seatTable, outputFile);
         } catch (IOException e) {
-            System.err.printf("ERROR: Failed to export seat table to %s.%n", outputFile.getAbsolutePath());
+            LOGGER.severe(String.format("Failed to export seat table to %s.", outputFile.getAbsolutePath()));
         }
-        System.out.printf("Seat table successfully exported to %s.%n", outputFile.getAbsolutePath());
+        LOGGER.info(String.format("Seat table successfully exported to %s.", outputFile.getAbsolutePath()));
     }
 }

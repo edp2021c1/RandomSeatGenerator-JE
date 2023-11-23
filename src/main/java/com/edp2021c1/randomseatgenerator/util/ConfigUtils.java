@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Contains several methods related to {@link SeatConfig}.
@@ -128,7 +129,7 @@ public class ConfigUtils {
         try {
             SeatConfig config;
             if (f.createNewFile()) {
-                System.err.println("WARNING: seat_config.json not found, will use default value.");
+                Logger.getGlobal().warning("Seat_config.json not found, will use default value.");
                 saveConfig(DEFAULT_CONFIG);
             }
             config = ConfigUtils.fromJsonFile(f);

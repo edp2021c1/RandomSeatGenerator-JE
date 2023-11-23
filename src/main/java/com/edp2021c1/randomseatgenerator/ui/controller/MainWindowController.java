@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 /**
  * Controller of {@code assets/fxml/MainWindow.fxml}
@@ -52,6 +53,7 @@ import java.util.ResourceBundle;
  * @since 1.0.0
  */
 public class MainWindowController {
+
     /**
      * Decides whether the config is changed after opening {@code PreferencesDialog}.
      */
@@ -137,7 +139,7 @@ public class MainWindowController {
                 generateRandomSeed(null);
             }
         } catch (NumberFormatException e) {
-            System.err.println("WARNING: Invalid seed.");
+            Logger.getGlobal().warning("Invalid seed.");
             generateRandomSeed(null);
         }
 

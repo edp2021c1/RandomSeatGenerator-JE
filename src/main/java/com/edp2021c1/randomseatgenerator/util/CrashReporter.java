@@ -154,8 +154,8 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             setScene(scene);
             setResizable(false);
             setTitle("出错啦");
-            setWidth(960);
-            setMaxHeight(960);
+            setMaxWidth(720);
+            setMaxHeight(480);
             getIcons().add(new Image(MetaData.ERROR_ICON_URL));
         }
     }

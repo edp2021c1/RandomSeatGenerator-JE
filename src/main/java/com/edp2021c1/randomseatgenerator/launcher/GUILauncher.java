@@ -25,8 +25,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * JavaFX application intro.
@@ -35,19 +35,18 @@ import java.util.Objects;
  * @since 1.2.0
  */
 public class GUILauncher extends Application {
+    private static final Logger LOGGER = Logger.getGlobal();
 
     @Override
     public void start(Stage primaryStage) {
-        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.DEFAULT_CRASH_REPORTER);
-
-        System.out.println("Working dir: " + MetaData.WORKING_DIR);
-        System.out.println("Config path: " + ConfigUtils.getConfigPath());
-
-        Stage stage = new Stage();
         try {
-            stage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/MainWindow.fxml")));
-        } catch (IOException ignored) {
+            LOGGER.info("Working dir: " + MetaData.WORKING_DIR);
+            LOGGER.info("Config path: " + ConfigUtils.getConfigPath());
+
+            Stage stage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/MainWindow.fxml")));
+            stage.show();
+        } catch (Throwable e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
         }
-        stage.show();
     }
 }
