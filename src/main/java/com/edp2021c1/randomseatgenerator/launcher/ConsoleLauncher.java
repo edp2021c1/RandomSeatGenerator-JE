@@ -42,6 +42,7 @@ import java.util.logging.Logger;
  */
 public class ConsoleLauncher {
     private static final Logger LOGGER = Logger.getGlobal();
+
     /**
      * Launches the application.
      *

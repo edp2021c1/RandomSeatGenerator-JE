@@ -89,90 +89,110 @@ public class PreferencesDialogController {
 
     @FXML
     void applySeatConfig(ActionEvent event) {
-        SeatConfig seatConfig = new SeatConfig();
-        seatConfig.row_count = rowCountInput.getText();
-        seatConfig.column_count = columnCountInput.getText();
-        seatConfig.random_between_rows = rbrInput.getText();
-        seatConfig.last_row_pos_cannot_be_chosen = disabledLastRowPosInput.getText();
-        seatConfig.person_sort_by_height = nameListInput.getText();
-        seatConfig.group_leader_list = groupLeaderListInput.getText();
-        seatConfig.separate_list = separateListInput.getText();
-        seatConfig.lucky_option = luckyOption.isSelected();
-
-        if (ConfigUtils.reloadConfig().equals(seatConfig)) {
-            return;
-        }
         try {
-            ConfigUtils.saveConfig(seatConfig);
-        } catch (IllegalConfigException e) {
-            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
-            return;
-        }
+            SeatConfig seatConfig = new SeatConfig();
+            seatConfig.row_count = rowCountInput.getText();
+            seatConfig.column_count = columnCountInput.getText();
+            seatConfig.random_between_rows = rbrInput.getText();
+            seatConfig.last_row_pos_cannot_be_chosen = disabledLastRowPosInput.getText();
+            seatConfig.person_sort_by_height = nameListInput.getText();
+            seatConfig.group_leader_list = groupLeaderListInput.getText();
+            seatConfig.separate_list = separateListInput.getText();
+            seatConfig.lucky_option = luckyOption.isSelected();
 
-        MainWindowController.configIsChanged = true;
-        applyBtn.setDisable(true);
+            if (ConfigUtils.reloadConfig().equals(seatConfig)) {
+                return;
+            }
+            try {
+                ConfigUtils.saveConfig(seatConfig);
+            } catch (IllegalConfigException e) {
+                CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+                return;
+            }
+
+            MainWindowController.configIsChanged = true;
+            applyBtn.setDisable(true);
+        } catch (Throwable e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+        }
     }
 
     @FXML
     void loadConfigFromFile(ActionEvent event) {
-        FileChooser fc = new FileChooser();
-        fc.setTitle("加载配置文件");
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
-        File f = fc.showOpenDialog(stage);
-        if (f == null) {
-            return;
-        }
-
-        SeatConfig seatConfig;
         try {
-            seatConfig = ConfigUtils.fromJsonFile(f);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Failed to load seat config from file.", e);
-        }
+            FileChooser fc = new FileChooser();
+            fc.setTitle("加载配置文件");
+            fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
+            File f = fc.showOpenDialog(stage);
+            if (f == null) {
+                return;
+            }
 
-        if (seatConfig != null) {
-            initConfigPane(seatConfig);
+            SeatConfig seatConfig;
+            try {
+                seatConfig = ConfigUtils.fromJsonFile(f);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Failed to load seat config from file.", e);
+            }
+
+            if (seatConfig != null) {
+                initConfigPane(seatConfig);
+            }
+        } catch (Throwable e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
         }
     }
 
     @FXML
     void confirm(ActionEvent event) {
-        applySeatConfig(null);
-        stage.close();
+        try {
+            applySeatConfig(null);
+            stage.close();
+        } catch (Throwable e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+        }
     }
 
     @FXML
     void cancel(ActionEvent event) {
-        stage.close();
+        try {
+            stage.close();
+        } catch (Throwable e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+        }
     }
 
     @FXML
     void initialize() {
-        stage.getIcons().add(new Image(MetaData.ICON_URL));
-        stage.setTitle("RandomSeatGenerator - 首选项");
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.getScene().getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
+        try {
+            stage.getIcons().add(new Image(MetaData.ICON_URL));
+            stage.setTitle("RandomSeatGenerator - 首选项");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.getScene().getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
 
-        iconView.setImage(new Image(MetaData.ICON_URL));
+            iconView.setImage(new Image(MetaData.ICON_URL));
 
-        initConfigPane(ConfigUtils.reloadConfig());
+            initConfigPane(ConfigUtils.reloadConfig());
 
-        rowCountInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().row_count.equals(newValue)));
-        columnCountInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().column_count.equals(newValue)));
-        rbrInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().random_between_rows.equals(newValue)));
-        disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().last_row_pos_cannot_be_chosen.equals(newValue)));
-        nameListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().person_sort_by_height.equals(newValue)));
-        groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().group_leader_list.equals(newValue)));
-        separateListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().separate_list.equals(newValue)));
-        luckyOption.selectedProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(newValue == ConfigUtils.reloadConfig().lucky_option));
+            rowCountInput.textProperty().addListener((observable, oldValue, newValue) ->
+                    applyBtn.setDisable(ConfigUtils.reloadConfig().row_count.equals(newValue)));
+            columnCountInput.textProperty().addListener((observable, oldValue, newValue) ->
+                    applyBtn.setDisable(ConfigUtils.reloadConfig().column_count.equals(newValue)));
+            rbrInput.textProperty().addListener((observable, oldValue, newValue) ->
+                    applyBtn.setDisable(ConfigUtils.reloadConfig().random_between_rows.equals(newValue)));
+            disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) ->
+                    applyBtn.setDisable(ConfigUtils.reloadConfig().last_row_pos_cannot_be_chosen.equals(newValue)));
+            nameListInput.textProperty().addListener((observable, oldValue, newValue) ->
+                    applyBtn.setDisable(ConfigUtils.reloadConfig().person_sort_by_height.equals(newValue)));
+            groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) ->
+                    applyBtn.setDisable(ConfigUtils.reloadConfig().group_leader_list.equals(newValue)));
+            separateListInput.textProperty().addListener((observable, oldValue, newValue) ->
+                    applyBtn.setDisable(ConfigUtils.reloadConfig().separate_list.equals(newValue)));
+            luckyOption.selectedProperty().addListener((observable, oldValue, newValue) ->
+                    applyBtn.setDisable(newValue == ConfigUtils.reloadConfig().lucky_option));
+        } catch (Throwable e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+        }
     }
 
     void initConfigPane(SeatConfig seatConfig) {

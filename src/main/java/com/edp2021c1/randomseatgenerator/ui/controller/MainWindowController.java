@@ -97,30 +97,34 @@ public class MainWindowController {
 
     @FXML
     void exportSeatTable(ActionEvent event) {
-        if (seat == null) {
-            generateSeatTable(null);
-        }
-
-        FileChooser fc = new FileChooser();
-        fc.setTitle("导出座位表");
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
-        fc.setInitialDirectory(export == null ? MetaData.USER_HOME.toFile() : export);
-        fc.setInitialFileName(String.format("%tF", new Date()));
-
-        File outputFile = fc.showSaveDialog(stage);
-        if (outputFile == null) {
-            return;
-        }
         try {
-            SeatUtils.exportToExcelDocument(seat, outputFile);
-        } catch (IOException e) {
-            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(
-                    Thread.currentThread(),
-                    new RuntimeException(String.format("Failed to export seat table to %s.", outputFile.getAbsolutePath()), e)
-            );
-        }
+            if (seat == null) {
+                generateSeatTable(null);
+            }
 
-        export = outputFile.getParentFile();
+            FileChooser fc = new FileChooser();
+            fc.setTitle("导出座位表");
+            fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
+            fc.setInitialDirectory(export == null ? MetaData.USER_HOME.toFile() : export);
+            fc.setInitialFileName(String.format("%tF", new Date()));
+
+            File outputFile = fc.showSaveDialog(stage);
+            if (outputFile == null) {
+                return;
+            }
+            try {
+                SeatUtils.exportToExcelDocument(seat, outputFile);
+            } catch (IOException e) {
+                CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(
+                        Thread.currentThread(),
+                        new RuntimeException(String.format("Failed to export seat table to %s.", outputFile.getAbsolutePath()), e)
+                );
+            }
+
+            export = outputFile.getParentFile();
+        } catch (Throwable e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+        }
     }
 
     @FXML
@@ -130,64 +134,64 @@ public class MainWindowController {
 
     @FXML
     void generateSeatTable(ActionEvent event) {
-        SeatConfig config = ConfigUtils.reloadConfig();
-        initSeatTable();
-
-        long seed;
         try {
-            if (Long.parseLong(seedInput.getText()) == previousSeed) {
+            SeatConfig config = ConfigUtils.reloadConfig();
+            initSeatTable(config);
+
+            long seed;
+            try {
+                if (Long.parseLong(seedInput.getText()) == previousSeed) {
+                    generateRandomSeed(null);
+                }
+            } catch (NumberFormatException e) {
+                Logger.getGlobal().warning("Invalid seed.");
                 generateRandomSeed(null);
             }
-        } catch (NumberFormatException e) {
-            Logger.getGlobal().warning("Invalid seed.");
-            generateRandomSeed(null);
-        }
 
-        seed = Long.parseLong(seedInput.getText());
-        try {
-            seat = new SeatGenerator().generate(config, seed);
-        } catch (IllegalConfigException e) {
+            seed = Long.parseLong(seedInput.getText());
+            try {
+                seat = new SeatGenerator().generate(config, seed);
+            } catch (IllegalConfigException e) {
+                CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+                return;
+            }
+            seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
+            previousSeed = seed;
+        } catch (Throwable e) {
             CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
-            return;
         }
-        seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
-        previousSeed = seed;
     }
 
     @FXML
     void openPreferencesDialog(ActionEvent event) {
-        Stage s = new Stage();
         try {
-            s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/PreferencesDialog.fxml")));
-        } catch (IOException ignored) {
-        }
-        s.initOwner(stage);
-        s.showAndWait();
-        if (configIsChanged) {
-            initSeatTable();
-            configIsChanged = false;
+            Stage s = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/PreferencesDialog.fxml")));
+            s.initOwner(stage);
+            s.showAndWait();
+            if (configIsChanged) {
+                initSeatTable(ConfigUtils.reloadConfig());
+                configIsChanged = false;
+            }
+        } catch (Throwable e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
         }
     }
 
     @FXML
     void initialize() {
-        stage.getIcons().add(new Image(MetaData.ICON_URL));
-        stage.setTitle("Random Seat Generator - 随机座位生成器");
-        stage.getScene().getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
-        stage.setOnCloseRequest(event -> System.exit(0));
+        try {
+            stage.getIcons().add(new Image(MetaData.ICON_URL));
+            stage.setTitle("Random Seat Generator - 随机座位生成器");
+            stage.getScene().getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
+            stage.setOnCloseRequest(event -> System.exit(0));
 
-        initSeatTable();
+            initSeatTable(ConfigUtils.reloadConfig());
+        } catch (Throwable e) {
+            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+        }
     }
 
-    void initSeatTable() {
-        SeatConfig conf;
-        try {
-            conf = ConfigUtils.reloadConfig();
-        } catch (IllegalConfigException e) {
-            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
-            System.exit(0);
-            return;
-        }
+    void initSeatTable(SeatConfig conf) {
         int rowCount = conf.getRowCount(), columnCount = conf.getColumnCount();
         TableColumn<SeatRowData, String> c;
 
