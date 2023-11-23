@@ -10,7 +10,9 @@ JavaFX Version: 20.0.1
 
 v1.0.0-1.1.2 在win64平台上不需要JavaFX，在其他平台上需要
 
-v1.2.0+ 在所有平台上都需要JavaFX来运行
+v1.2.0-1.2.8 在所有平台上都需要JavaFX来运行
+
+v1.3.0+ 在Windows和macOS上可以安装并直接运行应用程序，在linux_x64上需要jre但不需要JavaFX
 
 **种子只能是long值**
 
