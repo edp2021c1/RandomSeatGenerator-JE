@@ -16,8 +16,10 @@
  */
 
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.util.logging.Logger
 import kotlin.io.path.createDirectory
 import kotlin.io.path.notExists
 
@@ -36,9 +38,16 @@ version = "1.3.2"
 
 val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
 
-val osname = System.getProperty("os.name").lowercase()
-val isMac = osname.startsWith("mac")
-val isWin = osname.startsWith("win")
+val osname: String = System.getProperty("os.name").lowercase()
+val isMac: Boolean = osname.startsWith("mac")
+val isWin: Boolean = osname.startsWith("win")
+
+val fName: String = project.name + "-" + version.toString()
+val projectPath: String = projectDir.path
+val jarFile: File = Paths.get(projectPath, "build/libs", "$fName.jar").toFile()
+val packageDir: Path = Paths.get(projectPath, "build/packages")
+
+val log: Logger = Logger.getGlobal()
 
 repositories {
     mavenCentral()
@@ -90,32 +99,28 @@ tasks.jar {
 }
 
 task("pack") {
-    dependsOn.add(tasks.build)
-
+    // Can only be run after building
     try {
-        println("Packing...")
+        log.info("Packing...")
 
-        val projectPath = projectDir.path
-        println("Project path: $projectPath")
-        val jarFile = Paths.get(projectPath, "build/libs").toFile().listFiles()!![0]
+        log.finest("Project path: $projectPath")
+        log.finest("Jar: $jarFile")
 
-        println("Jar: $jarFile")
-        val packageDir = Paths.get(projectPath, "build/packages")
         if (packageDir.notExists()) {
             packageDir.createDirectory()
         }
 
         if (!(isMac || isWin)) {
-            System.err.println("[WARNING] Not running on Windows or macOS, will use generated jar file as the package.")
-            println("Packing arguments: null")
-            println("Moving package to $packageDir")
+            log.info("Not running on Windows or macOS, will use generated jar file as the package.")
+            log.finest("Packing arguments: null")
+            log.finest("Moving package to $packageDir")
             Files.move(Paths.get(jarFile.path), packageDir.resolve(jarFile.name), StandardCopyOption.REPLACE_EXISTING)
-            println("Package: $jarFile")
-            println("Packing successful")
+            log.info("Package: $jarFile")
+            log.info("Packing successful")
             return@task
         }
 
-        val packagePath = Paths.get(projectPath, getPackageName(jarFile.name))
+        val packagePath = Paths.get(projectPath, getPackageName())
 
         val args: ArrayList<String> = if (isMac) {
             getMacPackingArguments(jarFile)
@@ -129,17 +134,18 @@ task("pack") {
             arguments.append(i)
         }
 
-        println("Packing arguments: $arguments")
+        log.finest("Packing arguments: $arguments")
 
+        log.finest("Creating package...")
         Runtime.getRuntime().exec(arguments.toString()).waitFor()
 
-        println("Moving package to $packageDir")
+        log.finest("Moving package to $packageDir")
         Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
 
-        println("Package: $packagePath")
-        println("Packing successful")
+        log.info("Package: $packagePath")
+        log.info("Packing successful")
     } catch (e: Exception) {
-        System.err.println("Packing failed with an exception")
+        log.severe("Packing failed with an exception")
         e.printStackTrace()
         return@task
     }
@@ -177,15 +183,12 @@ fun getWinPackingArguments(jarFile: File): ArrayList<String> {
     return args
 }
 
-fun getPackageName(jarName: String): String {
-    val str = StringBuilder(jarName)
-    str.delete(str.length - 3, str.length)
-
+fun getPackageName(): String {
     return if (isMac) {
-        str.append("dmg").toString()
+        "$fName.dmg"
     } else if (isWin) {
-        str.append("msi").toString()
+        "$fName.msi"
     } else {
-        str.append("jar").toString()
+        "$fName.jar"
     }
 }
