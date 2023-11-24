@@ -47,7 +47,7 @@ seat_config.json
 
 ### Package ###
 *.dmg
-*.exe
+*.msi
 
 ### Log ###
 *.log
