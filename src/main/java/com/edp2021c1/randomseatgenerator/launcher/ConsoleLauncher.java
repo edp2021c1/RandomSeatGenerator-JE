@@ -79,7 +79,8 @@ public class ConsoleLauncher {
             } else {
                 outputPath = tmp.toAbsolutePath();
                 if (!outputPath.endsWith(".xlsx")) {
-                    LOGGER.severe(String.format("Invalid output path: %s.", outputPath));
+                    LOGGER.warning(String.format("Invalid output file name: %s, will add \".xlsx\" to the end of it.", outputPath.getFileName()));
+                    outputPath = Paths.get(outputPath + ".xlsx");
                 }
             }
         }

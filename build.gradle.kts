@@ -103,8 +103,8 @@ task("pack") {
     try {
         log.info("Packing...")
 
-        log.finest("Project path: $projectPath")
-        log.finest("Jar: $jarFile")
+        log.info("Project path: $projectPath")
+        log.info("Jar: $jarFile")
 
         if (packageDir.notExists()) {
             packageDir.createDirectory()
@@ -112,8 +112,8 @@ task("pack") {
 
         if (!(isMac || isWin)) {
             log.info("Not running on Windows or macOS, will use generated jar file as the package.")
-            log.finest("Packing arguments: null")
-            log.finest("Moving package to $packageDir")
+            log.info("Packing arguments: null")
+            log.info("Moving package to $packageDir")
             Files.move(Paths.get(jarFile.path), packageDir.resolve(jarFile.name), StandardCopyOption.REPLACE_EXISTING)
             log.info("Package: $jarFile")
             log.info("Packing successful")
@@ -134,12 +134,12 @@ task("pack") {
             arguments.append(i)
         }
 
-        log.finest("Packing arguments: $arguments")
+        log.info("Packing arguments: $arguments")
 
-        log.finest("Creating package...")
+        log.info("Creating package...")
         Runtime.getRuntime().exec(arguments.toString()).waitFor()
 
-        log.finest("Moving package to $packageDir")
+        log.info("Moving package to $packageDir")
         Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
 
         log.info("Package: $packagePath")
