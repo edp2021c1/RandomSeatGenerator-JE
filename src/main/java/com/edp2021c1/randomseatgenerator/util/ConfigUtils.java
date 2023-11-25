@@ -21,7 +21,10 @@ import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.google.gson.Gson;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,7 +90,7 @@ public class ConfigUtils {
      *
      * @param path to load from.
      * @return {@code SeatConfig} loaded from path.
-     * @throws FileNotFoundException if the path does not exist, is a directory rather than a regular path, or for some other reason cannot be opened for reading.
+     * @throws IOException if for some reason the path cannot be opened for reading.
      */
     public static SeatConfig fromJson(Path path) throws IOException {
         return new Gson().fromJson(Files.readString(path), SeatConfig.class);
