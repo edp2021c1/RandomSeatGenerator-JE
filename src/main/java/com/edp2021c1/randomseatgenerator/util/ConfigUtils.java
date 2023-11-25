@@ -18,7 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.google.gson.Gson;
 
@@ -41,6 +40,8 @@ import java.util.logging.Logger;
 public class ConfigUtils {
     private static final SeatConfig DEFAULT_CONFIG = loadDefaultConfig();
     private static final Path CONFIG_PATH;
+
+    private static final Logger LOGGER = Logger.getGlobal();
 
     static {
         final Path configDir;
@@ -147,9 +148,9 @@ public class ConfigUtils {
      */
     public static SeatConfig reloadConfig() {
         try {
-            final SeatConfig config;
+            SeatConfig config;
             if (Files.notExists(CONFIG_PATH)) {
-                Logger.getGlobal().warning("Seat_config.json not found, will use default value.");
+                LOGGER.warning("Seat_config.json not found, will use default value.");
                 Files.createFile(CONFIG_PATH);
                 saveConfig(DEFAULT_CONFIG);
             }
@@ -157,7 +158,9 @@ public class ConfigUtils {
             try {
                 config.checkFormat();
             } catch (final RuntimeException e) {
-                throw new IllegalConfigException("Invalid seat_config.json.", e);
+                LOGGER.warning("Invalid seat_config.json, will use default value.");
+                saveConfig(DEFAULT_CONFIG);
+                config = DEFAULT_CONFIG;
             }
             return config;
         } catch (final IOException e) {
