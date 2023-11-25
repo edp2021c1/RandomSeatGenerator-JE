@@ -44,7 +44,7 @@ public final class SeatGenerator {
         }
         config.checkFormat();
 
-        Random rd = new Random(seed);
+        final Random rd = new Random(seed);
 
         // 获取配置
         final int rowCount;
@@ -56,12 +56,7 @@ public final class SeatGenerator {
         final boolean lucky = config.lucky_option;
 
         // 防止lucky为true时数组越界
-        final int minus;
-        if (lucky) {
-            minus = 1;
-        } else {
-            minus = 0;
-        }
+        final int minus = lucky ? 1 : 0;
 
         // 临时变量，提前声明以减少内存和计算操作
         final int peopleNum = nameList.size();
@@ -80,19 +75,15 @@ public final class SeatGenerator {
         final int randomPeopleCount = columnCount * randomRowCount;
         final int peopleLeft = peopleNum % randomPeopleCount;
 
-        final int forTimes;
-        if (peopleLeft > columnCount) {
-            forTimes = seatNum / randomPeopleCount + 1;
-        } else {
-            forTimes = seatNum / randomPeopleCount;
-        }
+        final int forTimes = peopleLeft > columnCount ? seatNum / randomPeopleCount + 1 : seatNum / randomPeopleCount;
 
         final String[] emptyRow = new String[columnCount];
-        Arrays.fill(emptyRow, "-");
+        Arrays.fill(emptyRow, SeatTable.EMPTY_SEAT_PLACEHOLDER);
 
         List<String> tNameList;
         List<String> tResult;
         List<String> tSubNameList;
+        List<Integer> tLastRowPosChosenList;
         int tPeopleNum;
         String tGroupLeader;
 
@@ -123,13 +114,15 @@ public final class SeatGenerator {
             if (t == 0) {
                 seatTable.addAll(tResult.subList(0, seatNum));
             } else {
+                tLastRowPosChosenList = new ArrayList<>(t);
                 seatTable.addAll(tResult.subList(0, seatNum - columnCount));
                 seatTable.addAll(Arrays.asList(emptyRow));
                 for (int i = seatNum - columnCount; i < tPeopleNum; i++) {
                     do {
                         u = rd.nextInt(seatNum - columnCount, seatNum);
-                    } while (notAllowedLastRowPos.contains(u - seatNum + columnCount + 1));
+                    } while (notAllowedLastRowPos.contains(u - seatNum + columnCount + 1) || tLastRowPosChosenList.contains(u));
                     seatTable.set(u, tResult.get(i));
+                    tLastRowPosChosenList.add(u);
                 }
             }
         } while (!checkSeatTableFormat(seatTable, config));
@@ -158,23 +151,24 @@ public final class SeatGenerator {
 
         try {
             return future.get(3, TimeUnit.SECONDS);
-        } catch (TimeoutException e) {
+        } catch (final TimeoutException e) {
             throw new IllegalConfigException("Unlucky or invalid config/seed, please check your config or use another seed.");
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (final ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
     private boolean checkSeatTableFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
-        List<String> gl = config.getGroupLeaderList();
-        List<Separate> sp = config.getSeparatedList();
+        final List<String> gl = config.getGroupLeaderList();
+        final List<Separate> sp = config.getSeparatedList();
         boolean hasLeader = false;
         boolean isSeparated;
         int i, j;
-        int spNum = sp.size();
-        int seatNum = seatTable.size();
-        int columnCount = config.getColumnCount();
-        int rowCount = (int) Math.ceil((double) seatNum / columnCount);
+        final int spNum = sp.size();
+        final int rowCount;
+        final int columnCount = config.getColumnCount();
+        final int minus = config.lucky_option ? 1 : 0;
+        rowCount = (int) Math.min(config.getRowCount(), Math.ceil((double) (config.getNameList().size() - minus) / columnCount));
 
         // 检查每列是否都有组长
         for (i = 0; i < columnCount; i++) {

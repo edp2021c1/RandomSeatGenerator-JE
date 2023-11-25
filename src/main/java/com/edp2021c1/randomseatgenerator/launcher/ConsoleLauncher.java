@@ -1,4 +1,5 @@
 /*
+ * RandomSeatGenerator
  * Copyright (C) 2023  EDP2021C1
  *
  * This program is free software: you can redistribute it and/or modify
@@ -48,8 +49,8 @@ public class ConsoleLauncher {
      *
      * @param args arguments used to launch the application.
      */
-    public static void launch(String[] args) {
-        List<String> arguments = Arrays.asList(args);
+    public static void launch(final String[] args) {
+        final List<String> arguments = Arrays.asList(args);
 
         // 命令行参数相关
         int i;
@@ -73,7 +74,7 @@ public class ConsoleLauncher {
 
         // 获取导出路径
         if ((i = arguments.lastIndexOf("--output-path")) != -1 && i < arguments.size() - 1) {
-            Path tmp = Paths.get(arguments.get(i + 1));
+            final Path tmp = Paths.get(arguments.get(i + 1));
             if (Files.isDirectory(tmp)) {
                 outputPath = Paths.get(tmp.toString(), outputPath.toString()).toAbsolutePath();
             } else {
@@ -103,13 +104,12 @@ public class ConsoleLauncher {
         LOGGER.info(String.format("Config path: %s", configPath));
 
         // 生成座位表
-        SeatTable seatTable;
-        seatTable = new SeatGenerator().generate(config, seed);
+        final SeatTable seatTable = new SeatGenerator().generate(config, seed);
 
         LOGGER.info("\n" + seatTable);
 
         // 导出
-        File outputFile = outputPath.toFile();
+        final File outputFile = outputPath.toFile();
         LOGGER.info(String.format("Output path: %s", outputFile.getAbsolutePath()));
         try {
             SeatUtils.exportToExcelDocument(seatTable, outputFile);

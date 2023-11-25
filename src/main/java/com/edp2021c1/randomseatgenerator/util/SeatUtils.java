@@ -1,4 +1,5 @@
 /*
+ * RandomSeatGenerator
  * Copyright (C) 2023  EDP2021C1
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,9 +41,9 @@ public class SeatUtils {
      * @param file      to export seat table to.
      * @throws IOException if failed to save seat table to Excel document.
      */
-    public static void exportToExcelDocument(SeatTable seatTable, File file) throws IOException {
+    public static void exportToExcelDocument(final SeatTable seatTable, final File file) throws IOException {
         Objects.requireNonNull(file);
-        Date date = new Date();
+        final Date date = new Date();
         if (!file.createNewFile()) {
             if (!(file.delete() & file.createNewFile())) {
                 throw new IOException("Failed to save seat table to Excel document.");

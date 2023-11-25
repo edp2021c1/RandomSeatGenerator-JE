@@ -43,17 +43,12 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     /**
      * Default crash reporter.
      */
-    public static final CrashReporter DEFAULT_CRASH_REPORTER;
+    public static final CrashReporter DEFAULT_CRASH_REPORTER = new CrashReporter(true);
 
     /**
      * Shows error message in a {@code Swing} window rather than an {@code JavaFX} window.
      */
-    public static final CrashReporter SWING_CRASH_REPORTER;
-
-    static {
-        DEFAULT_CRASH_REPORTER = new CrashReporter(true);
-        SWING_CRASH_REPORTER = new CrashReporter(true, true);
-    }
+    public static final CrashReporter SWING_CRASH_REPORTER = new CrashReporter(true, true);
 
     private final boolean showDetailMessage;
 
@@ -64,7 +59,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      *
      * @param showDetailMessage if detail of the exception shall be shown.
      */
-    public CrashReporter(boolean showDetailMessage) {
+    public CrashReporter(final boolean showDetailMessage) {
         this(showDetailMessage, false);
     }
 
@@ -74,7 +69,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      * @param showDetailMessage if detail of the exception shall be shown.
      * @param useSwing          if the reporter will be shown in a {@code Swing} window.
      */
-    public CrashReporter(boolean showDetailMessage, boolean useSwing) {
+    public CrashReporter(final boolean showDetailMessage, final boolean useSwing) {
         this.showDetailMessage = showDetailMessage;
         this.useSwing = useSwing;
     }
@@ -89,8 +84,8 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      * @param e the exception
      */
     @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        String str = getDetailMessage(t, e);
+    public void uncaughtException(final Thread t, final Throwable e) {
+        final String str = getDetailMessage(t, e);
 
         if (OperatingSystem.CURRENT == OperatingSystem.MAC && Taskbar.getTaskbar().getIconImage() == null) {
             Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(MetaData.ERROR_ICON_URL)));
@@ -103,15 +98,16 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
 
         try {
             Application.launch(CrashReporterApp.class, str);
-        } catch (IllegalStateException exception) {
+        } catch (final IllegalStateException exception) {
             new CrashReporterWindow(str).showAndWait();
         }
 
     }
 
-    private String getDetailMessage(Thread t, Throwable e) {
-        String message = e.getMessage();
-        StringBuilder str = new StringBuilder();
+    private String getDetailMessage(final Thread t, final Throwable e) {
+        final String message = e.getMessage();
+        final StringBuilder str = new StringBuilder();
+
         str.append(String.format("Exception in thread \"%s\":", t.getName()));
 
         if (message != null) {
@@ -120,8 +116,8 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
         }
 
         if (showDetailMessage) {
-            StackTraceElement[] stackTraceElements = e.getStackTrace();
-            for (StackTraceElement s : stackTraceElements) {
+            final StackTraceElement[] stackTraceElements = e.getStackTrace();
+            for (final StackTraceElement s : stackTraceElements) {
                 str.append(String.format("\n        at: %s", s.toString()));
             }
         }
@@ -130,25 +126,25 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
 
     private static class CrashReporterWindow extends Stage {
 
-        private CrashReporterWindow(String message) {
-            Label label = new Label(message);
+        private CrashReporterWindow(final String message) {
+            final Label label = new Label(message);
             label.setWrapText(true);
 
-            Button button = new Button("确定");
+            final Button button = new Button("确定");
             button.setOnAction(event -> close());
             button.setDefaultButton(true);
 
-            ButtonBar buttonBar = new ButtonBar();
+            final ButtonBar buttonBar = new ButtonBar();
             buttonBar.getButtons().add(button);
 
-            ScrollPane scrollPane = new ScrollPane(label);
+            final ScrollPane scrollPane = new ScrollPane(label);
 
-            VBox vBox = new VBox(scrollPane, buttonBar);
+            final VBox vBox = new VBox(scrollPane, buttonBar);
             vBox.setPadding(new Insets(10, 10, 10, 10));
             vBox.setSpacing(10);
             VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
-            Scene scene = new Scene(vBox);
+            final Scene scene = new Scene(vBox);
             scene.getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
 
             setScene(scene);
@@ -166,7 +162,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     public static class CrashReporterApp extends Application {
 
         @Override
-        public void start(Stage primaryStage) {
+        public void start(final Stage primaryStage) {
             new CrashReporterWindow(getParameters().getRaw().get(0)).show();
         }
     }

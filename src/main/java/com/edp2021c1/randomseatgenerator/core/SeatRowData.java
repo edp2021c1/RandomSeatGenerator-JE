@@ -62,17 +62,17 @@ public class SeatRowData {
         c1 = c2 = c3 = c4 = c5 = c6 = c7 = c8 = c9 = c10 = c11 = c12 = c13 = c14 = c15 = c16 = c17 = c18 = c19 = c20 = "-";
     }
 
-    private SeatRowData(String... c) {
+    private SeatRowData(final String... c) {
         this();
         if (c.length > MAX_COLUMN_COUNT) {
             throw new IllegalConfigException(String.format("Count of people in a row cannot be larger than %d.", MAX_COLUMN_COUNT));
         }
         for (int i = 0, j = c.length; i < j; i++) {
             try {
-                Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
+                final Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
                 f.setAccessible(true);
                 f.set(this, c[i]);
-            } catch (ReflectiveOperationException e) {
+            } catch (final ReflectiveOperationException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -84,22 +84,18 @@ public class SeatRowData {
      * @param seatTable an instance of {@link SeatTable} being transferred.
      * @return a {@code List} storing {@code SeatRowData} transferred from a {@code SeatTable}.
      */
-    public static List<SeatRowData> fromSeat(SeatTable seatTable) {
-        SeatConfig conf = seatTable.getConfig();
-        int rowCount = conf.getRowCount(), columnCount = conf.getColumnCount();
-        List<String> s = seatTable.getSeatTable();
-        List<SeatRowData> seatRowData = new ArrayList<>(rowCount);
-        String[] tmp = new String[columnCount];
+    public static List<SeatRowData> fromSeat(final SeatTable seatTable) {
+        final SeatConfig conf = seatTable.getConfig();
+        final int columnCount = conf.getColumnCount();
+        final List<String> s = seatTable.getSeatTable();
+        final List<SeatRowData> seatRowData = new ArrayList<>();
+        final String[] tmp = new String[columnCount];
 
-        outer:
-        for (int i = 0; i < rowCount; i++) {
-            for (int j = 0; j < columnCount; j++) {
-                if (i * columnCount + j >= s.size()) {
-                    break outer;
-                }
-                tmp[j] = s.get(i * columnCount + j);
+        for (int i = 0, j = 0; i < s.size(); i++, j = i % columnCount) {
+            tmp[j] = s.get(i);
+            if (j == columnCount - 1) {
+                seatRowData.add(new SeatRowData(tmp));
             }
-            seatRowData.add(new SeatRowData(tmp));
         }
 
         if (seatTable.getConfig().lucky_option) {
@@ -118,13 +114,13 @@ public class SeatRowData {
      * @param columnCount of the empty seat table.
      * @return a {@code List} storing {@code SeatRowData} of an empty seat table.
      */
-    public static List<SeatRowData> emptySeat(int rowCount, int columnCount) {
-        String[] emptyRowData = new String[columnCount];
+    public static List<SeatRowData> emptySeat(final int rowCount, final int columnCount) {
+        final String[] emptyRowData = new String[columnCount];
         Arrays.fill(emptyRowData, SeatTable.EMPTY_SEAT_PLACEHOLDER);
 
-        SeatRowData emptyRow = new SeatRowData(emptyRowData);
+        final SeatRowData emptyRow = new SeatRowData(emptyRowData);
 
-        SeatRowData[] list = new SeatRowData[rowCount];
+        final SeatRowData[] list = new SeatRowData[rowCount];
         Arrays.fill(list, emptyRow);
 
         return Arrays.asList(list);

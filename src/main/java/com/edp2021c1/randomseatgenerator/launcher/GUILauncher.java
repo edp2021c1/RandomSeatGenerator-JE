@@ -38,14 +38,14 @@ public class GUILauncher extends Application {
     private static final Logger LOGGER = Logger.getGlobal();
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(final Stage primaryStage) {
         try {
             LOGGER.info("Working dir: " + MetaData.WORKING_DIR);
             LOGGER.info("Config path: " + ConfigUtils.getConfigPath());
 
-            Stage stage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/MainWindow.fxml")));
+            final Stage stage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/MainWindow.fxml")));
             stage.show();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
         }
     }

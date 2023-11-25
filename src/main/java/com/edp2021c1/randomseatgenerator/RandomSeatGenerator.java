@@ -37,10 +37,10 @@ public class RandomSeatGenerator {
     /**
      * @param args used to start the application.
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.SWING_CRASH_REPORTER);
 
-        List<String> arguments = Arrays.asList(args);
+        final List<String> arguments = Arrays.asList(args);
         // 如果有“--help”参数则打印帮助信息然后退出
         if (arguments.contains("--help")) {
             System.out.println(MetaData.HELP_INFO);

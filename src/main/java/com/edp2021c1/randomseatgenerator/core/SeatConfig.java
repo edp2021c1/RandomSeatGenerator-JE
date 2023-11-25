@@ -85,10 +85,10 @@ public final class SeatConfig {
      * @see #row_count
      */
     public int getRowCount() throws IllegalConfigException {
-        int r;
+        final int r;
         try {
             r = Integer.parseUnsignedInt(row_count);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new IllegalConfigException(String.format("Invalid row_count: %s.", row_count), e);
         }
         return r;
@@ -104,10 +104,10 @@ public final class SeatConfig {
      * @see #MAX_COLUMN_COUNT
      */
     public int getColumnCount() throws IllegalConfigException {
-        int c;
+        final int c;
         try {
             c = Integer.parseUnsignedInt(column_count);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new IllegalConfigException(String.format("Invalid column_count: %s.", column_count), e);
         }
         if (c > MAX_COLUMN_COUNT) {
@@ -127,10 +127,10 @@ public final class SeatConfig {
         if (random_between_rows.isBlank()) {
             return getRowCount();
         }
-        int r;
+        final int r;
         try {
             r = Integer.parseUnsignedInt(random_between_rows);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new IllegalConfigException(String.format("Invalid random_between_rows: %s.", random_between_rows), e);
         }
         return r;
@@ -147,13 +147,13 @@ public final class SeatConfig {
         if (last_row_pos_cannot_be_chosen.isBlank()) {
             return new ArrayList<>();
         }
-        String[] t = last_row_pos_cannot_be_chosen.split(" ");
-        List<Integer> i = new ArrayList<>(t.length);
+        final String[] t = last_row_pos_cannot_be_chosen.split(" ");
+        final List<Integer> i = new ArrayList<>(t.length);
         try {
-            for (String s : t) {
+            for (final String s : t) {
                 i.add(Integer.parseUnsignedInt(s));
             }
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             throw new IllegalConfigException(String.format("Invalid last row positions: %s.", last_row_pos_cannot_be_chosen), e);
         }
         return i;
@@ -166,7 +166,7 @@ public final class SeatConfig {
      * @see #person_sort_by_height
      */
     public List<String> getNameList() {
-        List<String> l = new ArrayList<>(Arrays.asList(person_sort_by_height.split(" ")));
+        final List<String> l = new ArrayList<>(Arrays.asList(person_sort_by_height.split(" ")));
         if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(String.format("Name list must not contain empty seat place holder \"%s\"", SeatTable.EMPTY_SEAT_PLACEHOLDER));
         }
@@ -180,7 +180,7 @@ public final class SeatConfig {
      * @see #group_leader_list
      */
     public List<String> getGroupLeaderList() {
-        List<String> l = new ArrayList<>(Arrays.asList(group_leader_list.split(" ")));
+        final List<String> l = new ArrayList<>(Arrays.asList(group_leader_list.split(" ")));
         if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(String.format("Group leader list must not contain empty seat place holder \"%s\"", SeatTable.EMPTY_SEAT_PLACEHOLDER));
         }
@@ -195,10 +195,10 @@ public final class SeatConfig {
      * @see #separate_list
      */
     public List<Separate> getSeparatedList() throws IllegalConfigException {
-        String[] t = separate_list.split("\n");
-        ArrayList<Separate> s = new ArrayList<>(t.length);
+        final String[] t = separate_list.split("\n");
+        final ArrayList<Separate> s = new ArrayList<>(t.length);
 
-        for (String m : t) {
+        for (final String m : t) {
             if (!m.isBlank()) {
                 s.add(new Separate(m));
             }
@@ -213,7 +213,7 @@ public final class SeatConfig {
      * @param another another {@code SeatConfig} to compare with.
      * @return if these two instances are equal.
      */
-    public boolean equals(SeatConfig another) {
+    public boolean equals(final SeatConfig another) {
         return Objects.equals(row_count, another.row_count)
                 && Objects.equals(column_count, another.column_count)
                 && Objects.equals(random_between_rows, another.random_between_rows)

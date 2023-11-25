@@ -1,4 +1,5 @@
 /*
+ * RandomSeatGenerator
  * Copyright © 2023 EDP2021C1
  *
  * This program is free software: you can redistribute it and/or modify

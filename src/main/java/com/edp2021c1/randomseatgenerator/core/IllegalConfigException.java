@@ -31,7 +31,7 @@ public class IllegalConfigException extends RuntimeException {
      *
      * @param message the detail message.
      */
-    public IllegalConfigException(String message) {
+    public IllegalConfigException(final String message) {
         super(message);
     }
 
@@ -50,7 +50,7 @@ public class IllegalConfigException extends RuntimeException {
      *                is permitted, and indicates that the cause is nonexistent or
      *                unknown.)
      */
-    public IllegalConfigException(String message, Throwable cause) {
+    public IllegalConfigException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

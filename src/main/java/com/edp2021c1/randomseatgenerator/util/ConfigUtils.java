@@ -1,4 +1,5 @@
 /*
+ * RandomSeatGenerator
  * Copyright (C) 2023  EDP2021C1
  *
  * This program is free software: you can redistribute it and/or modify
@@ -42,19 +43,20 @@ public class ConfigUtils {
     private static final Path CONFIG_PATH;
 
     static {
-        Path configDir = MetaData.USER_HOME;
+        final Path configDir;
 
         if (OperatingSystem.CURRENT == OperatingSystem.WINDOWS) {
             configDir = Paths.get(Paths.get(System.getenv("APPDATA")).getParent().toString(), "Local", "RandomSeatGenerator");
         } else if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
             configDir = Paths.get(System.getProperty("user.home"), "Library/Application Support", "RandomSeatGenerator");
+        } else {
+            configDir = MetaData.USER_HOME;
         }
 
-        configDir = configDir.toAbsolutePath();
         if (Files.notExists(configDir)) {
             try {
                 Files.createDirectory(configDir);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -62,7 +64,7 @@ public class ConfigUtils {
             try {
                 Files.delete(configDir);
                 Files.createDirectory(configDir);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -71,7 +73,7 @@ public class ConfigUtils {
         if (Files.notExists(CONFIG_PATH)) {
             try {
                 Files.createFile(CONFIG_PATH);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -79,7 +81,7 @@ public class ConfigUtils {
             try {
                 Files.delete(CONFIG_PATH);
                 Files.createFile(CONFIG_PATH);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -92,7 +94,7 @@ public class ConfigUtils {
      * @return {@code SeatConfig} loaded from path.
      * @throws IOException if for some reason the path cannot be opened for reading.
      */
-    public static SeatConfig fromJson(Path path) throws IOException {
+    public static SeatConfig fromJson(final Path path) throws IOException {
         return new Gson().fromJson(Files.readString(path), SeatConfig.class);
     }
 
@@ -102,19 +104,19 @@ public class ConfigUtils {
      * @param config to translate into Json.
      * @return a {@code Json} representation of the object.
      */
-    public static String parseJson(SeatConfig config) {
+    public static String parseJson(final SeatConfig config) {
         return new Gson().toJson(config);
     }
 
     private static SeatConfig loadDefaultConfig() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/default.json"))));
-        StringBuilder buffer = new StringBuilder();
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/default.json"))));
+        final StringBuilder buffer = new StringBuilder();
         String str;
         try {
             while ((str = reader.readLine()) != null) {
                 buffer.append(str);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
         str = buffer.toString();
@@ -126,13 +128,13 @@ public class ConfigUtils {
      *
      * @param config {@code SeatConfig} to set as the default seat config and save to file.
      */
-    public static void saveConfig(SeatConfig config) {
+    public static void saveConfig(final SeatConfig config) {
         config.checkFormat();
         try {
-            FileWriter writer = new FileWriter(CONFIG_PATH.toFile());
+            final FileWriter writer = new FileWriter(CONFIG_PATH.toFile());
             writer.write(parseJson(config));
             writer.close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -145,7 +147,7 @@ public class ConfigUtils {
      */
     public static SeatConfig reloadConfig() {
         try {
-            SeatConfig config;
+            final SeatConfig config;
             if (Files.notExists(CONFIG_PATH)) {
                 Logger.getGlobal().warning("Seat_config.json not found, will use default value.");
                 Files.createFile(CONFIG_PATH);
@@ -154,11 +156,11 @@ public class ConfigUtils {
             config = ConfigUtils.fromJson(CONFIG_PATH);
             try {
                 config.checkFormat();
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 throw new IllegalConfigException("Invalid seat_config.json.", e);
             }
             return config;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }

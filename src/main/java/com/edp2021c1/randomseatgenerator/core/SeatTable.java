@@ -59,35 +59,33 @@ public class SeatTable {
      * @param seed        {@link #seed}
      * @param luckyPerson {@link #luckyPerson}
      */
-    public SeatTable(List<String> seatTable, SeatConfig config, long seed, String luckyPerson) {
+    public SeatTable(final List<String> seatTable, final SeatConfig config, final long seed, final String luckyPerson) {
         this.seatTable = seatTable;
         this.config = config;
         this.seed = seed;
-        if (luckyPerson == null) luckyPerson = "";
         this.luckyPerson = luckyPerson;
     }
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder();
+        final StringBuilder str = new StringBuilder();
 
-        int rowCount = config.getRowCount(), columnCount = config.getColumnCount();
+        final int columnCount = config.getColumnCount();
 
         str.append("Seed: ");
         str.append(seed);
         str.append("\n");
 
         str.append("Seat Table:\n");
-        for (int i = 0; i < rowCount; i++) {
-            for (int j = 0; j < columnCount; j++) {
-                if (i * columnCount + j >= seatTable.size()) return str.toString();
-                str.append(seatTable.get(i * columnCount + j));
-                str.append("\t");
+        for (int i = 0; i < seatTable.size(); i++) {
+            str.append(seatTable.get(i));
+            str.append("\t");
+            if (i % columnCount == columnCount - 1) {
+                str.append("\n");
             }
-            str.append("\n");
         }
 
-        if (config.lucky_option) {
+        if (config.lucky_option && luckyPerson != null) {
             str.append("Lucky Person: ");
             str.append(luckyPerson);
         } else {

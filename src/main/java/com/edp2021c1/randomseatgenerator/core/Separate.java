@@ -42,8 +42,8 @@ public class Separate {
      * @param s a {@code String} contains the names of the two people separated, divided by a {@code space}.
      * @throws IllegalConfigException if the {@code String} contains only one name.
      */
-    public Separate(String s) throws IllegalConfigException {
-        String[] t = s.split(" ", 2);
+    public Separate(final String s) throws IllegalConfigException {
+        final String[] t = s.split(" ", 2);
         if (t.length < 2) {
             throw new IllegalConfigException(String.format("Invalid separate pair: \"%s\".", s));
         }
@@ -61,8 +61,8 @@ public class Separate {
      * @param columnCount count of columns of the seat table.
      * @return if {@code name_1} and {@code name_2} are separated in the seat table.
      */
-    public boolean check(List<String> seat, int columnCount) {
-        List<Integer> notSeparated = Arrays.asList(-columnCount - 1, -columnCount, -columnCount + 1, -1, 1, columnCount - 1, columnCount, columnCount + 1);
+    public boolean check(final List<String> seat, final int columnCount) {
+        final List<Integer> notSeparated = Arrays.asList(-columnCount - 1, -columnCount, -columnCount + 1, -1, 1, columnCount - 1, columnCount, columnCount + 1);
         return !notSeparated.contains(seat.indexOf(name_1) - seat.indexOf(name_2));
     }
 }

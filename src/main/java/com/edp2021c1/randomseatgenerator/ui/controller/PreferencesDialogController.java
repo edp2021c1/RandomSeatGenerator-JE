@@ -89,9 +89,9 @@ public class PreferencesDialogController {
     private ImageView iconView;
 
     @FXML
-    void applySeatConfig(ActionEvent event) {
+    void applySeatConfig(final ActionEvent event) {
         try {
-            SeatConfig seatConfig = new SeatConfig();
+            final SeatConfig seatConfig = new SeatConfig();
             seatConfig.row_count = rowCountInput.getText();
             seatConfig.column_count = columnCountInput.getText();
             seatConfig.random_between_rows = rbrInput.getText();
@@ -106,59 +106,59 @@ public class PreferencesDialogController {
             }
             try {
                 ConfigUtils.saveConfig(seatConfig);
-            } catch (IllegalConfigException e) {
+            } catch (final IllegalConfigException e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
                 return;
             }
 
             MainWindowController.configIsChanged = true;
             applyBtn.setDisable(true);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
         }
     }
 
     @FXML
-    void loadConfigFromFile(ActionEvent event) {
+    void loadConfigFromFile(final ActionEvent event) {
         try {
-            FileChooser fc = new FileChooser();
+            final FileChooser fc = new FileChooser();
             fc.setTitle("加载配置文件");
             fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
-            File f = fc.showOpenDialog(stage);
+            final File f = fc.showOpenDialog(stage);
             if (f == null) {
                 return;
             }
 
-            SeatConfig seatConfig;
+            final SeatConfig seatConfig;
             try {
                 seatConfig = ConfigUtils.fromJson(Paths.get(f.getAbsolutePath()));
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException("Failed to load seat config from file.", e);
             }
 
             if (seatConfig != null) {
                 initConfigPane(seatConfig);
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
         }
     }
 
     @FXML
-    void confirm(ActionEvent event) {
+    void confirm(final ActionEvent event) {
         try {
             applySeatConfig(null);
             stage.close();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
         }
     }
 
     @FXML
-    void cancel(ActionEvent event) {
+    void cancel(final ActionEvent event) {
         try {
             stage.close();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
         }
     }
@@ -191,12 +191,12 @@ public class PreferencesDialogController {
                     applyBtn.setDisable(ConfigUtils.reloadConfig().separate_list.equals(newValue)));
             luckyOption.selectedProperty().addListener((observable, oldValue, newValue) ->
                     applyBtn.setDisable(newValue == ConfigUtils.reloadConfig().lucky_option));
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
         }
     }
 
-    void initConfigPane(SeatConfig seatConfig) {
+    void initConfigPane(final SeatConfig seatConfig) {
         rowCountInput.setText(seatConfig.row_count);
         columnCountInput.setText(seatConfig.column_count);
         rbrInput.setText(seatConfig.random_between_rows);
