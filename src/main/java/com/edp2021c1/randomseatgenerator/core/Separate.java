@@ -47,6 +47,9 @@ public class Separate {
         if (t.length < 2) {
             throw new IllegalConfigException(String.format("Invalid separate pair: \"%s\".", s));
         }
+        if (Arrays.asList(t).contains(SeatTable.EMPTY_SEAT_PLACE_HOLDER)) {
+            throw new IllegalConfigException(String.format("Separated name list must not contain empty seat place holder \"%s\"", SeatTable.EMPTY_SEAT_PLACE_HOLDER));
+        }
         name_1 = t[0];
         name_2 = t[1];
     }

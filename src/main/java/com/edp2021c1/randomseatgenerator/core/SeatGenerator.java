@@ -18,10 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.core;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -31,9 +28,6 @@ import java.util.concurrent.*;
  * @since 1.2.0
  */
 public final class SeatGenerator {
-    private static int ceil(double d) {
-        return (int) Math.ceil(d);
-    }
 
     /**
      * Generates a seat table.
@@ -44,151 +38,110 @@ public final class SeatGenerator {
      * @throws NullPointerException   if the config is null.
      * @throws IllegalConfigException if the config has an illegal format.
      */
-    private SeatTable generateTask(SeatConfig config, long seed) throws NullPointerException, IllegalConfigException {
+    private SeatTable generateTask(final SeatConfig config, final long seed) throws NullPointerException, IllegalConfigException {
         if (config == null) {
             throw new NullPointerException("Config cannot be null");
         }
         config.checkFormat();
 
-        Random random = new Random(seed);
+        Random rd = new Random(seed);
 
         // 获取配置
-        int rowCount = config.getRowCount();
-        int columnCount = config.getColumnCount();
-        int randomRowCount = config.getRandomBetweenRows();
-        List<Integer> notAllowedLastRowPos = config.getNotAllowedLastRowPos();
-        List<String> nameList = config.getNameList();
-        List<String> groupLeaderList = config.getGroupLeaderList();
+        final int rowCount;
+        final int columnCount = config.getColumnCount();
+        final int randomRowCount;
+        final List<Integer> notAllowedLastRowPos = config.getNotAllowedLastRowPos();
+        final List<String> nameList = config.getNameList();
+        final List<String> groupLeaderList = config.getGroupLeaderList();
+        final boolean lucky = config.lucky_option;
+
+        // 防止lucky为true时数组越界
+        final int minus;
+        if (lucky) {
+            minus = 1;
+        } else {
+            minus = 0;
+        }
 
         // 临时变量，提前声明以减少内存和计算操作
-        int peopleNum = nameList.size();
+        final int peopleNum = nameList.size();
 
         // 防止行数过多引发无限递归
-        while (rowCount * columnCount - peopleNum > columnCount) {
-            rowCount--;
-        }
+        rowCount = (int) Math.min(config.getRowCount(), Math.ceil((double) (peopleNum - minus) / columnCount));
+        randomRowCount = Math.min(config.getRandomBetweenRows(), rowCount);
 
-        // 临时变量，提前声明以减少内存和计算操作
-        int seatNum = rowCount * columnCount;
-        int randomPeopleCount = columnCount * randomRowCount;
-        int peopleLeft = peopleNum % randomPeopleCount;
-        boolean luckyOption = config.lucky_option;
-        int i;
-        int j;
-        int c;
-        int d;
-        int e;
-        int f;
-        boolean hasSeatLeft = peopleLeft > 0 && seatNum > peopleNum;
-        boolean tmp_8 = peopleLeft <= columnCount;
-        List<Integer> tmp;
-
-        // 座位表变量
-        List<String> seat = Arrays.asList(new String[seatNum]);
-        List<Boolean> sorted = Arrays.asList(new Boolean[nameList.size()]);
+        // 座位表数据
+        List<String> seatTable;
         String luckyPerson = null;
 
-        int forTimes = seatNum / (columnCount * Math.min(rowCount, randomRowCount));
-        if (!hasSeatLeft) {
-            forTimes = ceil((double) seatNum / (columnCount * Math.min(rowCount, randomRowCount)));
+        // 临时变量，提前声明以减少内存和计算操作
+        int t, u;
+        final int seatNum = rowCount * columnCount;
+        final int randomPeopleCount = columnCount * randomRowCount;
+        final int peopleLeft = peopleNum % randomPeopleCount;
+
+        final int forTimes;
+        if (peopleLeft > columnCount) {
+            forTimes = seatNum / randomPeopleCount + 1;
+        } else {
+            forTimes = seatNum / randomPeopleCount;
         }
+
+        final String[] emptyRow = new String[columnCount];
+        Arrays.fill(emptyRow, "-");
+
+        List<String> tNameList;
+        List<String> tResult;
+        List<String> tSubNameList;
+        int tPeopleNum;
+        String tGroupLeader;
 
         do {
-            // 座位表初始化
-            // 只有最后一排会出现空位，因此只填入最后一排
-            for (i = (rowCount - 1) * columnCount, c = seatNum; i < c; i++) {
-                seat.set(i, "-");
-            }
-            for (i = 0, c = nameList.size(); i < c; i++) {
-                sorted.set(i, false);
-            }
-            tmp = new ArrayList<>(peopleNum % columnCount);
+            seatTable = new ArrayList<>(seatNum);
+            tNameList = new ArrayList<>(nameList);
+            tPeopleNum = peopleNum;
 
-            for (i = 0; i < forTimes; i++) {
-                if (i == forTimes - 1 && hasSeatLeft && tmp_8) {    // 如果余位不多于一排，则将最后一排归到前两排中轮换
-                    for (j = i * randomPeopleCount, f = (i + 1) * randomPeopleCount; j < f; j++) {
-                        do {
-                            e = random.nextInt(i * randomPeopleCount, peopleNum);
-                        } while (sorted.get(e));
-                        seat.set(j, nameList.get(e));
-                        sorted.set(e, true);
-                    }
-                    for (j = 0; j < peopleLeft; j++) {
-                        do {
-                            e = random.nextInt(i * randomPeopleCount, peopleNum);
-                        } while (sorted.get(e));
-                        do {
-                            f = random.nextInt(seatNum - columnCount, seatNum);
-                        } while (notAllowedLastRowPos.contains(f - forTimes * randomPeopleCount + 1) || tmp.contains(f));
-                        tmp.add(f);
-                        seat.set(f, nameList.get(e));
-                        sorted.set(e, true);
-                    }
-                    break;
-                } else if (i == forTimes - 1 && hasSeatLeft && !tmp_8) {   // 如果余位多于一排，则在余位中进行随机轮换
-                    for (j = i * randomPeopleCount, d = seatNum - columnCount; j < d; j++) {
-                        do {
-                            e = random.nextInt(i * randomPeopleCount, peopleNum);
-                        } while (sorted.get(e));
-                        seat.set(j, nameList.get(e));
-                        sorted.set(e, true);
-                    }
-                    for (j = 0, d = peopleLeft % columnCount; j < d; j++) {
-                        do {
-                            e = random.nextInt(i * randomPeopleCount, peopleNum);
-                        } while (sorted.get(e));
-                        do {
-                            f = random.nextInt(seatNum - columnCount, seatNum);
-                        } while (notAllowedLastRowPos.contains(f - seatNum + columnCount + 1) || tmp.contains(f));
-                        tmp.add(f);
-                        seat.set(f, nameList.get(e));
-                        sorted.set(e, true);
-                    }
-                    break;
+            if (lucky) {
+                t = rd.nextInt(tPeopleNum - randomPeopleCount, tPeopleNum);
+                luckyPerson = tNameList.get(t);
+                tNameList.remove(t);
+                tPeopleNum--;
+            }
+
+            tResult = new ArrayList<>(tPeopleNum);
+            for (int i = 0; i < forTimes; i++) {
+                if (i == forTimes - 1) {
+                    tSubNameList = tNameList.subList(i * randomPeopleCount, peopleNum - 1);
+                } else {
+                    tSubNameList = tNameList.subList(i * randomPeopleCount, (i + 1) * randomPeopleCount);
                 }
-                for (j = i * randomPeopleCount, f = (i + 1) * randomPeopleCount; j < f; j++) {
-                    if (j >= seatNum) {
-                        break;
-                    }
+                Collections.shuffle(tSubNameList);
+                tResult.addAll(tSubNameList);
+            }
 
+            t = tPeopleNum > seatNum ? 0 : tPeopleNum % columnCount;
+            if (t == 0) {
+                seatTable.addAll(tResult.subList(0, seatNum));
+            } else {
+                seatTable.addAll(tResult.subList(0, seatNum - columnCount));
+                seatTable.addAll(Arrays.asList(emptyRow));
+                for (int i = seatNum - columnCount; i < tPeopleNum; i++) {
                     do {
-                        e = random.nextInt(i * randomPeopleCount, (i + 1) * randomPeopleCount);
-                    } while (sorted.get(e));
-                    seat.set(j, nameList.get(e));
-                    sorted.set(e, true);
-                }
-
-            }
-
-            if (luckyOption && seatNum >= peopleNum) {
-                i = seatNum;
-                while (i > 0) {
-                    i--;
-                    if (!"-".equals(seat.get(i))) {
-                        luckyPerson = seat.set(i, "-");
-                        break;
-                    }
-                }
-            } else if (luckyOption) {
-                for (i = 0; i < peopleNum; i++) {
-                    if (!seat.contains(nameList.get(i))) {
-                        luckyPerson = nameList.get(i);
-                        break;
-                    }
+                        u = rd.nextInt(seatNum - columnCount, seatNum);
+                    } while (notAllowedLastRowPos.contains(u - seatNum + columnCount + 1));
+                    seatTable.set(u, tResult.get(i));
                 }
             }
+        } while (!checkSeatTableFormat(seatTable, config));
 
-        } while (!checkSeatFormat(seat, config));
-
-        //组长
-        for (i = 0; i < columnCount; i++) {
+        for (int i = 0; i < columnCount; i++) {
             do {
-                e = random.nextInt(0, rowCount);
-            } while (!groupLeaderList.contains(seat.get(e * columnCount + i)));
-            seat.set(e * columnCount + i, "*" + seat.get(e * columnCount + i) + "*");
+                t = rd.nextInt(rowCount) * columnCount + i;
+            } while (!groupLeaderList.contains((tGroupLeader = seatTable.get(t))));
+            seatTable.set(t, String.format("*%s*", tGroupLeader));
         }
 
-        return new SeatTable(seat, config, seed, luckyPerson);
+        return new SeatTable(seatTable, config, seed, luckyPerson);
     }
 
     /**
@@ -200,10 +153,8 @@ public final class SeatGenerator {
      * @throws NullPointerException   if the config is null.
      * @throws IllegalConfigException if the config has an illegal format, or if it costs too much time to generate the seat table.
      */
-    public SeatTable generate(SeatConfig config, long seed) {
-        Callable<SeatTable> task = () -> generateTask(config, seed);
-        ExecutorService service = Executors.newSingleThreadExecutor();
-        Future<SeatTable> future = service.submit(task);
+    public SeatTable generate(final SeatConfig config, final long seed) {
+        final Future<SeatTable> future = Executors.newSingleThreadExecutor().submit(() -> generateTask(config, seed));
 
         try {
             return future.get(3, TimeUnit.SECONDS);
@@ -214,7 +165,7 @@ public final class SeatGenerator {
         }
     }
 
-    private boolean checkSeatFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
+    private boolean checkSeatTableFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
         List<String> gl = config.getGroupLeaderList();
         List<Separate> sp = config.getSeparatedList();
         boolean hasLeader = false;
@@ -223,7 +174,7 @@ public final class SeatGenerator {
         int spNum = sp.size();
         int seatNum = seatTable.size();
         int columnCount = config.getColumnCount();
-        int rowCount = ceil((double) seatNum / columnCount);
+        int rowCount = (int) Math.ceil((double) seatNum / columnCount);
 
         // 检查每列是否都有组长
         for (i = 0; i < columnCount; i++) {

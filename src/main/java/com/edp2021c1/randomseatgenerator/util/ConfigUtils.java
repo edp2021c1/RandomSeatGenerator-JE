@@ -42,7 +42,7 @@ public class ConfigUtils {
         Path configDir = MetaData.USER_HOME;
 
         if (OperatingSystem.CURRENT == OperatingSystem.WINDOWS) {
-            configDir = Paths.get(System.getenv("APPDATA"), "RandomSeatGenerator");
+            configDir = Paths.get(Paths.get(System.getenv("APPDATA")).getParent().toString(), "Local", "RandomSeatGenerator");
         } else if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
             configDir = Paths.get(System.getProperty("user.home"), "Library/Application Support", "RandomSeatGenerator");
         }
@@ -65,18 +65,18 @@ public class ConfigUtils {
         }
 
         CONFIG_PATH = Paths.get(configDir.toString(), "seat_config.json");
-        if(Files.notExists(CONFIG_PATH)){
+        if (Files.notExists(CONFIG_PATH)) {
             try {
                 Files.createFile(CONFIG_PATH);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        if(!Files.isRegularFile(CONFIG_PATH)){
+        if (!Files.isRegularFile(CONFIG_PATH)) {
             try {
                 Files.delete(CONFIG_PATH);
                 Files.createFile(CONFIG_PATH);
-            }catch (IOException e){
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }

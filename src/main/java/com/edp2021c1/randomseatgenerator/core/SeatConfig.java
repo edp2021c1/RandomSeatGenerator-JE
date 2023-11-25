@@ -166,7 +166,11 @@ public final class SeatConfig {
      * @see #person_sort_by_height
      */
     public List<String> getNameList() {
-        return Arrays.asList(person_sort_by_height.split(" "));
+        List<String> l = new ArrayList<>(Arrays.asList(person_sort_by_height.split(" ")));
+        if (l.contains(SeatTable.EMPTY_SEAT_PLACE_HOLDER)) {
+            throw new IllegalConfigException(String.format("Name list must not contain empty seat place holder \"%s\"", SeatTable.EMPTY_SEAT_PLACE_HOLDER));
+        }
+        return l;
     }
 
     /**
@@ -176,7 +180,11 @@ public final class SeatConfig {
      * @see #group_leader_list
      */
     public List<String> getGroupLeaderList() {
-        return Arrays.asList(group_leader_list.split(" "));
+        List<String> l = new ArrayList<>(Arrays.asList(group_leader_list.split(" ")));
+        if (l.contains(SeatTable.EMPTY_SEAT_PLACE_HOLDER)) {
+            throw new IllegalConfigException(String.format("Group leader list must not contain empty seat place holder \"%s\"", SeatTable.EMPTY_SEAT_PLACE_HOLDER));
+        }
+        return l;
     }
 
     /**
