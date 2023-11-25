@@ -164,7 +164,7 @@ fun getMacPackingArguments(jarFile: File): ArrayList<String> {
     args.add("-t")
     args.add("dmg")
     args.add("--icon")
-    args.add(Paths.get(projectDir.path, "build_resources/app_icon/mac_icon.icns").toString())
+    args.add(Paths.get(projectDir.path, "package_resources/app_icon/mac_icon.icns").toString())
     return args
 }
 
@@ -172,14 +172,14 @@ fun getWinPackingArguments(jarFile: File): ArrayList<String> {
     val args = getDefaultPackingArguments(jarFile)
     args.add("-t")
     args.add("msi")
-    args.add("--icon")
-    args.add(Paths.get(projectDir.path, "build_resources/app_icon/icon.ico").toString())
     args.add("--win-menu")
     args.add("--win-menu-group")
     args.add("edp2021c1")
     args.add("--win-dir-chooser")
     args.add("--win-help-url")
     args.add("https://github.com/edp2021c1/RandomSeatGenerator-JE/")
+    args.add("--icon")
+    args.add(Paths.get(projectDir.path, "package_resources/app_icon/icon.ico").toString())
     return args
 }
 

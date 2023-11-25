@@ -60,7 +60,7 @@ public class MainWindowController {
     public static boolean configIsChanged = false;
     private SeatTable seat;
     private long previousSeed = 0;
-    private File export;
+    private File exportDir;
 
     @FXML
     private Stage stage;
@@ -105,7 +105,7 @@ public class MainWindowController {
             FileChooser fc = new FileChooser();
             fc.setTitle("导出座位表");
             fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
-            fc.setInitialDirectory(export == null ? MetaData.USER_HOME.toFile() : export);
+            fc.setInitialDirectory(exportDir == null ? MetaData.USER_HOME.toFile() : exportDir);
             fc.setInitialFileName(String.format("%tF", new Date()));
 
             File outputFile = fc.showSaveDialog(stage);
@@ -121,7 +121,7 @@ public class MainWindowController {
                 );
             }
 
-            export = outputFile.getParentFile();
+            exportDir = outputFile.getParentFile();
         } catch (Throwable e) {
             CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
         }
@@ -197,10 +197,9 @@ public class MainWindowController {
 
         if (seatTable.getColumns().size() != columnCount) {
             seatTable.getColumns().clear();
-            double d = 1.0 / (Math.max(columnCount, 2));
             for (int i = 0; i < columnCount || i < 2; i++) {
                 c = new TableColumn<>("C" + (i + 1)) {{
-                    prefWidthProperty().bind(seatTable.widthProperty().multiply(d));
+                    prefWidthProperty().bind(seatTable.widthProperty().divide(Math.max(columnCount, 2)));
                 }};
                 c.setCellValueFactory(new PropertyValueFactory<>("c" + (i + 1)));
                 c.setSortable(false);

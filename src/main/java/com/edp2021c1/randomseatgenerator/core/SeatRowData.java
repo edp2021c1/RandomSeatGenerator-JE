@@ -120,7 +120,7 @@ public class SeatRowData {
      */
     public static List<SeatRowData> emptySeat(int rowCount, int columnCount) {
         String[] emptyRowData = new String[columnCount];
-        Arrays.fill(emptyRowData, "-");
+        Arrays.fill(emptyRowData, SeatTable.EMPTY_SEAT_PLACEHOLDER);
 
         SeatRowData emptyRow = new SeatRowData(emptyRowData);
 

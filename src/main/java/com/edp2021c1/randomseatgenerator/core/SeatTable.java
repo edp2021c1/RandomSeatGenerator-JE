@@ -30,7 +30,10 @@ import java.util.List;
  */
 @Getter
 public class SeatTable {
-    public static final String EMPTY_SEAT_PLACE_HOLDER = "-";
+    /**
+     * Placeholder of an empty seat.
+     */
+    public static final String EMPTY_SEAT_PLACEHOLDER = "-";
     /**
      * The seat table stored as a {@code  List}.
      */

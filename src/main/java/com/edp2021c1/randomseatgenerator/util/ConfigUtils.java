@@ -107,7 +107,7 @@ public class ConfigUtils {
     }
 
     private static SeatConfig loadDefaultConfig() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/conf/default.json"))));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/default.json"))));
         StringBuilder buffer = new StringBuilder();
         String str;
         try {
