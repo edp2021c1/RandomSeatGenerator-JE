@@ -101,6 +101,8 @@ tasks.jar {
 
 task("pack") {
     // Can only be run after building
+
+    notCompatibleWithConfigurationCache("external precess used")
     try {
         log.info("Packing...")
 
