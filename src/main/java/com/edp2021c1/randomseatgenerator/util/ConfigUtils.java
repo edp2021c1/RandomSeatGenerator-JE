@@ -56,7 +56,7 @@ public class ConfigUtils {
 
         if (Files.notExists(configDir)) {
             try {
-                Files.createDirectory(configDir);
+                Files.createDirectories(configDir);
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
@@ -64,7 +64,7 @@ public class ConfigUtils {
         if (!Files.isDirectory(configDir)) {
             try {
                 Files.delete(configDir);
-                Files.createDirectory(configDir);
+                Files.createDirectories(configDir);
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             }

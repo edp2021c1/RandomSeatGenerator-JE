@@ -26,12 +26,21 @@ import java.util.logging.Logger;
 
 import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
 
+/**
+ * Main window of the application.
+ */
 public class MainWindow extends Stage {
+    /**
+     * If the seat config is changed after settings dialog closed.
+     */
     public boolean configChanged = false;
     private SeatTable seat = null;
     private long previousSeed = 0;
     private File exportDir = null;
 
+    /**
+     * Creates an instance.
+     */
     public MainWindow() {
         final Scene scene;
         final HBox mainBox;

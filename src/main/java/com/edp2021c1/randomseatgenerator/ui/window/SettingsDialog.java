@@ -22,7 +22,15 @@ import java.nio.file.Paths;
 
 import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
 
+/**
+ * Settings dialog of the application.
+ */
 public class SettingsDialog extends Stage {
+    /**
+     * Creates an instance.
+     *
+     * @param owner of the dialog.
+     */
     public SettingsDialog(MainWindow owner) {
         final Scene scene;
         final VBox mainBox;

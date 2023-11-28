@@ -21,7 +21,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.logging.Logger
-import kotlin.io.path.createDirectory
+import kotlin.io.path.createDirectories
 import kotlin.io.path.notExists
 
 plugins {
@@ -101,6 +101,7 @@ tasks.jar {
 
 task("pack") {
     // Can only be run after building
+    mustRunAfter("build")
     try {
         log.info("Packing...")
 
@@ -108,7 +109,7 @@ task("pack") {
         log.info("Jar: $jarFile")
 
         if (packageDir.notExists()) {
-            packageDir.createDirectory()
+            packageDir.createDirectories()
         }
 
         if (!(isMac || isWin)) {

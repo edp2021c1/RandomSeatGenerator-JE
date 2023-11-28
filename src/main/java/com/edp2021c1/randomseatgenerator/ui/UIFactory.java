@@ -15,36 +15,79 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
+/**
+ * Contains several useful methods for creating or initializing JavaFX controls.
+ */
 public class UIFactory {
+    /**
+     * Default margin.
+     */
     public static final Insets DEFAULT_MARGIN = new Insets(5);
+    /**
+     * Default padding.
+     */
     public static final Insets DEFAULT_PADDING = new Insets(10);
 
-    public static void setMargins(final Insets margin, final Node... children) {
-        for (final Node n : children) {
+    /**
+     * Sets margin of elements.
+     *
+     * @param margin   of the elements.
+     * @param elements where margin will be set to
+     */
+    public static void setMargins(final Insets margin, final Node... elements) {
+        for (final Node n : elements) {
             HBox.setMargin(n, margin);
             VBox.setMargin(n, margin);
         }
     }
 
-    public static void setGrows(final Priority priority, final Node... children) {
-        for (final Node n : children) {
+    /**
+     * Sets {@code HGrow} and {@code VGrow} of elements.
+     *
+     * @param priority {@code HGrow} and {@code VGrow} value to be set to the elements
+     * @param elements where priority will be set to
+     */
+    public static void setGrows(final Priority priority, final Node... elements) {
+        for (final Node n : elements) {
             HBox.setHgrow(n, priority);
             VBox.setVgrow(n, priority);
         }
     }
 
-    public static void setPaddings(final Insets padding, final Region... children) {
-        for (final Region r : children) {
+    /**
+     * Sets padding of elements.
+     *
+     * @param padding  to be set to the elements
+     * @param elements where padding will be set to
+     */
+    public static void setPaddings(final Insets padding, final Region... elements) {
+        for (final Region r : elements) {
             r.setPadding(padding);
         }
     }
 
+    /**
+     * Creates a {@code Button}.
+     *
+     * @param text of the button
+     * @param width of the button
+     * @param height of the button
+     * @return the button created
+     */
     public static Button createButton(final String text, final double width, final double height) {
         final Button btn = new Button(text);
         btn.setPrefSize(width, height);
         return btn;
     }
 
+    /**
+     * Creates a {@code VBox}.
+     *
+     * @param width of the box
+     * @param height of the box
+     * @param children of the box
+     * @return the box created
+     */
     public static VBox createVBox(final double width, final double height, final Node... children) {
         final VBox vBox = new VBox(children);
         vBox.setPrefSize(width, height);
@@ -52,6 +95,14 @@ public class UIFactory {
         return vBox;
     }
 
+    /**
+     * Creates a {@code HBox}.
+     *
+     * @param width of the box
+     * @param height of the box
+     * @param children of the box
+     * @return the box created
+     */
     public static HBox createHBox(final double width, final double height, final Node... children) {
         final HBox hBox = new HBox(children);
         hBox.setPrefSize(width, height);
@@ -59,18 +110,40 @@ public class UIFactory {
         return hBox;
     }
 
+    /**
+     * Creates a {@code TextField}.
+     *
+     * @param promptText of the field
+     * @return the field created
+     */
     public static TextField createTextField(final String promptText) {
         final TextField t = new TextField();
         t.setPromptText(promptText);
         return t;
     }
 
+    /**
+     * Creates a {@code TextField}.
+     *
+     * @param promptText of the field
+     * @param width of the field
+     * @param height of the field
+     * @return the field created
+     */
     public static TextField createTextField(final String promptText, final double width, final double height) {
         final TextField t = createTextField(promptText);
         t.setPrefSize(width, height);
         return t;
     }
 
+    /**
+     * Creates a {@code TextArea}.
+     *
+     * @param promptText of the area
+     * @param width of the area
+     * @param height of the area
+     * @return the area created
+     */
     public static TextArea createTextArea(final String promptText, final double width, final double height) {
         final TextArea t = new TextArea();
         t.setPromptText(promptText);
@@ -79,6 +152,14 @@ public class UIFactory {
         return t;
     }
 
+    /**
+     * Creates a {@code Label}.
+     *
+     * @param text of the label
+     * @param width of the label
+     * @param height of the label
+     * @return the label created
+     */
     public static Label createLabel(final String text, final double width, final double height) {
         final Label label = new Label(text);
         label.setPrefSize(width, height);
@@ -86,6 +167,14 @@ public class UIFactory {
         return label;
     }
 
+    /**
+     * Creates a {@code ImageView}.
+     *
+     * @param imageUrl URL of the image of the view
+     * @param fitWidth of the view
+     * @param fitHeight of the view
+     * @return the view created.
+     */
     public static ImageView createImageView(final String imageUrl, final double fitWidth, final double fitHeight) {
         final ImageView i = new ImageView(new Image(imageUrl));
         i.setFitWidth(fitWidth);
@@ -95,6 +184,14 @@ public class UIFactory {
         return i;
     }
 
+    /**
+     * Creates a {@code ButtonBar}.
+     *
+     * @param width of the bar
+     * @param height of the bar
+     * @param buttons in the bar.
+     * @return the bar created
+     */
     public static ButtonBar createButtonBar(final double width, final double height, final Button... buttons) {
         final ButtonBar buttonBar = new ButtonBar();
         buttonBar.setPrefSize(width, height);
@@ -102,10 +199,16 @@ public class UIFactory {
         return buttonBar;
     }
 
-    public static void initSeatTable(final TableView<SeatRowData> seatTable, final SeatConfig conf) {
+    /**
+     * Initialize a seat table view.
+     *
+     * @param seatTable to be initialized
+     * @param config    used to initialize the table.
+     */
+    public static void initSeatTable(final TableView<SeatRowData> seatTable, final SeatConfig config) {
         seatTable.setEditable(false);
-        final int rowCount = conf.getRowCount();
-        final int columnCount = conf.getColumnCount();
+        final int rowCount = config.getRowCount();
+        final int columnCount = config.getColumnCount();
         TableColumn<SeatRowData, String> c;
 
         if (seatTable.getColumns().size() != columnCount) {
@@ -123,6 +226,19 @@ public class UIFactory {
         seatTable.setItems(FXCollections.observableArrayList(SeatRowData.emptySeat(rowCount, columnCount)));
     }
 
+    /**
+     * Initialize a config input pane.
+     *
+     * @param seatConfig to be filled in.
+     * @param rowCountInput input of {@code row_count}
+     * @param columnCountInput input of {@code column_count}
+     * @param rbrInput input of {@code random_between_rows}
+     * @param disabledLastRowPosInput input of {@code last_row_pos_cannot_be_chosen}
+     * @param nameListInput input of {@code person_sort_by_height}
+     * @param groupLeaderListInput input of {@code group_leader_list}
+     * @param separateListInput input of {@code separate_list}
+     * @param luckyOption input of {@code lucky_option}
+     */
     public static void initConfigPane(final SeatConfig seatConfig,
                                       final TextField rowCountInput,
                                       final TextField columnCountInput,
