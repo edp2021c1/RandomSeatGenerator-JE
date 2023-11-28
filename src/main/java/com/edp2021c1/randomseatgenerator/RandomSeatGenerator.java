@@ -49,7 +49,9 @@ public class RandomSeatGenerator {
 
         // 如果有“--license”参数则打印许可证然后退出
         if (arguments.contains("--license")) {
+            System.out.println();
             System.out.println(MetaData.LICENSE_INFO);
+            System.out.println();
             System.exit(0);
         }
 

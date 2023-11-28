@@ -18,14 +18,13 @@
 
 package com.edp2021c1.randomseatgenerator.launcher;
 
+import com.edp2021c1.randomseatgenerator.ui.window.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 
-import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -43,7 +42,7 @@ public class GUILauncher extends Application {
             LOGGER.info("Working dir: " + MetaData.WORKING_DIR);
             LOGGER.info("Config path: " + ConfigUtils.getConfigPath());
 
-            final Stage stage = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/assets/fxml/MainWindow.fxml")));
+            final Stage stage = new MainWindow();
             stage.show();
         } catch (final Throwable e) {
             CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);

@@ -188,19 +188,19 @@ public final class SeatConfig {
     }
 
     /**
-     * Returns {@link #separate_list} as a list of {@code Separate}.
+     * Returns {@link #separate_list} as a list of {@code SeparatedPair}.
      *
-     * @return {@code  separate_list} as a list of {@code Separate}.
+     * @return {@code  separate_list} as a list of {@code SeparatedPair}.
      * @throws IllegalConfigException if {@code separate_list} contains one or more invalid pairs.
      * @see #separate_list
      */
-    public List<Separate> getSeparatedList() throws IllegalConfigException {
+    public List<SeparatedPair> getSeparatedList() throws IllegalConfigException {
         final String[] t = separate_list.split("\n");
-        final ArrayList<Separate> s = new ArrayList<>(t.length);
+        final ArrayList<SeparatedPair> s = new ArrayList<>(t.length);
 
         for (final String m : t) {
             if (!m.isBlank()) {
-                s.add(new Separate(m));
+                s.add(new SeparatedPair(m));
             }
         }
 

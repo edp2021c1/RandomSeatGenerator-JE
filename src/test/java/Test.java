@@ -1,13 +1,16 @@
-import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
-import com.edp2021c1.randomseatgenerator.core.SeatTable;
-import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
-
-import java.util.Random;
+import com.edp2021c1.randomseatgenerator.ui.window.MainWindow;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 public class Test {
     public static void main(String[] args) {
-        SeatTable s = new SeatGenerator().generate(ConfigUtils.reloadConfig(), new Random().nextLong());
-        System.out.println(s);
-        System.exit(0);
+        Application.launch(App.class, args);
+    }
+
+    public static class App extends Application {
+        @Override
+        public void start(Stage primaryStage) {
+            new MainWindow().show();
+        }
     }
 }

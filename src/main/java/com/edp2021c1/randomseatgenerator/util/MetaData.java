@@ -46,7 +46,6 @@ public class MetaData {
      * License.
      */
     public static final String LICENSE_INFO = """
-                                        
             Copyright (c) 2023  EDP2021C1
             This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
             This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -60,9 +59,7 @@ public class MetaData {
             EasyExcel v3.3.2 (Apache 2.0)
                 
             Contributors:
-            Calboot <calboot39@outlook.com>
-                                        
-            """;
+            Calboot <calboot39@outlook.com>""";
 
     /**
      * URL of the default app icon.

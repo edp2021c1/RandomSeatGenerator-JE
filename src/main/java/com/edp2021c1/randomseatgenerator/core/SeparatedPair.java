@@ -28,7 +28,7 @@ import java.util.List;
  * @author Calboot
  * @since 1.0.0
  */
-public class Separate {
+public class SeparatedPair {
     private final String name_1;
     private final String name_2;
 
@@ -42,7 +42,7 @@ public class Separate {
      * @param s a {@code String} contains the names of the two people separated, divided by a {@code space}.
      * @throws IllegalConfigException if the {@code String} contains only one name.
      */
-    public Separate(final String s) throws IllegalConfigException {
+    public SeparatedPair(final String s) throws IllegalConfigException {
         final String[] t = s.split(" ", 2);
         if (t.length < 2) {
             throw new IllegalConfigException(String.format("Invalid separate pair: \"%s\".", s));

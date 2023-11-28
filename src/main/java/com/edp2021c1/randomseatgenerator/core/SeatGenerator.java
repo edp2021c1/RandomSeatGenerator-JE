@@ -80,29 +80,27 @@ public final class SeatGenerator {
         final String[] emptyRow = new String[columnCount];
         Arrays.fill(emptyRow, SeatTable.EMPTY_SEAT_PLACEHOLDER);
 
+        final int tPeopleNum = peopleNum - minus;
         List<String> tNameList;
         List<String> tResult;
         List<String> tSubNameList;
         List<Integer> tLastRowPosChosenList;
-        int tPeopleNum;
         String tGroupLeader;
 
         do {
             seatTable = new ArrayList<>(seatNum);
             tNameList = new ArrayList<>(nameList);
-            tPeopleNum = peopleNum;
 
             if (lucky) {
                 t = rd.nextInt(tPeopleNum - randomPeopleCount, tPeopleNum);
                 luckyPerson = tNameList.get(t);
                 tNameList.remove(t);
-                tPeopleNum--;
             }
 
             tResult = new ArrayList<>(tPeopleNum);
             for (int i = 0; i < forTimes; i++) {
                 if (i == forTimes - 1) {
-                    tSubNameList = tNameList.subList(i * randomPeopleCount, peopleNum - 1);
+                    tSubNameList = tNameList.subList(i * randomPeopleCount, tPeopleNum);
                 } else {
                     tSubNameList = tNameList.subList(i * randomPeopleCount, (i + 1) * randomPeopleCount);
                 }
@@ -151,16 +149,16 @@ public final class SeatGenerator {
 
         try {
             return future.get(3, TimeUnit.SECONDS);
-        } catch (final TimeoutException e) {
-            throw new IllegalConfigException("Unlucky or invalid config/seed, please check your config or use another seed.");
         } catch (final ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
+        } catch (final TimeoutException e) {
+            throw new IllegalConfigException("Unlucky or invalid config/seed, please check your config or use another seed.");
         }
     }
 
     private boolean checkSeatTableFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
         final List<String> gl = config.getGroupLeaderList();
-        final List<Separate> sp = config.getSeparatedList();
+        final List<SeparatedPair> sp = config.getSeparatedList();
         boolean hasLeader = false;
         boolean isSeparated;
         int i, j;
