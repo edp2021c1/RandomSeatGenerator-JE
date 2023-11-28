@@ -35,7 +35,7 @@ javafx {
 }
 
 group = "com.edp2021c1"
-version = "1.3.2"
+version = "1.3.3"
 
 val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
 
@@ -99,6 +99,7 @@ tasks.jar {
     })
 }
 
+// Run once if is built and twice if not
 val pack = task("pack") {
     dependsOn(tasks.build)
     run { pack() }
