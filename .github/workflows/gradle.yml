@@ -29,9 +29,9 @@ jobs:
         with:
           gradle-version: 8.2.1
 
-      - name: Build and
+      - name: Build and Pack
         run: |
-          gradle pack
+          gradle build
           gradle pack
 
       - name: Upload
