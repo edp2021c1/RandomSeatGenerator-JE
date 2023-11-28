@@ -35,7 +35,7 @@ javafx {
 }
 
 group = "com.edp2021c1"
-version = "1.3.2-fix"
+version = "1.3.2"
 
 val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
 
@@ -99,58 +99,9 @@ tasks.jar {
     })
 }
 
-task("pack") {
-    // Can only be run after building
-    mustRunAfter("build")
-    try {
-        log.info("Packing...")
-
-        log.info("Project path: $projectPath")
-        log.info("Jar: $jarFile")
-
-        if (packageDir.notExists()) {
-            packageDir.createDirectories()
-        }
-
-        if (!(isMac || isWin)) {
-            log.info("Not running on Windows or macOS, will use generated jar file as the package.")
-            log.info("Packing arguments: null")
-            log.info("Moving package to $packageDir")
-            Files.move(Paths.get(jarFile.path), packageDir.resolve(jarFile.name), StandardCopyOption.REPLACE_EXISTING)
-            log.info("Package: $jarFile")
-            log.info("Packing successful")
-            return@task
-        }
-
-        val packagePath = Paths.get(projectPath, getPackageName())
-
-        val args: ArrayList<String> = if (isMac) {
-            getMacPackingArguments(jarFile)
-        } else {
-            getWinPackingArguments(jarFile)
-        }
-
-        val arguments = StringBuilder("jpackage")
-        for (i in args) {
-            arguments.append(" ")
-            arguments.append(i)
-        }
-
-        log.info("Packing arguments: $arguments")
-
-        log.info("Creating package...")
-        Runtime.getRuntime().exec(arguments.toString()).waitFor()
-
-        log.info("Moving package to $packageDir")
-        Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
-
-        log.info("Package: $packagePath")
-        log.info("Packing successful")
-    } catch (e: Exception) {
-        log.severe("Packing failed with an exception")
-        e.printStackTrace()
-        return@task
-    }
+val pack = task("pack") {
+    dependsOn(tasks.build)
+    run { pack() }
 }
 
 fun getDefaultPackingArguments(jarName: File): ArrayList<String> {
@@ -192,5 +143,57 @@ fun getPackageName(): String {
         "$fName.msi"
     } else {
         "$fName.jar"
+    }
+}
+
+fun pack() {
+    try {
+        log.info("Packing...")
+
+        log.info("Project path: $projectPath")
+        log.info("Jar: $jarFile")
+
+        if (packageDir.notExists()) {
+            packageDir.createDirectories()
+        }
+
+        if (!(isMac || isWin)) {
+            log.info("Not running on Windows or macOS, will use generated jar file as the package.")
+            log.info("Packing arguments: null")
+            log.info("Moving package to $packageDir")
+            Files.move(Paths.get(jarFile.path), packageDir.resolve(jarFile.name), StandardCopyOption.REPLACE_EXISTING)
+            log.info("Package: $jarFile")
+            log.info("Packing successful")
+            return
+        }
+
+        val packagePath = Paths.get(projectPath, getPackageName())
+
+        val args: ArrayList<String> = if (isMac) {
+            getMacPackingArguments(jarFile)
+        } else {
+            getWinPackingArguments(jarFile)
+        }
+
+        val arguments = StringBuilder("jpackage")
+        for (i in args) {
+            arguments.append(" ")
+            arguments.append(i)
+        }
+
+        log.info("Packing arguments: $arguments")
+
+        log.info("Creating package...")
+        Runtime.getRuntime().exec(arguments.toString()).waitFor()
+
+        log.info("Moving package to $packageDir")
+        Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
+
+        log.info("Package: $packagePath")
+        log.info("Packing successful")
+    } catch (e: Exception) {
+        log.severe("Packing failed with an exception")
+        e.printStackTrace()
+        return
     }
 }
