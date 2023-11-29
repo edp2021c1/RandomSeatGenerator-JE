@@ -31,7 +31,7 @@ plugins {
 
 javafx {
     version = "20.0.1"
-    modules("javafx.controls", "javafx.fxml")
+    modules("javafx.controls")
 }
 
 group = "com.edp2021c1"

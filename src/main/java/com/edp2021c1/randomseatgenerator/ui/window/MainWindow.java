@@ -24,12 +24,13 @@ import java.util.Date;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
+import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
 
 /**
  * Main window of the application.
  */
 public class MainWindow extends Stage {
+    private final SettingsDialog settingsDialog = new SettingsDialog(this);
     /**
      * If the seat config is changed after settings dialog closed.
      */
@@ -103,11 +104,11 @@ public class MainWindow extends Stage {
          **************************************************************************/
 
         settingsBtn.setOnAction(event -> {
-            Stage s = new SettingsDialog(MainWindow.this);
-            s.showAndWait();
+            settingsDialog.showAndWait();
             if (configChanged) {
                 initSeatTable(seatTable, ConfigUtils.reloadConfig());
                 configChanged = false;
+                previousSeed = 0;
             }
         });
 

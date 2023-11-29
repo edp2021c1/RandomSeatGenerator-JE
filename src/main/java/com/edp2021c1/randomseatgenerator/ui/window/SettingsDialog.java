@@ -2,6 +2,7 @@ package com.edp2021c1.randomseatgenerator.ui.window;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
+import com.edp2021c1.randomseatgenerator.ui.control.SeatConfigPane;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
@@ -20,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
+import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
 
 /**
  * Settings dialog of the application.
@@ -36,16 +37,15 @@ public class SettingsDialog extends Stage {
         final VBox mainBox;
         final VBox topBox;
         final Label seatConfigBoxTitleLabel;
-        final HBox box1;
+        final SeatConfigPane seatConfigPane;
         final TextField rowCountInput;
         final TextField columnCountInput;
         final TextField rbrInput;
         final TextField disabledLastRowPosInput;
-        final HBox box2;
         final TextField nameListInput;
         final TextField groupLeaderListInput;
         final TextArea separateListInput;
-        final CheckBox luckyOption;
+        final CheckBox luckyOptionCheck;
         final HBox box3;
         final Button loadConfigBtn;
         final Button applyBtn;
@@ -67,27 +67,25 @@ public class SettingsDialog extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        seatConfigBoxTitleLabel = createLabel("座位表配置", 1212, 45);
+        seatConfigBoxTitleLabel = createLabel("座位表配置", 1212, 30);
         rowCountInput = createTextField("行数");
         columnCountInput = createTextField("列数");
         rbrInput = createTextField("随机轮换的行数");
         disabledLastRowPosInput = createTextField("最后一排不可选位置");
 
-        box1 = createHBox(1212, 60, rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
-
         nameListInput = createTextField("名单 (按身高排序)");
         groupLeaderListInput = createTextField("组长列表");
         separateListInput = createTextArea("拆分列表", 165, 56);
-        luckyOption = new CheckBox("随机挑选一名幸运儿");
+        luckyOptionCheck = new CheckBox("随机挑选一名幸运儿");
 
-        box2 = createHBox(1212, 69, nameListInput, groupLeaderListInput, separateListInput, luckyOption);
+        seatConfigPane = new SeatConfigPane(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput, nameListInput, groupLeaderListInput, separateListInput, luckyOptionCheck);
 
         loadConfigBtn = createButton("从文件加载", 80, 26);
         applyBtn = createButton("应用", 80, 26);
 
         box3 = createHBox(1212, 45, loadConfigBtn, applyBtn);
 
-        topBox = createVBox(1212, 200, seatConfigBoxTitleLabel, box1, box2, box3);
+        topBox = createVBox(1212, 200, seatConfigBoxTitleLabel, seatConfigPane, box3);
 
         aboutInfoBoxTitleLabel = createLabel("关于", 1212, 15);
         iconView = createImageView(MetaData.ICON_URL, 275, 275);
@@ -102,16 +100,16 @@ public class SettingsDialog extends Stage {
         confirmBtn = createButton("确定", 80, 26);
         cancelBtn = createButton("取消", 80, 26);
 
-        buttonBar = createButtonBar(1212, 31, confirmBtn, cancelBtn);
+        buttonBar = createButtonBar(1212, 46, confirmBtn, cancelBtn);
 
-        bottomBox = createVBox(1212, 430, aboutInfoBoxTitleLabel, box4, buttonBar);
+        bottomBox = createVBox(1212, 445, aboutInfoBoxTitleLabel, box4, buttonBar);
 
-        mainBox = createVBox(1232, 629, topBox, bottomBox);
+        mainBox = createVBox(1232, 644, topBox, bottomBox);
 
         scene = new Scene(mainBox);
         scene.getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
 
-        setMargins(DEFAULT_MARGIN, rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput, nameListInput, groupLeaderListInput, separateListInput, loadConfigBtn, applyBtn);
+        setMargins(DEFAULT_MARGIN, rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput, nameListInput, groupLeaderListInput, separateListInput, loadConfigBtn, applyBtn, confirmBtn, cancelBtn);
         setPaddings(DEFAULT_PADDING, topBox, bottomBox);
         applyBtn.setDisable(true);
         randomSeatGeneratorLabel.setFont(new Font(24));
@@ -126,7 +124,7 @@ public class SettingsDialog extends Stage {
         initOwner(owner);
         initModality(Modality.APPLICATION_MODAL);
         setResizable(false);
-        initConfigPane(ConfigUtils.reloadConfig(), rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput, nameListInput, groupLeaderListInput, separateListInput, luckyOption);
+        initConfigPane(ConfigUtils.reloadConfig(), seatConfigPane);
 
 
         /* *************************************************************************
@@ -149,7 +147,7 @@ public class SettingsDialog extends Stage {
                 applyBtn.setDisable(ConfigUtils.reloadConfig().group_leader_list.equals(newValue)));
         separateListInput.textProperty().addListener((observable, oldValue, newValue) ->
                 applyBtn.setDisable(ConfigUtils.reloadConfig().separate_list.equals(newValue)));
-        luckyOption.selectedProperty().addListener((observable, oldValue, newValue) ->
+        luckyOptionCheck.selectedProperty().addListener((observable, oldValue, newValue) ->
                 applyBtn.setDisable(newValue == ConfigUtils.reloadConfig().lucky_option));
 
         loadConfigBtn.setOnAction(event -> {
@@ -170,7 +168,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 if (seatConfig != null) {
-                    initConfigPane(seatConfig, rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput, nameListInput, groupLeaderListInput, separateListInput, luckyOption);
+                    initConfigPane(seatConfig, seatConfigPane);
                 }
             } catch (final Throwable e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
@@ -187,7 +185,7 @@ public class SettingsDialog extends Stage {
                 seatConfig.person_sort_by_height = nameListInput.getText();
                 seatConfig.group_leader_list = groupLeaderListInput.getText();
                 seatConfig.separate_list = separateListInput.getText();
-                seatConfig.lucky_option = luckyOption.isSelected();
+                seatConfig.lucky_option = luckyOptionCheck.isSelected();
 
                 if (ConfigUtils.reloadConfig().equals(seatConfig)) {
                     return;

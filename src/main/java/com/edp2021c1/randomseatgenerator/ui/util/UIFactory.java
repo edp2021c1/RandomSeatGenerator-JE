@@ -1,7 +1,8 @@
-package com.edp2021c1.randomseatgenerator.ui;
+package com.edp2021c1.randomseatgenerator.ui.util;
 
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatRowData;
+import com.edp2021c1.randomseatgenerator.ui.control.SeatConfigPane;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -69,8 +70,8 @@ public class UIFactory {
     /**
      * Creates a {@code Button}.
      *
-     * @param text of the button
-     * @param width of the button
+     * @param text   of the button
+     * @param width  of the button
      * @param height of the button
      * @return the button created
      */
@@ -83,8 +84,8 @@ public class UIFactory {
     /**
      * Creates a {@code VBox}.
      *
-     * @param width of the box
-     * @param height of the box
+     * @param width    of the box
+     * @param height   of the box
      * @param children of the box
      * @return the box created
      */
@@ -98,8 +99,8 @@ public class UIFactory {
     /**
      * Creates a {@code HBox}.
      *
-     * @param width of the box
-     * @param height of the box
+     * @param width    of the box
+     * @param height   of the box
      * @param children of the box
      * @return the box created
      */
@@ -126,8 +127,8 @@ public class UIFactory {
      * Creates a {@code TextField}.
      *
      * @param promptText of the field
-     * @param width of the field
-     * @param height of the field
+     * @param width      of the field
+     * @param height     of the field
      * @return the field created
      */
     public static TextField createTextField(final String promptText, final double width, final double height) {
@@ -140,8 +141,8 @@ public class UIFactory {
      * Creates a {@code TextArea}.
      *
      * @param promptText of the area
-     * @param width of the area
-     * @param height of the area
+     * @param width      of the area
+     * @param height     of the area
      * @return the area created
      */
     public static TextArea createTextArea(final String promptText, final double width, final double height) {
@@ -155,8 +156,8 @@ public class UIFactory {
     /**
      * Creates a {@code Label}.
      *
-     * @param text of the label
-     * @param width of the label
+     * @param text   of the label
+     * @param width  of the label
      * @param height of the label
      * @return the label created
      */
@@ -170,10 +171,10 @@ public class UIFactory {
     /**
      * Creates a {@code ImageView}.
      *
-     * @param imageUrl URL of the image of the view
-     * @param fitWidth of the view
+     * @param imageUrl  URL of the image of the view
+     * @param fitWidth  of the view
      * @param fitHeight of the view
-     * @return the view created.
+     * @return the view created
      */
     public static ImageView createImageView(final String imageUrl, final double fitWidth, final double fitHeight) {
         final ImageView i = new ImageView(new Image(imageUrl));
@@ -187,9 +188,9 @@ public class UIFactory {
     /**
      * Creates a {@code ButtonBar}.
      *
-     * @param width of the bar
-     * @param height of the bar
-     * @param buttons in the bar.
+     * @param width   of the bar
+     * @param height  of the bar
+     * @param buttons in the bar
      * @return the bar created
      */
     public static ButtonBar createButtonBar(final double width, final double height, final Button... buttons) {
@@ -203,7 +204,7 @@ public class UIFactory {
      * Initialize a seat table view.
      *
      * @param seatTable to be initialized
-     * @param config    used to initialize the table.
+     * @param config    used to initialize the table
      */
     public static void initSeatTable(final TableView<SeatRowData> seatTable, final SeatConfig config) {
         seatTable.setEditable(false);
@@ -229,32 +230,17 @@ public class UIFactory {
     /**
      * Initialize a config input pane.
      *
-     * @param seatConfig to be filled in.
-     * @param rowCountInput input of {@code row_count}
-     * @param columnCountInput input of {@code column_count}
-     * @param rbrInput input of {@code random_between_rows}
-     * @param disabledLastRowPosInput input of {@code last_row_pos_cannot_be_chosen}
-     * @param nameListInput input of {@code person_sort_by_height}
-     * @param groupLeaderListInput input of {@code group_leader_list}
-     * @param separateListInput input of {@code separate_list}
-     * @param luckyOption input of {@code lucky_option}
+     * @param seatConfig     to be filled in
+     * @param seatConfigPane to be initialized
      */
-    public static void initConfigPane(final SeatConfig seatConfig,
-                                      final TextField rowCountInput,
-                                      final TextField columnCountInput,
-                                      final TextField rbrInput,
-                                      final TextField disabledLastRowPosInput,
-                                      final TextField nameListInput,
-                                      final TextField groupLeaderListInput,
-                                      final TextArea separateListInput,
-                                      final CheckBox luckyOption) {
-        rowCountInput.setText(seatConfig.row_count);
-        columnCountInput.setText(seatConfig.column_count);
-        rbrInput.setText(seatConfig.random_between_rows);
-        disabledLastRowPosInput.setText(seatConfig.last_row_pos_cannot_be_chosen);
-        nameListInput.setText(seatConfig.person_sort_by_height);
-        groupLeaderListInput.setText(seatConfig.group_leader_list);
-        separateListInput.setText(seatConfig.separate_list);
-        luckyOption.setSelected(seatConfig.lucky_option);
+    public static void initConfigPane(final SeatConfig seatConfig, final SeatConfigPane seatConfigPane) {
+        seatConfigPane.getRowCountInput().setText(seatConfig.row_count);
+        seatConfigPane.getColumnCountInput().setText(seatConfig.column_count);
+        seatConfigPane.getRbrInput().setText(seatConfig.random_between_rows);
+        seatConfigPane.getDisabledLastRowPosInput().setText(seatConfig.last_row_pos_cannot_be_chosen);
+        seatConfigPane.getNameListInput().setText(seatConfig.person_sort_by_height);
+        seatConfigPane.getGroupLeaderListInput().setText(seatConfig.group_leader_list);
+        seatConfigPane.getSeparateListInput().setText(seatConfig.separate_list);
+        seatConfigPane.getLuckyOptionCheck().setSelected(seatConfig.lucky_option);
     }
 }
