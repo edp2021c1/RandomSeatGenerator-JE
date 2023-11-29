@@ -97,7 +97,6 @@ tasks.jar {
     })
 }
 
-// Run once if is built and twice if not
 val pack = task("pack") {
     run { pack() }
 }
