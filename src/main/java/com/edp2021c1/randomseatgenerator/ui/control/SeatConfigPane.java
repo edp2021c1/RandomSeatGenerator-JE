@@ -51,6 +51,16 @@ public class SeatConfigPane extends VBox {
 
     private final CheckBox luckyOptionCheck;
 
+    /**
+     * @param rowCountInput           input of {@code row_count}
+     * @param columnCountInput        input of {@code column_count}
+     * @param rbrInput                input of {@code random_between_rows}
+     * @param disabledLastRowPosInput input of {@code last_row_pos_cannot_be_chosen}
+     * @param nameListInput           input of {@code person_sort_by_height}
+     * @param groupLeaderListInput    input of {@code group_leader_list}
+     * @param separateListInput       input of {@code separate_list}
+     * @param luckyOptionCheck        input of {@code lucky_option}
+     */
     public SeatConfigPane(TextField rowCountInput,
                           TextField columnCountInput,
                           TextField rbrInput,
