@@ -63,7 +63,9 @@ public class RandomSeatGenerator {
 
         // 如果不是命令行模式则启动JavaFX程序
         if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
-            Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(MetaData.MAC_ICON_URL)));
+            Taskbar.getTaskbar().setIconImage(
+                    Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(MetaData.MAC_ICON_URL))
+            );
         }
         Application.launch(GUILauncher.class);
 

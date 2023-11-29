@@ -57,7 +57,10 @@ public enum OperatingSystem {
             return WINDOWS;
         } else if (osName.startsWith("mac")) {
             return MAC;
-        } else if (osName.contains("solaris") || osName.contains("linux") || osName.contains("unix") || osName.contains("sunos")) {
+        } else if (osName.contains("solaris")
+                || osName.contains("linux")
+                || osName.contains("unix")
+                || osName.contains("sunos")) {
             return LINUX;
         } else {
             return UNKNOWN;

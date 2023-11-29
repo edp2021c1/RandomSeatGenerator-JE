@@ -48,7 +48,9 @@ public class SeparatedPair {
             throw new IllegalConfigException(String.format("Invalid separate pair: \"%s\".", s));
         }
         if (Arrays.asList(t).contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
-            throw new IllegalConfigException(String.format("Separated name list must not contain empty seat place holder \"%s\"", SeatTable.EMPTY_SEAT_PLACEHOLDER));
+            throw new IllegalConfigException(String.format(
+                    "Separated name list must not contain empty seat place holder \"%s\"",
+                    SeatTable.EMPTY_SEAT_PLACEHOLDER));
         }
         name_1 = t[0];
         name_2 = t[1];
@@ -62,7 +64,16 @@ public class SeparatedPair {
      * @return if {@code name_1} and {@code name_2} are separated in the seat table.
      */
     public boolean check(final List<String> seat, final int columnCount) {
-        final List<Integer> notSeparated = Arrays.asList(-columnCount - 1, -columnCount, -columnCount + 1, -1, 1, columnCount - 1, columnCount, columnCount + 1);
+        final List<Integer> notSeparated = Arrays.asList(
+                -columnCount - 1,
+                -columnCount,
+                -columnCount + 1,
+                -1,
+                1,
+                columnCount - 1,
+                columnCount,
+                columnCount + 1
+        );
         return !notSeparated.contains(seat.indexOf(name_1) - seat.indexOf(name_2));
     }
 }

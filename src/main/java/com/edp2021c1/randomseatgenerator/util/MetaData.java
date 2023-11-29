@@ -27,20 +27,22 @@ import java.nio.file.Paths;
  * @author Calboot
  * @since 1.2.9
  */
+@SuppressWarnings("LongLine")
 public class MetaData {
     /**
      * Helping information.
      */
-    public static final String HELP_INFO = """
-            OPTIONS:
-                --help                  Print this message and then quit.
-                --license               Print the license of this application and then quit.
-                --nogui                 Start the application in console mode.
-                --config-path <path>    Path of a specific Json config file. (optional, default to seat_config.json under the current directory)
-                --seed <value>          Seed used to generate seat table, must be in the format of a number. (optional, default to a random number)
-                --output-path <path>    File or directory to export seat table to. If the path is a directory, seat table will be exported to yyyy-mm-dd.xlsx under it. (optional, default to yyyy-mm-dd.xlsx under the current directory)
-                
-            """;
+    public static final String HELP_INFO =
+            """
+                    OPTIONS:
+                        --help                  Print this message and then quit.
+                        --license               Print the license of this application and then quit.
+                        --nogui                 Start the application in console mode.
+                        --config-path <path>    Path of a specific Json config file. (optional, default to seat_config.json under the current directory)
+                        --seed <value>          Seed used to generate seat table, must be in the format of a number. (optional, default to a random number)
+                        --output-path <path>    File or directory to export seat table to. If the path is a directory, seat table will be exported to yyyy-mm-dd.xlsx under it. (optional, default to yyyy-mm-dd.xlsx under the current directory)
+                        
+                    """;
 
     /**
      * License.

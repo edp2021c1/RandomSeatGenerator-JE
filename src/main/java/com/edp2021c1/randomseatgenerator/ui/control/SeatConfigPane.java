@@ -27,7 +27,14 @@ public class SeatConfigPane extends VBox {
 
     private final CheckBox luckyOptionCheck;
 
-    public SeatConfigPane(TextField rowCountInput, TextField columnCountInput, TextField rbrInput, TextField disabledLastRowPosInput, TextField nameListInput, TextField groupLeaderListInput, TextArea separateListInput, CheckBox luckyOptionCheck) {
+    public SeatConfigPane(TextField rowCountInput,
+                          TextField columnCountInput,
+                          TextField rbrInput,
+                          TextField disabledLastRowPosInput,
+                          TextField nameListInput,
+                          TextField groupLeaderListInput,
+                          TextArea separateListInput,
+                          CheckBox luckyOptionCheck) {
         super();
 
         this.rowCountInput = rowCountInput;

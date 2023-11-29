@@ -35,7 +35,7 @@ javafx {
 }
 
 group = "com.edp2021c1"
-version = "1.3.3"
+version = "1.3.4"
 
 val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
 
@@ -107,7 +107,11 @@ val pack = task("pack") {
 
 fun getDefaultPackingArguments(jarName: File): ArrayList<String> {
     val args = ArrayList<String>()
-    args.addAll(listOf("--app-version", version.toString(), "-n", project.name, "-i", jarName.parent, "--main-jar", jarName.name, "--vendor", "EDP-2021-C1"))
+    args.addAll(listOf("--app-version", version.toString(),
+            "-n", project.name,
+            "-i", jarName.parent,
+            "--main-jar", jarName.name,
+            "--vendor", "EDP-2021-C1"))
     return args
 }
 

@@ -47,9 +47,15 @@ public class ConfigUtils {
         final Path configDir;
 
         if (OperatingSystem.CURRENT == OperatingSystem.WINDOWS) {
-            configDir = Paths.get(Paths.get(System.getenv("APPDATA")).getParent().toString(), "Local", "RandomSeatGenerator");
+            configDir = Paths.get(
+                    Paths.get(System.getenv("APPDATA")).getParent().toString(),
+                    "Local",
+                    "RandomSeatGenerator");
         } else if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
-            configDir = Paths.get(System.getProperty("user.home"), "Library/Application Support", "RandomSeatGenerator");
+            configDir = Paths.get(
+                    System.getProperty("user.home"),
+                    "Library/Application Support",
+                    "RandomSeatGenerator");
         } else {
             configDir = MetaData.USER_HOME;
         }
@@ -110,7 +116,11 @@ public class ConfigUtils {
     }
 
     private static SeatConfig loadDefaultConfig() {
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/default.json"))));
+        final BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/default.json"))
+                )
+        );
         final StringBuilder buffer = new StringBuilder();
         String str;
         try {

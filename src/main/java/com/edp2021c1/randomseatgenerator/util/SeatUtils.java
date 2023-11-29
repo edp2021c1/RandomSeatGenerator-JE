@@ -49,7 +49,9 @@ public class SeatUtils {
                 throw new IOException("Failed to save seat table to Excel document.");
             }
         }
-        EasyExcel.write(file, SeatRowData.class).sheet(String.format("座位表-%tF", date)).doWrite(SeatRowData.fromSeat(seatTable));
+        EasyExcel.write(file, SeatRowData.class)
+                .sheet(String.format("座位表-%tF", date))
+                .doWrite(SeatRowData.fromSeat(seatTable));
         if (!file.setReadOnly()) {
             throw new IOException("Failed to save seat table to Excel document.");
         }

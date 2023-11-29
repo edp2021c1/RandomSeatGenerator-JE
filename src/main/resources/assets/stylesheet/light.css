@@ -144,3 +144,8 @@
     -fx-font-family: "Arial";
     -fx-font-weight: bold;
 }
+
+.app-name-label {
+    -fx-font-family: Impact;
+    -fx-font-size: 24;
+}

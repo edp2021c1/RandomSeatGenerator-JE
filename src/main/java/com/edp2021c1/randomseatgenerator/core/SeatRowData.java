@@ -37,35 +37,33 @@ import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT
 @Getter
 public class SeatRowData {
 
-    private final String c1;
-    private final String c2;
-    private final String c3;
-    private final String c4;
-    private final String c5;
-    private final String c6;
-    private final String c7;
-    private final String c8;
-    private final String c9;
-    private final String c10;
-    private final String c11;
-    private final String c12;
-    private final String c13;
-    private final String c14;
-    private final String c15;
-    private final String c16;
-    private final String c17;
-    private final String c18;
-    private final String c19;
-    private final String c20;
-
-    private SeatRowData() {
-        c1 = c2 = c3 = c4 = c5 = c6 = c7 = c8 = c9 = c10 = c11 = c12 = c13 = c14 = c15 = c16 = c17 = c18 = c19 = c20 = null;
-    }
+    private final String c1 = null;
+    private final String c2 = null;
+    private final String c3 = null;
+    private final String c4 = null;
+    private final String c5 = null;
+    private final String c6 = null;
+    private final String c7 = null;
+    private final String c8 = null;
+    private final String c9 = null;
+    private final String c10 = null;
+    private final String c11 = null;
+    private final String c12 = null;
+    private final String c13 = null;
+    private final String c14 = null;
+    private final String c15 = null;
+    private final String c16 = null;
+    private final String c17 = null;
+    private final String c18 = null;
+    private final String c19 = null;
+    private final String c20 = null;
 
     private SeatRowData(final String... c) {
-        this();
         if (c.length > MAX_COLUMN_COUNT) {
-            throw new IllegalConfigException(String.format("Count of people in a row cannot be larger than %d.", MAX_COLUMN_COUNT));
+            throw new IllegalConfigException(String.format(
+                    "Count of people in a row cannot be larger than %d.",
+                    MAX_COLUMN_COUNT
+            ));
         }
         for (int i = 0, j = c.length; i < j; i++) {
             try {

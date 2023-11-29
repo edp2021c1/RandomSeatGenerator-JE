@@ -50,7 +50,8 @@ public final class SeatConfig {
      */
     public String random_between_rows;
     /**
-     * Positions in the last row that cannot be chosen, in case something blocks the last row ({@code space} between two numbers).
+     * Positions in the last row that cannot be chosen, in case something blocks
+     * the last row ({@code space} between two numbers).
      */
     public String last_row_pos_cannot_be_chosen;
     /**
@@ -154,7 +155,10 @@ public final class SeatConfig {
                 i.add(Integer.parseUnsignedInt(s));
             }
         } catch (final IllegalArgumentException e) {
-            throw new IllegalConfigException(String.format("Invalid last row positions: %s.", last_row_pos_cannot_be_chosen), e);
+            throw new IllegalConfigException(
+                    String.format("Invalid last row positions: %s.", last_row_pos_cannot_be_chosen),
+                    e
+            );
         }
         return i;
     }
@@ -168,7 +172,10 @@ public final class SeatConfig {
     public List<String> getNameList() {
         final List<String> l = new ArrayList<>(Arrays.asList(person_sort_by_height.split(" ")));
         if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
-            throw new IllegalConfigException(String.format("Name list must not contain empty seat place holder \"%s\"", SeatTable.EMPTY_SEAT_PLACEHOLDER));
+            throw new IllegalConfigException(String.format(
+                    "Name list must not contain empty seat place holder \"%s\"",
+                    SeatTable.EMPTY_SEAT_PLACEHOLDER
+            ));
         }
         return l;
     }
@@ -182,7 +189,10 @@ public final class SeatConfig {
     public List<String> getGroupLeaderList() {
         final List<String> l = new ArrayList<>(Arrays.asList(group_leader_list.split(" ")));
         if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
-            throw new IllegalConfigException(String.format("Group leader list must not contain empty seat place holder \"%s\"", SeatTable.EMPTY_SEAT_PLACEHOLDER));
+            throw new IllegalConfigException(String.format(
+                    "Group leader list must not contain empty seat place holder \"%s\"",
+                    SeatTable.EMPTY_SEAT_PLACEHOLDER)
+            );
         }
         return l;
     }

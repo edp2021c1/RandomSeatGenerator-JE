@@ -163,7 +163,10 @@ public class MainWindow extends Stage {
                 } catch (final IOException e) {
                     CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(
                             Thread.currentThread(),
-                            new RuntimeException(String.format("Failed to export seat table to %s.", outputFile.getAbsolutePath()), e)
+                            new RuntimeException(
+                                    String.format("Failed to export seat table to %s.", outputFile.getAbsolutePath()),
+                                    e
+                            )
                     );
                 }
 

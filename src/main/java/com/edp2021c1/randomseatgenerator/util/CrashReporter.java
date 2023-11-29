@@ -88,7 +88,9 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
         final String str = getDetailMessage(t, e);
 
         if (OperatingSystem.CURRENT == OperatingSystem.MAC && Taskbar.getTaskbar().getIconImage() == null) {
-            Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(MetaData.ERROR_ICON_URL)));
+            Taskbar.getTaskbar().setIconImage(
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource(MetaData.ERROR_ICON_URL))
+            );
         }
 
         if (useSwing) {

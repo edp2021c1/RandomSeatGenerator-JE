@@ -53,10 +53,14 @@ public class ConsoleLauncher {
         final List<String> arguments = Arrays.asList(args);
 
         // 命令行参数相关
+        // 种子，默认为随机数
+        long seed = new Random().nextLong();
+        // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
+        Path configPath = ConfigUtils.getConfigPath();
+        // 导出路径，默认为用户根目录当前路径
+        Path outputPath = Paths.get(System.getProperty("user.home"), String.format("%tF.xlsx", new Date()));
+
         int i;
-        long seed = new Random().nextLong();  // 种子，默认为随机数
-        Path configPath = ConfigUtils.getConfigPath(); // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
-        Path outputPath = Paths.get(System.getProperty("user.home"), String.format("%tF.xlsx", new Date())); // 导出路径，默认为用户根目录当前路径
 
         // 获取配置文件路径
         if ((i = arguments.lastIndexOf("--config-path")) != -1 && i < arguments.size() - 1) {
@@ -80,7 +84,10 @@ public class ConsoleLauncher {
             } else {
                 outputPath = tmp.toAbsolutePath();
                 if (!outputPath.endsWith(".xlsx")) {
-                    LOGGER.warning(String.format("Invalid output file name: %s, will add \".xlsx\" to the end of it.", outputPath.getFileName()));
+                    LOGGER.warning(String.format(
+                            "Invalid output file name: %s, will add \".xlsx\" to the end of it.",
+                            outputPath.getFileName()
+                    ));
                     outputPath = Paths.get(outputPath + ".xlsx");
                 }
             }

@@ -12,7 +12,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -78,7 +77,16 @@ public class SettingsDialog extends Stage {
         separateListInput = createTextArea("拆分列表", 165, 56);
         luckyOptionCheck = new CheckBox("随机挑选一名幸运儿");
 
-        seatConfigPane = new SeatConfigPane(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput, nameListInput, groupLeaderListInput, separateListInput, luckyOptionCheck);
+        seatConfigPane = new SeatConfigPane(
+                rowCountInput,
+                columnCountInput,
+                rbrInput,
+                disabledLastRowPosInput,
+                nameListInput,
+                groupLeaderListInput,
+                separateListInput,
+                luckyOptionCheck
+        );
 
         loadConfigBtn = createButton("从文件加载", 80, 26);
         applyBtn = createButton("应用", 80, 26);
@@ -109,11 +117,22 @@ public class SettingsDialog extends Stage {
         scene = new Scene(mainBox);
         scene.getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
 
-        setMargins(DEFAULT_MARGIN, rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput, nameListInput, groupLeaderListInput, separateListInput, loadConfigBtn, applyBtn, confirmBtn, cancelBtn);
+        setMargins(DEFAULT_MARGIN,
+                rowCountInput,
+                columnCountInput,
+                rbrInput,
+                disabledLastRowPosInput,
+                nameListInput,
+                groupLeaderListInput,
+                separateListInput,
+                loadConfigBtn,
+                applyBtn,
+                confirmBtn,
+                cancelBtn
+        );
         setPaddings(DEFAULT_PADDING, topBox, bottomBox);
         applyBtn.setDisable(true);
-        randomSeatGeneratorLabel.setFont(new Font(24));
-        randomSeatGeneratorLabel.setStyle("-fx-font-family: Impact;");
+        randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
         licenseText.setText(MetaData.LICENSE_INFO);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");

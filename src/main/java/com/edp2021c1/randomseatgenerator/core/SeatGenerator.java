@@ -38,7 +38,8 @@ public final class SeatGenerator {
      * @throws NullPointerException   if the config is null.
      * @throws IllegalConfigException if the config has an illegal format.
      */
-    private SeatTable generateTask(final SeatConfig config, final long seed) throws NullPointerException, IllegalConfigException {
+    private SeatTable generateTask(final SeatConfig config, final long seed)
+            throws NullPointerException, IllegalConfigException {
         if (config == null) {
             throw new NullPointerException("Config cannot be null");
         }
@@ -118,7 +119,8 @@ public final class SeatGenerator {
                 for (int i = seatNum - columnCount; i < tPeopleNum; i++) {
                     do {
                         u = rd.nextInt(seatNum - columnCount, seatNum);
-                    } while (notAllowedLastRowPos.contains(u - seatNum + columnCount + 1) || tLastRowPosChosenList.contains(u));
+                    } while (notAllowedLastRowPos.contains(u - seatNum + columnCount + 1)
+                            || tLastRowPosChosenList.contains(u));
                     seatTable.set(u, tResult.get(i));
                     tLastRowPosChosenList.add(u);
                 }
@@ -142,7 +144,8 @@ public final class SeatGenerator {
      * @param seed   used to generate the seat table.
      * @return an instance of {@code SeatTable}.
      * @throws NullPointerException   if the config is null.
-     * @throws IllegalConfigException if the config has an illegal format, or if it costs too much time to generate the seat table.
+     * @throws IllegalConfigException if the config has an illegal format, or if it
+     *                                costs too much time to generate the seat table.
      */
     public SeatTable generate(final SeatConfig config, final long seed) {
         final Future<SeatTable> future = Executors.newSingleThreadExecutor().submit(() -> generateTask(config, seed));
@@ -152,7 +155,9 @@ public final class SeatGenerator {
         } catch (final ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         } catch (final TimeoutException e) {
-            throw new IllegalConfigException("Unlucky or invalid config/seed, please check your config or use another seed.");
+            throw new IllegalConfigException(
+                    "Unlucky or invalid config/seed, please check your config or use another seed."
+            );
         }
     }
 
@@ -166,7 +171,9 @@ public final class SeatGenerator {
         final int rowCount;
         final int columnCount = config.getColumnCount();
         final int minus = config.lucky_option ? 1 : 0;
-        rowCount = (int) Math.min(config.getRowCount(), Math.ceil((double) (config.getNameList().size() - minus) / columnCount));
+        rowCount = (int) Math.min(
+                config.getRowCount(),
+                Math.ceil((double) (config.getNameList().size() - minus) / columnCount));
 
         // 检查每列是否都有组长
         for (i = 0; i < columnCount; i++) {
