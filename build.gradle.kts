@@ -21,8 +21,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.logging.Logger
-import kotlin.io.path.createDirectories
-import kotlin.io.path.notExists
 
 plugins {
     id("java")
@@ -101,7 +99,6 @@ tasks.jar {
 
 // Run once if is built and twice if not
 val pack = task("pack") {
-    dependsOn(tasks.build)
     run { pack() }
 }
 
@@ -158,8 +155,8 @@ fun pack() {
         log.info("Project path: $projectPath")
         log.info("Jar: $jarFile")
 
-        if (packageDir.notExists()) {
-            packageDir.createDirectories()
+        if (Files.notExists(packageDir)) {
+            Files.createDirectories(packageDir)
         }
 
         if (!(isMac || isWin)) {
