@@ -111,7 +111,7 @@ fun getDefaultPackingArguments(jarName: File): ArrayList<String> {
             "-n", project.name,
             "-i", jarName.parent,
             "--main-jar", jarName.name,
-            "--vendor", "EDP-2021-C1"))
+            "--copyright", "EDP-2021-C1"))
     return args
 }
 
