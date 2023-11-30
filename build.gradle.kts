@@ -107,7 +107,8 @@ fun getDefaultPackingArguments(jarName: File): ArrayList<String> {
             "-n", project.name,
             "-i", jarName.parent,
             "--main-jar", jarName.name,
-            "--copyright", "EDP-2021-C1"))
+            String.format("@%s", Paths.get(projectDir.path, "package_resources/args/copyright.txt"))
+    ))
     return args
 }
 
