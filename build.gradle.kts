@@ -107,7 +107,7 @@ fun getDefaultPackingArguments(jarName: File): ArrayList<String> {
             "-n", project.name,
             "-i", jarName.parent,
             "--main-jar", jarName.name,
-            String.format("@%s", Paths.get(projectDir.path, "package_resources/args/copyright.txt"))
+            "@${Paths.get(projectDir.path, "package_resources/args/copyright.txt")}"
     ))
     return args
 }

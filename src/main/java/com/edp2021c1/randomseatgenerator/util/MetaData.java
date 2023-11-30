@@ -27,7 +27,6 @@ import java.nio.file.Paths;
  * @author Calboot
  * @since 1.2.9
  */
-@SuppressWarnings("LongLine")
 public class MetaData {
     /**
      * Helping information.
