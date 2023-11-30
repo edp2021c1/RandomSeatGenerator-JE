@@ -103,38 +103,29 @@ val pack = task("pack") {
 
 fun getDefaultPackingArguments(jarName: File): ArrayList<String> {
     val args = ArrayList<String>()
-    args.addAll(listOf("--app-version", version.toString(),
+    args.addAll(listOf(
+            "--app-version", version.toString(),
             "-n", project.name,
             "-i", jarName.parent,
             "--main-jar", jarName.name,
-            "@${Paths.get(projectDir.path, "package_resources/args/copyright.txt")}"
+            "@${Paths.get(projectDir.path, "package_resources/static_arguments/all.txt")}"
     ))
     return args
 }
 
 fun getMacPackingArguments(jarFile: File): ArrayList<String> {
     val args = getDefaultPackingArguments(jarFile)
-    args.add("--mac-package-name")
-    args.add("RandomSeatGenerator")
-    args.add("-t")
-    args.add("dmg")
     args.add("--icon")
     args.add(Paths.get(projectDir.path, "package_resources/app_icon/mac_icon.icns").toString())
+    args.add("@${Paths.get(projectDir.path, "package_resources/static_arguments/mac.txt")}")
     return args
 }
 
 fun getWinPackingArguments(jarFile: File): ArrayList<String> {
     val args = getDefaultPackingArguments(jarFile)
-    args.add("-t")
-    args.add("msi")
-    args.add("--win-menu")
-    args.add("--win-menu-group")
-    args.add("edp2021c1")
-    args.add("--win-dir-chooser")
-    args.add("--win-help-url")
-    args.add("https://github.com/edp2021c1/RandomSeatGenerator-JE/")
     args.add("--icon")
     args.add(Paths.get(projectDir.path, "package_resources/app_icon/icon.ico").toString())
+    args.add("@${Paths.get(projectDir.path, "package_resources/static_arguments/win.txt")}")
     return args
 }
 
