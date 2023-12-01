@@ -105,7 +105,7 @@ public final class SeatGenerator {
                 } else {
                     tSubNameList = tNameList.subList(i * randomPeopleCount, (i + 1) * randomPeopleCount);
                 }
-                Collections.shuffle(tSubNameList);
+                Collections.shuffle(tSubNameList, rd);
                 tResult.addAll(tSubNameList);
             }
 
