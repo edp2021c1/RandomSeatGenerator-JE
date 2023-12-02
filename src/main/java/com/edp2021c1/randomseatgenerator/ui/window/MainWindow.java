@@ -60,8 +60,9 @@ public class MainWindow extends Stage {
      * Creates an instance.
      */
     public MainWindow() {
-        if (ConfigUtils.reloadConfig().lastExportDir != null) {
-
+        String s = ConfigUtils.reloadConfig().lastExportDir;
+        if (s != null) {
+            exportDir = new File(s);
         }
 
         final Scene scene;
@@ -180,7 +181,7 @@ public class MainWindow extends Stage {
                 exportDir = outputFile.getParentFile();
                 AppConfig t = new AppConfig();
                 t.lastExportDir = exportDir.toString();
-                ConfigUtils.current.set(t);
+                ConfigUtils.saveConfig(t);
             } catch (final Throwable e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
             }

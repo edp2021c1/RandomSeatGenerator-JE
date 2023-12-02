@@ -147,11 +147,10 @@ public class ConfigUtils {
      * @param config {@code SeatConfig} to set as the default seat config and save to file.
      */
     public static void saveConfig(final AppConfig config) {
-        config.checkFormat();
         current.set(config);
         try {
             final FileWriter writer = new FileWriter(CONFIG_PATH.toFile());
-            writer.write(parseJson(config));
+            writer.write(parseJson(current));
             writer.close();
             Files.setLastModifiedTime(CONFIG_PATH, (configLastModifiedTime = FileTime.from(Instant.now())));
         } catch (final IOException e) {
