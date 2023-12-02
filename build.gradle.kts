@@ -33,7 +33,7 @@ javafx {
 }
 
 group = "com.edp2021c1"
-version = "1.3.4"
+version = "1.3.5"
 
 val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
 
