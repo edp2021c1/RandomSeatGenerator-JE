@@ -87,7 +87,7 @@ public class MainWindow extends Stage {
         leftBox = createVBox(91, 711, settingsBtn, generateBtn, exportBtn);
 
         // 右上种子输入栏
-        seedInput = createTextField("种子(Long)", 191, 26);
+        seedInput = createTextField("种子", 191, 26);
         randomSeedBtn = createButton("随机种子", 80, 26);
         dateAsSeedBtn = createButton("填入日期", 80, 26);
         topRightBox = createHBox(998, 60, seedInput, randomSeedBtn, dateAsSeedBtn);
@@ -131,6 +131,7 @@ public class MainWindow extends Stage {
                     randomSeedBtn.fire();
                 }
                 seed = seedInput.getText();
+
                 try {
                     seatTable = new SeatGenerator().generate(config, seed);
                 } catch (final IllegalConfigException e) {
