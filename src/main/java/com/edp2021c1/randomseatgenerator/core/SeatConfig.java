@@ -21,7 +21,6 @@ package com.edp2021c1.randomseatgenerator.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Stores config used to generate a seat table.
@@ -29,7 +28,7 @@ import java.util.Objects;
  * @author Calboot
  * @since 1.2.0
  */
-public final class SeatConfig {
+public class SeatConfig {
     /**
      * Max count of column in a {@code SeatRowData}.
      */
@@ -69,7 +68,7 @@ public final class SeatConfig {
     /**
      * Whether there will be a lucky person specially chosen from the last rows.
      */
-    public boolean lucky_option;
+    public Boolean lucky_option;
 
     /**
      * Nothing to say…
@@ -215,23 +214,6 @@ public final class SeatConfig {
         }
 
         return s;
-    }
-
-    /**
-     * Check if another instance equals to this one.
-     *
-     * @param another another {@code SeatConfig} to compare with.
-     * @return if these two instances are equal.
-     */
-    public boolean equals(final SeatConfig another) {
-        return Objects.equals(row_count, another.row_count)
-                && Objects.equals(column_count, another.column_count)
-                && Objects.equals(random_between_rows, another.random_between_rows)
-                && Objects.equals(last_row_pos_cannot_be_chosen, another.last_row_pos_cannot_be_chosen)
-                && Objects.equals(person_sort_by_height, another.person_sort_by_height)
-                && Objects.equals(group_leader_list, another.group_leader_list)
-                && Objects.equals(separate_list, another.separate_list)
-                && Objects.equals(lucky_option, another.lucky_option);
     }
 
     /**

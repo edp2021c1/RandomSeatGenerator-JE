@@ -19,8 +19,8 @@
 package com.edp2021c1.randomseatgenerator.ui.window;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
-import com.edp2021c1.randomseatgenerator.core.SeatConfig;
-import com.edp2021c1.randomseatgenerator.ui.control.SeatConfigPane;
+import com.edp2021c1.randomseatgenerator.ui.control.ConfigPane;
+import com.edp2021c1.randomseatgenerator.util.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
@@ -57,7 +57,7 @@ public class SettingsDialog extends Stage {
         final VBox mainBox;
         final VBox topBox;
         final Label seatConfigBoxTitleLabel;
-        final SeatConfigPane seatConfigPane;
+        final ConfigPane configPane;
         final TextField rowCountInput;
         final TextField columnCountInput;
         final TextField rbrInput;
@@ -66,6 +66,7 @@ public class SettingsDialog extends Stage {
         final TextField groupLeaderListInput;
         final TextArea separateListInput;
         final CheckBox luckyOptionCheck;
+        final CheckBox exportWritableCheck;
         final HBox box3;
         final Button loadConfigBtn;
         final Button applyBtn;
@@ -87,7 +88,7 @@ public class SettingsDialog extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        seatConfigBoxTitleLabel = createLabel("座位表配置", 1212, 30);
+        seatConfigBoxTitleLabel = createLabel("生成和导出", 1212, 30);
         rowCountInput = createTextField("行数");
         columnCountInput = createTextField("列数");
         rbrInput = createTextField("随机轮换的行数");
@@ -98,7 +99,12 @@ public class SettingsDialog extends Stage {
         separateListInput = createTextArea("拆分列表", 165, 56);
         luckyOptionCheck = new CheckBox("随机挑选一名幸运儿");
 
-        seatConfigPane = new SeatConfigPane(
+        exportWritableCheck = new CheckBox("导出为可写");
+
+        loadConfigBtn = createButton("从文件加载", 80, 26);
+        applyBtn = createButton("应用", 80, 26);
+
+        configPane = new ConfigPane(
                 rowCountInput,
                 columnCountInput,
                 rbrInput,
@@ -106,15 +112,14 @@ public class SettingsDialog extends Stage {
                 nameListInput,
                 groupLeaderListInput,
                 separateListInput,
-                luckyOptionCheck
+                luckyOptionCheck,
+                exportWritableCheck,
+                applyBtn
         );
-
-        loadConfigBtn = createButton("从文件加载", 80, 26);
-        applyBtn = createButton("应用", 80, 26);
 
         box3 = createHBox(1212, 45, loadConfigBtn, applyBtn);
 
-        topBox = createVBox(1212, 200, seatConfigBoxTitleLabel, seatConfigPane, box3);
+        topBox = createVBox(1212, 300, seatConfigBoxTitleLabel, configPane, box3);
 
         aboutInfoBoxTitleLabel = createLabel("关于", 1212, 15);
         iconView = createImageView(MetaData.ICON_URL, 275, 275);
@@ -131,9 +136,9 @@ public class SettingsDialog extends Stage {
 
         buttonBar = createButtonBar(1212, 46, confirmBtn, cancelBtn);
 
-        bottomBox = createVBox(1212, 445, aboutInfoBoxTitleLabel, box4, buttonBar);
+        bottomBox = createVBox(1212, 500, aboutInfoBoxTitleLabel, box4, buttonBar);
 
-        mainBox = createVBox(1232, 644, topBox, bottomBox);
+        mainBox = createVBox(1232, 720, topBox, bottomBox);
 
         scene = new Scene(mainBox);
         scene.getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
@@ -164,7 +169,7 @@ public class SettingsDialog extends Stage {
         initOwner(owner);
         initModality(Modality.APPLICATION_MODAL);
         setResizable(false);
-        initConfigPane(ConfigUtils.reloadConfig(), seatConfigPane);
+        initConfigPane(ConfigUtils.reloadConfig(), configPane);
 
 
         /* *************************************************************************
@@ -172,23 +177,6 @@ public class SettingsDialog extends Stage {
          * Init Control Actions                                                    *
          *                                                                         *
          **************************************************************************/
-
-        rowCountInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().row_count.equals(newValue)));
-        columnCountInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().column_count.equals(newValue)));
-        rbrInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().random_between_rows.equals(newValue)));
-        disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().last_row_pos_cannot_be_chosen.equals(newValue)));
-        nameListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().person_sort_by_height.equals(newValue)));
-        groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().group_leader_list.equals(newValue)));
-        separateListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(ConfigUtils.reloadConfig().separate_list.equals(newValue)));
-        luckyOptionCheck.selectedProperty().addListener((observable, oldValue, newValue) ->
-                applyBtn.setDisable(newValue == ConfigUtils.reloadConfig().lucky_option));
 
         loadConfigBtn.setOnAction(event -> {
             try {
@@ -200,7 +188,7 @@ public class SettingsDialog extends Stage {
                     return;
                 }
 
-                final SeatConfig seatConfig;
+                final AppConfig seatConfig;
                 try {
                     seatConfig = ConfigUtils.fromJson(Paths.get(f.getAbsolutePath()));
                 } catch (final IOException e) {
@@ -208,7 +196,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 if (seatConfig != null) {
-                    initConfigPane(seatConfig, seatConfigPane);
+                    initConfigPane(seatConfig, configPane);
                 }
             } catch (final Throwable e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
@@ -217,21 +205,22 @@ public class SettingsDialog extends Stage {
 
         applyBtn.setOnAction(event -> {
             try {
-                final SeatConfig seatConfig = new SeatConfig();
-                seatConfig.row_count = rowCountInput.getText();
-                seatConfig.column_count = columnCountInput.getText();
-                seatConfig.random_between_rows = rbrInput.getText();
-                seatConfig.last_row_pos_cannot_be_chosen = disabledLastRowPosInput.getText();
-                seatConfig.person_sort_by_height = nameListInput.getText();
-                seatConfig.group_leader_list = groupLeaderListInput.getText();
-                seatConfig.separate_list = separateListInput.getText();
-                seatConfig.lucky_option = luckyOptionCheck.isSelected();
+                final AppConfig config = new AppConfig();
+                config.row_count = rowCountInput.getText();
+                config.column_count = columnCountInput.getText();
+                config.random_between_rows = rbrInput.getText();
+                config.last_row_pos_cannot_be_chosen = disabledLastRowPosInput.getText();
+                config.person_sort_by_height = nameListInput.getText();
+                config.group_leader_list = groupLeaderListInput.getText();
+                config.separate_list = separateListInput.getText();
+                config.lucky_option = luckyOptionCheck.isSelected();
+                config.export_writable = exportWritableCheck.isSelected();
 
-                if (ConfigUtils.reloadConfig().equals(seatConfig)) {
+                if (ConfigUtils.reloadConfig().equals(config)) {
                     return;
                 }
                 try {
-                    ConfigUtils.saveConfig(seatConfig);
+                    ConfigUtils.saveConfig(config);
                 } catch (final IllegalConfigException e) {
                     CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
                     return;

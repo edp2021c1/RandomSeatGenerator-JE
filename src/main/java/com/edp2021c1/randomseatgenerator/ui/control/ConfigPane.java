@@ -18,6 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.ui.control;
 
+import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -34,7 +36,7 @@ import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.createHBox;
  * @since 1.3.4
  */
 @Getter
-public class SeatConfigPane extends VBox {
+public class ConfigPane extends VBox {
     private final TextField rowCountInput;
 
     private final TextField columnCountInput;
@@ -51,6 +53,8 @@ public class SeatConfigPane extends VBox {
 
     private final CheckBox luckyOptionCheck;
 
+    private final CheckBox exportWritableCheck;
+
     /**
      * @param rowCountInput           input of {@code row_count}
      * @param columnCountInput        input of {@code column_count}
@@ -61,14 +65,16 @@ public class SeatConfigPane extends VBox {
      * @param separateListInput       input of {@code separate_list}
      * @param luckyOptionCheck        input of {@code lucky_option}
      */
-    public SeatConfigPane(TextField rowCountInput,
-                          TextField columnCountInput,
-                          TextField rbrInput,
-                          TextField disabledLastRowPosInput,
-                          TextField nameListInput,
-                          TextField groupLeaderListInput,
-                          TextArea separateListInput,
-                          CheckBox luckyOptionCheck) {
+    public ConfigPane(TextField rowCountInput,
+                      TextField columnCountInput,
+                      TextField rbrInput,
+                      TextField disabledLastRowPosInput,
+                      TextField nameListInput,
+                      TextField groupLeaderListInput,
+                      TextArea separateListInput,
+                      CheckBox luckyOptionCheck,
+                      CheckBox exportWritableCheck,
+                      Button applyBtn) {
         super();
 
         this.rowCountInput = rowCountInput;
@@ -79,10 +85,30 @@ public class SeatConfigPane extends VBox {
         this.groupLeaderListInput = groupLeaderListInput;
         this.separateListInput = separateListInput;
         this.luckyOptionCheck = luckyOptionCheck;
+        this.exportWritableCheck = exportWritableCheck;
 
         HBox box1 = createHBox(1212, 60, rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
         HBox box2 = createHBox(1212, 69, nameListInput, groupLeaderListInput, separateListInput, luckyOptionCheck);
-        getChildren().addAll(box1, box2);
+        HBox box3 = createHBox(1212, 60, exportWritableCheck);
+        getChildren().addAll(box1, box2, box3);
+
+        rowCountInput.textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtn.setDisable(ConfigUtils.reloadConfig().row_count.equals(newValue)));
+        columnCountInput.textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtn.setDisable(ConfigUtils.reloadConfig().column_count.equals(newValue)));
+        rbrInput.textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtn.setDisable(ConfigUtils.reloadConfig().random_between_rows.equals(newValue)));
+        disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtn.setDisable(ConfigUtils.reloadConfig().last_row_pos_cannot_be_chosen.equals(newValue)));
+        nameListInput.textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtn.setDisable(ConfigUtils.reloadConfig().person_sort_by_height.equals(newValue)));
+        groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtn.setDisable(ConfigUtils.reloadConfig().group_leader_list.equals(newValue)));
+        separateListInput.textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtn.setDisable(ConfigUtils.reloadConfig().separate_list.equals(newValue)));
+        luckyOptionCheck.selectedProperty().addListener((observable, oldValue, newValue) ->
+                applyBtn.setDisable(newValue == ConfigUtils.reloadConfig().lucky_option));
+        exportWritableCheck.selectedProperty().addListener((observable, oldValue, newValue) -> applyBtn.setDisable(newValue == ConfigUtils.reloadConfig().export_writable));
     }
 
 }

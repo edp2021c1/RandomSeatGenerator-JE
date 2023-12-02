@@ -20,7 +20,8 @@ package com.edp2021c1.randomseatgenerator.ui.util;
 
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatRowData;
-import com.edp2021c1.randomseatgenerator.ui.control.SeatConfigPane;
+import com.edp2021c1.randomseatgenerator.ui.control.ConfigPane;
+import com.edp2021c1.randomseatgenerator.util.AppConfig;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -251,17 +252,18 @@ public class UIFactory {
     /**
      * Initialize a config input pane.
      *
-     * @param seatConfig     to be filled in
-     * @param seatConfigPane to be initialized
+     * @param config     to be filled in
+     * @param configPane to be initialized
      */
-    public static void initConfigPane(final SeatConfig seatConfig, final SeatConfigPane seatConfigPane) {
-        seatConfigPane.getRowCountInput().setText(seatConfig.row_count);
-        seatConfigPane.getColumnCountInput().setText(seatConfig.column_count);
-        seatConfigPane.getRbrInput().setText(seatConfig.random_between_rows);
-        seatConfigPane.getDisabledLastRowPosInput().setText(seatConfig.last_row_pos_cannot_be_chosen);
-        seatConfigPane.getNameListInput().setText(seatConfig.person_sort_by_height);
-        seatConfigPane.getGroupLeaderListInput().setText(seatConfig.group_leader_list);
-        seatConfigPane.getSeparateListInput().setText(seatConfig.separate_list);
-        seatConfigPane.getLuckyOptionCheck().setSelected(seatConfig.lucky_option);
+    public static void initConfigPane(final AppConfig config, final ConfigPane configPane) {
+        configPane.getRowCountInput().setText(config.row_count);
+        configPane.getColumnCountInput().setText(config.column_count);
+        configPane.getRbrInput().setText(config.random_between_rows);
+        configPane.getDisabledLastRowPosInput().setText(config.last_row_pos_cannot_be_chosen);
+        configPane.getNameListInput().setText(config.person_sort_by_height);
+        configPane.getGroupLeaderListInput().setText(config.group_leader_list);
+        configPane.getSeparateListInput().setText(config.separate_list);
+        configPane.getLuckyOptionCheck().setSelected(config.lucky_option);
+        configPane.getExportWritableCheck().setSelected(config.export_writable);
     }
 }

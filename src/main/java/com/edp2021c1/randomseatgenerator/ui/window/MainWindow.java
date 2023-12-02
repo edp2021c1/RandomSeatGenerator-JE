@@ -18,11 +18,11 @@
 
 package com.edp2021c1.randomseatgenerator.ui.window;
 
-import com.edp2021c1.randomseatgenerator.core.*;
-import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
-import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.MetaData;
-import com.edp2021c1.randomseatgenerator.util.SeatUtils;
+import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
+import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
+import com.edp2021c1.randomseatgenerator.core.SeatRowData;
+import com.edp2021c1.randomseatgenerator.core.SeatTable;
+import com.edp2021c1.randomseatgenerator.util.*;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -51,7 +51,6 @@ import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
  * @since 1.3.3
  */
 public class MainWindow extends Stage {
-    private final SettingsDialog settingsDialog = new SettingsDialog(this);
     private final TableView<SeatRowData> seatTableView = new TableView<>();
     private SeatTable seatTable = null;
     private String previousSeed = "";
@@ -61,6 +60,10 @@ public class MainWindow extends Stage {
      * Creates an instance.
      */
     public MainWindow() {
+        if (ConfigUtils.reloadConfig().lastExportDir != null) {
+
+        }
+
         final Scene scene;
         final HBox mainBox;
         final VBox leftBox;
@@ -119,11 +122,11 @@ public class MainWindow extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        settingsBtn.setOnAction(event -> settingsDialog.show());
+        settingsBtn.setOnAction(event -> new SettingsDialog(MainWindow.this).show());
 
         generateBtn.setOnAction(event -> {
             try {
-                final SeatConfig config = ConfigUtils.reloadConfig();
+                final AppConfig config = ConfigUtils.reloadConfig();
                 initSeatTable(seatTableView, config);
 
                 String seed = seedInput.getText();
@@ -163,7 +166,7 @@ public class MainWindow extends Stage {
                     return;
                 }
                 try {
-                    SeatUtils.exportToExcelDocument(seatTable, outputFile);
+                    SeatTableUtils.exportToExcelDocument(seatTable, outputFile, ConfigUtils.reloadConfig().export_writable);
                 } catch (final IOException e) {
                     CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(
                             Thread.currentThread(),
@@ -175,6 +178,9 @@ public class MainWindow extends Stage {
                 }
 
                 exportDir = outputFile.getParentFile();
+                AppConfig t = new AppConfig();
+                t.lastExportDir = exportDir.toString();
+                ConfigUtils.current.set(t);
             } catch (final Throwable e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
             }

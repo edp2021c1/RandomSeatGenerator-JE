@@ -33,7 +33,7 @@ import java.util.Objects;
  * @author Calboot
  * @since 1.2.9
  */
-public class SeatUtils {
+public class SeatTableUtils {
     /**
      * Exports this instance to an Excel form file (.xlsx).
      *
@@ -41,7 +41,7 @@ public class SeatUtils {
      * @param file      to export seat table to.
      * @throws IOException if failed to save seat table to Excel document.
      */
-    public static void exportToExcelDocument(final SeatTable seatTable, final File file) throws IOException {
+    public static void exportToExcelDocument(final SeatTable seatTable, final File file, final boolean writable) throws IOException {
         Objects.requireNonNull(file);
         final Date date = new Date();
         if (!file.createNewFile()) {
@@ -52,6 +52,9 @@ public class SeatUtils {
         EasyExcel.write(file, SeatRowData.class)
                 .sheet(String.format("座位表-%tF", date))
                 .doWrite(SeatRowData.fromSeat(seatTable));
+        if (writable) {
+            return;
+        }
         if (!file.setReadOnly()) {
             throw new IOException("Failed to save seat table to Excel document.");
         }

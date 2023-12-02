@@ -27,7 +27,7 @@ import java.util.concurrent.*;
  * @author Calboot
  * @since 1.2.0
  */
-public final class SeatGenerator {
+public class SeatGenerator {
 
     /**
      * Generates a seat table.

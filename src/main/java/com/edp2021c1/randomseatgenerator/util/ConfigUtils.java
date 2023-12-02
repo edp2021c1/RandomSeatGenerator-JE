@@ -18,7 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -28,20 +27,23 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
- * Contains several methods related to {@link SeatConfig}.
+ * Contains several methods related to {@link AppConfig}.
  *
  * @author Calboot
  * @since 1.2.9
  */
 public class ConfigUtils {
-    private static final SeatConfig DEFAULT_CONFIG = loadDefaultConfig();
     private static final Path CONFIG_PATH;
-
     private static final Logger LOGGER = Logger.getGlobal();
+    public static AppConfig current;
+    private static final AppConfig DEFAULT_CONFIG = loadDefaultConfig();
+    private static FileTime configLastModifiedTime = null;
 
     static {
         final Path configDir;
@@ -76,7 +78,7 @@ public class ConfigUtils {
             }
         }
 
-        CONFIG_PATH = Paths.get(configDir.toString(), "seat_config.json");
+        CONFIG_PATH = Paths.get(configDir.toString(), "randomseatgenerator.json");
         if (Files.notExists(CONFIG_PATH)) {
             try {
                 Files.createFile(CONFIG_PATH);
@@ -101,37 +103,42 @@ public class ConfigUtils {
      * @return {@code SeatConfig} loaded from path.
      * @throws IOException if for some reason the path cannot be opened for reading.
      */
-    public static SeatConfig fromJson(final Path path) throws IOException {
-        return new Gson().fromJson(Files.readString(path), SeatConfig.class);
+    public static AppConfig fromJson(final Path path) throws IOException {
+        return new Gson().fromJson(Files.readString(path), AppConfig.class);
     }
 
     /**
-     * Translates an instance of {@link SeatConfig} into {@code Json}.
+     * Translates an instance of {@link AppConfig} into {@code Json}.
      *
      * @param config to translate into Json.
      * @return a {@code Json} representation of the object.
      */
-    public static String parseJson(final SeatConfig config) {
+    public static String parseJson(final AppConfig config) {
         return new Gson().toJson(config);
     }
 
-    private static SeatConfig loadDefaultConfig() {
-        final BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/default.json"))
-                )
-        );
-        final StringBuilder buffer = new StringBuilder();
-        String str;
+    private static AppConfig loadDefaultConfig() {
         try {
+            final BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(
+                            Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/default.json"))
+                    )
+            );
+            final StringBuilder buffer = new StringBuilder();
+            String str;
             while ((str = reader.readLine()) != null) {
                 buffer.append(str);
             }
-        } catch (final IOException e) {
+            str = buffer.toString();
+            if (current == null) {
+                current = new Gson().fromJson(str, AppConfig.class);
+            } else {
+                current.set(new Gson().fromJson(str, AppConfig.class));
+            }
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        str = buffer.toString();
-        return new Gson().fromJson(str, SeatConfig.class);
+        return current;
     }
 
     /**
@@ -139,12 +146,14 @@ public class ConfigUtils {
      *
      * @param config {@code SeatConfig} to set as the default seat config and save to file.
      */
-    public static void saveConfig(final SeatConfig config) {
+    public static void saveConfig(final AppConfig config) {
         config.checkFormat();
+        current.set(config);
         try {
             final FileWriter writer = new FileWriter(CONFIG_PATH.toFile());
             writer.write(parseJson(config));
             writer.close();
+            Files.setLastModifiedTime(CONFIG_PATH, (configLastModifiedTime = FileTime.from(Instant.now())));
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
@@ -156,11 +165,14 @@ public class ConfigUtils {
      *
      * @return default seat config loaded from file.
      */
-    public static SeatConfig reloadConfig() {
+    public static AppConfig reloadConfig() {
         try {
-            SeatConfig config;
+            if (Files.getLastModifiedTime(CONFIG_PATH).equals(configLastModifiedTime)) {
+                return current;
+            }
+            AppConfig config;
             if (Files.notExists(CONFIG_PATH)) {
-                LOGGER.warning("Seat_config.json not found, will use default value.");
+                LOGGER.warning("seat_config.json not found, will use default value.");
                 Files.createFile(CONFIG_PATH);
                 saveConfig(DEFAULT_CONFIG);
             }
