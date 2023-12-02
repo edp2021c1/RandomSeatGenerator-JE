@@ -40,7 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
+import java.util.UUID;
 
 import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
 
@@ -182,7 +182,7 @@ public class MainWindow extends Stage {
 
         seedInput.setOnAction(event -> generateBtn.fire());
 
-        randomSeedBtn.setOnAction(event -> seedInput.setText(Long.toString(new Random().nextLong())));
+        randomSeedBtn.setOnAction(event -> seedInput.setText(UUID.randomUUID().toString().replaceAll("-", "")));
 
         dateAsSeedBtn.setOnAction(event -> {
             final Date t = new Date();

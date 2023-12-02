@@ -99,6 +99,12 @@ public class SeatRowData {
         if (seatTable.getConfig().lucky_option) {
             seatRowData.add(new SeatRowData("Lucky Person", seatTable.getLuckyPerson()));
         }
+
+        final String seed = seatTable.getSeed();
+        if (seed.isEmpty()) {
+            seatRowData.add(new SeatRowData("Seed", "empty_string"));
+            return seatRowData;
+        }
         seatRowData.add(new SeatRowData("Seed", seatTable.getSeed()));
         return seatRowData;
     }
