@@ -52,11 +52,8 @@ import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
  */
 public class MainWindow extends Stage {
     private final SettingsDialog settingsDialog = new SettingsDialog(this);
-    /**
-     * If the seat config is changed after settings dialog closed.
-     */
-    public boolean configChanged = false;
-    private SeatTable seat = null;
+    private final TableView<SeatRowData> seatTableView = new TableView<>();
+    private SeatTable seatTable = null;
     private long previousSeed = 0;
     private File exportDir = null;
 
@@ -75,7 +72,6 @@ public class MainWindow extends Stage {
         final TextField seedInput;
         final Button randomSeedBtn;
         final Button dateAsSeedBtn;
-        final TableView<SeatRowData> seatTable;
 
 
         /* *************************************************************************
@@ -97,11 +93,10 @@ public class MainWindow extends Stage {
         topRightBox = createHBox(998, 60, seedInput, randomSeedBtn, dateAsSeedBtn);
 
         // 座位表
-        seatTable = new TableView<>();
-        initSeatTable(seatTable, ConfigUtils.reloadConfig());
+        initSeatTable(seatTableView, ConfigUtils.reloadConfig());
 
         // 右侧主体
-        rightBox = createVBox(1003, 698, topRightBox, seatTable);
+        rightBox = createVBox(1003, 698, topRightBox, seatTableView);
         rightBox.setPadding(new Insets(0, 10, 10, 0));
 
         // 整体
@@ -111,7 +106,7 @@ public class MainWindow extends Stage {
         scene.getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
 
         setMargins(DEFAULT_MARGIN, settingsBtn, generateBtn, exportBtn, seedInput, randomSeedBtn, dateAsSeedBtn);
-        setGrows(Priority.ALWAYS, seatTable, rightBox);
+        setGrows(Priority.ALWAYS, seatTableView, rightBox);
 
         setScene(scene);
         getIcons().add(new Image(MetaData.ICON_URL));
@@ -124,19 +119,12 @@ public class MainWindow extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        settingsBtn.setOnAction(event -> {
-            settingsDialog.showAndWait();
-            if (configChanged) {
-                initSeatTable(seatTable, ConfigUtils.reloadConfig());
-                configChanged = false;
-                previousSeed = 0;
-            }
-        });
+        settingsBtn.setOnAction(event -> settingsDialog.show());
 
         generateBtn.setOnAction(event -> {
             try {
                 final SeatConfig config = ConfigUtils.reloadConfig();
-                initSeatTable(seatTable, config);
+                initSeatTable(seatTableView, config);
 
                 final long seed;
                 try {
@@ -150,12 +138,12 @@ public class MainWindow extends Stage {
 
                 seed = Long.parseLong(seedInput.getText());
                 try {
-                    seat = new SeatGenerator().generate(config, seed);
+                    seatTable = new SeatGenerator().generate(config, seed);
                 } catch (final IllegalConfigException e) {
                     CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
                     return;
                 }
-                seatTable.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seat)));
+                seatTableView.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seatTable)));
                 previousSeed = seed;
             } catch (final Throwable e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
@@ -165,7 +153,7 @@ public class MainWindow extends Stage {
 
         exportBtn.setOnAction(event -> {
             try {
-                if (seat == null) {
+                if (seatTable == null) {
                     generateBtn.fire();
                 }
 
@@ -180,7 +168,7 @@ public class MainWindow extends Stage {
                     return;
                 }
                 try {
-                    SeatUtils.exportToExcelDocument(seat, outputFile);
+                    SeatUtils.exportToExcelDocument(seatTable, outputFile);
                 } catch (final IOException e) {
                     CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(
                             Thread.currentThread(),
@@ -205,5 +193,13 @@ public class MainWindow extends Stage {
             final Date t = new Date();
             seedInput.setText(String.format("%tY%tm%td%tH%tM%tS", t, t, t, t, t, t));
         });
+    }
+
+    /**
+     * Action to do if config is changed.
+     */
+    public void onConfigChanged() {
+        initSeatTable(seatTableView, ConfigUtils.reloadConfig());
+        previousSeed = 0;
     }
 }

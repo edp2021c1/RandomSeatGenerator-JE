@@ -237,7 +237,7 @@ public class SettingsDialog extends Stage {
                     return;
                 }
 
-                owner.configChanged = true;
+                owner.onConfigChanged();
                 applyBtn.setDisable(true);
             } catch (final Throwable e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
