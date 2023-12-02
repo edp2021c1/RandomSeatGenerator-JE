@@ -47,12 +47,19 @@ import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
  * @since 1.3.3
  */
 public class SettingsDialog extends Stage {
+    private File importDir = ConfigUtils.getConfigPath().getParent().toFile();
+
     /**
      * Creates an instance.
      *
      * @param owner of the dialog.
      */
     public SettingsDialog(MainWindow owner) {
+        String s = ConfigUtils.reloadConfig().last_import_dir;
+        if (s != null) {
+            importDir = new File(s);
+        }
+
         final Scene scene;
         final VBox mainBox;
         final VBox topBox;
@@ -183,14 +190,15 @@ public class SettingsDialog extends Stage {
                 final FileChooser fc = new FileChooser();
                 fc.setTitle("加载配置文件");
                 fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
-                final File f = fc.showOpenDialog(SettingsDialog.this);
-                if (f == null) {
+                fc.setInitialDirectory(importDir);
+                final File importFile = fc.showOpenDialog(SettingsDialog.this);
+                if (importFile == null) {
                     return;
                 }
 
                 final AppConfig seatConfig;
                 try {
-                    seatConfig = ConfigUtils.fromJson(Paths.get(f.getAbsolutePath()));
+                    seatConfig = ConfigUtils.fromJson(Paths.get(importFile.getAbsolutePath()));
                 } catch (final IOException e) {
                     throw new RuntimeException("Failed to load seat config from file.", e);
                 }
@@ -198,6 +206,11 @@ public class SettingsDialog extends Stage {
                 if (seatConfig != null) {
                     initConfigPane(seatConfig, configPane);
                 }
+
+                importDir = importFile.getParentFile();
+                AppConfig t = new AppConfig();
+                t.last_import_dir = importDir.toString();
+                ConfigUtils.saveConfig(t);
             } catch (final Throwable e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
             }

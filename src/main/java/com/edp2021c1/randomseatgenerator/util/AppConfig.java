@@ -6,7 +6,8 @@ import java.util.Objects;
 
 public class AppConfig extends SeatConfig {
     public Boolean export_writable;
-    public String lastExportDir;
+    public String last_export_dir;
+    public String last_import_dir;
 
     /**
      * Check if another instance equals to this one.
@@ -24,7 +25,7 @@ public class AppConfig extends SeatConfig {
                 && Objects.equals(separate_list, another.separate_list)
                 && Objects.equals(lucky_option, another.lucky_option)
                 && Objects.equals(export_writable, another.export_writable)
-                && Objects.equals(lastExportDir, another.lastExportDir);
+                && Objects.equals(last_export_dir, another.last_export_dir);
     }
 
     public void set(final AppConfig value) {
@@ -37,6 +38,7 @@ public class AppConfig extends SeatConfig {
         separate_list = value.separate_list == null ? separate_list : value.separate_list;
         lucky_option = value.lucky_option == null ? lucky_option : value.lucky_option;
         export_writable = value.export_writable == null ? export_writable : value.export_writable;
-        lastExportDir = value.lastExportDir == null ? lastExportDir : value.lastExportDir;
+        last_export_dir = value.last_export_dir == null ? last_export_dir : value.last_export_dir;
+        last_import_dir = value.last_import_dir == null ? last_import_dir : value.last_import_dir;
     }
 }

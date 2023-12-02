@@ -54,13 +54,13 @@ public class MainWindow extends Stage {
     private final TableView<SeatRowData> seatTableView = new TableView<>();
     private SeatTable seatTable = null;
     private String previousSeed = "";
-    private File exportDir = null;
+    private File exportDir = MetaData.USER_HOME.toFile();
 
     /**
      * Creates an instance.
      */
     public MainWindow() {
-        String s = ConfigUtils.reloadConfig().lastExportDir;
+        String s = ConfigUtils.reloadConfig().last_export_dir;
         if (s != null) {
             exportDir = new File(s);
         }
@@ -159,7 +159,7 @@ public class MainWindow extends Stage {
                 final FileChooser fc = new FileChooser();
                 fc.setTitle("导出座位表");
                 fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
-                fc.setInitialDirectory(exportDir == null ? MetaData.USER_HOME.toFile() : exportDir);
+                fc.setInitialDirectory(exportDir);
                 fc.setInitialFileName(String.format("%tF", new Date()));
 
                 final File outputFile = fc.showSaveDialog(MainWindow.this);
@@ -180,7 +180,7 @@ public class MainWindow extends Stage {
 
                 exportDir = outputFile.getParentFile();
                 AppConfig t = new AppConfig();
-                t.lastExportDir = exportDir.toString();
+                t.last_export_dir = exportDir.toString();
                 ConfigUtils.saveConfig(t);
             } catch (final Throwable e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
