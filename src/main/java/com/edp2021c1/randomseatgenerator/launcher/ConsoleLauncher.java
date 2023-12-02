@@ -54,7 +54,7 @@ public class ConsoleLauncher {
 
         // 命令行参数相关
         // 种子，默认为随机数
-        long seed = new Random().nextLong();
+        String seed = Long.toString(new Random().nextLong());
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
         Path configPath = ConfigUtils.getConfigPath();
         // 导出路径，默认为用户根目录当前路径
@@ -69,11 +69,7 @@ public class ConsoleLauncher {
 
         // 获取种子
         if ((i = arguments.lastIndexOf("--seed")) != -1 && i < arguments.size() - 1) {
-            try {
-                seed = Long.parseLong(arguments.get(i + 1));
-            } catch (NumberFormatException e) {
-                LOGGER.warning(String.format("Invalid seed: \"%s\", will ignore.", arguments.get(i + 1)));
-            }
+            seed = arguments.get(i + 1);
         }
 
         // 获取导出路径

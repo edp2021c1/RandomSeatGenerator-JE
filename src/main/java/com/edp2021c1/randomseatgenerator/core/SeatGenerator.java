@@ -38,14 +38,21 @@ public final class SeatGenerator {
      * @throws NullPointerException   if the config is null.
      * @throws IllegalConfigException if the config has an illegal format.
      */
-    private SeatTable generateTask(final SeatConfig config, final long seed)
+    private SeatTable generateTask(final SeatConfig config, final String seed)
             throws NullPointerException, IllegalConfigException {
         if (config == null) {
             throw new NullPointerException("Config cannot be null");
         }
         config.checkFormat();
 
-        final Random rd = new Random(seed);
+        long longSeed;
+        try {
+            longSeed = Long.parseLong(seed);
+        } catch (RuntimeException e) {
+            longSeed = seed.hashCode();
+        }
+
+        final Random rd = new Random(longSeed);
 
         // 获取配置
         final int rowCount;
@@ -147,7 +154,7 @@ public final class SeatGenerator {
      * @throws IllegalConfigException if the config has an illegal format, or if it
      *                                costs too much time to generate the seat table.
      */
-    public SeatTable generate(final SeatConfig config, final long seed) {
+    public SeatTable generate(final SeatConfig config, final String seed) {
         final Future<SeatTable> future = Executors.newSingleThreadExecutor().submit(() -> generateTask(config, seed));
 
         try {

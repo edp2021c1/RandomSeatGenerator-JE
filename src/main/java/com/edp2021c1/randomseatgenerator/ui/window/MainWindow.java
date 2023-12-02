@@ -38,9 +38,9 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
-import java.util.logging.Logger;
 
 import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
 
@@ -54,7 +54,7 @@ public class MainWindow extends Stage {
     private final SettingsDialog settingsDialog = new SettingsDialog(this);
     private final TableView<SeatRowData> seatTableView = new TableView<>();
     private SeatTable seatTable = null;
-    private long previousSeed = 0;
+    private String previousSeed = "";
     private File exportDir = null;
 
     /**
@@ -126,17 +126,11 @@ public class MainWindow extends Stage {
                 final SeatConfig config = ConfigUtils.reloadConfig();
                 initSeatTable(seatTableView, config);
 
-                final long seed;
-                try {
-                    if (Long.parseLong(seedInput.getText()) == previousSeed) {
-                        randomSeedBtn.fire();
-                    }
-                } catch (final NumberFormatException e) {
-                    Logger.getGlobal().warning("Invalid seed.");
+                String seed = seedInput.getText();
+                if (previousSeed.equals(seed)) {
                     randomSeedBtn.fire();
                 }
-
-                seed = Long.parseLong(seedInput.getText());
+                seed = seedInput.getText();
                 try {
                     seatTable = new SeatGenerator().generate(config, seed);
                 } catch (final IllegalConfigException e) {
@@ -191,7 +185,8 @@ public class MainWindow extends Stage {
 
         dateAsSeedBtn.setOnAction(event -> {
             final Date t = new Date();
-            seedInput.setText(String.format("%tY%tm%td%tH%tM%tS", t, t, t, t, t, t));
+            final SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
+            seedInput.setText(d.format(t));
         });
     }
 
@@ -200,6 +195,7 @@ public class MainWindow extends Stage {
      */
     public void onConfigChanged() {
         initSeatTable(seatTableView, ConfigUtils.reloadConfig());
-        previousSeed = 0;
+        previousSeed = "";
     }
+
 }

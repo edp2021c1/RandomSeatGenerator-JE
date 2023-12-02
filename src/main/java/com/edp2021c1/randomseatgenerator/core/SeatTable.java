@@ -45,7 +45,7 @@ public class SeatTable {
     /**
      * The seed used to generate the seat table.
      */
-    private final long seed;
+    private final String seed;
     /**
      * The lucky person specially chosen.
      */
@@ -59,7 +59,7 @@ public class SeatTable {
      * @param seed        {@link #seed}
      * @param luckyPerson {@link #luckyPerson}
      */
-    public SeatTable(final List<String> seatTable, final SeatConfig config, final long seed, final String luckyPerson) {
+    public SeatTable(final List<String> seatTable, final SeatConfig config, final String seed, final String luckyPerson) {
         this.seatTable = seatTable;
         this.config = config;
         this.seed = seed;

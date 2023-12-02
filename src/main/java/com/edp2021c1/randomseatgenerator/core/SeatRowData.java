@@ -99,7 +99,7 @@ public class SeatRowData {
         if (seatTable.getConfig().lucky_option) {
             seatRowData.add(new SeatRowData("Lucky Person", seatTable.getLuckyPerson()));
         }
-        seatRowData.add(new SeatRowData("Seed", Long.toString(seatTable.getSeed())));
+        seatRowData.add(new SeatRowData("Seed", seatTable.getSeed()));
         return seatRowData;
     }
 
