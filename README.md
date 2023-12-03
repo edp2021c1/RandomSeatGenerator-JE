@@ -14,9 +14,9 @@ v1.2.0-1.2.8 在所有平台上都需要JavaFX来运行
 
 v1.3.0+ 在Windows和macOS上可以安装并直接运行应用程序，在linux_x64上需要jre但不需要JavaFX
 
-**种子只能是long值**
+v1.0.0-1.3.4 种子只能为long值
 
----
+v1.3.5+ 种子可为任意字符串
 
 ## 命令行模式
 
@@ -24,9 +24,9 @@ v1.2.4+ 启动时加上“--nogui”参数可启动无命令行模式，但 v1.2
 
 v1.2.5+ 可用参数：
 
-- --config-path value 默认为当前目录下的“seat_config.json”
+- --config-path <path> 制定配置文件位置（只生效一次）
 - --seed value 默认为随机数
-- --output-path value 默认在当前目录下
+- --output-path <path> 制定导出目录（只生效一次）
 
 v1.2.6+ 可用参数：
 
