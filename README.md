@@ -24,9 +24,9 @@ v1.2.4+ 启动时加上“--nogui”参数可启动无命令行模式，但 v1.2
 
 v1.2.5+ 可用参数：
 
-- --config-path value 默认为当前目录下的“seat_config.json”
+- --config-path <path> 制定配置文件位置（只生效一次）
 - --seed value 默认为随机数
-- --output-path value 默认在当前目录下
+- --output-path <path> 制定导出目录（只生效一次）
 
 v1.2.6+ 可用参数：
 
