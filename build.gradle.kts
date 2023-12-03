@@ -43,7 +43,8 @@ val isWin: Boolean = osname.startsWith("win")
 
 val fName: String = project.name + "-" + version.toString()
 val projectPath: String = projectDir.path
-val jarFile: File = Paths.get(projectPath, "build/libs", "$fName.jar").toFile()
+val jarName: String = "$fName.jar"
+val jarPath: Path = Paths.get(projectPath, "build/libs", jarName)
 val packageDir: Path = Paths.get(projectPath, "build/packages")
 
 val log: Logger = Logger.getGlobal()
@@ -101,24 +102,24 @@ val pack = task("pack") {
     run { pack() }
 }
 
-fun getDefaultPackingArguments(jar: File): ArrayList<String> {
+fun getDefaultPackingArguments(): ArrayList<String> {
     val args = ArrayList<String>()
     args.addAll(listOf(
             "@package_resources/static_arguments/all.txt",
             "--app-version", version.toString(),
-            "--main-jar", jar.name,
+            "--main-jar", jarName,
     ))
     return args
 }
 
-fun getMacPackingArguments(jar: File): ArrayList<String> {
-    val args = getDefaultPackingArguments(jar)
+fun getMacPackingArguments(): ArrayList<String> {
+    val args = getDefaultPackingArguments()
     args.add("@package_resources/static_arguments/mac.txt")
     return args
 }
 
-fun getWinPackingArguments(jar: File): ArrayList<String> {
-    val args = getDefaultPackingArguments(jar)
+fun getWinPackingArguments(): ArrayList<String> {
+    val args = getDefaultPackingArguments()
     args.add("@package_resources/static_arguments/win.txt")
     return args
 }
@@ -136,14 +137,14 @@ fun pack() {
         log.info("Packing...")
 
         log.info("Project path: $projectPath")
-        log.info("Jar: $jarFile")
+        log.info("Jar: $jarPath")
 
         if (!(isMac || isWin)) {
             log.info("Not running on Windows or macOS, will use generated jar file as the package.")
             log.info("Packing arguments: null")
             log.info("Moving package to $packageDir")
-            Files.move(Paths.get(jarFile.path), packageDir.resolve(jarFile.name), StandardCopyOption.REPLACE_EXISTING)
-            log.info("Package: $jarFile")
+            Files.move(jarPath, packageDir.resolve(jarPath.fileName), StandardCopyOption.REPLACE_EXISTING)
+            log.info("Package: $jarPath")
             log.info("Packing successful")
             return
         }
@@ -151,9 +152,9 @@ fun pack() {
         val packagePath = Paths.get(projectPath, getPackageName())
 
         val args: ArrayList<String> = if (isMac) {
-            getMacPackingArguments(jarFile)
+            getMacPackingArguments()
         } else {
-            getWinPackingArguments(jarFile)
+            getWinPackingArguments()
         }
 
         val arguments = StringBuilder("jpackage")
