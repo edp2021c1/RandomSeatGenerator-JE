@@ -18,7 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -85,11 +84,11 @@ public class MetaData {
     /**
      * Current working directory.
      */
-    public static final Path WORKING_DIR = Paths.get("").toAbsolutePath();
+    public static final String WORKING_DIR = Paths.get("").toAbsolutePath().toString();
 
     /**
      * User home.
      */
-    public static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
+    public static final String USER_HOME = Paths.get(System.getProperty("user.home")).toString();
 
 }

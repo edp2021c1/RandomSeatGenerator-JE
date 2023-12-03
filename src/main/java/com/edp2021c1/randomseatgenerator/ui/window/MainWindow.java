@@ -38,6 +38,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -54,7 +55,7 @@ public class MainWindow extends Stage {
     private final TableView<SeatRowData> seatTableView = new TableView<>();
     private SeatTable seatTable = null;
     private String previousSeed = "";
-    private File exportDir = MetaData.USER_HOME.toFile();
+    private File exportDir = Paths.get(MetaData.USER_HOME).toFile();
 
     /**
      * Creates an instance.
