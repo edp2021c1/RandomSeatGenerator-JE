@@ -1,1 +1,1 @@
--t dmg --mac-package-name "RdSeatGenerator"
+-t dmg
