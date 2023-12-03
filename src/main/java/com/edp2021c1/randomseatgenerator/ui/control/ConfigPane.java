@@ -64,6 +64,8 @@ public class ConfigPane extends VBox {
      * @param groupLeaderListInput    input of {@code group_leader_list}
      * @param separateListInput       input of {@code separate_list}
      * @param luckyOptionCheck        input of {@code lucky_option}
+     * @param exportWritableCheck     input of {@code export_writable}
+     * @param applyBtn                button used to apply changes of config
      */
     public ConfigPane(TextField rowCountInput,
                       TextField columnCountInput,

@@ -37,9 +37,10 @@ public class SeatTableUtils {
     /**
      * Exports this instance to an Excel form file (.xlsx).
      *
-     * @param seatTable to export to Excel document.
-     * @param file      to export seat table to.
-     * @throws IOException if failed to save seat table to Excel document.
+     * @param seatTable to export to Excel document
+     * @param file      to export seat table to
+     * @param writable  if export seat table to a writable file
+     * @throws IOException if failed to save seat table to Excel document
      */
     public static void exportToExcelDocument(final SeatTable seatTable, final File file, final boolean writable) throws IOException {
         Objects.requireNonNull(file);

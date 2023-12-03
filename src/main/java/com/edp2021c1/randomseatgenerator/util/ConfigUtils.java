@@ -41,9 +41,9 @@ import java.util.logging.Logger;
 public class ConfigUtils {
     private static final Path CONFIG_PATH;
     private static final Logger LOGGER = Logger.getGlobal();
-    public static AppConfig current;
     private static final AppConfig DEFAULT_CONFIG = loadDefaultConfig();
     private static FileTime configLastModifiedTime = null;
+    private static AppConfig current;
 
     static {
         final Path configDir;
