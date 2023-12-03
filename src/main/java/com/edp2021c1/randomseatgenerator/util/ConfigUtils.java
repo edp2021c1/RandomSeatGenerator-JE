@@ -59,7 +59,7 @@ public class ConfigUtils {
                     "Library/Application Support",
                     "RandomSeatGenerator");
         } else {
-            configDir = MetaData.USER_HOME;
+            configDir = Paths.get(MetaData.WORKING_DIR.toString(), ".rdstgnrt");
         }
 
         if (Files.notExists(configDir)) {
