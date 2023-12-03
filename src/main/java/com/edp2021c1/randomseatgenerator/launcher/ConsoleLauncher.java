@@ -22,6 +22,7 @@ import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.util.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.MetaData;
 import com.edp2021c1.randomseatgenerator.util.SeatTableUtils;
 
 import java.io.File;
@@ -58,7 +59,7 @@ public class ConsoleLauncher {
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
         Path configPath = ConfigUtils.getConfigPath();
         // 导出路径，默认为用户根目录当前路径
-        Path outputPath = Paths.get(System.getProperty("user.home"), String.format("%tF.xlsx", new Date()));
+        Path outputPath = Paths.get(MetaData.USER_HOME.toString(), String.format("%tF.xlsx", new Date()));
 
         int i;
 
