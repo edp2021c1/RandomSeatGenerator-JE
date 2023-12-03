@@ -46,10 +46,12 @@ seat_config.json
 *.xlsx
 
 ### Package ###
+packages/
 *.dmg
 *.msi
 
 ### Log ###
 *.log
+
 .idea/gradle.xml
 .idea/misc.xml

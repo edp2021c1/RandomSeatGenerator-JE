@@ -45,7 +45,7 @@ val fName: String = project.name + "-" + version.toString()
 val projectPath: String = projectDir.path
 val jarName: String = "$fName.jar"
 val jarPath: Path = Paths.get(projectPath, "build/libs", jarName)
-val packageDir: Path = Paths.get(projectPath, "build/packages")
+val packageDir: Path = Paths.get(projectPath, "packages")
 
 val log: Logger = Logger.getGlobal()
 
