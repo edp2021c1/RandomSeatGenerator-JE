@@ -86,6 +86,8 @@ tasks.javadoc {
 tasks.jar {
     manifest {
         attributes("Main-Class" to mainClass)
+        attributes("Created-By" to "Copyright (C) EDP2021C1")
+        attributes("Implementation-Version" to version)
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
