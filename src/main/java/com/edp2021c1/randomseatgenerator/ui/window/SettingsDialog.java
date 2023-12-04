@@ -19,7 +19,7 @@
 package com.edp2021c1.randomseatgenerator.ui.window;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
-import com.edp2021c1.randomseatgenerator.ui.control.ConfigPane;
+import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.util.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;

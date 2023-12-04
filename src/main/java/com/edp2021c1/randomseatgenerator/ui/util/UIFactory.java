@@ -20,7 +20,7 @@ package com.edp2021c1.randomseatgenerator.ui.util;
 
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatRowData;
-import com.edp2021c1.randomseatgenerator.ui.control.ConfigPane;
+import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.util.AppConfig;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
