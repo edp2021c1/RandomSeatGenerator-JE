@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.core;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This class packs the names of a pair of people separated when generating the seat and
@@ -51,6 +52,9 @@ public class SeparatedPair {
             throw new IllegalConfigException(String.format(
                     "Separated name list must not contain empty seat place holder \"%s\"",
                     SeatTable.EMPTY_SEAT_PLACEHOLDER));
+        }
+        if (Objects.equals(t[0], t[1])) {
+            throw new IllegalConfigException("Two names in one separate pair cannot be the same.");
         }
         name_1 = t[0];
         name_2 = t[1];

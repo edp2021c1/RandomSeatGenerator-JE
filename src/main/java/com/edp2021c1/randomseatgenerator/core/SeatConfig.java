@@ -91,6 +91,9 @@ public class SeatConfig {
         } catch (final NumberFormatException e) {
             throw new IllegalConfigException(String.format("Invalid row_count: %s.", row_count), e);
         }
+        if (r == 0) {
+            throw new IllegalConfigException("Row count cannot be zero.");
+        }
         return r;
     }
 
@@ -109,6 +112,9 @@ public class SeatConfig {
             c = Integer.parseUnsignedInt(column_count);
         } catch (final NumberFormatException e) {
             throw new IllegalConfigException(String.format("Invalid column_count: %s.", column_count), e);
+        }
+        if (c == 0) {
+            throw new IllegalConfigException("Column count cannot be zero.");
         }
         if (c > MAX_COLUMN_COUNT) {
             throw new IllegalConfigException(String.format("Column count cannot be larger than %d.", MAX_COLUMN_COUNT));

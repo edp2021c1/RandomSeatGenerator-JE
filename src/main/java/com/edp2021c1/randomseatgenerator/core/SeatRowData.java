@@ -59,13 +59,14 @@ public class SeatRowData {
     private final String c20 = null;
 
     private SeatRowData(final String... c) {
-        if (c.length > MAX_COLUMN_COUNT) {
+        int len = c.length;
+        if (len > MAX_COLUMN_COUNT) {
             throw new IllegalConfigException(String.format(
                     "Count of people in a row cannot be larger than %d.",
                     MAX_COLUMN_COUNT
             ));
         }
-        for (int i = 0, j = c.length; i < j; i++) {
+        for (int i = 0; i < len; i++) {
             try {
                 final Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
                 f.setAccessible(true);
