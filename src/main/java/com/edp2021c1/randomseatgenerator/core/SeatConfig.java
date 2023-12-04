@@ -176,6 +176,9 @@ public class SeatConfig {
                     SeatTable.EMPTY_SEAT_PLACEHOLDER
             ));
         }
+        if (l.contains("")) {
+            throw new IllegalConfigException("Name list must not contain empty name");
+        }
         return l;
     }
 

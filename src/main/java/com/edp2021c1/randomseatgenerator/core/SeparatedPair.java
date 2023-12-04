@@ -65,15 +65,11 @@ public class SeparatedPair {
      */
     public boolean check(final List<String> seat, final int columnCount) {
         final List<Integer> notSeparated = Arrays.asList(
-                -columnCount - 1,
-                -columnCount,
-                -columnCount + 1,
-                -1,
                 1,
                 columnCount - 1,
                 columnCount,
                 columnCount + 1
         );
-        return !notSeparated.contains(seat.indexOf(name_1) - seat.indexOf(name_2));
+        return !notSeparated.contains(Math.abs(seat.indexOf(name_1) - seat.indexOf(name_2)));
     }
 }

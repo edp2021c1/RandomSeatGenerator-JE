@@ -35,6 +35,14 @@ public class SeatTable {
      */
     public static final String EMPTY_SEAT_PLACEHOLDER = "-";
     /**
+     * Sign before and after a group leader.
+     */
+    public static final String GROUP_LEADER_IDENTIFIER = "*";
+    /**
+     * Format of a group leader.
+     */
+    public static final String GROUP_LEADER_FORMAT = "*%s*";
+    /**
      * The seat table stored as a {@code  List}.
      */
     private final List<String> seatTable;
