@@ -141,6 +141,10 @@ fun pack() {
         log.info("Project path: $projectPath")
         log.info("Jar: $jarPath")
 
+        if (Files.notExists(packageDir)) {
+            Files.createDirectories(packageDir)
+        }
+
         if (!(isMac || isWin)) {
             log.info("Not running on Windows or macOS, will use generated jar file as the package.")
             log.info("Packing arguments: null")
@@ -171,9 +175,6 @@ fun pack() {
         Runtime.getRuntime().exec(arguments.toString()).waitFor()
 
         log.info("Moving package to $packageDir")
-        if (Files.notExists(packageDir)) {
-            Files.createDirectories(packageDir)
-        }
         Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
 
         log.info("Package: $packagePath")
