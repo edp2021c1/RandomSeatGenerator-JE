@@ -185,7 +185,6 @@ public class SeatTableFactory {
         final List<String> gl = config.getGroupLeaderList();
         final List<SeparatedPair> sp = config.getSeparatedList();
         boolean hasLeader = false;
-        boolean isSeparated;
         int i, j;
         final int spNum = sp.size();
         final int rowCount;
@@ -210,11 +209,9 @@ public class SeatTableFactory {
         }
         // 检查是否分开
         for (i = 0; i < spNum; i++) {
-            isSeparated = sp.get(i).check(seatTable, columnCount);
-            if (isSeparated) {
-                continue;
+            if (!sp.get(i).check(seatTable, columnCount)) {
+                return false;
             }
-            return false;
         }
 
         return true;
