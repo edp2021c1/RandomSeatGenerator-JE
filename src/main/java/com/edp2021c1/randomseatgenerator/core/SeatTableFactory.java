@@ -38,7 +38,7 @@ public class SeatTableFactory {
      * @throws NullPointerException   if the config is null.
      * @throws IllegalConfigException if the config has an illegal format.
      */
-    private static SeatTable generate0(final SeatConfig config, final String seed)
+    private static SeatTable generate0(final SeatConfig config, String seed)
             throws NullPointerException, IllegalConfigException {
         if (config == null) {
             throw new NullPointerException("Config cannot be null");
@@ -48,6 +48,7 @@ public class SeatTableFactory {
         long longSeed;
         try {
             longSeed = Long.parseLong(seed);
+            seed += " (integer)";
         } catch (RuntimeException e) {
             longSeed = seed.hashCode();
         }
