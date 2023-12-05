@@ -1,1 +1,1 @@
--t msi --icon package_resources/app_icon/icon.ico --win-menu --win-menu-group edp2021c1 --win-dir-chooser --win-help-url https://github.com/edp2021c1/RandomSeatGenerator-JE/ --win-upgrade-url https://github.com/edp2021c1/RandomSeatGenerator-JE/releases/latest
+-t msi --icon package_resources/app_icon/icon.ico --win-menu --win-menu-group edp2021c1 --win-dir-chooser --win-help-url https://github.com/edp2021c1/RandomSeatGenerator-JE/ --win-update-url https://github.com/edp2021c1/RandomSeatGenerator-JE/releases/latest
