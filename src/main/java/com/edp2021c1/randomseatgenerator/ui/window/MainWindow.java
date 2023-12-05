@@ -20,8 +20,8 @@ package com.edp2021c1.randomseatgenerator.ui.window;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
-import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
+import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
 import javafx.geometry.Insets;
@@ -138,7 +138,7 @@ public class MainWindow extends Stage {
                 seed = seedInput.getText();
 
                 try {
-                    seatTable = new SeatGenerator().generate(config, seed);
+                    seatTable = SeatTableFactory.generate(config, seed);
                 } catch (final IllegalConfigException e) {
                     CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
                     return;

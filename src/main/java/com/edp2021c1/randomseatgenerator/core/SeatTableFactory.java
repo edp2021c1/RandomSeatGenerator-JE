@@ -27,7 +27,7 @@ import java.util.concurrent.*;
  * @author Calboot
  * @since 1.2.0
  */
-public class SeatGenerator {
+public class SeatTableFactory {
 
     /**
      * Generates a seat table.
@@ -38,7 +38,7 @@ public class SeatGenerator {
      * @throws NullPointerException   if the config is null.
      * @throws IllegalConfigException if the config has an illegal format.
      */
-    private SeatTable generateTask(final SeatConfig config, final String seed)
+    private static SeatTable generate0(final SeatConfig config, final String seed)
             throws NullPointerException, IllegalConfigException {
         if (config == null) {
             throw new NullPointerException("Config cannot be null");
@@ -154,8 +154,8 @@ public class SeatGenerator {
      * @throws IllegalConfigException if the config has an illegal format, or if it
      *                                costs too much time to generate the seat table.
      */
-    public SeatTable generate(final SeatConfig config, final String seed) {
-        final Future<SeatTable> future = Executors.newSingleThreadExecutor().submit(() -> generateTask(config, seed));
+    public static SeatTable generate(final SeatConfig config, final String seed) {
+        final Future<SeatTable> future = Executors.newSingleThreadExecutor().submit(() -> generate0(config, seed));
 
         try {
             return future.get(3, TimeUnit.SECONDS);
@@ -168,13 +168,19 @@ public class SeatGenerator {
         }
     }
 
-    public SeatTable generateEmptySeat(final SeatConfig config) {
+    /**
+     * Generates an empty seat table.
+     *
+     * @param config used to generate the empty seat table
+     * @return an empty seat table
+     */
+    public static SeatTable generateEmpty(final SeatConfig config) {
         List<String> seat = new ArrayList<>(Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]));
         Collections.fill(seat, SeatTable.EMPTY_SEAT_PLACEHOLDER);
         return new SeatTable(seat, config, "", "null");
     }
 
-    private boolean checkSeatTableFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
+    private static boolean checkSeatTableFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
         final List<String> gl = config.getGroupLeaderList();
         final List<SeparatedPair> sp = config.getSeparatedList();
         boolean hasLeader = false;

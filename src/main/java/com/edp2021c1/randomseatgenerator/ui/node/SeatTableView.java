@@ -19,9 +19,9 @@
 package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
-import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
 import com.edp2021c1.randomseatgenerator.core.SeatRowData;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
+import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -93,7 +93,7 @@ public class SeatTableView extends HBox {
      * @param config used to generate the empty seat table
      */
     public void setEmptySeatTable(final SeatConfig config) {
-        this.seatTable = new SeatGenerator().generateEmptySeat(config);
+        this.seatTable = SeatTableFactory.generateEmpty(config);
 
         this.rowCount = config.getRowCount();
         this.columnCount = config.getColumnCount();

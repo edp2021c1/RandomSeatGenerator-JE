@@ -18,8 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.launcher;
 
-import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
+import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.util.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
@@ -108,7 +108,7 @@ public class ConsoleLauncher {
         LOGGER.info(String.format("Config path: %s", configPath));
 
         // 生成座位表
-        final SeatTable seatTable = new SeatGenerator().generate(config, seed);
+        final SeatTable seatTable = SeatTableFactory.generate(config, seed);
 
         LOGGER.info("\n" + seatTable);
 
