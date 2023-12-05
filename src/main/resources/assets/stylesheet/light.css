@@ -119,6 +119,8 @@
     -fx-border-width: 2;
     -fx-border-color: #e1e0dd;
     -fx-border-radius: 5;
+
+    -fx-padding: 5;
 }
 
 .seat-table-cell:leader {
