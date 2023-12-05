@@ -149,3 +149,16 @@
     -fx-font-family: Impact;
     -fx-font-size: 24;
 }
+
+.seat-table-cell {
+    -fx-background-color: inherit;
+    -fx-background-radius: 5;
+
+    -fx-border-width: 2;
+    -fx-border-color: #e1e0dd;
+    -fx-border-radius: 5;
+}
+
+.seat-table-cell:leader {
+    -fx-background-color: white;
+}

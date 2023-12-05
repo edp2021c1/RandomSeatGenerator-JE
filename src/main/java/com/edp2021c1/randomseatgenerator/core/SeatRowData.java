@@ -22,7 +22,6 @@ import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT;
@@ -110,24 +109,4 @@ public class SeatRowData {
         return seatRowData;
     }
 
-    /**
-     * Returns an empty seat table with specified row count and column count.
-     * <p>
-     * Every seat in the seat table will be "-".
-     *
-     * @param rowCount    of the empty seat table.
-     * @param columnCount of the empty seat table.
-     * @return a {@code List} storing {@code SeatRowData} of an empty seat table.
-     */
-    public static List<SeatRowData> emptySeat(final int rowCount, final int columnCount) {
-        final String[] emptyRowData = new String[columnCount];
-        Arrays.fill(emptyRowData, SeatTable.EMPTY_SEAT_PLACEHOLDER);
-
-        final SeatRowData emptyRow = new SeatRowData(emptyRowData);
-
-        final SeatRowData[] list = new SeatRowData[rowCount];
-        Arrays.fill(list, emptyRow);
-
-        return Arrays.asList(list);
-    }
 }

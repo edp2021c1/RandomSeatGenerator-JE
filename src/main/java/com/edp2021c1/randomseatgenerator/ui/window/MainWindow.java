@@ -19,15 +19,14 @@
 package com.edp2021c1.randomseatgenerator.ui.window;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
+import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
-import com.edp2021c1.randomseatgenerator.core.SeatRowData;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
+import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
-import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
@@ -52,7 +51,7 @@ import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
  * @since 1.3.3
  */
 public class MainWindow extends Stage {
-    private final TableView<SeatRowData> seatTableView = new TableView<>();
+    private final SeatTableView seatTableView;
     private SeatTable seatTable = null;
     private String previousSeed = "";
     private File exportDir = Paths.get(MetaData.USER_HOME).toFile();
@@ -65,6 +64,9 @@ public class MainWindow extends Stage {
         if (s != null) {
             exportDir = new File(s);
         }
+
+        final SeatConfig initialConfig = ConfigUtils.reloadConfig();
+        seatTableView = new SeatTableView(initialConfig);
 
         final Scene scene;
         final HBox mainBox;
@@ -98,7 +100,6 @@ public class MainWindow extends Stage {
         topRightBox = createHBox(998, 60, seedInput, randomSeedBtn, dateAsSeedBtn);
 
         // 座位表
-        initSeatTable(seatTableView, ConfigUtils.reloadConfig());
 
         // 右侧主体
         rightBox = createVBox(1003, 698, topRightBox, seatTableView);
@@ -128,9 +129,8 @@ public class MainWindow extends Stage {
 
         generateBtn.setOnAction(event -> {
             try {
-                final AppConfig config = ConfigUtils.reloadConfig();
-                initSeatTable(seatTableView, config);
-
+                final SeatConfig config = ConfigUtils.reloadConfig();
+                seatTableView.setEmptySeatTable(config);
                 String seed = seedInput.getText();
                 if (previousSeed.equals(seed)) {
                     randomSeedBtn.fire();
@@ -143,7 +143,7 @@ public class MainWindow extends Stage {
                     CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
                     return;
                 }
-                seatTableView.setItems(FXCollections.observableArrayList(SeatRowData.fromSeat(seatTable)));
+                seatTableView.setSeatTable(seatTable);
                 previousSeed = seed;
             } catch (final Throwable e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
@@ -203,7 +203,7 @@ public class MainWindow extends Stage {
      * Action to do if config is changed.
      */
     public void onConfigChanged() {
-        initSeatTable(seatTableView, ConfigUtils.reloadConfig());
+        seatTableView.setEmptySeatTable(ConfigUtils.reloadConfig());
         previousSeed = "";
     }
 

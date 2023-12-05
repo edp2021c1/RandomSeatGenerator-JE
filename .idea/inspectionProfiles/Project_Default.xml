@@ -12,6 +12,7 @@
         </list>
       </option>
     </inspection_tool>
+    <inspection_tool class="CssInvalidPseudoSelector" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="CssUnusedSymbol" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="EmptyDirectory" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="FieldCanBeLocal" enabled="true" level="WARNING" enabled_by_default="true">

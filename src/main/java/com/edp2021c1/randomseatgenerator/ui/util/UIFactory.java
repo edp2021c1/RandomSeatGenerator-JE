@@ -18,16 +18,12 @@
 
 package com.edp2021c1.randomseatgenerator.ui.util;
 
-import com.edp2021c1.randomseatgenerator.core.SeatConfig;
-import com.edp2021c1.randomseatgenerator.core.SeatRowData;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.util.AppConfig;
-import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -220,33 +216,6 @@ public class UIFactory {
         buttonBar.setPrefSize(width, height);
         buttonBar.getButtons().addAll(buttons);
         return buttonBar;
-    }
-
-    /**
-     * Initialize a seat table view.
-     *
-     * @param seatTable to be initialized
-     * @param config    used to initialize the table
-     */
-    public static void initSeatTable(final TableView<SeatRowData> seatTable, final SeatConfig config) {
-        seatTable.setEditable(false);
-        final int rowCount = config.getRowCount();
-        final int columnCount = config.getColumnCount();
-        TableColumn<SeatRowData, String> c;
-
-        if (seatTable.getColumns().size() != columnCount) {
-            seatTable.getColumns().clear();
-            for (int i = 0; i < columnCount || i < 2; i++) {
-                c = new TableColumn<>("C" + (i + 1)) {{
-                    prefWidthProperty().bind(seatTable.widthProperty().divide(Math.max(columnCount, 2)));
-                }};
-                c.setCellValueFactory(new PropertyValueFactory<>("c" + (i + 1)));
-                c.setSortable(false);
-                seatTable.getColumns().add(c);
-            }
-        }
-
-        seatTable.setItems(FXCollections.observableArrayList(SeatRowData.emptySeat(rowCount, columnCount)));
     }
 
     /**

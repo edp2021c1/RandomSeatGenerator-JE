@@ -168,6 +168,12 @@ public class SeatGenerator {
         }
     }
 
+    public SeatTable generateEmptySeat(final SeatConfig config) {
+        List<String> seat = new ArrayList<>(Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]));
+        Collections.fill(seat, SeatTable.EMPTY_SEAT_PLACEHOLDER);
+        return new SeatTable(seat, config, "", "null");
+    }
+
     private boolean checkSeatTableFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
         final List<String> gl = config.getGroupLeaderList();
         final List<SeparatedPair> sp = config.getSeparatedList();
