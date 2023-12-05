@@ -47,8 +47,6 @@ val jarName: String = "$fName.jar"
 val jarPath: Path = Paths.get(projectPath, "build/libs", jarName)
 val packageDir: Path = Paths.get(projectPath, "packages")
 
-val log: Logger = Logger.getGlobal()
-
 repositories {
     mavenCentral()
 }
@@ -136,22 +134,22 @@ fun getPackageName(): String {
 
 fun pack() {
     try {
-        log.info("Packing...")
+        println("Packing...")
 
-        log.info("Project path: $projectPath")
-        log.info("Jar: $jarPath")
+        println("Project path: $projectPath")
+        println("Jar: $jarPath")
 
         if (Files.notExists(packageDir)) {
             Files.createDirectories(packageDir)
         }
 
         if (!(isMac || isWin)) {
-            log.info("Not running on Windows or macOS, will use generated jar file as the package.")
-            log.info("Packing arguments: null")
-            log.info("Moving package to $packageDir")
+            println("Warning: not running on Windows or macOS, will use generated jar file as the package.")
+            println("Packing arguments: null")
+            println("Moving package to $packageDir")
             Files.move(jarPath, packageDir.resolve(jarPath.fileName), StandardCopyOption.REPLACE_EXISTING)
-            log.info("Package: $jarPath")
-            log.info("Packing successful")
+            println("Package: $jarPath")
+            println("Packing successful")
             return
         }
 
@@ -169,18 +167,18 @@ fun pack() {
             arguments.append(i)
         }
 
-        log.info("Packing arguments: $arguments")
+        println("Packing arguments: $arguments")
 
-        log.info("Creating package...")
+        println("Creating package...")
         Runtime.getRuntime().exec(arguments.toString()).waitFor()
 
-        log.info("Moving package to $packageDir")
+        println("Moving package to $packageDir")
         Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
 
-        log.info("Package: $packagePath")
-        log.info("Packing successful")
+        println("Package: $packagePath")
+        println("Packing successful")
     } catch (e: Exception) {
-        log.severe("Packing failed with an exception")
+        Logger.getGlobal().severe("Packing failed with an exception")
         e.printStackTrace()
         return
     }
