@@ -125,6 +125,7 @@ public class SettingsDialog extends Stage {
         box3 = createHBox(1212, 45, loadConfigBtn, applyBtn);
 
         topBox = createVBox(1212, 300, seatConfigBoxTitleLabel, configPane, box3);
+        topBox.getStyleClass().add("top");
 
         aboutInfoBoxTitleLabel = createLabel("关于", 1212, 15);
         iconView = createImageView(MetaData.ICON_URL, 275, 275);
@@ -142,11 +143,13 @@ public class SettingsDialog extends Stage {
         buttonBar = createButtonBar(1212, 46, confirmBtn, cancelBtn);
 
         bottomBox = createVBox(1212, 500, aboutInfoBoxTitleLabel, box4, buttonBar);
+        bottomBox.getStyleClass().add("bottom");
 
         mainBox = createVBox(1232, 720, topBox, bottomBox);
+        mainBox.getStyleClass().add("main");
 
         scene = new Scene(mainBox);
-        scene.getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
+        scene.getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
 
         setMargins(DEFAULT_MARGIN,
                 rowCountInput,
@@ -161,7 +164,6 @@ public class SettingsDialog extends Stage {
                 confirmBtn,
                 cancelBtn
         );
-        setPaddings(DEFAULT_PADDING, topBox, bottomBox);
         applyBtn.setDisable(true);
         randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
         licenseText.setText(MetaData.LICENSE_INFO);

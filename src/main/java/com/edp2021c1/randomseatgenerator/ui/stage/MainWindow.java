@@ -24,7 +24,6 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.st.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -89,7 +88,7 @@ public class MainWindow extends Stage {
         generateBtn = createButton("生成", 70, 26);
         exportBtn = createButton("导出", 70, 26);
         leftBox = createVBox(91, 711, settingsBtn, generateBtn, exportBtn);
-        leftBox.setPadding(new Insets(0, 0, 0, 10));
+        leftBox.getStyleClass().add("left");
 
         // 右上种子输入栏
         seedInput = createTextField("种子", 191, 26);
@@ -102,14 +101,14 @@ public class MainWindow extends Stage {
 
         // 右侧主体
         rightBox = createVBox(1003, 698, topRightBox, seatTableView);
-        rightBox.setPadding(new Insets(0, 10, 10, 0));
+        rightBox.getStyleClass().add("right");
 
         // 整体
         mainBox = createHBox(1100, 634, leftBox, rightBox);
-        mainBox.setPadding(DEFAULT_PADDING);
+        mainBox.getStyleClass().add("main");
 
         scene = new Scene(mainBox);
-        scene.getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
+        scene.getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
 
         setMargins(DEFAULT_MARGIN, settingsBtn, generateBtn, exportBtn, seedInput, randomSeedBtn, dateAsSeedBtn);
         setGrows(Priority.ALWAYS, seatTableView, rightBox);

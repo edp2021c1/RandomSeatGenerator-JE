@@ -18,20 +18,23 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.DataFormat;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
 
 /**
  * Reports runtime exceptions.
@@ -43,34 +46,21 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     /**
      * Default crash reporter.
      */
-    public static final CrashReporter DEFAULT_CRASH_REPORTER = new CrashReporter(true);
+    public static final CrashReporter DEFAULT_CRASH_REPORTER = new CrashReporter(false);
 
     /**
      * Shows error message in a {@code Swing} window rather than an {@code JavaFX} window.
      */
-    public static final CrashReporter SWING_CRASH_REPORTER = new CrashReporter(true, true);
-
-    private final boolean showDetailMessage;
+    public static final CrashReporter SWING_CRASH_REPORTER = new CrashReporter(true);
 
     private final boolean useSwing;
 
     /**
-     * Creates an instance
-     *
-     * @param showDetailMessage if detail of the exception shall be shown.
-     */
-    public CrashReporter(final boolean showDetailMessage) {
-        this(showDetailMessage, false);
-    }
-
-    /**
      * Creates an instance.
      *
-     * @param showDetailMessage if detail of the exception shall be shown.
      * @param useSwing          if the reporter will be shown in a {@code Swing} window.
      */
-    public CrashReporter(final boolean showDetailMessage, final boolean useSwing) {
-        this.showDetailMessage = showDetailMessage;
+    public CrashReporter(final boolean useSwing) {
         this.useSwing = useSwing;
     }
 
@@ -117,7 +107,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             str.append(message);
         }
 
-        if (showDetailMessage) {
+        if (!(e instanceof IllegalConfigException)) {
             final StackTraceElement[] stackTraceElements = e.getStackTrace();
             for (final StackTraceElement s : stackTraceElements) {
                 str.append(String.format("\n        at: %s", s.toString()));
@@ -129,8 +119,11 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     private static class CrashReporterWindow extends Stage {
 
         private CrashReporterWindow(final String message) {
-            final Label label = new Label(message);
-            label.setWrapText(true);
+            final Label preLabel = new Label("Something's wrong... click here to copy the error message.\n");
+            preLabel.getStyleClass().add("error-pre-label");
+
+            final Label mainLabel = new Label(message);
+            mainLabel.setWrapText(true);
 
             final Button button = new Button("确定");
             button.setOnAction(event -> close());
@@ -139,22 +132,27 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             final ButtonBar buttonBar = new ButtonBar();
             buttonBar.getButtons().add(button);
 
-            final ScrollPane scrollPane = new ScrollPane(label);
+            final ScrollPane scrollPane = new ScrollPane(mainLabel);
 
-            final VBox vBox = new VBox(scrollPane, buttonBar);
-            vBox.setPadding(new Insets(10, 10, 10, 10));
+            final VBox vBox = new VBox(preLabel, scrollPane, buttonBar);
+            vBox.getStyleClass().add("main");
             vBox.setSpacing(10);
             VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
             final Scene scene = new Scene(vBox);
-            scene.getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);
+            scene.getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
 
             setScene(scene);
-            setResizable(false);
             setTitle("出错啦");
-            setMaxWidth(720);
-            setMaxHeight(480);
+            setWidth(720);
+            setHeight(480);
             getIcons().add(new Image(MetaData.ERROR_ICON_URL));
+
+            preLabel.setOnMouseClicked(event -> {
+                HashMap<DataFormat, Object> map = new HashMap<>();
+                map.put(DataFormat.PLAIN_TEXT, mainLabel.getText());
+                Clipboard.getSystemClipboard().setContent(map);
+            });
         }
     }
 

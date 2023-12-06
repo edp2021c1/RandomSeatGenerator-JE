@@ -1,0 +1,86 @@
+.root {
+    -fx-text-fill: black;
+
+    -fx-font-family: Hei;
+
+    -fx-background-color: #f2f2f2;
+}
+
+.label {
+    -fx-padding: 1;
+}
+
+.button,
+.text-area,
+.text-field {
+    -fx-border-width: 1.5;
+    -fx-border-radius: 3;
+}
+
+.button {
+    -fx-padding: 2;
+}
+
+.text-area,
+.text-field {
+    -fx-padding: 3;
+}
+
+.text-area .content {
+    -fx-padding: 0;
+    -fx-background-radius: 0;
+}
+
+.check-box .box {
+    -fx-border-width: 1;
+    -fx-border-radius: 2;
+}
+
+.seat-table-view {
+    -fx-padding: 20;
+}
+
+.seat-table-cell {
+    -fx-padding: 5;
+
+    -fx-background-radius: 5;
+
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+.license-text-area {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+}
+
+.app-name-label {
+    -fx-font-family: Impact;
+    -fx-font-size: 24;
+}
+
+.top {
+    -fx-padding: 10 0 0 0;
+}
+
+.bottom {
+    -fx-padding: 0 0 10 0;
+}
+
+.left {
+    -fx-padding: 0 0 0 10;
+}
+
+.right {
+    -fx-padding: 0 10 0 0;
+}
+
+.main {
+    -fx-padding: 10;
+}
+
+.error-pre-label {
+    -fx-font-size: 16;
+
+    -fx-text-fill: red !important;
+}

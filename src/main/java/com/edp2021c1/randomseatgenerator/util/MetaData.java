@@ -77,9 +77,9 @@ public class MetaData {
     public static final String ERROR_ICON_URL = "/assets/img/error_icon.png";
 
     /**
-     * Stylesheet of the windows of the app.
+     * Default stylesheets of the windows of the app.
      */
-    public static final String DEFAULT_STYLESHEET_URL = "/assets/stylesheet/light.css";
+    public static final String[] DEFAULT_STYLESHEETS = {"/assets/css/base.css", "/assets/css/light.css"};
 
     /**
      * Current working directory.
