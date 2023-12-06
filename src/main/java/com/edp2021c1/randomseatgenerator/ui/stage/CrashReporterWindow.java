@@ -1,5 +1,6 @@
-package com.edp2021c1.randomseatgenerator.ui.util;
+package com.edp2021c1.randomseatgenerator.ui.stage;
 
+import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import javafx.scene.Scene;
