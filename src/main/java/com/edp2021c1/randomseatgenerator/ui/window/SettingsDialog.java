@@ -20,14 +20,12 @@ package com.edp2021c1.randomseatgenerator.ui.window;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
-import com.edp2021c1.randomseatgenerator.util.AppConfig;
-import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
-import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.MetaData;
+import com.edp2021c1.randomseatgenerator.util.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -260,5 +258,13 @@ public class SettingsDialog extends Stage {
             }
         });
         cancelBtn.setCancelButton(true);
+
+        if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
+            mainBox.setOnKeyPressed(event -> {
+                if (event.isMetaDown() && KeyCode.W.equals(event.getCode())) {
+                    cancelBtn.fire();
+                }
+            });
+        }
     }
 }

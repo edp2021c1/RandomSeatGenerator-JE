@@ -29,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -199,6 +200,20 @@ public class MainWindow extends Stage {
             final SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
             seedInput.setText(d.format(t));
         });
+
+        if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
+            setFullScreenExitHint("按 Esc / Cmd+Shift+F 退出全屏");
+            mainBox.setOnKeyPressed(event -> {
+                if (event.isControlDown() && event.isMetaDown() && KeyCode.F.equals(event.getCode())) {
+                    setFullScreen(!isFullScreen());
+                } else if (event.isMetaDown() && KeyCode.W.equals(event.getCode())) {
+                    close();
+                    System.exit(0);
+                } else if (event.isMetaDown() && KeyCode.COMMA.equals(event.getCode())) {
+                    settingsBtn.fire();
+                }
+            });
+        }
     }
 
     /**
