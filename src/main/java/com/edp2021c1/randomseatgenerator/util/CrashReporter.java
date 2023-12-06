@@ -19,22 +19,12 @@
 package com.edp2021c1.randomseatgenerator.util;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
+import com.edp2021c1.randomseatgenerator.ui.util.CrashReporterWindow;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.DataFormat;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
 
 /**
  * Reports runtime exceptions.
@@ -114,46 +104,6 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             }
         }
         return str.toString();
-    }
-
-    private static class CrashReporterWindow extends Stage {
-
-        private CrashReporterWindow(final String message) {
-            final Label preLabel = new Label("Something's wrong... click here to copy the error message.\n");
-            preLabel.getStyleClass().add("error-pre-label");
-
-            final Label mainLabel = new Label(message);
-            mainLabel.setWrapText(true);
-
-            final Button button = new Button("确定");
-            button.setOnAction(event -> close());
-            button.setDefaultButton(true);
-
-            final ButtonBar buttonBar = new ButtonBar();
-            buttonBar.getButtons().add(button);
-
-            final ScrollPane scrollPane = new ScrollPane(mainLabel);
-
-            final VBox vBox = new VBox(preLabel, scrollPane, buttonBar);
-            vBox.getStyleClass().add("main");
-            vBox.setSpacing(10);
-            VBox.setVgrow(scrollPane, Priority.ALWAYS);
-
-            final Scene scene = new Scene(vBox);
-            scene.getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
-
-            setScene(scene);
-            setTitle("出错啦");
-            setWidth(720);
-            setHeight(480);
-            getIcons().add(new Image(MetaData.ERROR_ICON_URL));
-
-            preLabel.setOnMouseClicked(event -> {
-                HashMap<DataFormat, Object> map = new HashMap<>();
-                map.put(DataFormat.PLAIN_TEXT, mainLabel.getText());
-                Clipboard.getSystemClipboard().setContent(map);
-            });
-        }
     }
 
     /**
