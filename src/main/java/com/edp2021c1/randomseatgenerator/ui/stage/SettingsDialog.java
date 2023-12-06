@@ -25,7 +25,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -262,15 +261,25 @@ public class SettingsDialog extends Stage {
         });
         cancelBtn.setCancelButton(true);
 
-        // Just for OSX
         if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
             mainBox.setOnKeyPressed(event -> {
-                if (event.isMetaDown() && KeyCode.W.equals(event.getCode())) {
-                    cancelBtn.fire();
-                } else if (event.isMetaDown() && KeyCode.O.equals(event.getCode())) {
-                    loadConfigBtn.fire();
-                } else if (event.isMetaDown() && KeyCode.S.equals(event.getCode())) {
-                    applyBtn.fire();
+                if (!event.isMetaDown()) {
+                    return;
+                }
+                switch (event.getCode()) {
+                    case W -> cancelBtn.fire();
+                    case O -> loadConfigBtn.fire();
+                    case S -> applyBtn.fire();
+                }
+            });
+        } else {
+            mainBox.setOnKeyPressed(event -> {
+                if (!event.isControlDown()) {
+                    return;
+                }
+                switch (event.getCode()) {
+                    case O -> loadConfigBtn.fire();
+                    case S -> applyBtn.fire();
                 }
             });
         }
