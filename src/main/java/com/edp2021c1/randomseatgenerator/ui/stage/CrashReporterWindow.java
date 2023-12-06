@@ -36,9 +36,7 @@ public class CrashReporterWindow extends Stage {
 
         final Button copyBtn = UIFactory.createButton("复制并关闭", 80, 26);
         copyBtn.setOnAction(event -> {
-            HashMap<DataFormat, Object> map = new HashMap<>();
-            map.put(DataFormat.PLAIN_TEXT, mainLabel.getText());
-            Clipboard.getSystemClipboard().setContent(map);
+            copyText(mainLabel);
             close();
         });
 
@@ -62,18 +60,34 @@ public class CrashReporterWindow extends Stage {
         getIcons().add(new Image(MetaData.ERROR_ICON_URL));
 
         preLabel.setOnMouseClicked(event -> {
-            HashMap<DataFormat, Object> map = new HashMap<>();
-            map.put(DataFormat.PLAIN_TEXT, mainLabel.getText());
-            Clipboard.getSystemClipboard().setContent(map);
+            copyText(mainLabel);
         });
 
-        mainBox.setOnKeyPressed(event -> {
-            if (OperatingSystem.CURRENT != OperatingSystem.MAC || !event.isMetaDown()) {
-                return;
-            }
-            if (KeyCode.W.equals(event.getCode())) {
-                close();
-            }
-        });
+        if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
+            mainBox.setOnKeyPressed(event -> {
+                if (!event.isMetaDown()) {
+                    return;
+                }
+                switch (event.getCode()) {
+                    case W -> close();
+                    case C -> copyText(mainLabel);
+                }
+            });
+        } else {
+            mainBox.setOnKeyPressed(event -> {
+                if (!event.isControlDown()) {
+                    return;
+                }
+                if (KeyCode.C.equals(event.getCode())) {
+                    copyText(mainLabel);
+                }
+            });
+        }
+    }
+
+    private void copyText(Label label) {
+        HashMap<DataFormat, Object> map = new HashMap<>();
+        map.put(DataFormat.PLAIN_TEXT, label.getText());
+        Clipboard.getSystemClipboard().setContent(map);
     }
 }
