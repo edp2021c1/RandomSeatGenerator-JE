@@ -48,7 +48,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     /**
      * Creates an instance.
      *
-     * @param useSwing          if the reporter will be shown in a {@code Swing} window.
+     * @param useSwing if the reporter will be shown in a {@code Swing} window.
      */
     public CrashReporter(final boolean useSwing) {
         this.useSwing = useSwing;
