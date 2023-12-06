@@ -59,9 +59,7 @@ public class CrashReporterWindow extends Stage {
         setHeight(480);
         getIcons().add(new Image(MetaData.ERROR_ICON_URL));
 
-        preLabel.setOnMouseClicked(event -> {
-            copyText(mainLabel);
-        });
+        preLabel.setOnMouseClicked(event -> copyText(mainLabel));
 
         if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
             mainBox.setOnKeyPressed(event -> {
