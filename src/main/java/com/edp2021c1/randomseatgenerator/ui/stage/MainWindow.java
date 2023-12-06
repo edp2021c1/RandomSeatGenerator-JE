@@ -65,8 +65,6 @@ public class MainWindow extends Stage {
             exportDir = new File(s);
         }
 
-        final SeatConfig initialConfig = ConfigUtils.reloadConfig();
-
         final Scene scene;
         final HBox mainBox;
         final VBox leftBox;
@@ -100,7 +98,7 @@ public class MainWindow extends Stage {
         topRightBox = createHBox(998, 60, seedInput, randomSeedBtn, dateAsSeedBtn);
 
         // 座位表
-        seatTableView = new SeatTableView(initialConfig);
+        seatTableView = new SeatTableView(ConfigUtils.reloadConfig());
 
         // 右侧主体
         rightBox = createVBox(1003, 698, topRightBox, seatTableView);
