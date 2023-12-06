@@ -185,6 +185,11 @@ public class SeatConfig {
         if (l.contains("")) {
             throw new IllegalConfigException("Name list must not contain empty name");
         }
+        for (final String s : l) {
+            if (s.length() > 1 && s.startsWith(SeatTable.GROUP_LEADER_IDENTIFIER) || s.endsWith(SeatTable.GROUP_LEADER_IDENTIFIER)) {
+                throw new IllegalConfigException("Name list must not contain names in the format of a group leader");
+            }
+        }
         return l;
     }
 
@@ -235,6 +240,11 @@ public class SeatConfig {
         getColumnCount();
         getRandomBetweenRows();
         getNotAllowedLastRowPos();
+        getNameList();
+        getGroupLeaderList();
         getSeparatedList();
+        if (lucky_option == null) {
+            throw new IllegalConfigException("Lucky option cannot be null");
+        }
     }
 }

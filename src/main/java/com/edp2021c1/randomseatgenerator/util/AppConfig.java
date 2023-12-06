@@ -1,5 +1,6 @@
 package com.edp2021c1.randomseatgenerator.util;
 
+import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 
 import java.util.Objects;
@@ -20,6 +21,14 @@ public class AppConfig extends SeatConfig {
      * The previous directory config is loaded from.
      */
     public String last_import_dir;
+
+    @Override
+    public void checkFormat() {
+        super.checkFormat();
+        if (export_writable == null) {
+            throw new IllegalConfigException("Export writable cannot be null");
+        }
+    }
 
     /**
      * Check if another instance equals to this one.

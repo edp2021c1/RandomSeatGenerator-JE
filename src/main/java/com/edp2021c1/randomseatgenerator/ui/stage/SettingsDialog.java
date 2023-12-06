@@ -231,11 +231,12 @@ public class SettingsDialog extends Stage {
                     return;
                 }
                 try {
-                    ConfigUtils.saveConfig(config);
+                    config.checkFormat();
                 } catch (final IllegalConfigException e) {
                     CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
                     return;
                 }
+                ConfigUtils.saveConfig(config);
 
                 owner.onConfigChanged();
                 applyBtn.setDisable(true);
