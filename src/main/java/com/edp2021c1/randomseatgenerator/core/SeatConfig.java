@@ -20,7 +20,6 @@ package com.edp2021c1.randomseatgenerator.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Stores config used to generate a seat table.
@@ -149,12 +148,12 @@ public class SeatConfig {
      * @throws IllegalConfigException if failed to parse {@code last_row_pos_cannot_be_choosed}.
      * @see #last_row_pos_cannot_be_chosen
      */
-    public List<Integer> getNotAllowedLastRowPos() throws IllegalConfigException {
+    public ArrayList<Integer> getNotAllowedLastRowPos() throws IllegalConfigException {
         if (last_row_pos_cannot_be_chosen.isBlank()) {
             return new ArrayList<>();
         }
         final String[] t = last_row_pos_cannot_be_chosen.split(" ");
-        final List<Integer> i = new ArrayList<>(t.length);
+        final ArrayList<Integer> i = new ArrayList<>(t.length);
         try {
             for (final String s : t) {
                 i.add(Integer.parseUnsignedInt(s));
@@ -174,8 +173,8 @@ public class SeatConfig {
      * @return {@code  person_sort_by_height} as a list of {@code String}.
      * @see #person_sort_by_height
      */
-    public List<String> getNameList() {
-        final List<String> l = new ArrayList<>(Arrays.asList(person_sort_by_height.split(" ")));
+    public ArrayList<String> getNameList() {
+        final ArrayList<String> l = new ArrayList<>(Arrays.asList(person_sort_by_height.split(" ")));
         if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(String.format(
                     "Name list must not contain empty seat place holder \"%s\"",
@@ -199,8 +198,8 @@ public class SeatConfig {
      * @return {@code  group_leader_list} as a list of {@code String}.
      * @see #group_leader_list
      */
-    public List<String> getGroupLeaderList() {
-        final List<String> l = new ArrayList<>(Arrays.asList(group_leader_list.split(" ")));
+    public ArrayList<String> getGroupLeaderList() {
+        final ArrayList<String> l = new ArrayList<>(Arrays.asList(group_leader_list.split(" ")));
         if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(String.format(
                     "Group leader list must not contain empty seat place holder \"%s\"",
@@ -217,7 +216,7 @@ public class SeatConfig {
      * @throws IllegalConfigException if {@code separate_list} contains one or more invalid pairs.
      * @see #separate_list
      */
-    public List<SeparatedPair> getSeparatedList() throws IllegalConfigException {
+    public ArrayList<SeparatedPair> getSeparatedList() throws IllegalConfigException {
         final String[] t = separate_list.split("\n");
         final ArrayList<SeparatedPair> s = new ArrayList<>(t.length);
 

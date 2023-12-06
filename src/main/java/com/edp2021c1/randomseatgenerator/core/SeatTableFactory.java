@@ -59,9 +59,9 @@ public class SeatTableFactory {
         final int rowCount;
         final int columnCount = config.getColumnCount();
         final int randomRowCount;
-        final List<Integer> notAllowedLastRowPos = config.getNotAllowedLastRowPos();
-        final List<String> nameList = config.getNameList();
-        final List<String> groupLeaderList = config.getGroupLeaderList();
+        final ArrayList<Integer> notAllowedLastRowPos = config.getNotAllowedLastRowPos();
+        final ArrayList<String> nameList = config.getNameList();
+        final ArrayList<String> groupLeaderList = config.getGroupLeaderList();
         final boolean lucky = config.lucky_option;
 
         // 防止lucky为true时数组越界
@@ -74,10 +74,6 @@ public class SeatTableFactory {
         rowCount = (int) Math.min(config.getRowCount(), Math.ceil((double) (peopleNum - minus) / columnCount));
         randomRowCount = Math.min(config.getRandomBetweenRows(), rowCount);
 
-        // 座位表数据
-        List<String> seatTable;
-        String luckyPerson = null;
-
         // 临时变量，提前声明以减少内存和计算操作
         int t, u;
         final int seatNum = rowCount * columnCount;
@@ -89,15 +85,18 @@ public class SeatTableFactory {
         final String[] emptyRow = new String[columnCount];
         Arrays.fill(emptyRow, SeatTable.EMPTY_SEAT_PLACEHOLDER);
 
+        // 座位表数据
+        ArrayList<String> seatTable = new ArrayList<>(seatNum);
+        String luckyPerson = null;
+
         final int tPeopleNum = peopleNum - minus;
-        List<String> tNameList;
-        List<String> tResult;
+        ArrayList<String> tNameList;
         List<String> tSubNameList;
-        List<Integer> tLastRowPosChosenList;
+        ArrayList<Integer> tLastRowPosChosenList;
         String tGroupLeader;
 
         do {
-            seatTable = new ArrayList<>(seatNum);
+            seatTable.clear();
             tNameList = new ArrayList<>(nameList);
 
             if (lucky) {
@@ -106,7 +105,6 @@ public class SeatTableFactory {
                 tNameList.remove(t);
             }
 
-            tResult = new ArrayList<>(tPeopleNum);
             for (int i = 0; i < forTimes; i++) {
                 if (i == forTimes - 1) {
                     tSubNameList = tNameList.subList(i * randomPeopleCount, tPeopleNum);
@@ -114,22 +112,21 @@ public class SeatTableFactory {
                     tSubNameList = tNameList.subList(i * randomPeopleCount, (i + 1) * randomPeopleCount);
                 }
                 Collections.shuffle(tSubNameList, rd);
-                tResult.addAll(tSubNameList);
             }
 
             t = tPeopleNum > seatNum ? 0 : tPeopleNum % columnCount;
             if (t == 0) {
-                seatTable.addAll(tResult.subList(0, seatNum));
+                seatTable.addAll(tNameList.subList(0, seatNum));
             } else {
                 tLastRowPosChosenList = new ArrayList<>(t);
-                seatTable.addAll(tResult.subList(0, seatNum - columnCount));
+                seatTable.addAll(tNameList.subList(0, seatNum - columnCount));
                 seatTable.addAll(Arrays.asList(emptyRow));
                 for (int i = seatNum - columnCount; i < tPeopleNum; i++) {
                     do {
                         u = rd.nextInt(seatNum - columnCount, seatNum);
                     } while (notAllowedLastRowPos.contains(u - seatNum + columnCount + 1)
                             || tLastRowPosChosenList.contains(u));
-                    seatTable.set(u, tResult.get(i));
+                    seatTable.set(u, tNameList.get(i));
                     tLastRowPosChosenList.add(u);
                 }
             }
