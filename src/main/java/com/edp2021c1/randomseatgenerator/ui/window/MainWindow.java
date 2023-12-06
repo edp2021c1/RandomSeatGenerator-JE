@@ -91,6 +91,7 @@ public class MainWindow extends Stage {
         generateBtn = createButton("生成", 70, 26);
         exportBtn = createButton("导出", 70, 26);
         leftBox = createVBox(91, 711, settingsBtn, generateBtn, exportBtn);
+        leftBox.setPadding(new Insets(0, 0, 0, 10));
 
         // 右上种子输入栏
         seedInput = createTextField("种子", 191, 26);
@@ -107,6 +108,7 @@ public class MainWindow extends Stage {
 
         // 整体
         mainBox = createHBox(1100, 634, leftBox, rightBox);
+        mainBox.setPadding(DEFAULT_PADDING);
 
         scene = new Scene(mainBox);
         scene.getStylesheets().add(MetaData.DEFAULT_STYLESHEET_URL);

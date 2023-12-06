@@ -112,12 +112,16 @@
     -fx-font-size: 24;
 }
 
+.seat-table-view {
+    -fx-padding: 20;
+}
+
 .seat-table-cell {
-    -fx-background-color: inherit;
+    -fx-background-color: white;
     -fx-background-radius: 5;
 
-    -fx-border-width: 2;
-    -fx-border-color: #e1e0dd;
+    -fx-border-width: 1;
+    -fx-border-color: #eeeeee;
     -fx-border-radius: 5;
 
     -fx-padding: 5;
