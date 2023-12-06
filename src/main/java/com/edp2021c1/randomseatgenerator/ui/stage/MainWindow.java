@@ -16,20 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.ui.window;
+package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
-import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
+import com.edp2021c1.randomseatgenerator.ui.node.st.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -204,13 +203,28 @@ public class MainWindow extends Stage {
         if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
             setFullScreenExitHint("按 Esc / Cmd+Shift+F 退出全屏");
             mainBox.setOnKeyPressed(event -> {
-                if (event.isControlDown() && event.isMetaDown() && KeyCode.F.equals(event.getCode())) {
-                    setFullScreen(!isFullScreen());
-                } else if (event.isMetaDown() && KeyCode.W.equals(event.getCode())) {
-                    close();
-                    System.exit(0);
-                } else if (event.isMetaDown() && KeyCode.COMMA.equals(event.getCode())) {
-                    settingsBtn.fire();
+                if (!event.isMetaDown()) {
+                    return;
+                }
+                switch (event.getCode()) {
+                    case F -> setFullScreen(event.isControlDown() != isFullScreen());
+                    case W -> {
+                        close();
+                        System.exit(0);
+                    }
+                    case COMMA -> settingsBtn.fire();
+                    case S -> exportBtn.fire();
+                    case R -> randomSeedBtn.fire();
+                }
+            });
+        } else {
+            mainBox.setOnKeyPressed(event -> {
+                if (!event.isControlDown()) {
+                    return;
+                }
+                switch (event.getCode()) {
+                    case S -> exportBtn.fire();
+                    case R -> randomSeedBtn.fire();
                 }
             });
         }

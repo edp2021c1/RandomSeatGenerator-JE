@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.ui.window;
+package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
@@ -259,10 +259,15 @@ public class SettingsDialog extends Stage {
         });
         cancelBtn.setCancelButton(true);
 
+        // Just for OSX
         if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
             mainBox.setOnKeyPressed(event -> {
                 if (event.isMetaDown() && KeyCode.W.equals(event.getCode())) {
                     cancelBtn.fire();
+                } else if (event.isMetaDown() && KeyCode.O.equals(event.getCode())) {
+                    loadConfigBtn.fire();
+                } else if (event.isMetaDown() && KeyCode.S.equals(event.getCode())) {
+                    applyBtn.fire();
                 }
             });
         }

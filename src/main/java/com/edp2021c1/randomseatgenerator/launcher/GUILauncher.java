@@ -18,7 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.launcher;
 
-import com.edp2021c1.randomseatgenerator.ui.window.MainWindow;
+import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.MetaData;

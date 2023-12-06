@@ -1,5 +1,5 @@
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
-import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
+import com.edp2021c1.randomseatgenerator.ui.node.st.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

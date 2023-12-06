@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.ui.node;
+package com.edp2021c1.randomseatgenerator.ui.node.st;
 
 import com.edp2021c1.randomseatgenerator.core.SeatRowData;
 import javafx.geometry.Pos;
