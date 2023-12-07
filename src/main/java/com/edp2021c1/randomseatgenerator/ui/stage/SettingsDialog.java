@@ -96,20 +96,29 @@ public class SettingsDialog extends Stage {
          **************************************************************************/
 
         seatConfigBoxTitleLabel = createLabel("生成和导出", 1212, 30);
+
         rowCountInput = createTextField("行数");
+
         columnCountInput = createTextField("列数");
+
         rbrInput = createTextField("随机轮换的行数");
+
         disabledLastRowPosInput = createTextField("最后一排不可选位置");
 
         nameListInput = createTextField("名单 (按身高排序)");
+
         groupLeaderListInput = createTextField("组长列表");
+
         separateListInput = createTextArea("拆分列表", 165, 56);
+
         luckyOptionCheck = new CheckBox("随机挑选一名幸运儿");
 
         exportWritableCheck = new CheckBox("导出为可写");
 
         loadConfigBtn = createButton("从文件加载", 80, 26);
+
         applyBtn = createButton("应用", 80, 26);
+        applyBtn.setDisable(true);
 
         configPane = new ConfigPane(
                 rowCountInput,
@@ -130,16 +139,25 @@ public class SettingsDialog extends Stage {
         topBox.getStyleClass().add("top");
 
         aboutInfoBoxTitleLabel = createLabel("关于", 1212, 15);
+
         iconView = createImageView(MetaData.ICON_URL, 275, 275);
+
         randomSeatGeneratorLabel = createLabel("RandomSeatGenerator", 273, 32);
+        randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
+
         gitRepositoryUrlLabel = createLabel("官方仓库    https://github.com/edp2021c1/RandomSeatGenerator-JE.git", 452, 23);
+
         licenseText = createTextArea(null, 937, 282);
+        licenseText.setText(MetaData.LICENSE_INFO);
+        licenseText.setEditable(false);
+        licenseText.getStyleClass().add("license-text-area");
 
         box5 = createVBox(958, 264, randomSeatGeneratorLabel, gitRepositoryUrlLabel, licenseText);
 
         box4 = createHBox(1212, 385, iconView, box5);
 
         confirmBtn = createButton("确定", 80, 26);
+
         cancelBtn = createButton("取消", 80, 26);
 
         buttonBar = createButtonBar(1212, 46, confirmBtn, cancelBtn);
@@ -165,11 +183,6 @@ public class SettingsDialog extends Stage {
                 confirmBtn,
                 cancelBtn
         );
-        applyBtn.setDisable(true);
-        randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
-        licenseText.setText(MetaData.LICENSE_INFO);
-        licenseText.setEditable(false);
-        licenseText.getStyleClass().add("license-text-area");
 
         setScene(scene);
         setTitle("Random Seat Generator - 设置");

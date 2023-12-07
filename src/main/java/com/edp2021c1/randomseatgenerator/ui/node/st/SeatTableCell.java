@@ -34,6 +34,7 @@ import javafx.scene.layout.Priority;
  * @since 1.4.0
  */
 class SeatTableCell extends Label {
+    private static final String DEFAULT_STYLE_CLASS = "seat-table-cell";
     private static final PseudoClass PSEUDO_CLASS_LEADER
             = PseudoClass.getPseudoClass("leader");
 
@@ -74,6 +75,6 @@ class SeatTableCell extends Label {
 
         leader.set(s.length() > 1 && s.startsWith(SeatTable.GROUP_LEADER_IDENTIFIER) && s.endsWith(SeatTable.GROUP_LEADER_IDENTIFIER));
 
-        getStyleClass().add("seat-table-cell");
+        getStyleClass().add(DEFAULT_STYLE_CLASS);
     }
 }

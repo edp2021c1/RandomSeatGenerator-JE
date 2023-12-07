@@ -23,19 +23,23 @@
     -fx-padding: 2;
 }
 
-.text-area,
-.text-field {
+.text-input {
     -fx-padding: 3;
+}
+
+.text-area {
+    -fx-wrap-text: true;
 }
 
 .text-area .content {
     -fx-padding: 0;
+
     -fx-background-radius: 0;
 }
 
 .check-box .box {
     -fx-border-width: 1;
-    -fx-border-radius: 2;
+    -fx-border-radius: 4;
 }
 
 .seat-table-view {

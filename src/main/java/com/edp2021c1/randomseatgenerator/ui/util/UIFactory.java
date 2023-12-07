@@ -146,20 +146,6 @@ public class UIFactory {
     }
 
     /**
-     * Creates a {@code TextField}.
-     *
-     * @param promptText of the field
-     * @param width      of the field
-     * @param height     of the field
-     * @return the field created
-     */
-    public static TextField createTextField(final String promptText, final double width, final double height) {
-        final TextField t = createTextField(promptText);
-        t.setPrefSize(width, height);
-        return t;
-    }
-
-    /**
      * Creates a {@code TextArea}.
      *
      * @param promptText of the area
@@ -171,7 +157,6 @@ public class UIFactory {
         final TextArea t = new TextArea();
         t.setPromptText(promptText);
         t.setPrefSize(width, height);
-        t.setWrapText(true);
         return t;
     }
 

@@ -97,7 +97,7 @@ public class MainWindow extends Stage {
         separator = new Separator(Orientation.VERTICAL);
 
         // 右上种子输入栏
-        seedInput = createTextField("种子", 191, 26);
+        seedInput = createTextField("种子");
         randomSeedBtn = createButton("随机种子", 80, 26);
         dateAsSeedBtn = createButton("填入日期", 80, 26);
         topRightBox = createHBox(998, 60, seedInput, randomSeedBtn, dateAsSeedBtn);

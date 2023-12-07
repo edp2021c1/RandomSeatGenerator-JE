@@ -23,8 +23,6 @@ import com.edp2021c1.randomseatgenerator.core.SeatRowData;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
@@ -35,7 +33,8 @@ import java.util.List;
  * @author Calboot
  * @since 1.4.0
  */
-public class SeatTableView extends HBox {
+public class SeatTableView extends VBox {
+    private static final String DEFAULT_STYLE_CLASS = "seat-table-view";
     private SeatTable seatTable;
     private int rowCount;
     private int columnCount;
@@ -45,8 +44,8 @@ public class SeatTableView extends HBox {
      */
     private SeatTableView() {
         super();
-        getStyleClass().add("seat-table-view");
         setAlignment(Pos.CENTER);
+        getStyleClass().add(DEFAULT_STYLE_CLASS);
     }
 
     /**
@@ -102,18 +101,14 @@ public class SeatTableView extends HBox {
     }
 
     private void refresh() {
-        final VBox box = new VBox();
-        box.setAlignment(Pos.CENTER);
+        getChildren().clear();
 
         final List<SeatRowData> seatRowData = SeatRowData.fromSeat(seatTable);
         SeatTableRow row;
         for (final SeatRowData s : seatRowData) {
             row = new SeatTableRow(s, columnCount);
-            row.prefHeightProperty().bind(heightProperty().divide(rowCount));
-            box.getChildren().add(row);
+            row.prefHeightProperty().bind(heightProperty().divide((double) rowCount));
+            getChildren().add(row);
         }
-        setHgrow(box, Priority.ALWAYS);
-        getChildren().clear();
-        getChildren().add(box);
     }
 }
