@@ -198,7 +198,4 @@ public class ConfigUtils {
         return CONFIG_PATH;
     }
 
-    public static void saveLastExportDir(String value) {
-
-    }
 }
