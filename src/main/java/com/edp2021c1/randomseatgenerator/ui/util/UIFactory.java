@@ -40,6 +40,11 @@ import javafx.stage.Stage;
  * @since 1.3.3
  */
 public class UIFactory {
+    /**
+     * Default margin.
+     */
+    public static final Insets DEFAULT_MARGIN = new Insets(5);
+
     public static void decorate(Stage stage, WindowType type) {
         stage.getScene().getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
         switch (type) {
@@ -57,10 +62,6 @@ public class UIFactory {
             }
         }
     }
-    /**
-     * Default margin.
-     */
-    public static final Insets DEFAULT_MARGIN = new Insets(5);
 
     /**
      * Sets margin of elements.
@@ -86,12 +87,6 @@ public class UIFactory {
             HBox.setHgrow(n, priority);
             VBox.setVgrow(n, priority);
         }
-    }
-
-    public enum WindowType {
-        MAIN,
-        DIALOG,
-        ERROR
     }
 
     /**
@@ -242,5 +237,11 @@ public class UIFactory {
         configPane.getSeparateListInput().setText(config.separate_list);
         configPane.getLuckyOptionCheck().setSelected(config.lucky_option);
         configPane.getExportWritableCheck().setSelected(config.export_writable);
+    }
+
+    public enum WindowType {
+        MAIN,
+        DIALOG,
+        ERROR
     }
 }
