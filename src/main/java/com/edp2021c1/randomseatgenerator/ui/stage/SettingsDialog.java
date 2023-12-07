@@ -283,10 +283,12 @@ public class SettingsDialog extends Stage {
         });
 
         gitRepositoryUrlLabel.setOnMouseClicked(event -> {
-            try {
-                Desktop.getDesktop().browse(GIT_REPOSITORY_URI);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if (Desktop.isDesktopSupported()) {
+                try {
+                    Desktop.getDesktop().browse(GIT_REPOSITORY_URI);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
