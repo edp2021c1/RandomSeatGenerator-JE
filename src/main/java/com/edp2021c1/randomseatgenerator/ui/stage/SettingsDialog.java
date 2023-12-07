@@ -65,10 +65,10 @@ public class SettingsDialog extends Stage {
     private final Button loadConfigBtn;
     private final Button applyBtn;
     private final FileChooser fc;
+    private final URI GIT_REPOSITORY_URI;
     private File importDir = ConfigUtils.getConfigPath().getParent().toFile();
     private File importFile;
     private AppConfig config;
-    private final URI GIT_REPOSITORY_URI;
 
     {
         try {
