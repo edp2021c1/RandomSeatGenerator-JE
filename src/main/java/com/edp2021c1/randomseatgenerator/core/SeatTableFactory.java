@@ -100,7 +100,7 @@ public class SeatTableFactory {
             tNameList = new ArrayList<>(nameList);
 
             if (lucky) {
-                t = rd.nextInt(tPeopleNum - randomPeopleCount, tPeopleNum);
+                t = rd.nextInt(peopleNum - randomPeopleCount, peopleNum);
                 luckyPerson = tNameList.get(t);
                 tNameList.remove(t);
             }
