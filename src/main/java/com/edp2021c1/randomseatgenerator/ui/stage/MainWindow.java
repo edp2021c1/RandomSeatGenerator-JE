@@ -24,8 +24,10 @@ import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.st.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
 import javafx.beans.property.StringProperty;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
@@ -74,6 +76,7 @@ public class MainWindow extends Stage {
         final Scene scene;
         final HBox mainBox;
         final VBox leftBox;
+        final Separator separator;
         final VBox rightBox;
         final HBox topRightBox;
 
@@ -85,11 +88,13 @@ public class MainWindow extends Stage {
          **************************************************************************/
 
         // 左侧按钮栏
-        settingsBtn = createButton("设置", 70, 26);
-        generateBtn = createButton("生成", 70, 26);
-        exportBtn = createButton("导出", 70, 26);
-        leftBox = createVBox(91, 711, settingsBtn, generateBtn, exportBtn);
+        settingsBtn = createButton("设置", 80, 26);
+        generateBtn = createButton("生成", 80, 26);
+        exportBtn = createButton("导出", 80, 26);
+        leftBox = createVBox(121, 711, settingsBtn, generateBtn, exportBtn);
         leftBox.getStyleClass().add("left");
+
+        separator = new Separator(Orientation.VERTICAL);
 
         // 右上种子输入栏
         seedInput = createTextField("种子", 191, 26);
@@ -105,7 +110,7 @@ public class MainWindow extends Stage {
         rightBox.getStyleClass().add("right");
 
         // 整体
-        mainBox = createHBox(1100, 634, leftBox, rightBox);
+        mainBox = createHBox(1130, 634, leftBox, separator, rightBox);
         mainBox.getStyleClass().add("main");
 
         scene = new Scene(mainBox);
