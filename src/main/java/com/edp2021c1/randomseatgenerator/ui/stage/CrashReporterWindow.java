@@ -23,11 +23,16 @@ import java.util.HashMap;
  */
 public class CrashReporterWindow extends Stage {
 
-    public CrashReporterWindow(final String message) {
+    /**
+     * Creates an instance showing the given error message.
+     *
+     * @param msg to be shown.
+     */
+    public CrashReporterWindow(final String msg) {
         final Label preLabel = new Label("Something's wrong... click here to copy the error message.\n");
         preLabel.getStyleClass().add("error-pre-label");
 
-        final Label mainLabel = new Label(message);
+        final Label mainLabel = new Label(msg);
         mainLabel.setWrapText(true);
 
         final Button confirmBtn = UIFactory.createButton("确定", 80, 26);
