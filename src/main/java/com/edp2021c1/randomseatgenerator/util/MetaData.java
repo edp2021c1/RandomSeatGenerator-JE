@@ -91,4 +91,15 @@ public class MetaData {
      */
     public static final String USER_HOME = Paths.get(System.getProperty("user.home")).toString();
 
+    /**
+     * URL of the git repository.
+     */
+    public static final String GIT_REPOSITORY_URL = "https://github.com/edp2021c1/RandomSeatGenerator-JE.git";
+
+    private static final String VERSION_ID = MetaData.class.getPackage().getImplementationVersion();
+    /**
+     * Version of the app.
+     */
+    public static final String VERSION = VERSION_ID == null ? "dev" : "v" + VERSION_ID;
+
 }

@@ -22,7 +22,12 @@ import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.*;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -31,8 +36,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
@@ -60,6 +68,15 @@ public class SettingsDialog extends Stage {
     private File importDir = ConfigUtils.getConfigPath().getParent().toFile();
     private File importFile;
     private AppConfig config;
+    private final URI GIT_REPOSITORY_URI;
+
+    {
+        try {
+            GIT_REPOSITORY_URI = new URI(MetaData.GIT_REPOSITORY_URL);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Creates an instance.
@@ -76,13 +93,15 @@ public class SettingsDialog extends Stage {
         final VBox mainBox;
         final VBox topBox;
         final Label seatConfigBoxTitleLabel;
-        final HBox box3;
+        final HBox apply_loadConfigBox;
+        final Separator separator;
         final VBox bottomBox;
         final Label aboutInfoBoxTitleLabel;
-        final HBox box4;
+        final HBox moreBottomBox;
         final ImageView iconView;
-        final VBox box5;
+        final VBox bottomRightBox;
         final Label randomSeatGeneratorLabel;
+        final Label versionLabel;
         final Label gitRepositoryUrlLabel;
         final TextArea licenseText;
         final ButtonBar buttonBar;
@@ -133,10 +152,12 @@ public class SettingsDialog extends Stage {
                 applyBtn
         );
 
-        box3 = createHBox(1212, 45, loadConfigBtn, applyBtn);
+        apply_loadConfigBox = createHBox(1212, 45, loadConfigBtn, applyBtn);
 
-        topBox = createVBox(1212, 300, seatConfigBoxTitleLabel, configPane, box3);
+        topBox = createVBox(1212, 300, seatConfigBoxTitleLabel, configPane, apply_loadConfigBox);
         topBox.getStyleClass().add("top");
+
+        separator = new Separator();
 
         aboutInfoBoxTitleLabel = createLabel("关于", 1212, 15);
 
@@ -145,16 +166,19 @@ public class SettingsDialog extends Stage {
         randomSeatGeneratorLabel = createLabel("RandomSeatGenerator", 273, 32);
         randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
 
-        gitRepositoryUrlLabel = createLabel("官方仓库    https://github.com/edp2021c1/RandomSeatGenerator-JE.git", 452, 23);
+        versionLabel = new Label("版本:       " + MetaData.VERSION);
+
+        gitRepositoryUrlLabel = new Label("官方仓库: " + MetaData.GIT_REPOSITORY_URL);
 
         licenseText = createTextArea(null, 937, 282);
         licenseText.setText(MetaData.LICENSE_INFO);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");
 
-        box5 = createVBox(958, 264, randomSeatGeneratorLabel, gitRepositoryUrlLabel, licenseText);
+        bottomRightBox = createVBox(958, 287, randomSeatGeneratorLabel, versionLabel, gitRepositoryUrlLabel, licenseText);
+        bottomRightBox.setAlignment(Pos.CENTER_LEFT);
 
-        box4 = createHBox(1212, 385, iconView, box5);
+        moreBottomBox = createHBox(1212, 408, iconView, bottomRightBox);
 
         confirmBtn = createButton("确定", 80, 26);
 
@@ -162,10 +186,10 @@ public class SettingsDialog extends Stage {
 
         buttonBar = createButtonBar(1212, 46, confirmBtn, cancelBtn);
 
-        bottomBox = createVBox(1212, 500, aboutInfoBoxTitleLabel, box4, buttonBar);
+        bottomBox = createVBox(1212, 523, aboutInfoBoxTitleLabel, moreBottomBox, buttonBar);
         bottomBox.getStyleClass().add("bottom");
 
-        mainBox = createVBox(1232, 720, topBox, bottomBox);
+        mainBox = createVBox(1232, 740, topBox, separator, bottomBox);
         mainBox.getStyleClass().add("main");
 
         scene = new Scene(mainBox);
@@ -255,6 +279,14 @@ public class SettingsDialog extends Stage {
                 applyBtn.setDisable(true);
             } catch (final Throwable e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+            }
+        });
+
+        gitRepositoryUrlLabel.setOnMouseClicked(event -> {
+            try {
+                Desktop.getDesktop().browse(GIT_REPOSITORY_URI);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         });
 

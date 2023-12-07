@@ -7,7 +7,7 @@
 }
 
 .label {
-    -fx-padding: 1;
+    -fx-padding: 3;
 
     -fx-wrap-text: true;
 }
