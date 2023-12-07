@@ -46,7 +46,6 @@ class SeatTableCell extends Label {
         setAlignment(Pos.CENTER);
         HBox.setHgrow(this, Priority.ALWAYS);
         setMinSize(40, 30);
-        setWrapText(true);
 
         String s;
         if (o == null) {

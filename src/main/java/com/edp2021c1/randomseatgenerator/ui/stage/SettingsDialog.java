@@ -20,10 +20,10 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
+import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -151,7 +151,6 @@ public class SettingsDialog extends Stage {
         mainBox.getStyleClass().add("main");
 
         scene = new Scene(mainBox);
-        scene.getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
 
         setMargins(DEFAULT_MARGIN,
                 rowCountInput,
@@ -173,11 +172,11 @@ public class SettingsDialog extends Stage {
         licenseText.getStyleClass().add("license-text-area");
 
         setScene(scene);
-        getIcons().add(new Image(MetaData.ICON_URL));
         setTitle("Random Seat Generator - 设置");
         initOwner(owner);
         initModality(Modality.APPLICATION_MODAL);
         setResizable(false);
+        UIFactory.decorate(this, WindowType.DIALOG);
         initConfigPane(ConfigUtils.reloadConfig(), configPane);
 
         fc = new FileChooser();

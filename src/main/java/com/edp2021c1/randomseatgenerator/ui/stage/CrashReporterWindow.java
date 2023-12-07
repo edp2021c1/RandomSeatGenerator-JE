@@ -1,14 +1,12 @@
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
-import com.edp2021c1.randomseatgenerator.util.MetaData;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.KeyCode;
@@ -33,7 +31,6 @@ public class CrashReporterWindow extends Stage {
         preLabel.getStyleClass().add("error-pre-label");
 
         final Label mainLabel = new Label(msg);
-        mainLabel.setWrapText(true);
 
         final Button confirmBtn = UIFactory.createButton("确定", 80, 26);
         confirmBtn.setOnAction(event -> close());
@@ -56,13 +53,12 @@ public class CrashReporterWindow extends Stage {
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         final Scene scene = new Scene(mainBox);
-        scene.getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
 
         setScene(scene);
         setTitle("出错啦");
         setWidth(720);
         setHeight(480);
-        getIcons().add(new Image(MetaData.ERROR_ICON_URL));
+        UIFactory.decorate(this, UIFactory.WindowType.ERROR);
 
         preLabel.setOnMouseClicked(event -> copyText(mainLabel));
 

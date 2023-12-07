@@ -8,6 +8,8 @@
 
 .label {
     -fx-padding: 1;
+
+    -fx-wrap-text: true;
 }
 
 .button,
@@ -42,6 +44,8 @@
 
 .seat-table-cell {
     -fx-padding: 5;
+
+    -fx-font-size: 15;
 
     -fx-background-radius: 5;
 

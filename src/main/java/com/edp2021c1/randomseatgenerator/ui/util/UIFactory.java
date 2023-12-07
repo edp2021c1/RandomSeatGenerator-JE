@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.ui.util;
 
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.util.AppConfig;
+import com.edp2021c1.randomseatgenerator.util.MetaData;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -28,8 +29,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  * Contains several useful methods for creating or initializing JavaFX controls.
@@ -38,14 +40,27 @@ import javafx.scene.layout.VBox;
  * @since 1.3.3
  */
 public class UIFactory {
+    public static void decorate(Stage stage, WindowType type) {
+        stage.getScene().getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
+        switch (type) {
+            case ERROR -> {
+                stage.getIcons().add(new Image(MetaData.ERROR_ICON_URL));
+                stage.initModality(Modality.APPLICATION_MODAL);
+            }
+            case MAIN -> {
+                stage.getIcons().add(new Image(MetaData.ICON_URL));
+                stage.setOnCloseRequest(event -> System.exit(0));
+            }
+            default -> {
+                stage.getIcons().add(new Image(MetaData.ICON_URL));
+                stage.initModality(Modality.APPLICATION_MODAL);
+            }
+        }
+    }
     /**
      * Default margin.
      */
     public static final Insets DEFAULT_MARGIN = new Insets(5);
-    /**
-     * Default padding.
-     */
-    public static final Insets DEFAULT_PADDING = new Insets(10);
 
     /**
      * Sets margin of elements.
@@ -73,16 +88,10 @@ public class UIFactory {
         }
     }
 
-    /**
-     * Sets padding of elements.
-     *
-     * @param padding  to be set to the elements
-     * @param elements where padding will be set to
-     */
-    public static void setPaddings(final Insets padding, final Region... elements) {
-        for (final Region r : elements) {
-            r.setPadding(padding);
-        }
+    public enum WindowType {
+        MAIN,
+        DIALOG,
+        ERROR
     }
 
     /**
@@ -182,7 +191,6 @@ public class UIFactory {
     public static Label createLabel(final String text, final double width, final double height) {
         final Label label = new Label(text);
         label.setPrefSize(width, height);
-        label.setWrapText(true);
         return label;
     }
 

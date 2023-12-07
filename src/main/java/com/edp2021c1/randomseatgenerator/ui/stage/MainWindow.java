@@ -22,6 +22,7 @@ import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.st.SeatTableView;
+import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.*;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Orientation;
@@ -29,7 +30,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -114,14 +114,13 @@ public class MainWindow extends Stage {
         mainBox.getStyleClass().add("main");
 
         scene = new Scene(mainBox);
-        scene.getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
 
         setMargins(DEFAULT_MARGIN, settingsBtn, generateBtn, exportBtn, seedInput, randomSeedBtn, dateAsSeedBtn);
         setGrows(Priority.ALWAYS, seatTableView, rightBox);
 
         setScene(scene);
-        getIcons().add(new Image(MetaData.ICON_URL));
         setTitle("Random Seat Generator - 随机座位生成器");
+        UIFactory.decorate(this, WindowType.MAIN);
         setOnCloseRequest(event -> System.exit(0));
 
         String s = config.last_export_dir;
