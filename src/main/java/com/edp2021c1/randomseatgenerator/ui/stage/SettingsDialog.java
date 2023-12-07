@@ -44,7 +44,22 @@ import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
  * @since 1.3.3
  */
 public class SettingsDialog extends Stage {
+    private final ConfigPane configPane;
+    private final TextField rowCountInput;
+    private final TextField columnCountInput;
+    private final TextField rbrInput;
+    private final TextField disabledLastRowPosInput;
+    private final TextField nameListInput;
+    private final TextField groupLeaderListInput;
+    private final TextArea separateListInput;
+    private final CheckBox luckyOptionCheck;
+    private final CheckBox exportWritableCheck;
+    private final Button loadConfigBtn;
+    private final Button applyBtn;
+    private final FileChooser fc;
     private File importDir = ConfigUtils.getConfigPath().getParent().toFile();
+    private File importFile;
+    private AppConfig config;
 
     /**
      * Creates an instance.
@@ -61,19 +76,7 @@ public class SettingsDialog extends Stage {
         final VBox mainBox;
         final VBox topBox;
         final Label seatConfigBoxTitleLabel;
-        final ConfigPane configPane;
-        final TextField rowCountInput;
-        final TextField columnCountInput;
-        final TextField rbrInput;
-        final TextField disabledLastRowPosInput;
-        final TextField nameListInput;
-        final TextField groupLeaderListInput;
-        final TextArea separateListInput;
-        final CheckBox luckyOptionCheck;
-        final CheckBox exportWritableCheck;
         final HBox box3;
-        final Button loadConfigBtn;
-        final Button applyBtn;
         final VBox bottomBox;
         final Label aboutInfoBoxTitleLabel;
         final HBox box4;
@@ -177,6 +180,10 @@ public class SettingsDialog extends Stage {
         setResizable(false);
         initConfigPane(ConfigUtils.reloadConfig(), configPane);
 
+        fc = new FileChooser();
+        fc.setTitle("加载配置文件");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
+
 
         /* *************************************************************************
          *                                                                         *
@@ -186,30 +193,26 @@ public class SettingsDialog extends Stage {
 
         loadConfigBtn.setOnAction(event -> {
             try {
-                final FileChooser fc = new FileChooser();
-                fc.setTitle("加载配置文件");
-                fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
                 fc.setInitialDirectory(importDir);
-                final File importFile = fc.showOpenDialog(SettingsDialog.this);
+                importFile = fc.showOpenDialog(SettingsDialog.this);
                 if (importFile == null) {
                     return;
                 }
 
-                final AppConfig seatConfig;
                 try {
-                    seatConfig = ConfigUtils.fromJson(Paths.get(importFile.getAbsolutePath()));
+                    config = ConfigUtils.fromJson(Paths.get(importFile.getAbsolutePath()));
                 } catch (final IOException e) {
                     throw new RuntimeException("Failed to load seat config from file.", e);
                 }
 
-                if (seatConfig != null) {
-                    initConfigPane(seatConfig, configPane);
+                if (config != null) {
+                    initConfigPane(config, configPane);
                 }
 
                 importDir = importFile.getParentFile();
-                AppConfig t = new AppConfig();
-                t.last_import_dir = importDir.toString();
-                ConfigUtils.saveConfig(t);
+                config = new AppConfig();
+                config.last_import_dir = importDir.toString();
+                ConfigUtils.saveConfig(config);
             } catch (final Throwable e) {
                 CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
             }
@@ -217,7 +220,7 @@ public class SettingsDialog extends Stage {
 
         applyBtn.setOnAction(event -> {
             try {
-                final AppConfig config = new AppConfig();
+                config = new AppConfig();
                 config.row_count = rowCountInput.getText();
                 config.column_count = columnCountInput.getText();
                 config.random_between_rows = rbrInput.getText();
@@ -228,9 +231,6 @@ public class SettingsDialog extends Stage {
                 config.lucky_option = luckyOptionCheck.isSelected();
                 config.export_writable = exportWritableCheck.isSelected();
 
-                if (ConfigUtils.reloadConfig().equals(config)) {
-                    return;
-                }
                 try {
                     config.checkFormat();
                 } catch (final IllegalConfigException e) {
@@ -248,17 +248,11 @@ public class SettingsDialog extends Stage {
 
         confirmBtn.setOnAction(event -> {
             applyBtn.fire();
-            cancelBtn.fire();
+            close();
         });
         confirmBtn.setDefaultButton(true);
 
-        cancelBtn.setOnAction(event -> {
-            try {
-                SettingsDialog.this.close();
-            } catch (final Throwable e) {
-                CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
-            }
-        });
+        cancelBtn.setOnAction(event -> close());
         cancelBtn.setCancelButton(true);
 
         if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
@@ -267,7 +261,7 @@ public class SettingsDialog extends Stage {
                     return;
                 }
                 switch (event.getCode()) {
-                    case W -> cancelBtn.fire();
+                    case W -> close();
                     case O -> loadConfigBtn.fire();
                     case S -> applyBtn.fire();
                 }
