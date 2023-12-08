@@ -219,8 +219,7 @@ public class SettingsDialog extends Stage {
         setTitle("Random Seat Generator - 设置");
         initOwner(owner);
         initModality(Modality.APPLICATION_MODAL);
-        setResizable(false);
-        UIFactory.decorate(this, WindowType.DIALOG);
+        UIFactory.decorate(this, StageType.DIALOG);
 
         fc = new FileChooser();
         fc.setTitle("加载配置文件");

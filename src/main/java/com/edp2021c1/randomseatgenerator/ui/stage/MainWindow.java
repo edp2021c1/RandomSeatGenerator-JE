@@ -121,7 +121,7 @@ public class MainWindow extends Stage {
 
         setScene(scene);
         setTitle("Random Seat Generator - 随机座位生成器");
-        UIFactory.decorate(this, WindowType.MAIN);
+        UIFactory.decorate(this, StageType.MAIN);
         setOnCloseRequest(event -> System.exit(0));
 
         String s = config.last_export_dir;
