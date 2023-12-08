@@ -28,11 +28,11 @@ public class CrashReporterWindow extends Stage {
      */
     public CrashReporterWindow(final String msg) {
         final Label preLabel = new Label("Something's wrong... click here to copy the error message.\n");
-        preLabel.getStyleClass().add("error-pre-label");
+        preLabel.getStyleClass().add("err-pre-label");
 
         final Label mainLabel = new Label(msg);
 
-        final Button confirmBtn = UIFactory.createButton("确定", 80, 26);
+        final Button confirmBtn = UIFactory.createButton("关闭", 80, 26);
         confirmBtn.setOnAction(event -> close());
         confirmBtn.setDefaultButton(true);
 
@@ -44,20 +44,21 @@ public class CrashReporterWindow extends Stage {
 
         final ButtonBar buttonBar = new ButtonBar();
         buttonBar.getButtons().addAll(copyBtn, confirmBtn);
+        buttonBar.setPrefHeight(66);
+        buttonBar.getStyleClass().add("bottom");
 
         final ScrollPane scrollPane = new ScrollPane(mainLabel);
+        scrollPane.setPrefSize(720, 480);
+        scrollPane.getStyleClass().add("err-scroll-pane");
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         final VBox mainBox = new VBox(preLabel, scrollPane, buttonBar);
         mainBox.getStyleClass().add("main");
-        mainBox.setSpacing(10);
-        VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         final Scene scene = new Scene(mainBox);
 
         setScene(scene);
         setTitle("出错啦");
-        setWidth(720);
-        setHeight(480);
         UIFactory.decorate(this, UIFactory.WindowType.ERROR);
 
         preLabel.setOnMouseClicked(event -> copyText(mainLabel));

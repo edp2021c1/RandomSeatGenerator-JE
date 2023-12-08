@@ -68,27 +68,32 @@
 }
 
 .main {
-    -fx-padding: 10;
+    -fx-padding: 5;
 }
 
 .main > .top {
-    -fx-padding: 10 0 0 0;
+    -fx-padding: 20 10 10 10;
 }
 
 .main > .bottom {
-    -fx-padding: 0 0 10 0;
+    -fx-padding: 10 10 20 10;
 }
 
 .main > .left {
-    -fx-padding: 0 20 0 10;
+    -fx-padding: 10 20 10 10;
 }
 
 .main > .right {
-    -fx-padding: 0 10 0 0;
+    -fx-padding: 10 20 10 10;
 }
 
-.error-pre-label {
+.err-pre-label {
     -fx-font-size: 16;
+}
 
-    -fx-text-fill: red !important;
+.err-scroll-pane {
+    -fx-padding: 5;
+
+    -fx-border-width: 1.5;
+    -fx-border-radius: 3;
 }

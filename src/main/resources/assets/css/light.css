@@ -75,10 +75,6 @@
     -fx-border-color: black;
 }
 
-.scroll-pane {
-    -fx-background-color: inherit;
-}
-
 .seat-table-cell {
     -fx-background-color: white;
     -fx-background-radius: 5;
@@ -88,4 +84,14 @@
 
 .seat-table-cell:leader {
     -fx-background-color: #fff9ab;
+}
+
+.err-pre-label {
+    -fx-text-fill: #e74f4f;
+}
+
+.err-scroll-pane {
+    -fx-background-color: inherit;
+
+    -fx-border-color: #e74f4f;
 }
