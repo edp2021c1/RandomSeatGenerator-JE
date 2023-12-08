@@ -208,8 +208,8 @@ public class UIFactory {
     /**
      * Initialize a config input pane.
      *
-     * @param config     to be filled in
-     * @param configPane to be initialized
+     * @param config                   to be filled in
+     * @param configPane               to be initialized
      * @param applyBtnDisabledProperty property of whether the current global config is equal to the config in the pane,
      *                                 usually decides whether the apply button is disabled. Ignored if is null.
      */

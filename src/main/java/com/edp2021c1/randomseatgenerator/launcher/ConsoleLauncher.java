@@ -34,7 +34,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Logger;
+
+import static com.edp2021c1.randomseatgenerator.util.MetaData.LOGGER;
 
 /**
  * Launches the application in console mode.
@@ -43,7 +44,6 @@ import java.util.logging.Logger;
  * @since 1.2.9
  */
 public class ConsoleLauncher {
-    private static final Logger LOGGER = Logger.getGlobal();
 
     /**
      * Launches the application.

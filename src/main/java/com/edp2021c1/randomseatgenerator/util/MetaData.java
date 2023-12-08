@@ -18,7 +18,11 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import java.awt.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.logging.Logger;
 
 /**
  * Saves data of the application.
@@ -96,17 +100,47 @@ public class MetaData {
      */
     public static final String GIT_REPOSITORY_URL = "https://github.com/edp2021c1/RandomSeatGenerator-JE.git";
     /**
-     * Url of the license.
+     * URI of the git repository.
+     */
+    public static final URI GIT_REPOSITORY_URI;
+
+    /**
+     * URL of the license.
      */
     public static final String LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.txt";
+    /**
+     * URI of the license.
+     */
+    public static final URI LICENSE_URI;
+
     /**
      * Name of the license of this application.
      */
     public static final String LICENSE_NAME = "GPLv3";
+    /**
+     * Is desktop supported.
+     */
+    public static final boolean DESKTOP_SUPPORTED = Desktop.isDesktopSupported();
+    /**
+     * Desktop toolkit, null if not supported.
+     */
+    public static final Desktop DESKTOP = DESKTOP_SUPPORTED ? Desktop.getDesktop() : null;
+    /**
+     * Global logger.
+     */
+    public static final Logger LOGGER = Logger.getGlobal();
     private static final String VERSION_ID = MetaData.class.getPackage().getImplementationVersion();
     /**
      * Version of the app.
      */
     public static final String VERSION = VERSION_ID == null ? "dev" : "v" + VERSION_ID;
 
+    static {
+        try {
+            GIT_REPOSITORY_URI = new URI(GIT_REPOSITORY_URL);
+            LICENSE_URI = new URI(LICENSE_URL);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

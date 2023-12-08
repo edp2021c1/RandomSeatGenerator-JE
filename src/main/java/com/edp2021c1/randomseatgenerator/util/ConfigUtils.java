@@ -30,7 +30,8 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.Objects;
-import java.util.logging.Logger;
+
+import static com.edp2021c1.randomseatgenerator.util.MetaData.LOGGER;
 
 /**
  * Contains several methods related to {@link AppConfig}.
@@ -40,7 +41,6 @@ import java.util.logging.Logger;
  */
 public class ConfigUtils {
     private static final Path CONFIG_PATH;
-    private static final Logger LOGGER = Logger.getGlobal();
     private static FileTime configLastModifiedTime = null;
     private static AppConfig current;
     private static final AppConfig DEFAULT_CONFIG = loadDefaultConfig();
