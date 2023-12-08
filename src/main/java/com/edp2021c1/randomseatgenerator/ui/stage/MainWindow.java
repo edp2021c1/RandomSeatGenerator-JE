@@ -62,6 +62,7 @@ public class MainWindow extends Stage {
     private final StringProperty seed;
     private final FileChooser fc;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    private final SettingsDialog settingsDialog = new SettingsDialog(this);
     private File exportFile;
     private SeatTable seatTable = null;
     private AppConfig config = ConfigUtils.reloadConfig();
@@ -140,7 +141,7 @@ public class MainWindow extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        settingsBtn.setOnAction(event -> new SettingsDialog(MainWindow.this).show());
+        settingsBtn.setOnAction(event -> settingsDialog.show());
 
         generateBtn.setOnAction(event -> {
             try {
