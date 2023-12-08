@@ -93,7 +93,7 @@ public class SettingsDialog extends Stage {
         final VBox mainBox;
         final VBox topBox;
         final Label seatConfigBoxTitleLabel;
-        final HBox apply_loadConfigBox;
+        final HBox loadConfigBtnBox;
         final Separator separator;
         final VBox bottomBox;
         final Label aboutInfoBoxTitleLabel;
@@ -104,7 +104,7 @@ public class SettingsDialog extends Stage {
         final Label versionLabel;
         final Label gitRepositoryUrlLabel;
         final TextArea licenseText;
-        final ButtonBar buttonBar;
+        final ButtonBar confirm_apply_cancelBar;
         final Button confirmBtn;
         final Button cancelBtn;
 
@@ -134,7 +134,7 @@ public class SettingsDialog extends Stage {
 
         exportWritableCheck = new CheckBox("导出为可写");
 
-        loadConfigBtn = createButton("从文件加载", 80, 26);
+        loadConfigBtn = createButton("从文件加载", 90, 26);
 
         applyBtn = createButton("应用", 80, 26);
         applyBtn.setDisable(true);
@@ -149,12 +149,12 @@ public class SettingsDialog extends Stage {
                 separateListInput,
                 luckyOptionCheck,
                 exportWritableCheck,
-                applyBtn
+                applyBtn.disableProperty()
         );
 
-        apply_loadConfigBox = createHBox(1212, 45, loadConfigBtn, applyBtn);
+        loadConfigBtnBox = createHBox(1212, 45, loadConfigBtn);
 
-        topBox = createVBox(1212, 300, seatConfigBoxTitleLabel, configPane, apply_loadConfigBox);
+        topBox = new VBox(seatConfigBoxTitleLabel, configPane, loadConfigBtnBox);
         topBox.getStyleClass().add("top");
 
         separator = new Separator();
@@ -184,12 +184,13 @@ public class SettingsDialog extends Stage {
 
         cancelBtn = createButton("取消", 80, 26);
 
-        buttonBar = createButtonBar(1212, 46, confirmBtn, cancelBtn);
+        confirm_apply_cancelBar = new ButtonBar();
+        confirm_apply_cancelBar.getButtons().addAll(confirmBtn, applyBtn, cancelBtn);
 
-        bottomBox = createVBox(1212, 523, aboutInfoBoxTitleLabel, moreBottomBox, buttonBar);
+        bottomBox = new VBox(aboutInfoBoxTitleLabel, moreBottomBox, confirm_apply_cancelBar);
         bottomBox.getStyleClass().add("bottom");
 
-        mainBox = createVBox(1232, 740, topBox, separator, bottomBox);
+        mainBox = new VBox(topBox, separator, bottomBox);
         mainBox.getStyleClass().add("main");
 
         scene = new Scene(mainBox);

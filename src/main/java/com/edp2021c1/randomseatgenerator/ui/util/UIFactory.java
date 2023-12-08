@@ -24,7 +24,10 @@ import com.edp2021c1.randomseatgenerator.util.MetaData;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -189,21 +192,6 @@ public class UIFactory {
         i.setPickOnBounds(true);
         i.setPreserveRatio(true);
         return i;
-    }
-
-    /**
-     * Creates a {@code ButtonBar}.
-     *
-     * @param width   of the bar
-     * @param height  of the bar
-     * @param buttons in the bar
-     * @return the bar created
-     */
-    public static ButtonBar createButtonBar(final double width, final double height, final Button... buttons) {
-        final ButtonBar buttonBar = new ButtonBar();
-        buttonBar.setPrefSize(width, height);
-        buttonBar.getButtons().addAll(buttons);
-        return buttonBar;
     }
 
     /**

@@ -3,8 +3,6 @@ package com.edp2021c1.randomseatgenerator.util;
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 
-import java.util.Objects;
-
 /**
  * Stores config of the application.
  */
@@ -28,25 +26,6 @@ public class AppConfig extends SeatConfig {
         if (export_writable == null) {
             throw new IllegalConfigException("Export writable cannot be null");
         }
-    }
-
-    /**
-     * Check if another instance equals to this one.
-     *
-     * @param another another instance to compare with.
-     * @return if these two instances are equal.
-     */
-    public boolean equals(final AppConfig another) {
-        return Objects.equals(row_count, another.row_count)
-                && Objects.equals(column_count, another.column_count)
-                && Objects.equals(random_between_rows, another.random_between_rows)
-                && Objects.equals(last_row_pos_cannot_be_chosen, another.last_row_pos_cannot_be_chosen)
-                && Objects.equals(person_sort_by_height, another.person_sort_by_height)
-                && Objects.equals(group_leader_list, another.group_leader_list)
-                && Objects.equals(separate_list, another.separate_list)
-                && Objects.equals(lucky_option, another.lucky_option)
-                && Objects.equals(export_writable, another.export_writable)
-                && Objects.equals(last_export_dir, another.last_export_dir);
     }
 
     /**
