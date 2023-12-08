@@ -159,7 +159,7 @@ public class SettingsDialog extends Stage {
 
         separator = new Separator();
 
-        aboutInfoBoxTitleLabel = createLabel("关于", 1212, 15);
+        aboutInfoBoxTitleLabel = createLabel("关于", 1212, 30);
 
         iconView = createImageView(MetaData.ICON_URL, 275, 275);
 
@@ -180,17 +180,18 @@ public class SettingsDialog extends Stage {
 
         moreBottomBox = createHBox(1212, 408, iconView, bottomRightBox);
 
+        bottomBox = new VBox(aboutInfoBoxTitleLabel, moreBottomBox);
+
         confirmBtn = createButton("确定", 80, 26);
 
         cancelBtn = createButton("取消", 80, 26);
 
         confirm_apply_cancelBar = new ButtonBar();
         confirm_apply_cancelBar.getButtons().addAll(confirmBtn, applyBtn, cancelBtn);
+        confirm_apply_cancelBar.setPrefHeight(66);
+        confirm_apply_cancelBar.getStyleClass().add("bottom");
 
-        bottomBox = new VBox(aboutInfoBoxTitleLabel, moreBottomBox, confirm_apply_cancelBar);
-        bottomBox.getStyleClass().add("bottom");
-
-        mainBox = new VBox(topBox, separator, bottomBox);
+        mainBox = new VBox(topBox, separator, bottomBox, confirm_apply_cancelBar);
         mainBox.getStyleClass().add("main");
 
         scene = new Scene(mainBox);
