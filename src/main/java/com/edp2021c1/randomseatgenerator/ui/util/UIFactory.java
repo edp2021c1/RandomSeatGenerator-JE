@@ -20,7 +20,9 @@ package com.edp2021c1.randomseatgenerator.ui.util;
 
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.util.AppConfig;
+import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
+import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -200,7 +202,7 @@ public class UIFactory {
      * @param config     to be filled in
      * @param configPane to be initialized
      */
-    public static void initConfigPane(final AppConfig config, final ConfigPane configPane) {
+    public static void initConfigPane(final AppConfig config, final ConfigPane configPane, final BooleanProperty applyBtnDisabledProperty) {
         configPane.getRowCountInput().setText(config.row_count);
         configPane.getColumnCountInput().setText(config.column_count);
         configPane.getRbrInput().setText(config.random_between_rows);
@@ -210,6 +212,25 @@ public class UIFactory {
         configPane.getSeparateListInput().setText(config.separate_list);
         configPane.getLuckyOptionCheck().setSelected(config.lucky_option);
         configPane.getExportWritableCheck().setSelected(config.export_writable);
+
+        configPane.getRowCountInput().textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().row_count.equals(newValue)));
+        configPane.getColumnCountInput().textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().column_count.equals(newValue)));
+        configPane.getRbrInput().textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().random_between_rows.equals(newValue)));
+        configPane.getDisabledLastRowPosInput().textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().last_row_pos_cannot_be_chosen.equals(newValue)));
+        configPane.getNameListInput().textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().person_sort_by_height.equals(newValue)));
+        configPane.getGroupLeaderListInput().textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().group_leader_list.equals(newValue)));
+        configPane.getSeparateListInput().textProperty().addListener((observable, oldValue, newValue) ->
+                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().separate_list.equals(newValue)));
+        configPane.getLuckyOptionCheck().selectedProperty().addListener((observable, oldValue, newValue) ->
+                applyBtnDisabledProperty.set(newValue == ConfigUtils.reloadConfig().lucky_option));
+        configPane.getExportWritableCheck().selectedProperty().addListener((observable, oldValue, newValue) ->
+                applyBtnDisabledProperty.set(newValue == ConfigUtils.reloadConfig().export_writable));
     }
 
     public enum WindowType {

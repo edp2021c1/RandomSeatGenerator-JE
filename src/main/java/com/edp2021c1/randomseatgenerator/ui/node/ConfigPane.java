@@ -18,8 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
-import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
-import javafx.beans.property.BooleanProperty;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -74,8 +72,7 @@ public class ConfigPane extends VBox {
                       TextField groupLeaderListInput,
                       TextArea separateListInput,
                       CheckBox luckyOptionCheck,
-                      CheckBox exportWritableCheck,
-                      BooleanProperty applyBtnDisabledProperty) {
+                      CheckBox exportWritableCheck) {
         super();
 
         this.rowCountInput = rowCountInput;
@@ -92,25 +89,6 @@ public class ConfigPane extends VBox {
         HBox box2 = createHBox(1212, 69, nameListInput, groupLeaderListInput, separateListInput, luckyOptionCheck);
         HBox box3 = createHBox(1212, 60, exportWritableCheck);
         getChildren().addAll(box1, box2, box3);
-
-        rowCountInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().row_count.equals(newValue)));
-        columnCountInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().column_count.equals(newValue)));
-        rbrInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().random_between_rows.equals(newValue)));
-        disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().last_row_pos_cannot_be_chosen.equals(newValue)));
-        nameListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().person_sort_by_height.equals(newValue)));
-        groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().group_leader_list.equals(newValue)));
-        separateListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().separate_list.equals(newValue)));
-        luckyOptionCheck.selectedProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(newValue == ConfigUtils.reloadConfig().lucky_option));
-        exportWritableCheck.selectedProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(newValue == ConfigUtils.reloadConfig().export_writable));
     }
 
 }

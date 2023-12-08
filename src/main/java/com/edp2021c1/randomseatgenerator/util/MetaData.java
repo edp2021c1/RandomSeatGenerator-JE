@@ -95,7 +95,14 @@ public class MetaData {
      * URL of the git repository.
      */
     public static final String GIT_REPOSITORY_URL = "https://github.com/edp2021c1/RandomSeatGenerator-JE.git";
-
+    /**
+     * Url of the license.
+     */
+    public static final String LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.txt";
+    /**
+     * Name of the license of this application.
+     */
+    public static final String LICENSE_NAME = "GPLv3";
     private static final String VERSION_ID = MetaData.class.getPackage().getImplementationVersion();
     /**
      * Version of the app.

@@ -22,6 +22,7 @@ import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.*;
+import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -65,6 +66,7 @@ public class SettingsDialog extends Stage {
     private final Button loadConfigBtn;
     private final Button applyBtn;
     private final FileChooser fc;
+    private final BooleanProperty applyBtnDisabledProperty;
     private final URI GIT_REPOSITORY_URI;
     private File importDir = ConfigUtils.getConfigPath().getParent().toFile();
     private File importFile;
@@ -103,6 +105,7 @@ public class SettingsDialog extends Stage {
         final Label randomSeatGeneratorLabel;
         final Label versionLabel;
         final Label gitRepositoryUrlLabel;
+        final Label licenseLabel;
         final TextArea licenseText;
         final ButtonBar confirm_apply_cancelBar;
         final Button confirmBtn;
@@ -138,6 +141,7 @@ public class SettingsDialog extends Stage {
 
         applyBtn = createButton("应用", 80, 26);
         applyBtn.setDisable(true);
+        applyBtnDisabledProperty = applyBtn.disableProperty();
 
         configPane = new ConfigPane(
                 rowCountInput,
@@ -148,8 +152,7 @@ public class SettingsDialog extends Stage {
                 groupLeaderListInput,
                 separateListInput,
                 luckyOptionCheck,
-                exportWritableCheck,
-                applyBtn.disableProperty()
+                exportWritableCheck
         );
 
         loadConfigBtnBox = createHBox(1212, 45, loadConfigBtn);
@@ -168,14 +171,16 @@ public class SettingsDialog extends Stage {
 
         versionLabel = new Label("版本:       " + MetaData.VERSION);
 
-        gitRepositoryUrlLabel = new Label("官方仓库: " + MetaData.GIT_REPOSITORY_URL);
+        gitRepositoryUrlLabel = new Label("Git仓库:   " + MetaData.GIT_REPOSITORY_URL);
+
+        licenseLabel = new Label("许可证:    " + MetaData.LICENSE_NAME + String.format("(%s)", MetaData.LICENSE_URL));
 
         licenseText = createTextArea(null, 937, 282);
         licenseText.setText(MetaData.LICENSE_INFO);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");
 
-        bottomRightBox = createVBox(958, 287, randomSeatGeneratorLabel, versionLabel, gitRepositoryUrlLabel, licenseText);
+        bottomRightBox = createVBox(958, 287, randomSeatGeneratorLabel, versionLabel, gitRepositoryUrlLabel, licenseLabel, licenseText);
         bottomRightBox.setAlignment(Pos.CENTER_LEFT);
 
         moreBottomBox = createHBox(1212, 408, iconView, bottomRightBox);
@@ -216,7 +221,6 @@ public class SettingsDialog extends Stage {
         initModality(Modality.APPLICATION_MODAL);
         setResizable(false);
         UIFactory.decorate(this, WindowType.DIALOG);
-        initConfigPane(ConfigUtils.reloadConfig(), configPane);
 
         fc = new FileChooser();
         fc.setTitle("加载配置文件");
@@ -244,7 +248,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 if (config != null) {
-                    initConfigPane(config, configPane);
+                    initConfigPane(config, configPane, applyBtnDisabledProperty);
                 }
 
                 importDir = importFile.getParentFile();
@@ -325,5 +329,7 @@ public class SettingsDialog extends Stage {
                 }
             });
         }
+
+        setOnShown(event -> initConfigPane(ConfigUtils.reloadConfig(), configPane, applyBtnDisabledProperty));
     }
 }
