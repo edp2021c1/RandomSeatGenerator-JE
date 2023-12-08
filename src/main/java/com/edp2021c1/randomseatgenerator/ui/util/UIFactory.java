@@ -50,7 +50,15 @@ public class UIFactory {
      */
     public static final Insets DEFAULT_MARGIN = new Insets(5);
 
-    public static void decorate(Stage stage, WindowType type) {
+    /**
+     * Decorates the given stage by adding an icon and
+     * style sheets related to the window type to the stage.
+     *
+     * @param stage to be decorated
+     * @param type  of the window
+     * @see StageType
+     */
+    public static void decorate(Stage stage, StageType type) {
         stage.getScene().getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
         switch (type) {
             case ERROR -> {
@@ -64,6 +72,7 @@ public class UIFactory {
             default -> {
                 stage.getIcons().add(new Image(MetaData.ICON_URL));
                 stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setResizable(false);
             }
         }
     }
@@ -201,6 +210,8 @@ public class UIFactory {
      *
      * @param config     to be filled in
      * @param configPane to be initialized
+     * @param applyBtnDisabledProperty property of whether the current global config is equal to the config in the pane,
+     *                                 usually decides whether the apply button is disabled. Ignored if is null.
      */
     public static void initConfigPane(final AppConfig config, final ConfigPane configPane, final BooleanProperty applyBtnDisabledProperty) {
         configPane.getRowCountInput().setText(config.row_count);
@@ -213,6 +224,9 @@ public class UIFactory {
         configPane.getLuckyOptionCheck().setSelected(config.lucky_option);
         configPane.getExportWritableCheck().setSelected(config.export_writable);
 
+        if (applyBtnDisabledProperty == null) {
+            return;
+        }
         configPane.getRowCountInput().textProperty().addListener((observable, oldValue, newValue) ->
                 applyBtnDisabledProperty.set(ConfigUtils.reloadConfig().row_count.equals(newValue)));
         configPane.getColumnCountInput().textProperty().addListener((observable, oldValue, newValue) ->
@@ -233,9 +247,27 @@ public class UIFactory {
                 applyBtnDisabledProperty.set(newValue == ConfigUtils.reloadConfig().export_writable));
     }
 
-    public enum WindowType {
+    /**
+     * Type of stage decorated.
+     */
+    public enum StageType {
+        /**
+         * Identifies the main window in the application.
+         */
         MAIN,
+        /**
+         * Identifies dialogs in the application.
+         * <p>
+         * Not resizable.
+         * <p>
+         * Always on the top of other windows of this app.
+         */
         DIALOG,
+        /**
+         * Identifies crash reporter windows in the application.
+         * <p>
+         * Icon set to the error icon.
+         */
         ERROR
     }
 }

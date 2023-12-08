@@ -59,7 +59,7 @@ public class CrashReporterWindow extends Stage {
 
         setScene(scene);
         setTitle("出错啦");
-        UIFactory.decorate(this, UIFactory.WindowType.ERROR);
+        UIFactory.decorate(this, UIFactory.StageType.ERROR);
 
         preLabel.setOnMouseClicked(event -> copyText(mainLabel));
 
