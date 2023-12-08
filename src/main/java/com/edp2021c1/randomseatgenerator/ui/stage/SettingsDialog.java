@@ -21,14 +21,13 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.AppConfig;
+import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.CrashReporter;
+import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -37,14 +36,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
+import static com.edp2021c1.randomseatgenerator.util.MetaData.*;
 
 /**
  * Settings dialog of the application.
@@ -67,18 +64,10 @@ public class SettingsDialog extends Stage {
     private final Button applyBtn;
     private final FileChooser fc;
     private final BooleanProperty applyBtnDisabledProperty;
-    private final URI GIT_REPOSITORY_URI;
+
     private File importDir = ConfigUtils.getConfigPath().getParent().toFile();
     private File importFile;
     private AppConfig config;
-
-    {
-        try {
-            GIT_REPOSITORY_URI = new URI(MetaData.GIT_REPOSITORY_URL);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Creates an instance.
@@ -164,19 +153,19 @@ public class SettingsDialog extends Stage {
 
         aboutInfoBoxTitleLabel = createLabel("关于", 1212, 30);
 
-        iconView = createImageView(MetaData.ICON_URL, 275, 275);
+        iconView = createImageView(ICON_URL, 275, 275);
 
         randomSeatGeneratorLabel = createLabel("RandomSeatGenerator", 273, 32);
         randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
 
-        versionLabel = new Label("版本:       " + MetaData.VERSION);
+        versionLabel = new Label("版本:       " + VERSION);
 
-        gitRepositoryUrlLabel = new Label("Git仓库:   " + MetaData.GIT_REPOSITORY_URL);
+        gitRepositoryUrlLabel = new Label("Git仓库:   " + GIT_REPOSITORY_URL);
 
-        licenseLabel = new Label("许可证:    " + MetaData.LICENSE_NAME + String.format("(%s)", MetaData.LICENSE_URL));
+        licenseLabel = new Label("许可证:    " + LICENSE_NAME + String.format("(%s)", LICENSE_URL));
 
         licenseText = createTextArea(null, 937, 282);
-        licenseText.setText(MetaData.LICENSE_INFO);
+        licenseText.setText(LICENSE_INFO);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");
 
@@ -288,10 +277,22 @@ public class SettingsDialog extends Stage {
         });
 
         gitRepositoryUrlLabel.setOnMouseClicked(event -> {
-            try {
-                Desktop.getDesktop().browse(GIT_REPOSITORY_URI);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if (DESKTOP_SUPPORTED) {
+                try {
+                    DESKTOP.browse(GIT_REPOSITORY_URI);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        licenseLabel.setOnMouseClicked(event -> {
+            if (DESKTOP_SUPPORTED) {
+                try {
+                    DESKTOP.browse(LICENSE_URI);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 

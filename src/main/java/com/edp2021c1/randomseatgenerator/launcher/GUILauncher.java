@@ -25,7 +25,7 @@ import com.edp2021c1.randomseatgenerator.util.MetaData;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.util.logging.Logger;
+import static com.edp2021c1.randomseatgenerator.util.MetaData.LOGGER;
 
 /**
  * JavaFX application intro.
@@ -34,7 +34,6 @@ import java.util.logging.Logger;
  * @since 1.2.0
  */
 public class GUILauncher extends Application {
-    private static final Logger LOGGER = Logger.getGlobal();
 
     @Override
     public void start(final Stage primaryStage) {
