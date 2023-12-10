@@ -175,11 +175,10 @@ fun pack() {
         println("Moving package to $packageDir")
         Files.move(packagePath, packageDir.resolve(packagePath.fileName), StandardCopyOption.REPLACE_EXISTING)
 
-        println("Package: $packagePath")
+        println("Package: ${packageDir.resolve(packagePath.fileName)}")
         println("Packing successful")
     } catch (e: Exception) {
         Logger.getGlobal().severe("Packing failed with an exception")
         e.printStackTrace()
-        return
     }
 }
