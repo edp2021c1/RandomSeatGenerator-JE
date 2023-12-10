@@ -75,7 +75,7 @@ public class SeatTableFactory {
         randomRowCount = Math.min(config.getRandomBetweenRows(), rowCount);
 
         // 临时变量，提前声明以减少内存和计算操作
-        int t, u;
+        int t;
         final int seatNum = rowCount * columnCount;
         final int randomPeopleCount = columnCount * randomRowCount;
         final int peopleLeft = peopleNum % randomPeopleCount;
@@ -91,7 +91,6 @@ public class SeatTableFactory {
 
         final int tPeopleNum = peopleNum - minus;
         ArrayList<String> tNameList;
-        List<String> tSubNameList;
         ArrayList<Integer> tLastRowPosChosenList;
         String tGroupLeader;
 
@@ -107,11 +106,11 @@ public class SeatTableFactory {
 
             for (int i = 0; i < forTimes; i++) {
                 if (i == forTimes - 1) {
-                    tSubNameList = tNameList.subList(i * randomPeopleCount, tPeopleNum);
+                    t = tPeopleNum;
                 } else {
-                    tSubNameList = tNameList.subList(i * randomPeopleCount, (i + 1) * randomPeopleCount);
+                    t = (i + 1) * randomPeopleCount;
                 }
-                Collections.shuffle(tSubNameList, rd);
+                Collections.shuffle(tNameList.subList(i * randomPeopleCount, t), rd);
             }
 
             t = tPeopleNum > seatNum ? 0 : tPeopleNum % columnCount;
@@ -123,11 +122,11 @@ public class SeatTableFactory {
                 seatTable.addAll(Arrays.asList(emptyRow));
                 for (int i = seatNum - columnCount; i < tPeopleNum; i++) {
                     do {
-                        u = rd.nextInt(seatNum - columnCount, seatNum);
-                    } while (notAllowedLastRowPos.contains(u - seatNum + columnCount + 1)
-                            || tLastRowPosChosenList.contains(u));
-                    seatTable.set(u, tNameList.get(i));
-                    tLastRowPosChosenList.add(u);
+                        t = rd.nextInt(seatNum - columnCount, seatNum);
+                    } while (notAllowedLastRowPos.contains(t - seatNum + columnCount + 1)
+                            || tLastRowPosChosenList.contains(t));
+                    seatTable.set(t, tNameList.get(i));
+                    tLastRowPosChosenList.add(t);
                 }
             }
         } while (!checkSeatTableFormat(seatTable, config));
