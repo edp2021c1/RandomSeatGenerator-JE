@@ -95,16 +95,10 @@ public class ConsoleLauncher {
         try {
             config = ConfigUtils.fromJson(configPath);
         } catch (IOException e) {
-            LOGGER.warning("Failed to load config from specific file, will use default config.");
-            configPath = ConfigUtils.getConfigPath();
-            config = ConfigUtils.reloadConfig();
+            throw new RuntimeException("Failed to load config from specific file.", e);
         }
-        try {
-            config.checkFormat();
-        } catch (RuntimeException e) {
-            LOGGER.warning("Invalid seat config, will use default value.");
-            config = ConfigUtils.reloadConfig();
-        }
+
+        config.checkFormat();
         LOGGER.info(String.format("Config path: %s", configPath));
 
         // 生成座位表
@@ -118,7 +112,7 @@ public class ConsoleLauncher {
         try {
             SeatTableUtils.exportToExcelDocument(seatTable, outputFile, config.export_writable);
         } catch (IOException e) {
-            LOGGER.severe(String.format("Failed to export seat table to %s.", outputFile.getAbsolutePath()));
+            throw new RuntimeException("Failed to export seat table to %s.", e);
         }
         LOGGER.info(String.format("Seat table successfully exported to %s.", outputFile.getAbsolutePath()));
     }

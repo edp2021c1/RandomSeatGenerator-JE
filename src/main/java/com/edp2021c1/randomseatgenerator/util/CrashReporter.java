@@ -23,7 +23,6 @@ import com.edp2021c1.randomseatgenerator.ui.stage.CrashReporterWindow;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -36,22 +35,24 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     /**
      * Default crash reporter.
      */
-    public static final CrashReporter DEFAULT_CRASH_REPORTER = new CrashReporter(false);
+    public static final CrashReporter CRASH_REPORTER_FULL = new CrashReporter(true, true);
 
     /**
      * Shows error message in a {@code Swing} window rather than an {@code JavaFX} window.
      */
-    public static final CrashReporter SWING_CRASH_REPORTER = new CrashReporter(true);
+    public static final CrashReporter CRASH_REPORTER_LOG_ONLY = new CrashReporter(true, false);
 
-    private final boolean useSwing;
+    private final boolean useLog;
+    private final boolean useFX;
 
     /**
      * Creates an instance.
      *
-     * @param useSwing if the reporter will be shown in a {@code Swing} window.
+     * @param useLog if the error message will be logged.
      */
-    public CrashReporter(final boolean useSwing) {
-        this.useSwing = useSwing;
+    public CrashReporter(final boolean useLog, final boolean useFX) {
+        this.useLog = useLog;
+        this.useFX = useFX;
     }
 
     /**
@@ -73,17 +74,17 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             );
         }
 
-        if (useSwing) {
-            JOptionPane.showMessageDialog(null, str, "出错啦", JOptionPane.ERROR_MESSAGE);
-            return;
+        if (useLog) {
+            MetaData.LOGGER.severe(str);
         }
 
-        try {
-            Application.launch(CrashReporterApp.class, str);
-        } catch (final IllegalStateException exception) {
-            new CrashReporterWindow(str).showAndWait();
+        if (useFX) {
+            try {
+                Application.launch(CrashReporterApp.class, str);
+            } catch (final IllegalStateException exception) {
+                new CrashReporterWindow(str).showAndWait();
+            }
         }
-
     }
 
     private String getDetailMessage(final Thread t, final Throwable e) {

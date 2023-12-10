@@ -51,6 +51,7 @@ public class SeatTableFactory {
             seed += " (integer)";
         } catch (RuntimeException e) {
             longSeed = seed.hashCode();
+            seed += " (string)";
         }
 
         final Random rd = new Random(longSeed);

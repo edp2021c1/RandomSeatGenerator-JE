@@ -248,7 +248,7 @@ public class SettingsDialog extends Stage {
                 config.last_import_dir = importDir.toString();
                 ConfigUtils.saveConfig(config);
             } catch (final Throwable e) {
-                CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
             }
         });
 
@@ -268,7 +268,7 @@ public class SettingsDialog extends Stage {
                 try {
                     config.checkFormat();
                 } catch (final IllegalConfigException e) {
-                    CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+                    CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
                     return;
                 }
                 ConfigUtils.saveConfig(config);
@@ -276,7 +276,7 @@ public class SettingsDialog extends Stage {
                 owner.onConfigChanged();
                 applyBtn.setDisable(true);
             } catch (final Throwable e) {
-                CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
             }
         });
 

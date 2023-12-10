@@ -154,13 +154,13 @@ public class MainWindow extends Stage {
                 try {
                     seatTable = SeatTableFactory.generate(config, seed.get());
                 } catch (final IllegalConfigException e) {
-                    CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+                    CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
                     return;
                 }
                 seatTableView.setSeatTable(seatTable);
                 previousSeed = seed.get();
             } catch (final Throwable e) {
-                CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
             }
         });
         generateBtn.setDefaultButton(true);
@@ -181,7 +181,7 @@ public class MainWindow extends Stage {
                 try {
                     SeatTableUtils.exportToExcelDocument(seatTable, exportFile, ConfigUtils.reloadConfig().export_writable);
                 } catch (final IOException e) {
-                    CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(
+                    CrashReporter.CRASH_REPORTER_FULL.uncaughtException(
                             Thread.currentThread(),
                             new RuntimeException(
                                     String.format("Failed to export seat table to %s.", exportFile.getAbsolutePath()),
@@ -195,7 +195,7 @@ public class MainWindow extends Stage {
                 t.last_export_dir = exportDir.toString();
                 ConfigUtils.saveConfig(t);
             } catch (final Throwable e) {
-                CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
             }
         });
 

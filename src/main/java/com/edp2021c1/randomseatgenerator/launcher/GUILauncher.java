@@ -44,7 +44,7 @@ public class GUILauncher extends Application {
             final Stage stage = new MainWindow();
             stage.show();
         } catch (final Throwable e) {
-            CrashReporter.DEFAULT_CRASH_REPORTER.uncaughtException(Thread.currentThread(), e);
+            CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
         }
     }
 }
