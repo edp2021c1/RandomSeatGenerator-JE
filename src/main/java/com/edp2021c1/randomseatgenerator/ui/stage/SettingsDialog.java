@@ -63,8 +63,6 @@ public class SettingsDialog extends Stage {
     private final Button loadConfigBtn;
     private final Button applyBtn;
     private final FileChooser fc;
-    private final BooleanProperty applyBtnDisabledProperty;
-
     private File importDir = ConfigUtils.getConfigPath().getParent().toFile();
     private File importFile;
     private AppConfig config;
@@ -130,7 +128,7 @@ public class SettingsDialog extends Stage {
 
         applyBtn = createButton("应用", 80, 26);
         applyBtn.setDisable(true);
-        applyBtnDisabledProperty = applyBtn.disableProperty();
+        BooleanProperty applyBtnDisabledProperty = applyBtn.disableProperty();
 
         configPane = new ConfigPane(
                 rowCountInput,
@@ -141,8 +139,14 @@ public class SettingsDialog extends Stage {
                 groupLeaderListInput,
                 separateListInput,
                 luckyOptionCheck,
-                exportWritableCheck
-        );
+                exportWritableCheck,
+                applyBtnDisabledProperty
+        ) {
+            @Override
+            protected AppConfig getConfig() {
+                return ConfigUtils.reloadConfig();
+            }
+        };
 
         loadConfigBtnBox = createHBox(1212, 45, loadConfigBtn);
 
@@ -236,7 +240,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 if (config != null) {
-                    initConfigPane(config, configPane, applyBtnDisabledProperty);
+                    configPane.reset(config);
                 }
 
                 importDir = importFile.getParentFile();
@@ -328,6 +332,6 @@ public class SettingsDialog extends Stage {
             });
         }
 
-        setOnShown(event -> initConfigPane(ConfigUtils.reloadConfig(), configPane, applyBtnDisabledProperty));
+        setOnShown(event -> configPane.reset(ConfigUtils.reloadConfig()));
     }
 }

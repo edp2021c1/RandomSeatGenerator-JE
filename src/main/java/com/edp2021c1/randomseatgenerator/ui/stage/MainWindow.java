@@ -21,7 +21,7 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
-import com.edp2021c1.randomseatgenerator.ui.node.st.SeatTableView;
+import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.*;
 import javafx.beans.property.StringProperty;
