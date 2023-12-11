@@ -87,12 +87,12 @@ public class MetaData {
     /**
      * Current working directory.
      */
-    public static final String WORKING_DIR = System.getProperty("user.dir");
+    public static final String WORKING_DIR;
 
     /**
      * User home.
      */
-    public static final String USER_HOME = System.getProperty("user.home");
+    public static final String USER_HOME;
 
     /**
      * URL of the git repository.
@@ -119,11 +119,12 @@ public class MetaData {
     /**
      * Is desktop supported.
      */
-    public static final boolean DESKTOP_SUPPORTED = Desktop.isDesktopSupported();
+    public static final boolean DESKTOP_SUPPORTED;
+
     /**
      * Desktop toolkit, null if not supported.
      */
-    public static final Desktop DESKTOP = DESKTOP_SUPPORTED ? Desktop.getDesktop() : null;
+    public static final Desktop DESKTOP;
     /**
      * Data directory.
      */
@@ -135,29 +136,43 @@ public class MetaData {
     /**
      * Operating system name.
      */
-    public static final String SYSTEM_NAME = System.getProperty("os.name");
+    public static final String SYSTEM_NAME;
     /**
      * Operating system version.
      */
-    public static final String SYSTEM_VERSION = System.getProperty("os.version");
+    public static final String SYSTEM_VERSION;
     /**
      * Current architecture.
      */
-    public static final String SYSTEM_ARCH = System.getProperty("os.arch");
+    public static final String SYSTEM_ARCH;
     /**
      * Application title.
      */
-    public static final String TITLE = NAME + " - " + VERSION;
+    public static final String TITLE;
     /**
      * Version of the app.
      */
-    public static final String VERSION = VERSION_ID == null ? "dev" : "v" + VERSION_ID;
+    public static final String VERSION;
     /**
      * Version ID.
      */
-    private static final String VERSION_ID = MetaData.class.getPackage().getImplementationVersion();
+    private static final String VERSION_ID;
 
     static {
+        SYSTEM_ARCH = System.getProperty("os.arch");
+        SYSTEM_VERSION = System.getProperty("os.version");
+        SYSTEM_NAME = System.getProperty("os.name");
+
+        USER_HOME = System.getProperty("user.home");
+        WORKING_DIR = System.getProperty("user.dir");
+
+        DESKTOP_SUPPORTED = Desktop.isDesktopSupported();
+        DESKTOP = DESKTOP_SUPPORTED ? Desktop.getDesktop() : null;
+
+        VERSION_ID = MetaData.class.getPackage().getImplementationVersion();
+        VERSION = VERSION_ID == null ? "dev" : "v" + VERSION_ID;
+        TITLE = NAME + " - " + VERSION;
+
         try {
             GIT_REPOSITORY_URI = new URI(GIT_REPOSITORY_URL);
             LICENSE_URI = new URI(LICENSE_URL);
