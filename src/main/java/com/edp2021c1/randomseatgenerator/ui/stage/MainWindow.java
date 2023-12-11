@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
+import static com.edp2021c1.randomseatgenerator.util.LoggingUtils.LOG;
 
 /**
  * Main window of the application.
@@ -120,7 +121,7 @@ public class MainWindow extends Stage {
         setGrows(Priority.ALWAYS, seatTableView, rightBox);
 
         setScene(scene);
-        setTitle("Random Seat Generator - 随机座位生成器");
+        setTitle(MetaData.TITLE);
         UIFactory.decorate(this, StageType.MAIN);
         setOnCloseRequest(event -> System.exit(0));
 
@@ -157,6 +158,7 @@ public class MainWindow extends Stage {
                     CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
                     return;
                 }
+                LOG.info("\n" + seatTable);
                 seatTableView.setSeatTable(seatTable);
                 previousSeed = seed.get();
             } catch (final Throwable e) {
@@ -189,6 +191,8 @@ public class MainWindow extends Stage {
                             )
                     );
                 }
+
+                LOG.info("Successfully exported seat table to " + exportFile);
 
                 exportDir = exportFile.getParentFile();
                 t = new AppConfig();
@@ -242,6 +246,7 @@ public class MainWindow extends Stage {
     public void onConfigChanged() {
         seatTableView.setEmptySeatTable(ConfigUtils.reloadConfig());
         previousSeed = "";
+        LOG.info("Seat table view reset");
     }
 
 }

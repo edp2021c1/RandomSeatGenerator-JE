@@ -24,6 +24,8 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Reports runtime exceptions.
@@ -49,6 +51,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      * Creates an instance.
      *
      * @param useLog if the error message will be logged.
+     * @param useFX  if the error message will be shown in a JavaFX stage.
      */
     public CrashReporter(final boolean useLog, final boolean useFX) {
         this.useLog = useLog;
@@ -75,7 +78,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
         }
 
         if (useLog) {
-            MetaData.LOGGER.severe(str);
+            LoggingUtils.LOG.severe(str);
         }
 
         if (useFX) {
@@ -91,7 +94,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
         final String message = e.getMessage();
         final StringBuilder str = new StringBuilder();
 
-        str.append(String.format("Exception in thread \"%s\":", t.getName()));
+        str.append(String.format("Exception in thread \"%s\":\n", t.getName()));
 
         if (message != null) {
             str.append(" ");
@@ -99,10 +102,11 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
         }
 
         if (!(e instanceof IllegalConfigException)) {
-            final StackTraceElement[] stackTraceElements = e.getStackTrace();
-            for (final StackTraceElement s : stackTraceElements) {
-                str.append(String.format("\n        at: %s", s.toString()));
+            StringWriter writer = new StringWriter(1024);
+            try (PrintWriter printWriter = new PrintWriter(writer)) {
+                e.printStackTrace(printWriter);
             }
+            str.append(writer);
         }
         return str.toString();
     }

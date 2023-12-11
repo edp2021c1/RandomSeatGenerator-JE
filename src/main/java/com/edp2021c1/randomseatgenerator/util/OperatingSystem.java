@@ -18,6 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import static com.edp2021c1.randomseatgenerator.util.MetaData.SYSTEM_NAME;
+
 /**
  * Enum of the operating system.
  *
@@ -45,26 +47,25 @@ public enum OperatingSystem {
     /**
      * Current operating system.
      */
-    public static final OperatingSystem CURRENT = getOsByName(System.getProperty("os.name"));
+    public static final OperatingSystem CURRENT;
 
-    private static OperatingSystem getOsByName(String osName) {
-        if (osName == null) {
-            return UNKNOWN;
+    static {
+        OperatingSystem result = UNKNOWN;
+        if (SYSTEM_NAME != null) {
+            String osName = SYSTEM_NAME.toLowerCase();
+            if (osName.startsWith("windows")) {
+                result = WINDOWS;
+            } else if (osName.startsWith("mac")) {
+                result = MAC;
+            } else if (osName.contains("solaris")
+                    || osName.contains("linux")
+                    || osName.contains("unix")
+                    || osName.contains("sunos")) {
+                result = LINUX;
+            }
         }
 
-        osName = osName.toLowerCase();
-        if (osName.startsWith("windows")) {
-            return WINDOWS;
-        } else if (osName.startsWith("mac")) {
-            return MAC;
-        } else if (osName.contains("solaris")
-                || osName.contains("linux")
-                || osName.contains("unix")
-                || osName.contains("sunos")) {
-            return LINUX;
-        } else {
-            return UNKNOWN;
-        }
+        CURRENT = result;
     }
 
 }

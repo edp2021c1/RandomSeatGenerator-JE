@@ -87,7 +87,7 @@ public class SeatTable {
         str.append("Seat Table:\n");
         for (int i = 0; i < seatTable.size(); i++) {
             str.append(seatTable.get(i));
-            str.append("\t");
+            str.append("\t\t");
             if (i % columnCount == columnCount - 1) {
                 str.append("\n");
             }

@@ -22,7 +22,6 @@ import java.awt.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.logging.Logger;
 
 /**
  * Saves data of the application.
@@ -88,12 +87,12 @@ public class MetaData {
     /**
      * Current working directory.
      */
-    public static final String WORKING_DIR = Paths.get("").toAbsolutePath().toString();
+    public static final String WORKING_DIR = System.getProperty("user.dir");
 
     /**
      * User home.
      */
-    public static final String USER_HOME = Paths.get(System.getProperty("user.home")).toString();
+    public static final String USER_HOME = System.getProperty("user.home");
 
     /**
      * URL of the git repository.
@@ -126,14 +125,37 @@ public class MetaData {
      */
     public static final Desktop DESKTOP = DESKTOP_SUPPORTED ? Desktop.getDesktop() : null;
     /**
-     * Global logger.
+     * Data directory.
      */
-    public static final Logger LOGGER = Logger.getGlobal();
-    private static final String VERSION_ID = MetaData.class.getPackage().getImplementationVersion();
+    public static final String DATA_DIR;
+    /**
+     * Application name.
+     */
+    public static final String NAME = "Random Seat Generator";
+    /**
+     * Operating system name.
+     */
+    public static final String SYSTEM_NAME = System.getProperty("os.name");
+    /**
+     * Operating system version.
+     */
+    public static final String SYSTEM_VERSION = System.getProperty("os.version");
+    /**
+     * Current architecture.
+     */
+    public static final String SYSTEM_ARCH = System.getProperty("os.arch");
+    /**
+     * Application title.
+     */
+    public static final String TITLE = NAME + " - " + VERSION;
     /**
      * Version of the app.
      */
     public static final String VERSION = VERSION_ID == null ? "dev" : "v" + VERSION_ID;
+    /**
+     * Version ID.
+     */
+    private static final String VERSION_ID = MetaData.class.getPackage().getImplementationVersion();
 
     static {
         try {
@@ -141,6 +163,23 @@ public class MetaData {
             LICENSE_URI = new URI(LICENSE_URL);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
+        }
+
+
+        if (OperatingSystem.CURRENT == OperatingSystem.WINDOWS) {
+            DATA_DIR = Paths.get(
+                    USER_HOME,
+                    "AppData",
+                    "Local",
+                    "RandomSeatGenerator").toString();
+        } else if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
+            DATA_DIR = Paths.get(
+                    USER_HOME,
+                    "Library",
+                    "Application Support",
+                    "RandomSeatGenerator").toString();
+        } else {
+            DATA_DIR = Paths.get(WORKING_DIR, ".rdstgnrt").toString();
         }
     }
 }

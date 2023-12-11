@@ -25,7 +25,7 @@ import com.edp2021c1.randomseatgenerator.util.MetaData;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import static com.edp2021c1.randomseatgenerator.util.MetaData.LOGGER;
+import static com.edp2021c1.randomseatgenerator.util.LoggingUtils.LOG;
 
 /**
  * JavaFX application intro.
@@ -38,8 +38,15 @@ public class GUILauncher extends Application {
     @Override
     public void start(final Stage primaryStage) {
         try {
-            LOGGER.info("Working dir: " + MetaData.WORKING_DIR);
-            LOGGER.info("Config path: " + ConfigUtils.getConfigPath());
+            LOG.info("*** " + MetaData.TITLE + " ***");
+            LOG.info("OS: " + MetaData.SYSTEM_NAME + " " + MetaData.SYSTEM_VERSION);
+            LOG.info("Architecture: " + MetaData.SYSTEM_ARCH);
+            LOG.info("Java Version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
+            LOG.info("Java VM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
+            LOG.info("Java Home: " + System.getProperty("java.home"));
+            LOG.info("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
+            LOG.info("Working dir: " + MetaData.WORKING_DIR);
+            LOG.info("Config path: " + ConfigUtils.getConfigPath());
 
             final Stage stage = new MainWindow();
             stage.show();

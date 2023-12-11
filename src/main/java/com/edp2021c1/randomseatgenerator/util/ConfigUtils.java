@@ -28,10 +28,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
-import java.time.Instant;
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.util.MetaData.LOGGER;
+import static com.edp2021c1.randomseatgenerator.util.LoggingUtils.LOG;
 
 /**
  * Contains several methods related to {@link AppConfig}.
@@ -41,26 +40,13 @@ import static com.edp2021c1.randomseatgenerator.util.MetaData.LOGGER;
  */
 public class ConfigUtils {
     private static final Path CONFIG_PATH;
-    private static FileTime configLastModifiedTime = null;
-    private static AppConfig current;
+    private static final Gson GSON = new Gson();
+    private final static AppConfig current = new AppConfig();
     private static final AppConfig DEFAULT_CONFIG = loadDefaultConfig();
+    private static FileTime configLastModifiedTime = null;
 
     static {
-        final Path configDir;
-
-        if (OperatingSystem.CURRENT == OperatingSystem.WINDOWS) {
-            configDir = Paths.get(
-                    Paths.get(System.getenv("APPDATA")).getParent().toString(),
-                    "Local",
-                    "RandomSeatGenerator");
-        } else if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
-            configDir = Paths.get(
-                    System.getProperty("user.home"),
-                    "Library/Application Support",
-                    "RandomSeatGenerator");
-        } else {
-            configDir = Paths.get(MetaData.WORKING_DIR, ".rdstgnrt");
-        }
+        final Path configDir = Paths.get(MetaData.DATA_DIR, "config");
 
         if (Files.notExists(configDir)) {
             try {
@@ -78,10 +64,11 @@ public class ConfigUtils {
             }
         }
 
-        CONFIG_PATH = Paths.get(configDir.toString(), "randomseatgenerator.json");
+        CONFIG_PATH = configDir.resolve("randomseatgenerator.json");
         if (Files.notExists(CONFIG_PATH)) {
             try {
                 Files.createFile(CONFIG_PATH);
+                saveConfig(DEFAULT_CONFIG);
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
@@ -90,6 +77,7 @@ public class ConfigUtils {
             try {
                 Files.delete(CONFIG_PATH);
                 Files.createFile(CONFIG_PATH);
+                saveConfig(DEFAULT_CONFIG);
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
@@ -104,20 +92,11 @@ public class ConfigUtils {
      * @throws IOException if for some reason the path cannot be opened for reading.
      */
     public static AppConfig fromJson(final Path path) throws IOException {
-        return new Gson().fromJson(Files.readString(path), AppConfig.class);
-    }
-
-    /**
-     * Translates an instance of {@link AppConfig} into {@code Json}.
-     *
-     * @param config to translate into Json.
-     * @return a {@code Json} representation of the object.
-     */
-    public static String parseJson(final AppConfig config) {
-        return new Gson().toJson(config);
+        return GSON.fromJson(Files.readString(path), AppConfig.class);
     }
 
     private static AppConfig loadDefaultConfig() {
+        AppConfig config;
         try {
             final BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
@@ -130,15 +109,11 @@ public class ConfigUtils {
                 buffer.append(str);
             }
             str = buffer.toString();
-            if (current == null) {
-                current = new Gson().fromJson(str, AppConfig.class);
-            } else {
-                current.set(new Gson().fromJson(str, AppConfig.class));
-            }
+            config = GSON.fromJson(str, AppConfig.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return current;
+        return config;
     }
 
     /**
@@ -150,9 +125,9 @@ public class ConfigUtils {
         current.set(config);
         try {
             final FileWriter writer = new FileWriter(CONFIG_PATH.toFile());
-            writer.write(parseJson(current));
+            writer.write(GSON.toJson(ConfigUtils.current));
             writer.close();
-            Files.setLastModifiedTime(CONFIG_PATH, (configLastModifiedTime = FileTime.from(Instant.now())));
+            configLastModifiedTime = Files.getLastModifiedTime(CONFIG_PATH);
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
@@ -171,7 +146,7 @@ public class ConfigUtils {
             }
             AppConfig config;
             if (Files.notExists(CONFIG_PATH)) {
-                LOGGER.warning("seat_config.json not found, will use default value.");
+                LOG.warning("seat_config.json not found, will use default value.");
                 Files.createFile(CONFIG_PATH);
                 saveConfig(DEFAULT_CONFIG);
             }
@@ -179,9 +154,9 @@ public class ConfigUtils {
             try {
                 config.checkFormat();
             } catch (final RuntimeException e) {
-                LOGGER.warning("Invalid seat_config.json, will use default value.");
+                LOG.warning("Invalid seat_config.json, will use default value.");
                 saveConfig(DEFAULT_CONFIG);
-                config = DEFAULT_CONFIG;
+                current.set(config = DEFAULT_CONFIG);
             }
             return config;
         } catch (final IOException e) {

@@ -35,8 +35,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import static com.edp2021c1.randomseatgenerator.util.MetaData.LOGGER;
-
 /**
  * Launches the application in console mode.
  *
@@ -77,14 +75,14 @@ public class ConsoleLauncher {
         if ((i = arguments.lastIndexOf("--output-path")) != -1 && i < arguments.size() - 1) {
             final Path tmp = Paths.get(arguments.get(i + 1));
             if (Files.isDirectory(tmp)) {
-                outputPath = Paths.get(tmp.toString(), outputPath.toString()).toAbsolutePath();
+                outputPath = tmp.resolve(outputPath).toAbsolutePath();
             } else {
                 outputPath = tmp.toAbsolutePath();
                 if (!outputPath.endsWith(".xlsx")) {
-                    LOGGER.warning(String.format(
-                            "Invalid output file name: %s, will add \".xlsx\" to the end of it.",
+                    System.err.printf(
+                            "Invalid output file name: %s, will add \".xlsx\" to the end of it.%n",
                             outputPath.getFileName()
-                    ));
+                    );
                     outputPath = Paths.get(outputPath + ".xlsx");
                 }
             }
@@ -99,21 +97,21 @@ public class ConsoleLauncher {
         }
 
         config.checkFormat();
-        LOGGER.info(String.format("Config path: %s", configPath));
+        System.out.printf("Config path: %s%n", configPath);
 
         // 生成座位表
         final SeatTable seatTable = SeatTableFactory.generate(config, seed);
 
-        LOGGER.info("\n" + seatTable);
+        System.out.println("\n" + seatTable);
 
         // 导出
         final File outputFile = outputPath.toFile();
-        LOGGER.info(String.format("Output path: %s", outputFile.getAbsolutePath()));
+        System.out.printf("Output path: %s%n", outputFile.getAbsolutePath());
         try {
             SeatTableUtils.exportToExcelDocument(seatTable, outputFile, config.export_writable);
         } catch (IOException e) {
             throw new RuntimeException("Failed to export seat table to %s.", e);
         }
-        LOGGER.info(String.format("Seat table successfully exported to %s.", outputFile.getAbsolutePath()));
+        System.out.printf("Seat table successfully exported to %s.%n", outputFile.getAbsolutePath());
     }
 }
