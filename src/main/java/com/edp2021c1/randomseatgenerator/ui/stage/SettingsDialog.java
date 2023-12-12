@@ -145,13 +145,16 @@ public class SettingsDialog extends Stage {
             }
         };
 
-        loadConfigBtnBox = createHBox(1212, 45, loadConfigBtn);
+        loadConfigBtnBox = new HBox(loadConfigBtn);
+        loadConfigBtnBox.setPrefHeight(45);
+        loadConfigBtnBox.setAlignment(Pos.CENTER);
 
         appConfigBox = new VBox(configPane, loadConfigBtnBox);
 
         iconView = createImageView(ICON_URL, 275, 275);
 
-        randomSeatGeneratorLabel = createLabel("RandomSeatGenerator", 273, 32);
+        randomSeatGeneratorLabel = new Label(NAME);
+        randomSeatGeneratorLabel.setPrefHeight(32);
         randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
 
         versionLabel = new Label("版本:       " + VERSION);
@@ -160,15 +163,15 @@ public class SettingsDialog extends Stage {
 
         licenseLabel = new Label("许可证:    " + LICENSE_NAME + String.format("(%s)", LICENSE_URL));
 
-        licenseText = createTextArea(null, 937, 282);
+        licenseText = createTextArea(null, 960, 288);
         licenseText.setText(LICENSE_INFO);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");
 
-        bottomRightBox = createVBox(958, 287, randomSeatGeneratorLabel, versionLabel, gitRepositoryUrlLabel, licenseLabel, licenseText);
+        bottomRightBox = new VBox(randomSeatGeneratorLabel, versionLabel, gitRepositoryUrlLabel, licenseLabel, licenseText);
         bottomRightBox.setAlignment(Pos.CENTER_LEFT);
 
-        aboutInfoBox = createHBox(1212, 408, iconView, bottomRightBox);
+        aboutInfoBox = new HBox(iconView, bottomRightBox);
 
         confirmBtn = createButton("确定", 80, 26);
 
