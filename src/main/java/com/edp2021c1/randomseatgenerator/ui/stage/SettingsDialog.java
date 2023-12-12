@@ -80,13 +80,12 @@ public class SettingsDialog extends Stage {
 
         final Scene scene;
         final VBox mainBox;
-        final VBox topBox;
-        final Label seatConfigBoxTitleLabel;
+        final TabPane topPane;
+        final Tab appConfigTab;
+        final VBox appConfigBox;
         final HBox loadConfigBtnBox;
-        final Separator separator;
-        final VBox bottomBox;
-        final Label aboutInfoBoxTitleLabel;
-        final HBox moreBottomBox;
+        final Tab aboutInfoTab;
+        final HBox aboutInfoBox;
         final ImageView iconView;
         final VBox bottomRightBox;
         final Label randomSeatGeneratorLabel;
@@ -103,8 +102,6 @@ public class SettingsDialog extends Stage {
          * Init Controls                                                           *
          *                                                                         *
          **************************************************************************/
-
-        seatConfigBoxTitleLabel = createLabel("生成和导出", 1212, 30);
 
         rowCountInput = createTextField("行数");
 
@@ -150,12 +147,7 @@ public class SettingsDialog extends Stage {
 
         loadConfigBtnBox = createHBox(1212, 45, loadConfigBtn);
 
-        topBox = new VBox(seatConfigBoxTitleLabel, configPane, loadConfigBtnBox);
-        topBox.getStyleClass().add("top");
-
-        separator = new Separator();
-
-        aboutInfoBoxTitleLabel = createLabel("关于", 1212, 30);
+        appConfigBox = new VBox(configPane, loadConfigBtnBox);
 
         iconView = createImageView(ICON_URL, 275, 275);
 
@@ -176,9 +168,7 @@ public class SettingsDialog extends Stage {
         bottomRightBox = createVBox(958, 287, randomSeatGeneratorLabel, versionLabel, gitRepositoryUrlLabel, licenseLabel, licenseText);
         bottomRightBox.setAlignment(Pos.CENTER_LEFT);
 
-        moreBottomBox = createHBox(1212, 408, iconView, bottomRightBox);
-
-        bottomBox = new VBox(aboutInfoBoxTitleLabel, moreBottomBox);
+        aboutInfoBox = createHBox(1212, 408, iconView, bottomRightBox);
 
         confirmBtn = createButton("确定", 80, 26);
 
@@ -189,7 +179,15 @@ public class SettingsDialog extends Stage {
         confirm_apply_cancelBar.setPrefHeight(66);
         confirm_apply_cancelBar.getStyleClass().add("bottom");
 
-        mainBox = new VBox(topBox, separator, bottomBox, confirm_apply_cancelBar);
+        appConfigTab = new Tab("生成和导出", appConfigBox);
+        appConfigTab.setClosable(false);
+
+        aboutInfoTab = new Tab("关于", aboutInfoBox);
+        aboutInfoTab.setClosable(false);
+
+        topPane = new TabPane(appConfigTab, aboutInfoTab);
+
+        mainBox = new VBox(topPane, confirm_apply_cancelBar);
         mainBox.getStyleClass().add("main");
 
         scene = new Scene(mainBox);

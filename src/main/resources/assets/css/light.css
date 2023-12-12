@@ -16,82 +16,129 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+* {
+    -highlight-fill: #2571d5;
+
+    -text-fill-root: black;
+    -text-fill-button-disabled: #9b9b9b;
+    -text-fill-button-default: white;
+    -text-fill-err: #e74f4f;
+
+    -background-color-root: #f2f2f2;
+    -background-color-button-default: #398bfa;
+    -background-color-button-default-hover: #589eff;
+    -background-color-seat-table-cell: white;
+    -background-color-seat-table-cell-leader: #fff9ab;
+
+    -border-color-root: #7c7c7c;
+    -border-color-button-disabled: #9b9b9b;
+    -border-color-focused: black;
+    -border-color-checkbox-box: black;
+    -border-color-button-default: #398bfa;
+    -border-color-button-default-hover: #589eff;
+    -border-color-seat-table-cell: #eeeeee;
+    -border-color-err: #e74f4f;
+}
+
+.root {
+    -fx-text-fill: -text-fill-root;
+
+    -fx-background-color: -background-color-root;
+}
+
 .label {
-    -fx-text-fill: inherit;
+    -fx-text-fill: -text-fill-root;
 }
 
 .button,
 .text-field,
 .text-area {
-    -fx-text-fill: inherit;
+    -fx-text-fill: -text-fill-root;
 
-    -fx-background-color: inherit;
+    -fx-background-color: -background-color-root;
 
-    -fx-border-color: #7c7c7c;
+    -fx-border-color: -border-color-root;
 }
 
 .button:disabled {
-    -fx-text-fill: #9b9b9b;
+    -fx-text-fill: -text-fill-button-disabled;
 
-    -fx-border-color: #9b9b9b;
+    -fx-border-color: -border-color-button-disabled;
 }
 
 .text-field,
 .text-area {
-    -fx-highlight-fill: #2571d5;
+    -fx-highlight-fill: -highlight-fill;
 }
 
 .button:hover,
 .text-field:focused,
 .text-area:focused {
-    -fx-border-color: black;
+    -fx-border-color: -border-color-focused;
 }
 
 .button:default {
-    -fx-text-fill: white;
+    -fx-text-fill: -text-fill-button-default;
 
-    -fx-background-color: #398bfa;
+    -fx-background-color: -background-color-button-default;
 
-    -fx-border-color: #398bfa;
+    -fx-border-color: -border-color-button-default;
 }
 
 .button:default:hover {
-    -fx-background-color: #589eff;
+    -fx-background-color: -background-color-button-default-hover;
 
-    -fx-border-color: #589eff;
+    -fx-border-color: -border-color-button-default-hover;
 }
 
 .text-area .content {
-    -fx-background-color: inherit;
+    -fx-background-color: -background-color-root;
 }
 
 .check-box {
-    -fx-text-fill: black;
+    -fx-text-fill: -text-fill-root;
 }
 
 .check-box .box {
-    -fx-background-color: inherit;
+    -fx-background-color: -background-color-root;
 
-    -fx-border-color: black;
+    -fx-border-color: -border-color-checkbox-box;
+}
+
+.tab-header-area .tab-header-background {
+    -fx-background-color: -background-color-root;
+}
+
+.tab-pane > .tab-content-area {
+    -fx-border-color: -border-color-root;
+}
+
+.tab {
+    -fx-border-color: -border-color-root;
+
+    -fx-background-color: -background-color-root;
+}
+
+.tab:selected {
+    -fx-border-color: -border-color-focused;
 }
 
 .seat-table-cell {
-    -fx-background-color: white;
-    -fx-background-radius: 5;
+    -fx-background-color: -background-color-seat-table-cell;
 
-    -fx-border-color: #eeeeee;
+    -fx-border-color: -border-color-seat-table-cell;
 }
 
 .seat-table-cell:leader {
-    -fx-background-color: #fff9ab;
+    -fx-background-color: -background-color-seat-table-cell-leader;
 }
 
 .err-pre-label {
-    -fx-text-fill: #e74f4f;
+    -fx-text-fill: -text-fill-err;
 }
 
 .err-scroll-pane {
-    -fx-background-color: inherit;
+    -fx-background-color: -background-color-root;
 
-    -fx-border-color: #e74f4f;
+    -fx-border-color: -border-color-err;
 }
