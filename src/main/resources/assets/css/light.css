@@ -119,7 +119,8 @@
     -fx-background-color: -background-color-root;
 }
 
-.tab:selected {
+.tab:selected,
+.tab:hover {
     -fx-border-color: -border-color-focused;
 }
 
