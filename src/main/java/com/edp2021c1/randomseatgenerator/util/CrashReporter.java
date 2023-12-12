@@ -78,7 +78,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
         }
 
         if (useLog) {
-            LoggingUtils.LOG.severe(str);
+            Logging.LOG.severe(str);
         }
 
         if (useFX) {

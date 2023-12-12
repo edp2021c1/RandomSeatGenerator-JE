@@ -30,7 +30,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.util.LoggingUtils.LOG;
+import static com.edp2021c1.randomseatgenerator.util.Logging.LOG;
 
 /**
  * Contains several methods related to {@link AppConfig}.

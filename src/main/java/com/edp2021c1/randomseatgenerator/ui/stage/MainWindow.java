@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
-import static com.edp2021c1.randomseatgenerator.util.LoggingUtils.LOG;
+import static com.edp2021c1.randomseatgenerator.util.Logging.LOG;
 
 /**
  * Main window of the application.

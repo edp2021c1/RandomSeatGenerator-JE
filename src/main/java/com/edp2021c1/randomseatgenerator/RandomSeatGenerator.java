@@ -21,7 +21,7 @@ package com.edp2021c1.randomseatgenerator;
 import com.edp2021c1.randomseatgenerator.launcher.ConsoleLauncher;
 import com.edp2021c1.randomseatgenerator.launcher.GUILauncher;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.LoggingUtils;
+import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import javafx.application.Application;
@@ -41,7 +41,7 @@ public class RandomSeatGenerator {
     public static void main(final String[] args) {
         Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.CRASH_REPORTER_LOG_ONLY);
 
-        LoggingUtils.start();
+        Logging.start();
 
         final List<String> arguments = Arrays.asList(args);
         // 如果有“--help”参数则打印帮助信息然后退出

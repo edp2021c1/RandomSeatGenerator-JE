@@ -30,15 +30,27 @@ import java.util.logging.*;
 /**
  * Logging related util.
  */
-public class LoggingUtils {
+public class Logging {
     /**
      * Logger.
      */
     public static final Logger LOG = Logger.getLogger("RandomSeat");
     private static final Path LOG_DIR = Paths.get(MetaData.DATA_DIR, "logs");
     private static final Path LATEST_LOG_PATH = LOG_DIR.resolve("latest.log");
+    private static final Path CURRENT_LOG_PATH;
     private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}.{2}/{3}] {4}\n");
     private static boolean started = false;
+
+    static {
+        String str = String.format("%tF", new Date());
+        int t = 1;
+        String tmp = "-" + t;
+        while (Files.exists(LOG_DIR.resolve(str + tmp + ".log"))) {
+            t++;
+            tmp = "-" + t;
+        }
+        CURRENT_LOG_PATH = LOG_DIR.resolve(str + tmp + ".log");
+    }
 
     /**
      * Starts logging.
@@ -109,15 +121,7 @@ public class LoggingUtils {
             latestLogHandler.setEncoding("UTF-8");
             handlers.add(latestLogHandler);
 
-            String string = String.format("%tF", new Date());
-            int t = 1;
-            String tmp = "-" + t;
-            while (Files.exists(LOG_DIR.resolve(string + tmp + ".log"))) {
-                t++;
-                tmp = "-" + t;
-            }
-
-            FileHandler currentLogHandler = new FileHandler(LOG_DIR.resolve(string + tmp + ".log").toString());
+            FileHandler currentLogHandler = new FileHandler(CURRENT_LOG_PATH.toString());
             currentLogHandler.setLevel(Level.FINEST);
             currentLogHandler.setFormatter(formatter);
             currentLogHandler.setEncoding("UTF-8");
