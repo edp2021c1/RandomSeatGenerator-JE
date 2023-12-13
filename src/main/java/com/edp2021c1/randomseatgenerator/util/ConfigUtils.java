@@ -146,8 +146,7 @@ public class ConfigUtils {
 
     private static void refreshConfig() {
         try {
-            FileTime t = Files.getLastModifiedTime(CONFIG_PATH);
-            if (Objects.equals(t, configLastModifiedTime)) {
+            if (Objects.equals(Files.getLastModifiedTime(CONFIG_PATH), configLastModifiedTime)) {
                 return;
             }
             if (Files.notExists(CONFIG_PATH)) {
