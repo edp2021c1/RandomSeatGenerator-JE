@@ -73,7 +73,7 @@ public class SettingsDialog extends Stage {
      * @param owner of the dialog.
      */
     public SettingsDialog(MainWindow owner) {
-        String s = ConfigUtils.reloadConfig().last_import_dir;
+        String s = ConfigUtils.getConfig().last_import_dir;
         if (s != null) {
             importDir = new File(s);
         }
@@ -141,7 +141,7 @@ public class SettingsDialog extends Stage {
         ) {
             @Override
             protected AppConfig getConfig() {
-                return ConfigUtils.reloadConfig();
+                return ConfigUtils.getConfig();
             }
         };
 
@@ -333,6 +333,6 @@ public class SettingsDialog extends Stage {
             });
         }
 
-        setOnShown(event -> configPane.reset(ConfigUtils.reloadConfig()));
+        setOnShown(event -> configPane.reset(ConfigUtils.getConfig()));
     }
 }

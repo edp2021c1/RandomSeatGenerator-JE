@@ -66,7 +66,7 @@ public class MainWindow extends Stage {
     private final SettingsDialog settingsDialog = new SettingsDialog(this);
     private File exportFile;
     private SeatTable seatTable = null;
-    private AppConfig config = ConfigUtils.reloadConfig();
+    private AppConfig config = ConfigUtils.getConfig();
     private AppConfig t;
     private String previousSeed = "";
     private File exportDir = Paths.get(MetaData.USER_HOME).toFile();
@@ -146,7 +146,7 @@ public class MainWindow extends Stage {
 
         generateBtn.setOnAction(event -> {
             try {
-                config = ConfigUtils.reloadConfig();
+                config = ConfigUtils.getConfig();
                 seatTableView.setEmptySeatTable(config);
                 if (previousSeed.equals(seed.get())) {
                     randomSeedBtn.fire();
@@ -181,7 +181,7 @@ public class MainWindow extends Stage {
                     return;
                 }
                 try {
-                    SeatTableUtils.exportToExcelDocument(seatTable, exportFile, ConfigUtils.reloadConfig().export_writable);
+                    SeatTableUtils.exportToExcelDocument(seatTable, exportFile, ConfigUtils.getConfig().export_writable);
                 } catch (final IOException e) {
                     CrashReporter.CRASH_REPORTER_FULL.uncaughtException(
                             Thread.currentThread(),
@@ -244,7 +244,7 @@ public class MainWindow extends Stage {
      * Action to do if config is changed.
      */
     public void onConfigChanged() {
-        seatTableView.setEmptySeatTable(ConfigUtils.reloadConfig());
+        seatTableView.setEmptySeatTable(ConfigUtils.getConfig());
         previousSeed = "";
         LOG.info("Seat table view reset");
     }

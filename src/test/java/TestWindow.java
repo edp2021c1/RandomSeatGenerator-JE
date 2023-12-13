@@ -6,6 +6,6 @@ import javafx.stage.Stage;
 
 public class TestWindow extends Stage {
     public TestWindow() {
-        setScene(new Scene(new SeatTableView(SeatTableFactory.generate(ConfigUtils.reloadConfig(), ""))));
+        setScene(new Scene(new SeatTableView(SeatTableFactory.generate(ConfigUtils.getConfig(), ""))));
     }
 }

@@ -139,26 +139,30 @@ public class ConfigUtils {
      *
      * @return default seat config loaded from file.
      */
-    public static AppConfig reloadConfig() {
+    public static AppConfig getConfig() {
+        refreshConfig();
+        return current;
+    }
+
+    private static void refreshConfig() {
         try {
-            if (Files.getLastModifiedTime(CONFIG_PATH).equals(configLastModifiedTime)) {
-                return current;
+            FileTime t = Files.getLastModifiedTime(CONFIG_PATH);
+            if (Objects.equals(t, configLastModifiedTime)) {
+                return;
             }
-            AppConfig config;
             if (Files.notExists(CONFIG_PATH)) {
                 LOG.warning("seat_config.json not found, will use default value.");
                 Files.createFile(CONFIG_PATH);
                 saveConfig(DEFAULT_CONFIG);
             }
-            config = ConfigUtils.fromJson(CONFIG_PATH);
+            current.set(ConfigUtils.fromJson(CONFIG_PATH));
             try {
-                config.checkFormat();
+                current.checkFormat();
             } catch (final RuntimeException e) {
                 LOG.warning("Invalid seat_config.json, will use default value.");
                 saveConfig(DEFAULT_CONFIG);
-                current.set(config = DEFAULT_CONFIG);
+                current.set(DEFAULT_CONFIG);
             }
-            return config;
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
