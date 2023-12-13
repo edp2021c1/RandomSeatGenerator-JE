@@ -41,7 +41,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 
 import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
 import static com.edp2021c1.randomseatgenerator.util.Logging.LOG;
@@ -205,7 +204,7 @@ public class MainWindow extends Stage {
 
         seedInput.setOnAction(event -> generateBtn.fire());
 
-        randomSeedBtn.setOnAction(event -> seedInput.setText(UUID.randomUUID().toString().replaceAll("-", "")));
+        randomSeedBtn.setOnAction(event -> seedInput.setText(StringUtils.randomString(30)));
 
         dateAsSeedBtn.setOnAction(event -> seed.set(dateFormat.format(new Date())));
 

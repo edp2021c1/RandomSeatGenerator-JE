@@ -24,8 +24,6 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.awt.*;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 /**
  * Reports runtime exceptions.
@@ -69,7 +67,8 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(final Thread t, final Throwable e) {
-        final String str = getDetailMessage(t, e);
+        final String str = String.format("Exception in thread \"%s\":\n", t.getName()) +
+                (e instanceof IllegalConfigException ? e.getMessage() : StringUtils.getStackTrace(e));
 
         if (OperatingSystem.CURRENT == OperatingSystem.MAC && Taskbar.getTaskbar().getIconImage() == null) {
             Taskbar.getTaskbar().setIconImage(
@@ -88,27 +87,6 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
                 new CrashReporterWindow(str).showAndWait();
             }
         }
-    }
-
-    private String getDetailMessage(final Thread t, final Throwable e) {
-        final String message = e.getMessage();
-        final StringBuilder str = new StringBuilder();
-
-        str.append(String.format("Exception in thread \"%s\":\n", t.getName()));
-
-        if (message != null) {
-            str.append(" ");
-            str.append(message);
-        }
-
-        if (!(e instanceof IllegalConfigException)) {
-            StringWriter writer = new StringWriter(1024);
-            try (PrintWriter printWriter = new PrintWriter(writer)) {
-                e.printStackTrace(printWriter);
-            }
-            str.append(writer);
-        }
-        return str.toString();
     }
 
     /**

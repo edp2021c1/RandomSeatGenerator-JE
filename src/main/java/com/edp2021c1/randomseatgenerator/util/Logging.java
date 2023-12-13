@@ -29,6 +29,9 @@ import java.util.logging.*;
 
 /**
  * Logging related util.
+ *
+ * @author Calboot
+ * @since 1.4.4
  */
 public class Logging {
     /**

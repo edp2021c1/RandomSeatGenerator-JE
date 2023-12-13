@@ -33,7 +33,7 @@ javafx {
 }
 
 group = "com.edp2021c1"
-version = "1.4.3"
+version = "1.4.5"
 
 val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
 
@@ -134,14 +134,19 @@ fun getPackageName(): String {
 
 fun pack() {
     try {
-        println("Packing...")
-
         println("Project path: $projectPath")
+
+        if (Files.exists(jarPath)) {
+            println("Jar not found, will not pack")
+            return
+        }
         println("Jar: $jarPath")
 
         if (Files.notExists(packageDir)) {
             Files.createDirectories(packageDir)
         }
+
+        println("Packing...")
 
         if (!(isMac || isWin)) {
             println("Warning: not running on Windows or macOS, will use generated jar file as the package.")

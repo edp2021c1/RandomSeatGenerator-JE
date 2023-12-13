@@ -18,6 +18,9 @@ import java.util.HashMap;
 
 /**
  * Windows of FX crash reporter.
+ *
+ * @author Calboot
+ * @since 1.4.1
  */
 public class CrashReporterWindow extends Stage {
 
