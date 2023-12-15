@@ -136,7 +136,7 @@ fun pack() {
     try {
         println("Project path: $projectPath")
 
-        if (Files.exists(jarPath)) {
+        if (Files.notExists(jarPath)) {
             println("Jar not found, will not pack")
             return
         }
