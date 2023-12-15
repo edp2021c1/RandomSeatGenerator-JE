@@ -24,7 +24,6 @@ import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
-import javafx.application.Application;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -40,6 +39,7 @@ public class RandomSeatGenerator {
      */
     public static void main(final String[] args) {
         Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.CRASH_REPORTER_LOG_ONLY);
+        Thread.currentThread().setName("Main Thread");
 
         Logging.start();
 
@@ -70,7 +70,7 @@ public class RandomSeatGenerator {
                     Toolkit.getDefaultToolkit().getImage(RandomSeatGenerator.class.getResource(MetaData.MAC_ICON_URL))
             );
         }
-        Application.launch(GUILauncher.class);
+        GUILauncher.launch();
 
     }
 }

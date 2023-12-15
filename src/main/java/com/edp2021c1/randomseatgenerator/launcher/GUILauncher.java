@@ -35,6 +35,13 @@ import static com.edp2021c1.randomseatgenerator.util.Logging.LOG;
  */
 public class GUILauncher extends Application {
 
+    /**
+     * Launches the JavaFX application.
+     */
+    public static void launch() {
+        Application.launch(GUILauncher.class);
+    }
+
     @Override
     public void start(final Stage primaryStage) {
         try {

@@ -23,8 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
+import java.util.logging.Formatter;
 import java.util.logging.*;
 
 /**
@@ -39,20 +39,26 @@ public class Logging {
      */
     public static final Logger LOG = Logger.getLogger("RandomSeat");
     private static final Path LOG_DIR = Paths.get(MetaData.DATA_DIR, "logs");
-    private static final Path LATEST_LOG_PATH = LOG_DIR.resolve("latest.log");
-    private static final Path CURRENT_LOG_PATH;
-    private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}.{2}/{3}] {4}\n");
+    private static final Path[] LOG_PATHS;
+    private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
+    private static final Formatter DEFAULT_FORMATTER;
+    private static final Map<Long, Thread> threadIDMap = new HashMap<>();
     private static boolean started = false;
 
     static {
-        String str = String.format("%tF", new Date());
+        String str = "%tF-%%d.log".formatted(new Date());
         int t = 1;
-        String tmp = "-" + t;
-        while (Files.exists(LOG_DIR.resolve(str + tmp + ".log"))) {
+        while (Files.exists(LOG_DIR.resolve(str.formatted(t)))) {
             t++;
-            tmp = "-" + t;
         }
-        CURRENT_LOG_PATH = LOG_DIR.resolve(str + tmp + ".log");
+        LOG_PATHS = new Path[]{LOG_DIR.resolve("latest.log"), LOG_DIR.resolve(str.formatted(t))};
+
+        DEFAULT_FORMATTER = new Formatter() {
+            @Override
+            public String format(LogRecord record) {
+                return record.getMessage();
+            }
+        };
     }
 
     /**
@@ -81,18 +87,12 @@ public class Logging {
             throw new RuntimeException("Unable to create randomseat.log", e);
         }
 
-        Formatter formatter = new Formatter() {
-            @Override
-            public String format(LogRecord record) {
-                return record.getMessage();
-            }
-        };
-        for (final Handler h : getHandlers(formatter)) {
+        for (final Handler h : getHandlers()) {
             LOG.addHandler(h);
         }
 
         LOG.info("Logging started");
-        LOG.info("Log file: " + LATEST_LOG_PATH);
+        LOG.info("Log files: " + Arrays.toString(LOG_PATHS));
     }
 
     private static String format(LogRecord record) {
@@ -102,37 +102,48 @@ public class Logging {
 
         MESSAGE_FORMAT.format(new Object[]{
                 new Date(record.getMillis()),
-                record.getSourceClassName(), record.getSourceMethodName(), record.getLevel().getName(),
+                getThreadById(record.getLongThreadID()).getName(), record.getLevel().getName(),
                 message
         }, buffer, null);
 
         return buffer.toString();
     }
 
-    private static ArrayList<Handler> getHandlers(Formatter formatter) {
+    private static ArrayList<Handler> getHandlers() {
         ArrayList<Handler> handlers = new ArrayList<>(3);
 
         ConsoleHandler consoleHandler = new ConsoleHandler();
-        consoleHandler.setFormatter(formatter);
+        consoleHandler.setFormatter(DEFAULT_FORMATTER);
         consoleHandler.setLevel(Level.FINER);
         handlers.add(consoleHandler);
 
         try {
-            FileHandler latestLogHandler = new FileHandler(LATEST_LOG_PATH.toString());
-            latestLogHandler.setLevel(Level.FINEST);
-            latestLogHandler.setFormatter(formatter);
-            latestLogHandler.setEncoding("UTF-8");
-            handlers.add(latestLogHandler);
-
-            FileHandler currentLogHandler = new FileHandler(CURRENT_LOG_PATH.toString());
-            currentLogHandler.setLevel(Level.FINEST);
-            currentLogHandler.setFormatter(formatter);
-            currentLogHandler.setEncoding("UTF-8");
-            handlers.add(currentLogHandler);
+            for (final Path path : LOG_PATHS) {
+                FileHandler latestLogHandler = new FileHandler(path.toString());
+                latestLogHandler.setLevel(Level.FINEST);
+                latestLogHandler.setFormatter(DEFAULT_FORMATTER);
+                latestLogHandler.setEncoding("UTF-8");
+                handlers.add(latestLogHandler);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         return handlers;
+    }
+
+    private static Thread getThreadById(long id) {
+        if (threadIDMap.containsKey(id)) {
+            return threadIDMap.get(id);
+        }
+
+        Set<Thread> threads = Thread.getAllStackTraces().keySet();
+        for (final Thread t : threads) {
+            threadIDMap.put(t.getId(), t);
+            if (t.getId() == id) {
+                return t;
+            }
+        }
+        throw new RuntimeException("Thread not found");
     }
 }
