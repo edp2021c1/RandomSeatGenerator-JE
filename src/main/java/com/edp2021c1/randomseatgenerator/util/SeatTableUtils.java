@@ -51,7 +51,7 @@ public class SeatTableUtils {
             }
         }
         EasyExcel.write(file, SeatRowData.class)
-                .sheet(String.format("座位表-%tF", date))
+                .sheet("座位表-%tF".formatted(date))
                 .doWrite(SeatRowData.fromSeat(seatTable));
         if (writable) {
             return;

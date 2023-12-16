@@ -88,7 +88,7 @@ public class SeatConfig {
         try {
             r = Integer.parseUnsignedInt(row_count);
         } catch (final NumberFormatException e) {
-            throw new IllegalConfigException(String.format("Invalid row_count: %s", row_count), e);
+            throw new IllegalConfigException("Invalid row_count: " + row_count, e);
         }
         if (r == 0) {
             throw new IllegalConfigException("Row count cannot be zero");
@@ -176,10 +176,9 @@ public class SeatConfig {
     public ArrayList<String> getNameList() {
         final ArrayList<String> l = new ArrayList<>(Arrays.asList(person_sort_by_height.split(" ")));
         if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
-            throw new IllegalConfigException(String.format(
-                    "Name list must not contain empty seat place holder \"%s\"",
-                    SeatTable.EMPTY_SEAT_PLACEHOLDER
-            ));
+            throw new IllegalConfigException(
+                    "Name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.EMPTY_SEAT_PLACEHOLDER)
+            );
         }
         if (l.contains("")) {
             throw new IllegalConfigException("Name list must not contain empty name");
@@ -201,9 +200,8 @@ public class SeatConfig {
     public ArrayList<String> getGroupLeaderList() {
         final ArrayList<String> l = new ArrayList<>(Arrays.asList(group_leader_list.split(" ")));
         if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
-            throw new IllegalConfigException(String.format(
-                    "Group leader list must not contain empty seat place holder \"%s\"",
-                    SeatTable.EMPTY_SEAT_PLACEHOLDER)
+            throw new IllegalConfigException(
+                    "Group leader list must not contain empty seat place holder \"%s\"".formatted(SeatTable.EMPTY_SEAT_PLACEHOLDER)
             );
         }
         return l;

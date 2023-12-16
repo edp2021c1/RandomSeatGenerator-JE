@@ -67,7 +67,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(final Thread t, final Throwable e) {
-        final String str = String.format("Exception in thread \"%s\":\n", t.getName()) +
+        final String str = "Exception in thread \"%s\":\n".formatted(t.getName()) +
                 (e instanceof IllegalConfigException ? e.getMessage() : StringUtils.getStackTrace(e));
 
         if (OperatingSystem.CURRENT == OperatingSystem.MAC && Taskbar.getTaskbar().getIconImage() == null) {

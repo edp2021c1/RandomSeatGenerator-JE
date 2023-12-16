@@ -173,7 +173,7 @@ public class MainWindow extends Stage {
                 }
 
                 fc.setInitialDirectory(exportDir);
-                fc.setInitialFileName(String.format("%tF", new Date()));
+                fc.setInitialFileName("%tF".formatted(new Date()));
 
                 exportFile = fc.showSaveDialog(MainWindow.this);
                 if (exportFile == null) {
@@ -185,7 +185,7 @@ public class MainWindow extends Stage {
                     CrashReporter.CRASH_REPORTER_FULL.uncaughtException(
                             Thread.currentThread(),
                             new RuntimeException(
-                                    String.format("Failed to export seat table to %s.", exportFile.getAbsolutePath()),
+                                    "Failed to export seat table to " + exportFile.getAbsolutePath(),
                                     e
                             )
                     );

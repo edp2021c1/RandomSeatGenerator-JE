@@ -60,14 +60,13 @@ public class SeatRowData {
     private SeatRowData(final String... c) {
         int len = c.length;
         if (len > MAX_COLUMN_COUNT) {
-            throw new IllegalConfigException(String.format(
-                    "Count of people in a row cannot be larger than %d.",
-                    MAX_COLUMN_COUNT
-            ));
+            throw new IllegalConfigException(
+                    "Count of people in a row cannot be larger than " + MAX_COLUMN_COUNT
+            );
         }
         for (int i = 0; i < len; i++) {
             try {
-                final Field f = this.getClass().getDeclaredField(String.format("c%d", (i + 1)));
+                final Field f = this.getClass().getDeclaredField("c%d".formatted(i + 1));
                 f.setAccessible(true);
                 f.set(this, c[i]);
             } catch (final ReflectiveOperationException e) {

@@ -139,8 +139,8 @@ public class Logging {
 
         Set<Thread> threads = Thread.getAllStackTraces().keySet();
         for (final Thread t : threads) {
-            threadIDMap.put(t.getId(), t);
             if (t.getId() == id) {
+                threadIDMap.put(t.getId(), t);
                 return t;
             }
         }

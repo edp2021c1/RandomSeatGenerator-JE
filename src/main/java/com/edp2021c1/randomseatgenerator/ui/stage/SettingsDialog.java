@@ -161,7 +161,7 @@ public class SettingsDialog extends Stage {
 
         gitRepositoryUrlLabel = new Label("Git仓库:   " + GIT_REPOSITORY_URL);
 
-        licenseLabel = new Label("许可证:    " + LICENSE_NAME + String.format("(%s)", LICENSE_URL));
+        licenseLabel = new Label("许可证:    %s(%s)".formatted(LICENSE_NAME, LICENSE_URL));
 
         licenseText = createTextArea(null, 960, 288);
         licenseText.setText(LICENSE_INFO);

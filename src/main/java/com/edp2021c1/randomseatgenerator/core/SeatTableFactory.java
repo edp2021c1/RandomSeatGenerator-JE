@@ -138,7 +138,7 @@ public class SeatTableFactory {
             do {
                 t = rd.nextInt(rowCount) * columnCount + i;
             } while (!groupLeaderList.contains((tGroupLeader = seatTable.get(t))));
-            seatTable.set(t, String.format(SeatTable.GROUP_LEADER_FORMAT, tGroupLeader));
+            seatTable.set(t, SeatTable.GROUP_LEADER_FORMAT.formatted(tGroupLeader));
         }
 
         return new SeatTable(seatTable, config, seed, luckyPerson);
