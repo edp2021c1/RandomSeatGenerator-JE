@@ -20,12 +20,8 @@ package com.edp2021c1.randomseatgenerator.launcher;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
-import com.edp2021c1.randomseatgenerator.util.AppConfig;
-import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
-import com.edp2021c1.randomseatgenerator.util.MetaData;
-import com.edp2021c1.randomseatgenerator.util.SeatTableUtils;
+import com.edp2021c1.randomseatgenerator.util.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,7 +29,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
+
+import static com.edp2021c1.randomseatgenerator.util.Logging.LOG;
 
 /**
  * Launches the application in console mode.
@@ -53,7 +50,7 @@ public class ConsoleLauncher {
 
         // 命令行参数相关
         // 种子，默认为随机数
-        String seed = Long.toString(new Random().nextLong());
+        String seed = StringUtils.randomString(30);
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
         Path configPath = ConfigUtils.getConfigPath();
         // 导出路径，默认为用户根目录当前路径
@@ -79,10 +76,7 @@ public class ConsoleLauncher {
             } else {
                 outputPath = tmp.toAbsolutePath();
                 if (!outputPath.endsWith(".xlsx")) {
-                    System.err.printf(
-                            "Invalid output file name: %s, will add \".xlsx\" to the end of it.%n",
-                            outputPath.getFileName()
-                    );
+                    LOG.warning("Invalid output file name: %s, will add \".xlsx\" to the end of it".formatted(outputPath.getFileName()));
                     outputPath = Paths.get(outputPath + ".xlsx");
                 }
             }
@@ -93,25 +87,24 @@ public class ConsoleLauncher {
         try {
             config = ConfigUtils.fromJson(configPath);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load config from specific file.", e);
+            throw new RuntimeException("Failed to load config from specific file", e);
         }
 
         config.checkFormat();
-        System.out.printf("Config path: %s%n", configPath);
+        LOG.info("Config path: " + configPath);
 
         // 生成座位表
         final SeatTable seatTable = SeatTableFactory.generate(config, seed);
 
-        System.out.println("\n" + seatTable);
+        LOG.info("\n" + seatTable);
 
         // 导出
-        final File outputFile = outputPath.toFile();
-        System.out.printf("Output path: %s%n", outputFile.getAbsolutePath());
+        LOG.info("Output path: " + outputPath);
         try {
-            SeatTableUtils.exportToExcelDocument(seatTable, outputFile, config.export_writable);
+            SeatTableUtils.exportToExcelDocument(seatTable, outputPath.toFile(), config.export_writable);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to export seat table to %s.", e);
+            throw new RuntimeException("Failed to export seat table to " + outputPath, e);
         }
-        System.out.printf("Seat table successfully exported to %s.%n", outputFile.getAbsolutePath());
+        LOG.info("Seat table successfully exported to " + outputPath);
     }
 }

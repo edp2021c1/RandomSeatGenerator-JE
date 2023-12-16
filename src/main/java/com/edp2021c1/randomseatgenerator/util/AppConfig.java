@@ -40,9 +40,17 @@ public class AppConfig extends SeatConfig {
 
     @Override
     public void checkFormat() {
-        super.checkFormat();
+        StringBuilder str = new StringBuilder();
+        try {
+            super.checkFormat();
+        } catch (IllegalConfigException e) {
+            str.append(e.getMessage());
+        }
         if (export_writable == null) {
-            throw new IllegalConfigException("Export writable cannot be null");
+            str.append("\nExport writable cannot be null");
+        }
+        if (!str.isEmpty()) {
+            throw new IllegalConfigException(str.toString());
         }
     }
 

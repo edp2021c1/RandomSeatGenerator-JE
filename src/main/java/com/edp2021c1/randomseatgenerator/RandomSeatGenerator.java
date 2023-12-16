@@ -38,11 +38,6 @@ public class RandomSeatGenerator {
      * @param args used to start the application.
      */
     public static void main(final String[] args) {
-        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.CRASH_REPORTER_LOG_ONLY);
-        Thread.currentThread().setName("Main Thread");
-
-        Logging.start();
-
         final List<String> arguments = Arrays.asList(args);
         // 如果有“--help”参数则打印帮助信息然后退出
         if (arguments.contains("--help")) {
@@ -57,6 +52,11 @@ public class RandomSeatGenerator {
             System.out.println();
             System.exit(0);
         }
+
+        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.CRASH_REPORTER_LOG_ONLY);
+        Thread.currentThread().setName("Main Thread");
+
+        Logging.start();
 
         // 如果是命令行模式则启动命令行程序
         if (arguments.contains("--nogui")) {

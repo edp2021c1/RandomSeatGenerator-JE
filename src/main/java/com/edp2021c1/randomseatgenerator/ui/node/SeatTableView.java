@@ -65,7 +65,6 @@ public class SeatTableView extends VBox {
      */
     public SeatTableView(final SeatConfig config) {
         this();
-
         setEmptySeatTable(config);
     }
 

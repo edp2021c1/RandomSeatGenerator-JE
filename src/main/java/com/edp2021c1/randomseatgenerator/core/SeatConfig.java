@@ -233,15 +233,55 @@ public class SeatConfig {
      * @throws IllegalConfigException if this instance has an illegal format.
      */
     public void checkFormat() throws IllegalConfigException {
-        getRowCount();
-        getColumnCount();
-        getRandomBetweenRows();
-        getNotAllowedLastRowPos();
-        getNameList();
-        getGroupLeaderList();
-        getSeparatedList();
+        StringBuilder str = new StringBuilder();
+        try {
+            getRowCount();
+        } catch (IllegalConfigException e) {
+            str.append(e.getMessage());
+            str.append("\n");
+        }
+        try {
+            getColumnCount();
+        } catch (IllegalConfigException e) {
+            str.append(e.getMessage());
+            str.append("\n");
+        }
+        try {
+            getRandomBetweenRows();
+        } catch (IllegalConfigException e) {
+            str.append(e.getMessage());
+            str.append("\n");
+        }
+        try {
+            getNotAllowedLastRowPos();
+        } catch (IllegalConfigException e) {
+            str.append(e.getMessage());
+            str.append("\n");
+        }
+        try {
+            getNameList();
+        } catch (IllegalConfigException e) {
+            str.append(e.getMessage());
+            str.append("\n");
+        }
+        try {
+            getGroupLeaderList();
+        } catch (IllegalConfigException e) {
+            str.append(e.getMessage());
+            str.append("\n");
+        }
+        try {
+            getSeparatedList();
+        } catch (IllegalConfigException e) {
+            str.append(e.getMessage());
+            str.append("\n");
+        }
         if (lucky_option == null) {
-            throw new IllegalConfigException("Lucky option cannot be null");
+            str.append("Lucky option cannot be null\n");
+        }
+        if (!str.isEmpty()) {
+            str.deleteCharAt(str.length() - 1);
+            throw new IllegalConfigException(str.toString());
         }
     }
 }

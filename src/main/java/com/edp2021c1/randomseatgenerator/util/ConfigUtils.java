@@ -48,35 +48,22 @@ public class ConfigUtils {
     static {
         final Path configDir = Paths.get(MetaData.DATA_DIR, "config");
 
-        if (Files.notExists(configDir)) {
-            try {
-                Files.createDirectories(configDir);
-            } catch (final IOException e) {
-                throw new RuntimeException(e);
+        try {
+            if (!Files.isDirectory(configDir)) {
+                IOUtils.delete(configDir);
             }
-        }
-        if (!Files.isDirectory(configDir)) {
-            try {
-                Files.delete(configDir);
-                Files.createDirectories(configDir);
-            } catch (final IOException e) {
-                throw new RuntimeException(e);
-            }
+            Files.createDirectories(configDir);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
         }
 
         CONFIG_PATH = configDir.resolve("randomseatgenerator.json");
         if (Files.notExists(CONFIG_PATH)) {
-            try {
-                Files.createFile(CONFIG_PATH);
-                saveConfig(DEFAULT_CONFIG);
-            } catch (final IOException e) {
-                throw new RuntimeException(e);
-            }
+            saveConfig(DEFAULT_CONFIG);
         }
         if (!Files.isRegularFile(CONFIG_PATH)) {
             try {
-                Files.delete(CONFIG_PATH);
-                Files.createFile(CONFIG_PATH);
+                IOUtils.delete(CONFIG_PATH);
                 saveConfig(DEFAULT_CONFIG);
             } catch (final IOException e) {
                 throw new RuntimeException(e);
@@ -150,7 +137,7 @@ public class ConfigUtils {
                 return;
             }
             if (Files.notExists(CONFIG_PATH)) {
-                LOG.warning("seat_config.json not found, will use default value.");
+                LOG.warning("Config file not found, will use default value");
                 Files.createFile(CONFIG_PATH);
                 saveConfig(DEFAULT_CONFIG);
             }
@@ -158,9 +145,7 @@ public class ConfigUtils {
             try {
                 current.checkFormat();
             } catch (final RuntimeException e) {
-                LOG.warning("Invalid seat_config.json, will use default value.");
-                saveConfig(DEFAULT_CONFIG);
-                current.set(DEFAULT_CONFIG);
+                LOG.warning("Invalid config");
             }
         } catch (final IOException e) {
             throw new RuntimeException(e);

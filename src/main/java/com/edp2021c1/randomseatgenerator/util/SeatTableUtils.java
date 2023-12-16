@@ -47,7 +47,7 @@ public class SeatTableUtils {
         final Date date = new Date();
         if (!file.createNewFile()) {
             if (!(file.delete() & file.createNewFile())) {
-                throw new IOException("Failed to save seat table to Excel document.");
+                throw new IOException("Failed to save seat table to " + file);
             }
         }
         EasyExcel.write(file, SeatRowData.class)
@@ -57,7 +57,7 @@ public class SeatTableUtils {
             return;
         }
         if (!file.setReadOnly()) {
-            throw new IOException("Failed to save seat table to Excel document.");
+            throw new IOException("Failed to save seat table to " + file);
         }
     }
 }

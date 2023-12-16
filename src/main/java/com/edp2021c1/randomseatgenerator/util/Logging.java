@@ -23,8 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.*;
-import java.util.logging.Formatter;
+import java.util.Date;
 import java.util.logging.*;
 
 /**
@@ -42,7 +41,6 @@ public class Logging {
     private static final Path[] LOG_PATHS;
     private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
     private static final Formatter DEFAULT_FORMATTER;
-    private static final Map<Long, Thread> threadIDMap = new HashMap<>();
     private static boolean started = false;
 
     static {
@@ -78,21 +76,35 @@ public class Logging {
             return true;
         });
 
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setFormatter(DEFAULT_FORMATTER);
+        consoleHandler.setLevel(Level.FINER);
+        LOG.addHandler(consoleHandler);
+
         try {
-            if (Files.isRegularFile(LOG_DIR)) {
-                Files.delete(LOG_DIR);
+            if (!Files.isDirectory(LOG_DIR)) {
+                IOUtils.delete(LOG_DIR);
             }
             Files.createDirectories(LOG_DIR);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to create randomseat.log", e);
+            LOG.warning("Unable to create log dir, log may not be saved");
+            LOG.warning(StringUtils.getStackTrace(e));
         }
 
-        for (final Handler h : getHandlers()) {
-            LOG.addHandler(h);
+        for (final Path path : LOG_PATHS) {
+            try {
+                FileHandler fileHandler = new FileHandler(path.toString());
+                fileHandler.setLevel(Level.FINEST);
+                fileHandler.setFormatter(DEFAULT_FORMATTER);
+                fileHandler.setEncoding("UTF-8");
+                LOG.addHandler(fileHandler);
+            } catch (IOException e) {
+                LOG.warning("Failed to create log file at " + path);
+                LOG.warning(StringUtils.getStackTrace(e));
+            }
         }
 
         LOG.info("Logging started");
-        LOG.info("Log files: " + Arrays.toString(LOG_PATHS));
     }
 
     private static String format(LogRecord record) {
@@ -102,48 +114,11 @@ public class Logging {
 
         MESSAGE_FORMAT.format(new Object[]{
                 new Date(record.getMillis()),
-                getThreadById(record.getLongThreadID()).getName(), record.getLevel().getName(),
+                ThreadUtils.getThreadById(record.getLongThreadID()).getName(), record.getLevel().getName(),
                 message
         }, buffer, null);
 
         return buffer.toString();
     }
 
-    private static ArrayList<Handler> getHandlers() {
-        ArrayList<Handler> handlers = new ArrayList<>(3);
-
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-        consoleHandler.setFormatter(DEFAULT_FORMATTER);
-        consoleHandler.setLevel(Level.FINER);
-        handlers.add(consoleHandler);
-
-        try {
-            for (final Path path : LOG_PATHS) {
-                FileHandler latestLogHandler = new FileHandler(path.toString());
-                latestLogHandler.setLevel(Level.FINEST);
-                latestLogHandler.setFormatter(DEFAULT_FORMATTER);
-                latestLogHandler.setEncoding("UTF-8");
-                handlers.add(latestLogHandler);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return handlers;
-    }
-
-    private static Thread getThreadById(long id) {
-        if (threadIDMap.containsKey(id)) {
-            return threadIDMap.get(id);
-        }
-
-        Set<Thread> threads = Thread.getAllStackTraces().keySet();
-        for (final Thread t : threads) {
-            if (t.getId() == id) {
-                threadIDMap.put(t.getId(), t);
-                return t;
-            }
-        }
-        throw new RuntimeException("Thread not found");
-    }
 }

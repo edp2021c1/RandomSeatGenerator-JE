@@ -38,12 +38,12 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
 import static com.edp2021c1.randomseatgenerator.util.Logging.LOG;
+import static com.edp2021c1.randomseatgenerator.util.StringUtils.DATE_FORMAT;
 
 /**
  * Main window of the application.
@@ -61,19 +61,23 @@ public class MainWindow extends Stage {
     private final TextField seedInput;
     private final StringProperty seed;
     private final FileChooser fc;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-    private final SettingsDialog settingsDialog = new SettingsDialog(this);
+    private final SettingsDialog settingsDialog;
     private File exportFile;
     private SeatTable seatTable = null;
-    private AppConfig config = ConfigUtils.getConfig();
+    private AppConfig config;
     private AppConfig t;
-    private String previousSeed = "";
-    private File exportDir = Paths.get(MetaData.USER_HOME).toFile();
+    private String previousSeed = null;
+    private File exportDir;
 
     /**
      * Creates an instance.
      */
     public MainWindow() {
+        settingsDialog = new SettingsDialog(this);
+        config = ConfigUtils.getConfig();
+        config.checkFormat();
+        exportDir = new File(config.last_export_dir != null ? config.last_export_dir : MetaData.USER_HOME);
+
         final Scene scene;
         final HBox mainBox;
         final VBox leftBox;
@@ -124,11 +128,6 @@ public class MainWindow extends Stage {
         UIFactory.decorate(this, StageType.MAIN);
         setOnCloseRequest(event -> System.exit(0));
 
-        String s = config.last_export_dir;
-        if (s != null) {
-            exportDir = new File(s);
-        }
-
         seed = seedInput.textProperty();
 
         fc = new FileChooser();
@@ -146,8 +145,11 @@ public class MainWindow extends Stage {
         generateBtn.setOnAction(event -> {
             try {
                 config = ConfigUtils.getConfig();
-                seatTableView.setEmptySeatTable(config);
-                if (previousSeed.equals(seed.get())) {
+                if (config == null) {
+                    throw new IllegalConfigException("Null config");
+                }
+                config.checkFormat();
+                if (Objects.equals(previousSeed, seed.get())) {
                     randomSeedBtn.fire();
                 }
 
@@ -206,7 +208,7 @@ public class MainWindow extends Stage {
 
         randomSeedBtn.setOnAction(event -> seedInput.setText(StringUtils.randomString(30)));
 
-        dateAsSeedBtn.setOnAction(event -> seed.set(dateFormat.format(new Date())));
+        dateAsSeedBtn.setOnAction(event -> seed.set(DATE_FORMAT.format(new Date())));
 
         if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
             setFullScreenExitHint("按 Esc / Cmd+Shift+F 退出全屏");
@@ -244,7 +246,7 @@ public class MainWindow extends Stage {
      */
     public void onConfigChanged() {
         seatTableView.setEmptySeatTable(ConfigUtils.getConfig());
-        previousSeed = "";
+        previousSeed = null;
         LOG.info("Seat table view reset");
     }
 
