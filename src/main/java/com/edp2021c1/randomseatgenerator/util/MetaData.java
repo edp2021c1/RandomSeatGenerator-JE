@@ -70,11 +70,6 @@ public class MetaData {
     public static final String ICON_URL = "/assets/img/icon.png";
 
     /**
-     * URL of the icon shown on macOS docker.
-     */
-    public static final String MAC_ICON_URL = "/assets/img/mac_icon.png";
-
-    /**
      * URL of the icon shown when an error occurs.
      */
     public static final String ERROR_ICON_URL = "/assets/img/error_icon.png";
@@ -176,7 +171,7 @@ public class MetaData {
         try {
             GIT_REPOSITORY_URI = new URI(GIT_REPOSITORY_URL);
             LICENSE_URI = new URI(LICENSE_URL);
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new RuntimeException(e);
         }
 

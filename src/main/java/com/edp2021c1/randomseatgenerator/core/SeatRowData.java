@@ -18,11 +18,14 @@
 
 package com.edp2021c1.randomseatgenerator.core;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT;
 
@@ -35,6 +38,21 @@ import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT
 
 @Getter
 public class SeatRowData {
+
+    @ExcelIgnore
+    private static final Map<Integer, Field> fields = new HashMap<>(MAX_COLUMN_COUNT);
+
+    static {
+        try {
+            for (int i = 0; i < MAX_COLUMN_COUNT; i++) {
+                final Field field = SeatRowData.class.getDeclaredField("c" + (i + 1));
+                field.setAccessible(true);
+                fields.put(i, field);
+            }
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private final String c1 = null;
     private final String c2 = null;
@@ -58,7 +76,7 @@ public class SeatRowData {
     private final String c20 = null;
 
     private SeatRowData(final String... c) {
-        int len = c.length;
+        final int len = c.length;
         if (len > MAX_COLUMN_COUNT) {
             throw new IllegalConfigException(
                     "Count of people in a row cannot be larger than " + MAX_COLUMN_COUNT
@@ -66,8 +84,7 @@ public class SeatRowData {
         }
         for (int i = 0; i < len; i++) {
             try {
-                final Field f = this.getClass().getDeclaredField("c%d".formatted(i + 1));
-                f.setAccessible(true);
+                final Field f = fields.get(i);
                 f.set(this, c[i]);
             } catch (final ReflectiveOperationException e) {
                 throw new RuntimeException(e);

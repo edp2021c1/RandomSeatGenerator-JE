@@ -23,8 +23,6 @@ import com.edp2021c1.randomseatgenerator.ui.stage.CrashReporterWindow;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.awt.*;
-
 /**
  * Reports runtime exceptions.
  *
@@ -69,12 +67,6 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     public void uncaughtException(final Thread t, final Throwable e) {
         final String str = "Exception in thread \"%s\":\n".formatted(t.getName()) +
                 (e instanceof IllegalConfigException ? e.getMessage() : StringUtils.getStackTrace(e));
-
-        if (OperatingSystem.CURRENT == OperatingSystem.MAC && Taskbar.getTaskbar().getIconImage() == null) {
-            Taskbar.getTaskbar().setIconImage(
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource(MetaData.ERROR_ICON_URL))
-            );
-        }
 
         if (useLog) {
             Logging.LOG.severe(str);

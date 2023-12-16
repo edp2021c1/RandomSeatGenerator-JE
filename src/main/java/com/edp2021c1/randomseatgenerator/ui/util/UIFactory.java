@@ -23,7 +23,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -54,7 +53,7 @@ public class UIFactory {
      * @param type  of the window
      * @see StageType
      */
-    public static void decorate(Stage stage, StageType type) {
+    public static void decorate(final Stage stage, final StageType type) {
         stage.getScene().getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
         switch (type) {
             case ERROR -> {
@@ -168,20 +167,6 @@ public class UIFactory {
         t.setPromptText(promptText);
         t.setPrefSize(width, height);
         return t;
-    }
-
-    /**
-     * Creates a {@code Label}.
-     *
-     * @param text   of the label
-     * @param width  of the label
-     * @param height of the label
-     * @return the label created
-     */
-    public static Label createLabel(final String text, final double width, final double height) {
-        final Label label = new Label(text);
-        label.setPrefSize(width, height);
-        return label;
     }
 
     /**

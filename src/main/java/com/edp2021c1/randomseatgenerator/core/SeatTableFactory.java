@@ -161,7 +161,7 @@ public class SeatTableFactory {
         final Future<SeatTable> future = Executors.newSingleThreadExecutor().submit(() -> generate0(config, seed));
 
         try {
-            SeatTable table = future.get(3, TimeUnit.SECONDS);
+            final SeatTable table = future.get(3, TimeUnit.SECONDS);
             current.setName(oldName);
             return table;
         } catch (final ExecutionException | InterruptedException e) {

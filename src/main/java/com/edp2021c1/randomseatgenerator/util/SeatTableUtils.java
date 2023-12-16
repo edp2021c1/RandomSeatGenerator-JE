@@ -44,14 +44,13 @@ public class SeatTableUtils {
      */
     public static void exportToExcelDocument(final SeatTable seatTable, final File file, final boolean writable) throws IOException {
         Objects.requireNonNull(file);
-        final Date date = new Date();
         if (!file.createNewFile()) {
             if (!(file.delete() & file.createNewFile())) {
                 throw new IOException("Failed to save seat table to " + file);
             }
         }
         EasyExcel.write(file, SeatRowData.class)
-                .sheet("座位表-%tF".formatted(date))
+                .sheet("座位表-%tF".formatted(new Date()))
                 .doWrite(SeatRowData.fromSeat(seatTable));
         if (writable) {
             return;

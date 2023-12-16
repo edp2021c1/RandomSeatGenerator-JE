@@ -43,20 +43,15 @@ class SeatTableCell extends Label {
      *
      * @param o {@code Object} to be shown
      */
-    public SeatTableCell(Object o) {
+    public SeatTableCell(final Object o) {
         setAlignment(Pos.CENTER);
         HBox.setHgrow(this, Priority.ALWAYS);
         setMinSize(40, 30);
 
-        String s;
-        if (o == null) {
-            s = "";
-        } else {
-            s = o.toString();
-        }
+        final String s = o == null ? "" : o.toString();
         setText(s);
 
-        BooleanProperty leader = new BooleanPropertyBase(false) {
+        final BooleanProperty leader = new BooleanPropertyBase(false) {
             @Override
             protected void invalidated() {
                 pseudoClassStateChanged(PSEUDO_CLASS_LEADER, get());

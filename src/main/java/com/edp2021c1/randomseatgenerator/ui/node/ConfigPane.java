@@ -20,14 +20,13 @@ package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.util.AppConfig;
 import javafx.beans.property.BooleanProperty;
+import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
-
-import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.createHBox;
 
 /**
  * Config pane.
@@ -71,16 +70,16 @@ public abstract class ConfigPane extends VBox {
      * @param applyBtnDisabledProperty property of whether the current global config is equal to the config in the pane,
      *                                 usually decides whether the apply button is disabled. Ignored if is null.
      */
-    public ConfigPane(TextField rowCountInput,
-                      TextField columnCountInput,
-                      TextField rbrInput,
-                      TextField disabledLastRowPosInput,
-                      TextField nameListInput,
-                      TextField groupLeaderListInput,
-                      TextArea separateListInput,
-                      CheckBox luckyOptionCheck,
-                      CheckBox exportWritableCheck,
-                      BooleanProperty applyBtnDisabledProperty) {
+    public ConfigPane(final TextField rowCountInput,
+                      final TextField columnCountInput,
+                      final TextField rbrInput,
+                      final TextField disabledLastRowPosInput,
+                      final TextField nameListInput,
+                      final TextField groupLeaderListInput,
+                      final TextArea separateListInput,
+                      final CheckBox luckyOptionCheck,
+                      final CheckBox exportWritableCheck,
+                      final BooleanProperty applyBtnDisabledProperty) {
         super();
 
         this.rowCountInput = rowCountInput;
@@ -93,9 +92,15 @@ public abstract class ConfigPane extends VBox {
         this.luckyOptionCheck = luckyOptionCheck;
         this.exportWritableCheck = exportWritableCheck;
 
-        HBox box1 = createHBox(1212, 60, rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
-        HBox box2 = createHBox(1212, 70, nameListInput, groupLeaderListInput, separateListInput, luckyOptionCheck);
-        HBox box3 = createHBox(1212, 60, exportWritableCheck);
+        final HBox box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
+        box1.setPrefHeight(60);
+        box1.setAlignment(Pos.CENTER);
+        final HBox box2 = new HBox(nameListInput, groupLeaderListInput, separateListInput, luckyOptionCheck);
+        box2.setPrefHeight(60);
+        box2.setAlignment(Pos.CENTER);
+        final HBox box3 = new HBox(exportWritableCheck);
+        box3.setPrefHeight(60);
+        box3.setAlignment(Pos.CENTER);
         getChildren().addAll(box1, box2, box3);
 
         if (applyBtnDisabledProperty == null) {
@@ -131,7 +136,7 @@ public abstract class ConfigPane extends VBox {
      *
      * @param config to set to the pane.
      */
-    public void reset(AppConfig config) {
+    public void reset(final AppConfig config) {
         rowCountInput.setText(config.row_count);
         columnCountInput.setText(config.column_count);
         rbrInput.setText(config.random_between_rows);

@@ -53,7 +53,7 @@ public class Logging {
 
         DEFAULT_FORMATTER = new Formatter() {
             @Override
-            public String format(LogRecord record) {
+            public String format(final LogRecord record) {
                 return record.getMessage();
             }
         };
@@ -76,7 +76,7 @@ public class Logging {
             return true;
         });
 
-        ConsoleHandler consoleHandler = new ConsoleHandler();
+        final ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setFormatter(DEFAULT_FORMATTER);
         consoleHandler.setLevel(Level.FINER);
         LOG.addHandler(consoleHandler);
@@ -86,19 +86,19 @@ public class Logging {
                 IOUtils.delete(LOG_DIR);
             }
             Files.createDirectories(LOG_DIR);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.warning("Unable to create log dir, log may not be saved");
             LOG.warning(StringUtils.getStackTrace(e));
         }
 
         for (final Path path : LOG_PATHS) {
             try {
-                FileHandler fileHandler = new FileHandler(path.toString());
+                final FileHandler fileHandler = new FileHandler(path.toString());
                 fileHandler.setLevel(Level.FINEST);
                 fileHandler.setFormatter(DEFAULT_FORMATTER);
                 fileHandler.setEncoding("UTF-8");
                 LOG.addHandler(fileHandler);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOG.warning("Failed to create log file at " + path);
                 LOG.warning(StringUtils.getStackTrace(e));
             }
@@ -108,7 +108,7 @@ public class Logging {
     }
 
     private static String format(LogRecord record) {
-        String message = record.getMessage();
+        final String message = record.getMessage();
 
         final StringBuffer buffer = new StringBuffer(1024);
 

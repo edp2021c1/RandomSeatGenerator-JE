@@ -89,7 +89,7 @@ public class CrashReporterWindow extends Stage {
     }
 
     private void copyText(Label label) {
-        HashMap<DataFormat, Object> map = new HashMap<>();
+        final HashMap<DataFormat, Object> map = new HashMap<>();
         map.put(DataFormat.PLAIN_TEXT, label.getText());
         Clipboard.getSystemClipboard().setContent(map);
     }

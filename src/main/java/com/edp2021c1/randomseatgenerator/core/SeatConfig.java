@@ -233,7 +233,7 @@ public class SeatConfig {
      * @throws IllegalConfigException if this instance has an illegal format.
      */
     public void checkFormat() throws IllegalConfigException {
-        StringBuilder str = new StringBuilder();
+        final StringBuilder str = new StringBuilder();
         try {
             getRowCount();
         } catch (IllegalConfigException e) {

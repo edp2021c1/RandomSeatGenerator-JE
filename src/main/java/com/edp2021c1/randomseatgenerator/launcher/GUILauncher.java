@@ -55,8 +55,7 @@ public class GUILauncher extends Application {
             LOG.info("Working dir: " + MetaData.WORKING_DIR);
             LOG.info("Config path: " + ConfigUtils.getConfigPath());
 
-            final Stage stage = new MainWindow();
-            stage.show();
+            new MainWindow().show();
         } catch (final Throwable e) {
             CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
         }

@@ -210,7 +210,7 @@ public class SettingsDialog extends Stage {
         );
 
         setScene(scene);
-        setTitle("Random Seat Generator - 设置");
+        setTitle(NAME + " - 设置");
         initOwner(owner);
         initModality(Modality.APPLICATION_MODAL);
         UIFactory.decorate(this, StageType.DIALOG);
@@ -285,7 +285,7 @@ public class SettingsDialog extends Stage {
             if (DESKTOP_SUPPORTED) {
                 try {
                     DESKTOP.browse(GIT_REPOSITORY_URI);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -295,7 +295,7 @@ public class SettingsDialog extends Stage {
             if (DESKTOP_SUPPORTED) {
                 try {
                     DESKTOP.browse(LICENSE_URI);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new RuntimeException(e);
                 }
             }

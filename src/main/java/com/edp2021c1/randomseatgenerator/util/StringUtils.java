@@ -30,6 +30,9 @@ import java.util.Random;
  * @since 1.4.5
  */
 public class StringUtils {
+    /**
+     * Simple date format
+     */
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 
     /**

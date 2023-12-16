@@ -86,7 +86,7 @@ public class ConsoleLauncher {
         AppConfig config;
         try {
             config = ConfigUtils.fromJson(configPath);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Failed to load config from specific file", e);
         }
 
@@ -102,7 +102,7 @@ public class ConsoleLauncher {
         LOG.info("Output path: " + outputPath);
         try {
             SeatTableUtils.exportToExcelDocument(seatTable, outputPath.toFile(), config.export_writable);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Failed to export seat table to " + outputPath, e);
         }
         LOG.info("Seat table successfully exported to " + outputPath);
