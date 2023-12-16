@@ -1,3 +1,5 @@
+package com.edp2021c1.randomseatgenerator;
+
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
