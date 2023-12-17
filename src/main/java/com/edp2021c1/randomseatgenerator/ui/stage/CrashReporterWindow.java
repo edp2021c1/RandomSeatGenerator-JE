@@ -2,6 +2,7 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
+import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -34,6 +35,7 @@ public class CrashReporterWindow extends Stage {
         preLabel.getStyleClass().add("err-pre-label");
 
         final Label mainLabel = new Label(msg);
+        mainLabel.getStyleClass().add("err-main-label");
 
         final Button confirmBtn = UIFactory.createButton("关闭", 80, 26);
         confirmBtn.setOnAction(event -> close());
@@ -72,6 +74,7 @@ public class CrashReporterWindow extends Stage {
                     return;
                 }
                 switch (event.getCode()) {
+                    case Q -> RuntimeUtils.exit();
                     case W -> close();
                     case C -> copyText(mainLabel);
                 }

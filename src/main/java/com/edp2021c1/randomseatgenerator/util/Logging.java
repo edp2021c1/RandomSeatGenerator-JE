@@ -160,7 +160,7 @@ public class Logging {
 
         MESSAGE_FORMAT.format(new Object[]{
                 new Date(record.getMillis()),
-                ThreadUtils.getThreadById(record.getLongThreadID()).getName(), record.getLevel().getName(),
+                RuntimeUtils.getThreadById(record.getLongThreadID()).getName(), record.getLevel().getName(),
                 message
         }, buffer, null);
 

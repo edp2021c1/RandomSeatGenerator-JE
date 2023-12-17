@@ -126,6 +126,12 @@
     -fx-font-size: 16;
 }
 
+.err-pre-label,
+.err-main-label {
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+}
+
 .err-scroll-pane {
     -fx-padding: 5;
 

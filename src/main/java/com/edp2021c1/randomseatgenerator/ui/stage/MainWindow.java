@@ -216,7 +216,8 @@ public class MainWindow extends Stage {
                     return;
                 }
                 switch (event.getCode()) {
-                    case Q, W -> close();
+                    case Q -> RuntimeUtils.exit();
+                    case W -> close();
                     case F -> setFullScreen(event.isControlDown() != isFullScreen());
                     case COMMA -> settingsBtn.fire();
                     case S -> exportBtn.fire();
@@ -248,10 +249,8 @@ public class MainWindow extends Stage {
 
     @Override
     public void close() {
-        Logging.debug("Closing main window");
         super.close();
-        Logging.info("Exiting");
-        System.exit(0);
+        RuntimeUtils.exit();
     }
 
 }

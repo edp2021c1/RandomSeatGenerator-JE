@@ -21,10 +21,7 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
-import com.edp2021c1.randomseatgenerator.util.AppConfig;
-import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
-import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
+import com.edp2021c1.randomseatgenerator.util.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -316,7 +313,7 @@ public class SettingsDialog extends Stage {
                     return;
                 }
                 switch (event.getCode()) {
-                    case Q -> owner.close();
+                    case Q -> RuntimeUtils.exit();
                     case W -> close();
                     case O -> loadConfigBtn.fire();
                     case S -> applyBtn.fire();

@@ -22,12 +22,12 @@ import java.util.HashMap;
 import java.util.Set;
 
 /**
- * Thread utils.
+ * Runtime utils.
  *
  * @author Calboot
  * @since 1.4.6
  */
-public class ThreadUtils {
+public class RuntimeUtils {
     private static final HashMap<Long, Thread> threadIdMap = new HashMap<>();
 
     /**
@@ -50,5 +50,13 @@ public class ThreadUtils {
             }
         }
         throw new RuntimeException("Thread does not exist or is not live");
+    }
+
+    /**
+     * Terminates the application.
+     */
+    public static void exit() {
+        Logging.debug("Exiting");
+        System.exit(0);
     }
 }
