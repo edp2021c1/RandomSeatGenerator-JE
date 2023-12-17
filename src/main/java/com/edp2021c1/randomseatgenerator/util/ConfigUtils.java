@@ -30,8 +30,6 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.util.Logging.LOG;
-
 /**
  * Contains several methods related to {@link AppConfig}.
  *
@@ -137,7 +135,7 @@ public class ConfigUtils {
                 return;
             }
             if (Files.notExists(CONFIG_PATH)) {
-                LOG.warning("Config file not found, will use default value");
+                Logging.warning("Config file not found, will use default value");
                 Files.createFile(CONFIG_PATH);
                 saveConfig(DEFAULT_CONFIG);
             }
@@ -145,7 +143,7 @@ public class ConfigUtils {
             try {
                 current.checkFormat();
             } catch (final RuntimeException e) {
-                LOG.warning("Invalid config");
+                Logging.warning("Invalid config");
             }
         } catch (final IOException e) {
             throw new RuntimeException(e);

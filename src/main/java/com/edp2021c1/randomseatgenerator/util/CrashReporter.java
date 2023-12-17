@@ -69,7 +69,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
                 (e instanceof IllegalConfigException ? e.getMessage() : StringUtils.getStackTrace(e));
 
         if (useLog) {
-            Logging.LOG.severe(str);
+            Logging.error(str);
         }
 
         if (useFX) {

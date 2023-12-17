@@ -64,6 +64,5 @@ public class RandomSeatGenerator {
 
         // 如果不是命令行模式则启动JavaFX程序
         GUILauncher.launch();
-
     }
 }

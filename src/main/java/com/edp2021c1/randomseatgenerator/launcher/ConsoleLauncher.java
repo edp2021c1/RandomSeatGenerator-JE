@@ -30,8 +30,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static com.edp2021c1.randomseatgenerator.util.Logging.LOG;
-
 /**
  * Launches the application in console mode.
  *
@@ -76,7 +74,7 @@ public class ConsoleLauncher {
             } else {
                 outputPath = tmp.toAbsolutePath();
                 if (!outputPath.endsWith(".xlsx")) {
-                    LOG.warning("Invalid output file name: %s, will add \".xlsx\" to the end of it".formatted(outputPath.getFileName()));
+                    Logging.warning("Invalid output file name: %s, will add \".xlsx\" to the end of it".formatted(outputPath.getFileName()));
                     outputPath = Paths.get(outputPath + ".xlsx");
                 }
             }
@@ -91,20 +89,20 @@ public class ConsoleLauncher {
         }
 
         config.checkFormat();
-        LOG.info("Config path: " + configPath);
+        Logging.debug("Config path: " + configPath);
 
         // 生成座位表
         final SeatTable seatTable = SeatTableFactory.generate(config, seed);
 
-        LOG.info("\n" + seatTable);
+        Logging.info("\n" + seatTable);
 
         // 导出
-        LOG.info("Output path: " + outputPath);
+        Logging.debug("Output path: " + outputPath);
         try {
             SeatTableUtils.exportToExcelDocument(seatTable, outputPath.toFile(), config.export_writable);
         } catch (final IOException e) {
             throw new RuntimeException("Failed to export seat table to " + outputPath, e);
         }
-        LOG.info("Seat table successfully exported to " + outputPath);
+        Logging.info("Seat table successfully exported to " + outputPath);
     }
 }

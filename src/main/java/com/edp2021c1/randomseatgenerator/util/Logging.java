@@ -36,7 +36,7 @@ public class Logging {
     /**
      * Logger.
      */
-    public static final Logger LOG = Logger.getLogger("RandomSeat");
+    private static final Logger LOG = Logger.getLogger("RandomSeat");
     private static final Path LOG_DIR = Paths.get(MetaData.DATA_DIR, "logs");
     private static final Path[] LOG_PATHS;
     private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
@@ -59,6 +59,52 @@ public class Logging {
         };
     }
 
+    private static void checkStarted() {
+        if (!started) {
+            throw new IllegalStateException("Logging has not started yet");
+        }
+    }
+
+    /**
+     * Logs an INFO message.
+     *
+     * @param msg logged message
+     */
+    public static void info(String msg) {
+        checkStarted();
+        LOG.log(Level.INFO, msg);
+    }
+
+    /**
+     * Logs a WARNING message.
+     *
+     * @param msg logged message
+     */
+    public static void warning(String msg) {
+        checkStarted();
+        LOG.log(Level.WARNING, msg);
+    }
+
+    /**
+     * Logs an ERROR message.
+     *
+     * @param msg logged message
+     */
+    public static void error(String msg) {
+        checkStarted();
+        LOG.log(Level.ERROR, msg);
+    }
+
+    /**
+     * Logs a DEBUG message.
+     *
+     * @param msg logged message
+     */
+    public static void debug(String msg) {
+        checkStarted();
+        LOG.log(Level.DEBUG, msg);
+    }
+
     /**
      * Starts logging.
      */
@@ -78,7 +124,7 @@ public class Logging {
 
         final ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setFormatter(DEFAULT_FORMATTER);
-        consoleHandler.setLevel(Level.FINER);
+        consoleHandler.setLevel(Level.INFO);
         LOG.addHandler(consoleHandler);
 
         try {
@@ -87,24 +133,24 @@ public class Logging {
             }
             Files.createDirectories(LOG_DIR);
         } catch (final IOException e) {
-            LOG.warning("Unable to create log dir, log may not be saved");
-            LOG.warning(StringUtils.getStackTrace(e));
+            warning("Unable to create log dir, log may not be saved");
+            warning(StringUtils.getStackTrace(e));
         }
 
         for (final Path path : LOG_PATHS) {
             try {
                 final FileHandler fileHandler = new FileHandler(path.toString());
-                fileHandler.setLevel(Level.FINEST);
+                fileHandler.setLevel(Level.DEBUG);
                 fileHandler.setFormatter(DEFAULT_FORMATTER);
                 fileHandler.setEncoding("UTF-8");
                 LOG.addHandler(fileHandler);
             } catch (final IOException e) {
-                LOG.warning("Failed to create log file at " + path);
-                LOG.warning(StringUtils.getStackTrace(e));
+                warning("Failed to create log file at " + path);
+                warning(StringUtils.getStackTrace(e));
             }
         }
 
-        LOG.info("Logging started");
+        debug("Logging started");
     }
 
     private static String format(LogRecord record) {

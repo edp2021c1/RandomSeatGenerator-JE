@@ -316,6 +316,7 @@ public class SettingsDialog extends Stage {
                     return;
                 }
                 switch (event.getCode()) {
+                    case Q -> owner.close();
                     case W -> close();
                     case O -> loadConfigBtn.fire();
                     case S -> applyBtn.fire();

@@ -21,11 +21,10 @@ package com.edp2021c1.randomseatgenerator.launcher;
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
+import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
 import javafx.application.Application;
 import javafx.stage.Stage;
-
-import static com.edp2021c1.randomseatgenerator.util.Logging.LOG;
 
 /**
  * JavaFX application intro.
@@ -45,19 +44,24 @@ public class GUILauncher extends Application {
     @Override
     public void start(final Stage primaryStage) {
         try {
-            LOG.info("*** " + MetaData.TITLE + " ***");
-            LOG.info("OS: " + MetaData.SYSTEM_NAME + " " + MetaData.SYSTEM_VERSION);
-            LOG.info("Architecture: " + MetaData.SYSTEM_ARCH);
-            LOG.info("Java Version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
-            LOG.info("Java VM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
-            LOG.info("Java Home: " + System.getProperty("java.home"));
-            LOG.info("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
-            LOG.info("Working dir: " + MetaData.WORKING_DIR);
-            LOG.info("Config path: " + ConfigUtils.getConfigPath());
+            Logging.info("*** " + MetaData.TITLE + " ***");
+            Logging.debug("OS: " + MetaData.SYSTEM_NAME + " " + MetaData.SYSTEM_VERSION);
+            Logging.debug("Architecture: " + MetaData.SYSTEM_ARCH);
+            Logging.debug("Java Version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
+            Logging.debug("Java VM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
+            Logging.debug("Java Home: " + System.getProperty("java.home"));
+            Logging.debug("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
+            Logging.debug("Working dir: " + MetaData.WORKING_DIR);
+            Logging.debug("Config path: " + ConfigUtils.getConfigPath());
 
             new MainWindow().show();
         } catch (final Throwable e) {
             CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
         }
+    }
+
+    @Override
+    public void stop() {
+        Logging.info("Exiting");
     }
 }

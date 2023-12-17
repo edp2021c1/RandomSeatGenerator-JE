@@ -42,7 +42,6 @@ import java.util.Date;
 import java.util.Objects;
 
 import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
-import static com.edp2021c1.randomseatgenerator.util.Logging.LOG;
 import static com.edp2021c1.randomseatgenerator.util.StringUtils.DATE_FORMAT;
 
 /**
@@ -126,7 +125,7 @@ public class MainWindow extends Stage {
         setScene(scene);
         setTitle(MetaData.TITLE);
         UIFactory.decorate(this, StageType.MAIN);
-        setOnCloseRequest(event -> System.exit(0));
+        setOnCloseRequest(event -> close());
 
         seed = seedInput.textProperty();
 
@@ -159,7 +158,7 @@ public class MainWindow extends Stage {
                     CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
                     return;
                 }
-                LOG.info("\n" + seatTable);
+                Logging.info("\n" + seatTable);
                 seatTableView.setSeatTable(seatTable);
                 previousSeed = seed.get();
             } catch (final Throwable e) {
@@ -193,7 +192,7 @@ public class MainWindow extends Stage {
                     );
                 }
 
-                LOG.info("Successfully exported seat table to " + exportFile);
+                Logging.info("Successfully exported seat table to " + exportFile);
 
                 exportDir = exportFile.getParentFile();
                 t = new AppConfig();
@@ -217,11 +216,8 @@ public class MainWindow extends Stage {
                     return;
                 }
                 switch (event.getCode()) {
+                    case Q, W -> close();
                     case F -> setFullScreen(event.isControlDown() != isFullScreen());
-                    case W -> {
-                        close();
-                        System.exit(0);
-                    }
                     case COMMA -> settingsBtn.fire();
                     case S -> exportBtn.fire();
                     case R -> randomSeedBtn.fire();
@@ -247,7 +243,15 @@ public class MainWindow extends Stage {
     public void onConfigChanged() {
         seatTableView.setEmptySeatTable(ConfigUtils.getConfig());
         previousSeed = null;
-        LOG.info("Seat table view reset");
+        Logging.debug("Seat table view reset");
+    }
+
+    @Override
+    public void close() {
+        Logging.debug("Closing main window");
+        super.close();
+        Logging.info("Exiting");
+        System.exit(0);
     }
 
 }
