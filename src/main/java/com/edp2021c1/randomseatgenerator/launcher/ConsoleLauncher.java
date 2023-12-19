@@ -44,6 +44,8 @@ public class ConsoleLauncher {
      * @param args arguments used to launch the application.
      */
     public static void launch(final String[] args) {
+        Logging.start(Logging.LoggingMode.CONSOLE);
+
         final List<String> arguments = Arrays.asList(args);
 
         // 命令行参数相关
@@ -94,7 +96,7 @@ public class ConsoleLauncher {
         // 生成座位表
         final SeatTable seatTable = SeatTableFactory.generate(config, seed);
 
-        Logging.info("\n" + seatTable);
+        Logging.user("\n" + seatTable);
 
         // 导出
         Logging.debug("Output path: " + outputPath);
@@ -103,6 +105,6 @@ public class ConsoleLauncher {
         } catch (final IOException e) {
             throw new RuntimeException("Failed to export seat table to " + outputPath, e);
         }
-        Logging.info("Seat table successfully exported to " + outputPath);
+        Logging.user("Seat table successfully exported to " + outputPath);
     }
 }

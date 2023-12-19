@@ -19,12 +19,11 @@
 package com.edp2021c1.randomseatgenerator.launcher;
 
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
-import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
-import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.Logging;
-import com.edp2021c1.randomseatgenerator.util.MetaData;
+import com.edp2021c1.randomseatgenerator.util.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
+
+import java.nio.file.Paths;
 
 /**
  * JavaFX application intro.
@@ -38,6 +37,7 @@ public class GUILauncher extends Application {
      * Launches the JavaFX application.
      */
     public static void launch() {
+        Logging.start(Logging.LoggingMode.GUI);
         Application.launch(GUILauncher.class);
     }
 
@@ -54,14 +54,13 @@ public class GUILauncher extends Application {
             Logging.debug("Working dir: " + MetaData.WORKING_DIR);
             Logging.debug("Config path: " + ConfigUtils.getConfigPath());
 
+            if (IOUtils.lackOfPermission(Paths.get(MetaData.DATA_DIR))) {
+                throw new RuntimeException("Does not have read/write permission of the data directory");
+            }
+
             new MainWindow().show();
         } catch (final Throwable e) {
             CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
         }
-    }
-
-    @Override
-    public void stop() {
-        Logging.info("Exiting");
     }
 }

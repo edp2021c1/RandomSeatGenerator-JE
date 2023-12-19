@@ -61,9 +61,18 @@ public class Logging {
 
     private static void checkStarted() {
         if (!started) {
-            debug("Logging has not started yet, will start it as it's needed");
-            start();
+            throw new IllegalStateException("Logging has not started yet");
         }
+    }
+
+    /**
+     * Logs an USER message.
+     *
+     * @param msg logged message
+     */
+    public static void user(String msg) {
+        checkStarted();
+        LOG.log(Level.USER_INFO, msg);
     }
 
     /**
@@ -109,7 +118,7 @@ public class Logging {
     /**
      * Starts logging.
      */
-    public static void start() {
+    public static void start(LoggingMode mode) {
         if (started) {
             debug("Logging already started, there's no need to start it twice");
         }
@@ -125,7 +134,7 @@ public class Logging {
 
         final ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setFormatter(DEFAULT_FORMATTER);
-        consoleHandler.setLevel(Level.INFO);
+        consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? Level.ERROR : Level.INFO);
         LOG.addHandler(consoleHandler);
 
         try {
@@ -138,6 +147,17 @@ public class Logging {
             warning(StringUtils.getStackTrace(e));
         }
 
+        try {
+            if (Files.notExists(LOG_DIR) || !Files.isDirectory(LOG_DIR)) {
+                IOUtils.delete(LOG_DIR);
+                Files.createDirectories(LOG_DIR);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (IOUtils.lackOfPermission(LOG_DIR)) {
+            warning("Does not have read/write permission of the log directory");
+        }
         for (final Path path : LOG_PATHS) {
             try {
                 final FileHandler fileHandler = new FileHandler(path.toString());
@@ -166,6 +186,11 @@ public class Logging {
         }, buffer, null);
 
         return buffer.toString();
+    }
+
+    public enum LoggingMode {
+        CONSOLE,
+        GUI
     }
 
 }

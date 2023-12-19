@@ -21,7 +21,6 @@ package com.edp2021c1.randomseatgenerator;
 import com.edp2021c1.randomseatgenerator.launcher.ConsoleLauncher;
 import com.edp2021c1.randomseatgenerator.launcher.GUILauncher;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
 
 import java.util.Arrays;
@@ -53,8 +52,6 @@ public class RandomSeatGenerator {
 
         Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.CRASH_REPORTER_LOG_ONLY);
         Thread.currentThread().setName("Main Thread");
-
-        Logging.start();
 
         // 如果是命令行模式则启动命令行程序
         if (arguments.contains("--nogui")) {
