@@ -61,9 +61,18 @@ public class Logging {
 
     private static void checkStarted() {
         if (!started) {
-            debug("Logging has not started yet, will start it as it's needed");
-            start();
+            throw new IllegalStateException("Logging has not started yet");
         }
+    }
+
+    /**
+     * Logs an USER message.
+     *
+     * @param msg logged message
+     */
+    public static void user(String msg) {
+        checkStarted();
+        LOG.log(Level.USER_INFO, msg);
     }
 
     /**
@@ -108,8 +117,10 @@ public class Logging {
 
     /**
      * Starts logging.
+     *
+     * @param mode logging mode
      */
-    public static void start() {
+    public static void start(LoggingMode mode) {
         if (started) {
             debug("Logging already started, there's no need to start it twice");
         }
@@ -125,7 +136,7 @@ public class Logging {
 
         final ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setFormatter(DEFAULT_FORMATTER);
-        consoleHandler.setLevel(Level.INFO);
+        consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? Level.USER_INFO : Level.INFO);
         LOG.addHandler(consoleHandler);
 
         try {
@@ -138,6 +149,17 @@ public class Logging {
             warning(StringUtils.getStackTrace(e));
         }
 
+        try {
+            if (Files.notExists(LOG_DIR) || !Files.isDirectory(LOG_DIR)) {
+                IOUtils.delete(LOG_DIR);
+                Files.createDirectories(LOG_DIR);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (IOUtils.lackOfPermission(LOG_DIR)) {
+            warning("Does not have read/write permission of the log directory");
+        }
         for (final Path path : LOG_PATHS) {
             try {
                 final FileHandler fileHandler = new FileHandler(path.toString());
@@ -152,6 +174,15 @@ public class Logging {
         }
 
         debug("Logging started");
+        info("*** " + MetaData.TITLE + " ***");
+        debug("Launching mode: " + mode.toString());
+        debug("OS: " + MetaData.SYSTEM_NAME + " " + MetaData.SYSTEM_VERSION);
+        debug("Architecture: " + MetaData.SYSTEM_ARCH);
+        debug("Java Version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
+        debug("Java VM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
+        debug("Java Home: " + System.getProperty("java.home"));
+        debug("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
+        debug("Working dir: " + MetaData.WORKING_DIR);
     }
 
     private static String format(LogRecord record) {
@@ -166,6 +197,22 @@ public class Logging {
         }, buffer, null);
 
         return buffer.toString();
+    }
+
+    /**
+     * Logging modes.
+     */
+    public enum LoggingMode {
+        /**
+         * Console logging mode, sets console logging level
+         * to {@link Level#USER_INFO}
+         */
+        CONSOLE,
+        /**
+         * GUI logging mode, sets console logging level
+         * to {@link Level#INFO}
+         */
+        GUI
     }
 
 }

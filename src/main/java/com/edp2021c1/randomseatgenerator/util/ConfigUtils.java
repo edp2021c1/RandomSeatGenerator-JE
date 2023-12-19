@@ -54,10 +54,16 @@ public class ConfigUtils {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+        if (IOUtils.lackOfPermission(configDir)) {
+            throw new RuntimeException("Does not has enough permission to read/write config");
+        }
 
         CONFIG_PATH = configDir.resolve("randomseatgenerator.json");
         if (Files.notExists(CONFIG_PATH)) {
             saveConfig(DEFAULT_CONFIG);
+        }
+        if (IOUtils.lackOfPermission(CONFIG_PATH)) {
+            throw new RuntimeException("Does not has enough permission to read/write config");
         }
         if (!Files.isRegularFile(CONFIG_PATH)) {
             try {
@@ -67,6 +73,7 @@ public class ConfigUtils {
                 throw new RuntimeException(e);
             }
         }
+        Logging.debug("Config path: " + CONFIG_PATH);
     }
 
     /**

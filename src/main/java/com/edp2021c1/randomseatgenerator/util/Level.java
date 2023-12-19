@@ -26,6 +26,11 @@ package com.edp2021c1.randomseatgenerator.util;
  */
 class Level extends java.util.logging.Level {
     /**
+     * Indicates messages for user to see.
+     */
+    public static final Level USER_INFO = new Level("INFO", 950);
+
+    /**
      * Indicates debug messages.
      */
     public static final Level DEBUG = new Level("DEBUG", 200);

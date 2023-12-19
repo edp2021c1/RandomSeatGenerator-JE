@@ -44,10 +44,12 @@ public class ConsoleLauncher {
      * @param args arguments used to launch the application.
      */
     public static void launch(final String[] args) {
+        Logging.start(Logging.LoggingMode.CONSOLE);
+
         final List<String> arguments = Arrays.asList(args);
 
         // 命令行参数相关
-        // 种子，默认为随机数
+        // 种子，默认为随机字符串
         String seed = StringUtils.randomString(30);
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
         Path configPath = ConfigUtils.getConfigPath();
@@ -59,25 +61,26 @@ public class ConsoleLauncher {
         // 获取配置文件路径
         if ((i = arguments.lastIndexOf("--config-path")) != -1 && i < arguments.size() - 1) {
             configPath = Paths.get(arguments.get(i + 1)).toAbsolutePath();
+            if (!Files.isRegularFile(configPath) || !configPath.endsWith(".json")) {
+                Logging.error("Invalid config path: " + configPath);
+                return;
+            }
+            Logging.user("Config path set to " + configPath);
         }
 
         // 获取种子
         if ((i = arguments.lastIndexOf("--seed")) != -1 && i < arguments.size() - 1) {
             seed = arguments.get(i + 1);
+            Logging.user("Seed set to " + seed);
         }
 
         // 获取导出路径
         if ((i = arguments.lastIndexOf("--output-path")) != -1 && i < arguments.size() - 1) {
-            final Path tmp = Paths.get(arguments.get(i + 1));
-            if (Files.isDirectory(tmp)) {
-                outputPath = tmp.resolve(outputPath).toAbsolutePath();
-            } else {
-                outputPath = tmp.toAbsolutePath();
-                if (!outputPath.endsWith(".xlsx")) {
-                    Logging.warning("Invalid output file name: %s, will add \".xlsx\" to the end of it".formatted(outputPath.getFileName()));
-                    outputPath = Paths.get(outputPath + ".xlsx");
-                }
+            outputPath = Paths.get(arguments.get(i + 1)).toAbsolutePath();
+            if (Files.isDirectory(outputPath) || !outputPath.endsWith(".xlsx")) {
+                Logging.error("Invalid output path: " + outputPath);
             }
+            Logging.user("Output path set to " + outputPath);
         }
 
         // 处理座位表生成配置
@@ -94,15 +97,14 @@ public class ConsoleLauncher {
         // 生成座位表
         final SeatTable seatTable = SeatTableFactory.generate(config, seed);
 
-        Logging.info("\n" + seatTable);
+        Logging.user("\n" + seatTable);
 
         // 导出
-        Logging.debug("Output path: " + outputPath);
         try {
             SeatTableUtils.exportToExcelDocument(seatTable, outputPath.toFile(), config.export_writable);
         } catch (final IOException e) {
             throw new RuntimeException("Failed to export seat table to " + outputPath, e);
         }
-        Logging.info("Seat table successfully exported to " + outputPath);
+        Logging.user("Seat table successfully exported to " + outputPath);
     }
 }
