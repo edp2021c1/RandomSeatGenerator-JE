@@ -35,9 +35,9 @@ public class SeatTable {
      */
     public static final String EMPTY_SEAT_PLACEHOLDER = "-";
     /**
-     * Sign before and after a group leader.
+     * Regular expression of a group leader.
      */
-    public static final String GROUP_LEADER_IDENTIFIER = "*";
+    public static final String GROUP_LEADER_REGEX = "\\*+.+\\*";
     /**
      * Format of a group leader.
      */

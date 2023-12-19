@@ -39,13 +39,13 @@ public class StringUtils {
      * Returns a long hash code of a {@code String}.
      *
      * @param str owner of the hash code
-     * @return hash code of str
+     * @return hash code of {@code str}
      */
     public static long longHash(final String str) {
         final byte[] val = str.getBytes();
         long h = 0;
         for (final byte v : val) {
-            h = v - h + (h << 5);
+            h = (v & 0xffff) - h + (h << 5);
         }
         return h;
     }

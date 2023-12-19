@@ -143,14 +143,15 @@ public class MainWindow extends Stage {
 
         generateBtn.setOnAction(event -> {
             try {
+                if (Objects.equals(previousSeed, seed.get())) {
+                    randomSeedBtn.fire();
+                }
+
                 config = ConfigUtils.getConfig();
                 if (config == null) {
                     throw new IllegalConfigException("Null config");
                 }
                 config.checkFormat();
-                if (Objects.equals(previousSeed, seed.get())) {
-                    randomSeedBtn.fire();
-                }
 
                 try {
                     seatTable = SeatTableFactory.generate(config, seed.get());

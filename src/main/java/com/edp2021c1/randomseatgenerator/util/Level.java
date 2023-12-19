@@ -39,6 +39,6 @@ class Level extends java.util.logging.Level {
     }
 
     private Level(java.util.logging.Level level) {
-        super(level.getName(), level.intValue());
+        super(level.getName(), level.intValue(), level.getResourceBundleName());
     }
 }

@@ -66,7 +66,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(final Thread t, final Throwable e) {
         final String str = "Exception in thread \"%s\":\n".formatted(t.getName()) +
-                (e instanceof IllegalConfigException ? e.getMessage() : StringUtils.getStackTrace(e));
+                (e instanceof IllegalConfigException ? "IllegalConfigException: " + e.getMessage() : StringUtils.getStackTrace(e));
 
         if (useLog) {
             Logging.error(str);

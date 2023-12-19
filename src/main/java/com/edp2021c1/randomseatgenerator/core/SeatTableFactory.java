@@ -43,7 +43,7 @@ public class SeatTableFactory {
     private static SeatTable generate0(final SeatConfig config, String seed)
             throws NullPointerException, IllegalConfigException {
         if (config == null) {
-            throw new NullPointerException("Config cannot be null");
+            throw new IllegalConfigException("Config cannot be null");
         }
         config.checkFormat();
 
@@ -155,17 +155,23 @@ public class SeatTableFactory {
      *                                costs too much time to generate the seat table.
      */
     public static SeatTable generate(final SeatConfig config, final String seed) {
-        final Future<SeatTable> future = Executors.newSingleThreadExecutor(r -> new Thread(r, "SeatTable Factory Thread"))
+        final Future<SeatTable> future = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"))
                 .submit(() -> generate0(config, seed));
 
         try {
             return future.get(3, TimeUnit.SECONDS);
-        } catch (final ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            final Throwable ex = e.getCause();
+            if (ex instanceof IllegalConfigException) {
+                throw (IllegalConfigException) ex;
+            }
+            throw (RuntimeException) ex;
         } catch (final TimeoutException e) {
             throw new IllegalConfigException(
-                    "Unlucky or invalid config/seed, please check your config or use another seed."
+                    "Seat table generating timeout, please check your config or use another seed"
             );
+        } catch (final InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

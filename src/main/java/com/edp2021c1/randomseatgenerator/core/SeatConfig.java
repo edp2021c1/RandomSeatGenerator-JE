@@ -88,7 +88,7 @@ public class SeatConfig {
         try {
             r = Integer.parseUnsignedInt(row_count);
         } catch (final NumberFormatException e) {
-            throw new IllegalConfigException("Invalid row_count: " + row_count, e);
+            throw new IllegalConfigException("Invalid row_count: " + row_count);
         }
         if (r == 0) {
             throw new IllegalConfigException("Row count cannot be zero");
@@ -110,7 +110,7 @@ public class SeatConfig {
         try {
             c = Integer.parseUnsignedInt(column_count);
         } catch (final NumberFormatException e) {
-            throw new IllegalConfigException("Invalid column_count: " + column_count, e);
+            throw new IllegalConfigException("Invalid column_count: " + column_count);
         }
         if (c == 0) {
             throw new IllegalConfigException("Column count cannot be zero");
@@ -136,7 +136,7 @@ public class SeatConfig {
         try {
             r = Integer.parseUnsignedInt(random_between_rows);
         } catch (final NumberFormatException e) {
-            throw new IllegalConfigException("Invalid random_between_rows: " + random_between_rows, e);
+            throw new IllegalConfigException("Invalid random_between_rows: " + random_between_rows);
         }
         return r;
     }
@@ -160,8 +160,7 @@ public class SeatConfig {
             }
         } catch (final IllegalArgumentException e) {
             throw new IllegalConfigException(
-                    "Invalid last row positions: " + last_row_pos_cannot_be_chosen,
-                    e
+                    "Invalid last row positions: " + last_row_pos_cannot_be_chosen
             );
         }
         return i;
@@ -184,7 +183,7 @@ public class SeatConfig {
             throw new IllegalConfigException("Name list must not contain empty name");
         }
         for (final String s : l) {
-            if (s.length() > 1 && s.startsWith(SeatTable.GROUP_LEADER_IDENTIFIER) || s.endsWith(SeatTable.GROUP_LEADER_IDENTIFIER)) {
+            if (s.matches(SeatTable.GROUP_LEADER_REGEX)) {
                 throw new IllegalConfigException("Name list must not contain names in the format of a group leader");
             }
         }

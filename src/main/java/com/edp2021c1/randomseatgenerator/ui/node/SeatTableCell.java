@@ -68,7 +68,7 @@ class SeatTableCell extends Label {
             }
         };
 
-        leader.set(s.length() > 1 && s.startsWith(SeatTable.GROUP_LEADER_IDENTIFIER) && s.endsWith(SeatTable.GROUP_LEADER_IDENTIFIER));
+        leader.set(s.matches(SeatTable.GROUP_LEADER_REGEX));
 
         getStyleClass().add(DEFAULT_STYLE_CLASS);
     }

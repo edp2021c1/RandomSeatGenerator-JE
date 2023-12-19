@@ -61,7 +61,8 @@ public class Logging {
 
     private static void checkStarted() {
         if (!started) {
-            throw new IllegalStateException("Logging has not started yet");
+            debug("Logging has not started yet, will start it as it's needed");
+            start();
         }
     }
 
@@ -110,7 +111,7 @@ public class Logging {
      */
     public static void start() {
         if (started) {
-            throw new IllegalStateException("Logging already started");
+            debug("Logging already started, there's no need to start it twice");
         }
 
         started = true;
