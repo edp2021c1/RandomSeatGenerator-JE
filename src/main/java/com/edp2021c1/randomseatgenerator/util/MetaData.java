@@ -75,9 +75,20 @@ public class MetaData {
     public static final String ERROR_ICON_URL = "/assets/img/error_icon.png";
 
     /**
-     * Default stylesheets of the windows of the app.
+     * Base stylesheet of the windows of the app.
+     * Defines everything except from colour.
      */
-    public static final String[] DEFAULT_STYLESHEETS = {"/assets/css/base.css", "/assets/css/light.css"};
+    public static final String STYLESHEET_BASE = "/assets/css/base.css";
+
+    /**
+     * Light stylesheet of the windows of the app.
+     */
+    public static final String STYLESHEET_LIGHT = "/assets/css/light.css";
+
+    /**
+     * Dark stylesheet of the windows of the app.
+     */
+    public static final String STYLESHEET_DARK = "/assets/css/dark.css";
 
     /**
      * Current working directory.

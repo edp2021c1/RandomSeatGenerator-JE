@@ -18,7 +18,14 @@
 
 package com.edp2021c1.randomseatgenerator.ui.util;
 
+import com.edp2021c1.randomseatgenerator.util.AppConfig;
+import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.MetaData;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -44,6 +51,29 @@ public class UIFactory {
      * Default margin.
      */
     public static final Insets DEFAULT_MARGIN = new Insets(5);
+    private static final BooleanProperty darkMode;
+
+    static {
+        darkMode = new SimpleBooleanProperty();
+        darkMode.addListener(new ChangeListener<>() {
+            private final AppConfig config = new AppConfig();
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                config.dark_mode = newValue;
+                ConfigUtils.saveConfig(config);
+            }
+        });
+    }
+
+    /**
+     * Sets whether the app is shown in the dark mode.
+     *
+     * @param isDarkMode value
+     */
+    public static void setDarkMode(boolean isDarkMode) {
+        darkMode.set(isDarkMode);
+    }
 
     /**
      * Decorates the given stage by adding an icon and
@@ -54,7 +84,27 @@ public class UIFactory {
      * @see StageType
      */
     public static void decorate(final Stage stage, final StageType type) {
-        stage.getScene().getStylesheets().addAll(MetaData.DEFAULT_STYLESHEETS);
+        final ObservableList<String> styleSheets = stage.getScene().getStylesheets();
+        styleSheets.add(MetaData.STYLESHEET_BASE);
+        darkMode.addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            if (newValue) {
+                styleSheets.remove(MetaData.STYLESHEET_LIGHT);
+                styleSheets.add(MetaData.STYLESHEET_DARK);
+            } else {
+                styleSheets.remove(MetaData.STYLESHEET_DARK);
+                styleSheets.add(MetaData.STYLESHEET_LIGHT);
+            }
+        });
+        if (darkMode.get()) {
+            styleSheets.remove(MetaData.STYLESHEET_LIGHT);
+            styleSheets.add(MetaData.STYLESHEET_DARK);
+        } else {
+            styleSheets.remove(MetaData.STYLESHEET_DARK);
+            styleSheets.add(MetaData.STYLESHEET_LIGHT);
+        }
         switch (type) {
             case ERROR -> {
                 stage.getIcons().add(new Image(MetaData.ERROR_ICON_URL));

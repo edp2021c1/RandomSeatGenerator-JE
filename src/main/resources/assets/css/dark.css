@@ -19,24 +19,24 @@
 * {
     -highlight-fill: #2571d5;
 
-    -text-fill-root: black;
+    -text-fill-root: white;
     -text-fill-button-disabled: #9b9b9b;
     -text-fill-button-default: white;
     -text-fill-err: #e74f4f;
 
-    -background-color-root: #f2f2f2;
-    -background-color-button-default: #398bfa;
+    -background-color-root: #232323;
+    -background-color-button-default: #276fce;
     -background-color-button-default-hover: #589eff;
-    -background-color-seat-table-cell: white;
-    -background-color-seat-table-cell-leader: #fff9ab;
+    -background-color-seat-table-cell: #313131;
+    -background-color-seat-table-cell-leader: #45296c;
 
     -border-color-root: #7c7c7c;
     -border-color-button-disabled: #9b9b9b;
-    -border-color-focused: black;
-    -border-color-checkbox-box: black;
-    -border-color-button-default: #398bfa;
+    -border-color-focused: #d9d9d9;
+    -border-color-checkbox-box: white;
+    -border-color-button-default: #276fce;
     -border-color-button-default-hover: #589eff;
-    -border-color-seat-table-cell: #eeeeee;
+    -border-color-seat-table-cell: #282828;
     -border-color-err: #e74f4f;
 }
 

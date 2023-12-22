@@ -57,6 +57,7 @@ public class SettingsDialog extends Stage {
     private final TextArea separateListInput;
     private final CheckBox luckyOptionCheck;
     private final CheckBox exportWritableCheck;
+    private final CheckBox darkModeCheck;
     private final Button loadConfigBtn;
     private final Button applyBtn;
     private final FileChooser fc;
@@ -118,6 +119,8 @@ public class SettingsDialog extends Stage {
 
         exportWritableCheck = new CheckBox("导出为可写");
 
+        darkModeCheck = new CheckBox("深色模式");
+
         loadConfigBtn = createButton("从文件加载", 90, 26);
 
         applyBtn = createButton("应用", 80, 26);
@@ -134,6 +137,7 @@ public class SettingsDialog extends Stage {
                 separateListInput,
                 luckyOptionCheck,
                 exportWritableCheck,
+                darkModeCheck,
                 applyBtnDisabledProperty
         ) {
             @Override

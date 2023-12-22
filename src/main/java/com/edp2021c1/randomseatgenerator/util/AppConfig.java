@@ -38,6 +38,11 @@ public class AppConfig extends SeatConfig {
      */
     public String last_import_dir;
 
+    /**
+     * Determines whether the app is shown in the dark mode.
+     */
+    public Boolean dark_mode;
+
     @Override
     public void checkFormat() {
         StringBuilder str = new StringBuilder();
@@ -93,6 +98,9 @@ public class AppConfig extends SeatConfig {
         }
         if (value.last_import_dir != null) {
             last_import_dir = value.last_import_dir;
+        }
+        if (value.dark_mode != null) {
+            dark_mode = value.dark_mode;
         }
     }
 }

@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
+import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.AppConfig;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Pos;
@@ -57,6 +58,8 @@ public abstract class ConfigPane extends VBox {
 
     private final CheckBox exportWritableCheck;
 
+    private final CheckBox darkModeCheck;
+
     /**
      * @param rowCountInput            input of {@code row_count}
      * @param columnCountInput         input of {@code column_count}
@@ -67,6 +70,7 @@ public abstract class ConfigPane extends VBox {
      * @param separateListInput        input of {@code separate_list}
      * @param luckyOptionCheck         input of {@code lucky_option}
      * @param exportWritableCheck      input of {@code export_writable}
+     * @param darkModeCheck            input of {@code dark_mode}
      * @param applyBtnDisabledProperty property of whether the current global config is equal to the config in the pane,
      *                                 usually decides whether the apply button is disabled. Ignored if is null.
      */
@@ -79,6 +83,7 @@ public abstract class ConfigPane extends VBox {
                       final TextArea separateListInput,
                       final CheckBox luckyOptionCheck,
                       final CheckBox exportWritableCheck,
+                      final CheckBox darkModeCheck,
                       final BooleanProperty applyBtnDisabledProperty) {
         super();
 
@@ -91,6 +96,7 @@ public abstract class ConfigPane extends VBox {
         this.separateListInput = separateListInput;
         this.luckyOptionCheck = luckyOptionCheck;
         this.exportWritableCheck = exportWritableCheck;
+        this.darkModeCheck = darkModeCheck;
 
         final HBox box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
         box1.setPrefHeight(60);
@@ -98,7 +104,7 @@ public abstract class ConfigPane extends VBox {
         final HBox box2 = new HBox(nameListInput, groupLeaderListInput, separateListInput, luckyOptionCheck);
         box2.setPrefHeight(60);
         box2.setAlignment(Pos.CENTER);
-        final HBox box3 = new HBox(exportWritableCheck);
+        final HBox box3 = new HBox(exportWritableCheck, darkModeCheck);
         box3.setPrefHeight(60);
         box3.setAlignment(Pos.CENTER);
         getChildren().addAll(box1, box2, box3);
@@ -124,6 +130,7 @@ public abstract class ConfigPane extends VBox {
                 applyBtnDisabledProperty.set(newValue == getConfig().lucky_option));
         exportWritableCheck.selectedProperty().addListener((observable, oldValue, newValue) ->
                 applyBtnDisabledProperty.set(newValue == getConfig().export_writable));
+        darkModeCheck.selectedProperty().addListener((observable, oldValue, newValue) -> UIFactory.setDarkMode(newValue));
     }
 
     /**
@@ -146,6 +153,7 @@ public abstract class ConfigPane extends VBox {
         separateListInput.setText(config.separate_list);
         luckyOptionCheck.setSelected(config.lucky_option);
         exportWritableCheck.setSelected(config.export_writable);
+        darkModeCheck.setSelected(config.dark_mode);
     }
 
 }
