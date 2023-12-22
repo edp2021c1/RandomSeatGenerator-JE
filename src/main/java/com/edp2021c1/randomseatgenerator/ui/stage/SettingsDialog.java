@@ -183,7 +183,7 @@ public class SettingsDialog extends Stage {
         confirm_apply_cancelBar.setPrefHeight(66);
         confirm_apply_cancelBar.getStyleClass().add("bottom");
 
-        appConfigTab = new Tab("生成和导出", appConfigBox);
+        appConfigTab = new Tab("常规", appConfigBox);
         appConfigTab.setClosable(false);
 
         aboutInfoTab = new Tab("关于", aboutInfoBox);

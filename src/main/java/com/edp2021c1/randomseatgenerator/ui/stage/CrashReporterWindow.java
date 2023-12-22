@@ -53,7 +53,7 @@ public class CrashReporterWindow extends Stage {
         buttonBar.getStyleClass().add("bottom");
 
         final ScrollPane scrollPane = new ScrollPane(mainLabel);
-        scrollPane.setPrefSize(720, 480);
+        scrollPane.autosize();
         scrollPane.getStyleClass().add("err-scroll-pane");
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
@@ -62,8 +62,11 @@ public class CrashReporterWindow extends Stage {
 
         final Scene scene = new Scene(mainBox);
 
+        setMaxWidth(1440);
+        setMaxHeight(810);
         setScene(scene);
         setTitle("出错啦");
+        setResizable(false);
         UIFactory.decorate(this, UIFactory.StageType.ERROR);
 
         preLabel.setOnMouseClicked(event -> copyText(mainLabel));

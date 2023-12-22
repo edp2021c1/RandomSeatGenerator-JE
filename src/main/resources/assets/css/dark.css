@@ -102,7 +102,11 @@
 .check-box .box {
     -fx-background-color: -background-color-root;
 
-    -fx-border-color: -border-color-checkbox-box;
+    -fx-border-color: -border-color-root;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: inherit;
 }
 
 .tab-header-area .tab-header-background {
