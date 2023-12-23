@@ -50,22 +50,23 @@ public enum OperatingSystem {
     public static final OperatingSystem CURRENT;
 
     static {
-        OperatingSystem result = UNKNOWN;
         if (SYSTEM_NAME != null) {
-            String osName = SYSTEM_NAME.toLowerCase();
+            final String osName = SYSTEM_NAME.toLowerCase();
             if (osName.startsWith("windows")) {
-                result = WINDOWS;
+                CURRENT = WINDOWS;
             } else if (osName.startsWith("mac")) {
-                result = MAC;
+                CURRENT = MAC;
             } else if (osName.contains("solaris")
                     || osName.contains("linux")
                     || osName.contains("unix")
                     || osName.contains("sunos")) {
-                result = LINUX;
+                CURRENT = LINUX;
+            } else {
+                CURRENT = UNKNOWN;
             }
+        } else {
+            CURRENT = UNKNOWN;
         }
-
-        CURRENT = result;
     }
 
 }

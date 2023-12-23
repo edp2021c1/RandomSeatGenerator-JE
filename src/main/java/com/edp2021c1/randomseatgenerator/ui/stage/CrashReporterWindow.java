@@ -1,6 +1,7 @@
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
+import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import javafx.scene.Scene;
@@ -8,14 +9,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.DataFormat;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import java.util.HashMap;
 
 /**
  * Windows of FX crash reporter.
@@ -43,7 +40,7 @@ public class CrashReporterWindow extends Stage {
 
         final Button copyBtn = UIFactory.createButton("复制并关闭", 80, 26);
         copyBtn.setOnAction(event -> {
-            copyText(mainLabel);
+            DesktopUtils.copyText(mainLabel.getText());
             close();
         });
 
@@ -69,7 +66,7 @@ public class CrashReporterWindow extends Stage {
         setResizable(false);
         UIFactory.decorate(this, UIFactory.StageType.ERROR);
 
-        preLabel.setOnMouseClicked(event -> copyText(mainLabel));
+        preLabel.setOnMouseClicked(event -> DesktopUtils.copyText(mainLabel.getText()));
 
         if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
             mainBox.setOnKeyPressed(event -> {
@@ -79,7 +76,7 @@ public class CrashReporterWindow extends Stage {
                 switch (event.getCode()) {
                     case Q -> RuntimeUtils.exit();
                     case W -> close();
-                    case C -> copyText(mainLabel);
+                    case C -> DesktopUtils.copyText(mainLabel.getText());
                 }
             });
         } else {
@@ -88,15 +85,10 @@ public class CrashReporterWindow extends Stage {
                     return;
                 }
                 if (KeyCode.C.equals(event.getCode())) {
-                    copyText(mainLabel);
+                    DesktopUtils.copyText(mainLabel.getText());
                 }
             });
         }
     }
 
-    private void copyText(Label label) {
-        final HashMap<DataFormat, Object> map = new HashMap<>();
-        map.put(DataFormat.PLAIN_TEXT, label.getText());
-        Clipboard.getSystemClipboard().setContent(map);
-    }
 }

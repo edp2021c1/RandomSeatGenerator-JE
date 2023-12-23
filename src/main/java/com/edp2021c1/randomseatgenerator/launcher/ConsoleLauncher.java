@@ -45,6 +45,7 @@ public class ConsoleLauncher {
      */
     public static void launch(final String[] args) {
         Logging.start(Logging.LoggingMode.CONSOLE);
+        ConfigUtils.initConfig();
 
         final List<String> arguments = Arrays.asList(args);
 

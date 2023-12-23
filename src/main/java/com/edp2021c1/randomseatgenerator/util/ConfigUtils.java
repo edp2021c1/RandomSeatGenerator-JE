@@ -37,28 +37,56 @@ import java.util.Objects;
  * @since 1.2.9
  */
 public class ConfigUtils {
+    private static final Path CONFIG_DIR;
     private static final Path CONFIG_PATH;
     private static final Gson GSON = new Gson();
     private final static AppConfig current = new AppConfig();
-    private static final AppConfig DEFAULT_CONFIG = loadDefaultConfig();
+    private static final AppConfig DEFAULT_CONFIG;
     private static FileTime configLastModifiedTime = null;
+    private static boolean initialized = false;
 
     static {
-        final Path configDir = Paths.get(MetaData.DATA_DIR, "config");
+        CONFIG_DIR = Paths.get(MetaData.DATA_DIR, "config");
+        CONFIG_PATH = CONFIG_DIR.resolve("randomseatgenerator.json");
 
         try {
-            if (!Files.isDirectory(configDir)) {
-                IOUtils.delete(configDir);
+            final BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(
+                            Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/default.json"))
+                    )
+            );
+            final StringBuilder buffer = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {
+                buffer.append(str);
             }
-            Files.createDirectories(configDir);
+            str = buffer.toString();
+            DEFAULT_CONFIG = GSON.fromJson(str, AppConfig.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Initializes the config directory and file.
+     */
+    public static void initConfig() {
+        Logging.debug("Initializing config");
+
+        initialized = true;
+
+        try {
+            if (!Files.isDirectory(CONFIG_DIR)) {
+                IOUtils.delete(CONFIG_DIR);
+            }
+            Files.createDirectories(CONFIG_DIR);
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-        if (IOUtils.lackOfPermission(configDir)) {
+        if (IOUtils.lackOfPermission(CONFIG_DIR)) {
             throw new RuntimeException("Does not has enough permission to read/write config");
         }
 
-        CONFIG_PATH = configDir.resolve("randomseatgenerator.json");
         if (Files.notExists(CONFIG_PATH)) {
             saveConfig(DEFAULT_CONFIG);
         }
@@ -73,7 +101,14 @@ public class ConfigUtils {
                 throw new RuntimeException(e);
             }
         }
+
         Logging.debug("Config path: " + CONFIG_PATH);
+    }
+
+    private static void checkInitialized() {
+        if (!initialized) {
+            throw new IllegalStateException("Config not initialized");
+        }
     }
 
     /**
@@ -87,33 +122,13 @@ public class ConfigUtils {
         return GSON.fromJson(Files.readString(path), AppConfig.class);
     }
 
-    private static AppConfig loadDefaultConfig() {
-        AppConfig config;
-        try {
-            final BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(
-                            Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/default.json"))
-                    )
-            );
-            final StringBuilder buffer = new StringBuilder();
-            String str;
-            while ((str = reader.readLine()) != null) {
-                buffer.append(str);
-            }
-            str = buffer.toString();
-            config = GSON.fromJson(str, AppConfig.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return config;
-    }
-
     /**
      * Writes {@code SeatConfig} to {@code seat_config.json} under the current directory.
      *
      * @param config {@code SeatConfig} to set as the default seat config and save to file.
      */
     public static void saveConfig(final AppConfig config) {
+        checkInitialized();
         current.set(config);
         try {
             final FileWriter writer = new FileWriter(CONFIG_PATH.toFile());
@@ -137,6 +152,7 @@ public class ConfigUtils {
     }
 
     private static void refreshConfig() {
+        checkInitialized();
         try {
             if (Objects.equals(Files.getLastModifiedTime(CONFIG_PATH), configLastModifiedTime)) {
                 return;

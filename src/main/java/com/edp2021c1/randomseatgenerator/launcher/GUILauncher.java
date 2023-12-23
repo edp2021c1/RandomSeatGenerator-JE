@@ -45,6 +45,7 @@ public class GUILauncher extends Application {
     public void start(final Stage primaryStage) {
         try {
             Logging.start(Logging.LoggingMode.GUI);
+            ConfigUtils.initConfig();
 
             if (IOUtils.lackOfPermission(Paths.get(MetaData.DATA_DIR))) {
                 throw new RuntimeException("Does not have read/write permission of the data directory");

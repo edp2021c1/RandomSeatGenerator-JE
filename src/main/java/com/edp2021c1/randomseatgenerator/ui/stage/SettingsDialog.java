@@ -282,25 +282,9 @@ public class SettingsDialog extends Stage {
             }
         });
 
-        gitRepositoryUrlLabel.setOnMouseClicked(event -> {
-            if (DESKTOP_SUPPORTED) {
-                try {
-                    DESKTOP.browse(GIT_REPOSITORY_URI);
-                } catch (final IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        gitRepositoryUrlLabel.setOnMouseClicked(event -> DesktopUtils.browseIfSupported(GIT_REPOSITORY_URI));
 
-        licenseLabel.setOnMouseClicked(event -> {
-            if (DESKTOP_SUPPORTED) {
-                try {
-                    DESKTOP.browse(LICENSE_URI);
-                } catch (final IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        licenseLabel.setOnMouseClicked(event -> DesktopUtils.browseIfSupported(LICENSE_URI));
 
         confirmBtn.setOnAction(event -> {
             applyBtn.fire();

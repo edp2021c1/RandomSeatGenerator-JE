@@ -18,7 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import java.awt.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -122,15 +121,7 @@ public class MetaData {
      * Name of the license of this application.
      */
     public static final String LICENSE_NAME = "GPLv3";
-    /**
-     * Is desktop supported.
-     */
-    public static final boolean DESKTOP_SUPPORTED;
 
-    /**
-     * Desktop toolkit, null if not supported.
-     */
-    public static final Desktop DESKTOP;
     /**
      * Data directory.
      */
@@ -172,9 +163,6 @@ public class MetaData {
         USER_HOME = System.getProperty("user.home");
         WORKING_DIR = System.getProperty("user.dir");
 
-        DESKTOP_SUPPORTED = Desktop.isDesktopSupported();
-        DESKTOP = DESKTOP_SUPPORTED ? Desktop.getDesktop() : null;
-
         VERSION_ID = MetaData.class.getPackage().getImplementationVersion();
         VERSION = VERSION_ID == null ? "dev" : "v" + VERSION_ID;
         TITLE = NAME + " - " + VERSION;
@@ -187,20 +175,18 @@ public class MetaData {
         }
 
 
-        if (OperatingSystem.CURRENT == OperatingSystem.WINDOWS) {
-            DATA_DIR = Paths.get(
+        switch (OperatingSystem.CURRENT) {
+            case WINDOWS -> DATA_DIR = Paths.get(
                     USER_HOME,
                     "AppData",
                     "Local",
                     "RandomSeatGenerator").toString();
-        } else if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
-            DATA_DIR = Paths.get(
+            case MAC -> DATA_DIR = Paths.get(
                     USER_HOME,
                     "Library",
                     "Application Support",
                     "RandomSeatGenerator").toString();
-        } else {
-            DATA_DIR = Paths.get(WORKING_DIR, ".rdstgnrt").toString();
+            default -> DATA_DIR = Paths.get(WORKING_DIR, ".rdstgnrt").toString();
         }
     }
 }

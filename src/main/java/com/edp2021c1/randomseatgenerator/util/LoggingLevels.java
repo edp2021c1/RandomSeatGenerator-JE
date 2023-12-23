@@ -18,32 +18,31 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import java.util.logging.Level;
+
 /**
  * Logging levels.
  *
  * @author Calboot
  * @since 1.4.6
  */
-class Level extends java.util.logging.Level {
+class LoggingLevels extends Level {
     /**
      * Indicates messages for user to see.
      */
-    public static final Level USER_INFO = new Level("INFO", 950);
+    public static final Level USER_INFO = new LoggingLevels("INFO", 950);
 
     /**
      * Indicates debug messages.
      */
-    public static final Level DEBUG = new Level("DEBUG", 200);
+    public static final Level DEBUG = new LoggingLevels("DEBUG", 200);
     /**
-     * @see java.util.logging.Level#SEVERE
+     * @see Level#SEVERE
      */
-    public static final Level ERROR = new Level(SEVERE);
+    public static final Level ERROR = SEVERE;
 
-    protected Level(String name, int value) {
+    protected LoggingLevels(String name, int value) {
         super(name, value);
     }
 
-    private Level(java.util.logging.Level level) {
-        super(level.getName(), level.intValue(), level.getResourceBundleName());
-    }
 }

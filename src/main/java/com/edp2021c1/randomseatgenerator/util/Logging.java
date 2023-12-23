@@ -41,7 +41,7 @@ public class Logging {
     private static final Path[] LOG_PATHS;
     private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
     private static final Formatter DEFAULT_FORMATTER;
-    private static boolean started = false;
+    private static boolean initialized = false;
 
     static {
         String str = "%tF-%%d.log".formatted(new Date());
@@ -59,9 +59,9 @@ public class Logging {
         };
     }
 
-    private static void checkStarted() {
-        if (!started) {
-            throw new IllegalStateException("Logging has not started yet");
+    private static void checkInitialized() {
+        if (!initialized) {
+            throw new IllegalStateException("Logger not initialized");
         }
     }
 
@@ -71,8 +71,8 @@ public class Logging {
      * @param msg logged message
      */
     public static void user(String msg) {
-        checkStarted();
-        LOG.log(Level.USER_INFO, msg);
+        checkInitialized();
+        LOG.log(LoggingLevels.USER_INFO, msg);
     }
 
     /**
@@ -81,8 +81,8 @@ public class Logging {
      * @param msg logged message
      */
     public static void info(String msg) {
-        checkStarted();
-        LOG.log(Level.INFO, msg);
+        checkInitialized();
+        LOG.log(LoggingLevels.INFO, msg);
     }
 
     /**
@@ -91,8 +91,8 @@ public class Logging {
      * @param msg logged message
      */
     public static void warning(String msg) {
-        checkStarted();
-        LOG.log(Level.WARNING, msg);
+        checkInitialized();
+        LOG.log(LoggingLevels.WARNING, msg);
     }
 
     /**
@@ -101,8 +101,8 @@ public class Logging {
      * @param msg logged message
      */
     public static void error(String msg) {
-        checkStarted();
-        LOG.log(Level.ERROR, msg);
+        checkInitialized();
+        LOG.log(LoggingLevels.ERROR, msg);
     }
 
     /**
@@ -111,8 +111,8 @@ public class Logging {
      * @param msg logged message
      */
     public static void debug(String msg) {
-        checkStarted();
-        LOG.log(Level.DEBUG, msg);
+        checkInitialized();
+        LOG.log(LoggingLevels.DEBUG, msg);
     }
 
     /**
@@ -121,13 +121,14 @@ public class Logging {
      * @param mode logging mode
      */
     public static void start(LoggingMode mode) {
-        if (started) {
+        if (initialized) {
             debug("Logging already started, there's no need to start it twice");
+            return;
         }
 
-        started = true;
+        initialized = true;
 
-        LOG.setLevel(Level.ALL);
+        LOG.setLevel(LoggingLevels.ALL);
         LOG.setUseParentHandlers(false);
         LOG.setFilter(record -> {
             record.setMessage(format(record));
@@ -136,7 +137,7 @@ public class Logging {
 
         final ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setFormatter(DEFAULT_FORMATTER);
-        consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? Level.USER_INFO : Level.INFO);
+        consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? LoggingLevels.USER_INFO : LoggingLevels.INFO);
         LOG.addHandler(consoleHandler);
 
         try {
@@ -163,7 +164,7 @@ public class Logging {
         for (final Path path : LOG_PATHS) {
             try {
                 final FileHandler fileHandler = new FileHandler(path.toString());
-                fileHandler.setLevel(Level.DEBUG);
+                fileHandler.setLevel(LoggingLevels.DEBUG);
                 fileHandler.setFormatter(DEFAULT_FORMATTER);
                 fileHandler.setEncoding("UTF-8");
                 LOG.addHandler(fileHandler);
@@ -205,12 +206,12 @@ public class Logging {
     public enum LoggingMode {
         /**
          * Console logging mode, sets console logging level
-         * to {@link Level#USER_INFO}
+         * to {@link LoggingLevels#USER_INFO}
          */
         CONSOLE,
         /**
          * GUI logging mode, sets console logging level
-         * to {@link Level#INFO}
+         * to {@link LoggingLevels#INFO}
          */
         GUI
     }

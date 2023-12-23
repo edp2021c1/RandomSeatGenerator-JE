@@ -49,16 +49,6 @@ public class SeatTableView extends VBox {
     }
 
     /**
-     * Creates a view showing the given {@code SeatTable}.
-     *
-     * @param seatTable {@code SeatTable} to be shown in this view
-     */
-    public SeatTableView(final SeatTable seatTable) {
-        this();
-        setSeatTable(seatTable);
-    }
-
-    /**
      * Creates a view showing an empty {@code SeatTable}.
      *
      * @param config used to generate the empty seat table
