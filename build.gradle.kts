@@ -27,7 +27,7 @@ plugins {
 }
 
 javafx {
-    version = "20.0.1"
+    version = "21.0.1"
     modules("javafx.controls")
 }
 
@@ -143,7 +143,7 @@ fun pack() {
         val finalPackagePath: Path = packageDir.resolve(packageName)
 
         if (!Files.isDirectory(packageDir)) {
-            Files.delete(packageDir)
+            Files.deleteIfExists(packageDir)
         }
         Files.createDirectories(packageDir)
 
