@@ -105,6 +105,10 @@
     -fx-border-color: -border-color-root;
 }
 
+.check-box:selected .box .mark {
+    -fx-background-color: -text-fill-root;
+}
+
 .scroll-pane .viewport {
     -fx-background-color: inherit;
 }
