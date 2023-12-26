@@ -38,9 +38,9 @@ public class Metadata {
                         --help                  Print this message and then quit.
                         --license               Print the license of this application and then quit.
                         --nogui                 Start the application in console mode.
-                        --config-path <path>    Path of a specific Json config file. (optional, default to seat_config.json under the current directory)
-                        --seed <value>          Seed used to generate seat table, must be in the format of a number. (optional, default to a random number)
-                        --output-path <path>    File or directory to export seat table to. If the path is a directory, seat table will be exported to yyyy-mm-dd.xlsx under it. (optional, default to yyyy-mm-dd.xlsx under the current directory)
+                        --config-path <path>    Path of a specific Json config file. Only useful in console mode. (optional)
+                        --seed <value>          Seed used to generate seat table, must be in the format of a number. Only useful in console mode. (optional, default to a random string)
+                        --output-path <path>    Path to export seat table to. Only useful in console mode. (optional, default to yyyy-mm-dd.xlsx under the current directory)
                         
                     """;
 
