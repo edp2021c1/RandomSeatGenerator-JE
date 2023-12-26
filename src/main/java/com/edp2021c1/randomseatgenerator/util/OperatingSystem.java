@@ -18,7 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import static com.edp2021c1.randomseatgenerator.util.MetaData.SYSTEM_NAME;
+import static com.edp2021c1.randomseatgenerator.util.Metadata.SYSTEM_NAME;
 
 /**
  * Enum of the operating system.

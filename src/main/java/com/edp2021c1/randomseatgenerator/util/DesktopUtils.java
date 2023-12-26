@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * Utils related to desktop.
+ * Desktop utils.
  *
  * @author Calboot
  * @since 1.4.7
@@ -75,8 +75,7 @@ public class DesktopUtils {
         if (DESKTOP_SUPPORTED) {
             try {
                 DESKTOP.browse(uri);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (IOException ignored) {
             }
         }
     }

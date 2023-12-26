@@ -22,8 +22,11 @@ import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
-import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.logging.Logging;
+import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -41,8 +44,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
 import static com.edp2021c1.randomseatgenerator.util.StringUtils.DATE_FORMAT;
+import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
 
 /**
  * Main window of the application.
@@ -75,7 +78,7 @@ public class MainWindow extends Stage {
         settingsDialog = new SettingsDialog(this);
         config = ConfigUtils.getConfig();
         config.checkFormat();
-        exportDir = new File(config.last_export_dir != null ? config.last_export_dir : MetaData.USER_HOME);
+        exportDir = new File(config.last_export_dir != null ? config.last_export_dir : Metadata.USER_HOME);
 
         final Scene scene;
         final HBox mainBox;
@@ -123,7 +126,7 @@ public class MainWindow extends Stage {
         setGrows(Priority.ALWAYS, seatTableView, rightBox);
 
         setScene(scene);
-        setTitle(MetaData.TITLE);
+        setTitle(Metadata.TITLE);
         UIFactory.decorate(this, StageType.MAIN);
         setOnCloseRequest(event -> close());
 

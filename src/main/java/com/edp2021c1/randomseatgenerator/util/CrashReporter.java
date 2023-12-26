@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.util;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.stage.CrashReporterWindow;
+import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

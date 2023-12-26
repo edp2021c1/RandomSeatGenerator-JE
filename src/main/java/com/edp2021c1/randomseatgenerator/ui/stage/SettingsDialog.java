@@ -20,8 +20,13 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
-import com.edp2021c1.randomseatgenerator.ui.util.UIFactory;
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.CrashReporter;
+import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
+import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
+import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
+import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -37,8 +42,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import static com.edp2021c1.randomseatgenerator.ui.util.UIFactory.*;
-import static com.edp2021c1.randomseatgenerator.util.MetaData.*;
+import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
+import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
 
 /**
  * Settings dialog of the application.

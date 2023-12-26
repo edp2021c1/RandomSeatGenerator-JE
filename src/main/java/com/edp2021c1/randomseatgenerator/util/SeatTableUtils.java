@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * Contains methods related to {@link SeatTable}.
+ * Methods related to {@link SeatTable}.
  *
  * @author Calboot
  * @since 1.2.9

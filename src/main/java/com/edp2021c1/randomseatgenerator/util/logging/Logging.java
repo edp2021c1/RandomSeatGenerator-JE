@@ -16,7 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.util;
+package com.edp2021c1.randomseatgenerator.util.logging;
+
+import com.edp2021c1.randomseatgenerator.util.IOUtils;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
+import com.edp2021c1.randomseatgenerator.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,7 +42,7 @@ public class Logging {
      * Logger.
      */
     private static final Logger LOG = Logger.getLogger("RandomSeat");
-    private static final Path LOG_DIR = Paths.get(MetaData.DATA_DIR, "logs");
+    private static final Path LOG_DIR = Paths.get(Metadata.DATA_DIR, "logs");
     private static final Path[] LOG_PATHS;
     private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
     private static final Formatter DEFAULT_FORMATTER;
@@ -175,15 +180,15 @@ public class Logging {
         }
 
         debug("Logging started");
-        info("*** " + MetaData.TITLE + " ***");
+        info("*** " + Metadata.TITLE + " ***");
         debug("Launching mode: " + mode.toString());
-        debug("OS: " + MetaData.SYSTEM_NAME + " " + MetaData.SYSTEM_VERSION);
-        debug("Architecture: " + MetaData.SYSTEM_ARCH);
+        debug("OS: " + Metadata.SYSTEM_NAME + " " + Metadata.SYSTEM_VERSION);
+        debug("Architecture: " + Metadata.SYSTEM_ARCH);
         debug("Java Version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
         debug("Java VM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
         debug("Java Home: " + System.getProperty("java.home"));
         debug("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
-        debug("Working dir: " + MetaData.WORKING_DIR);
+        debug("Working dir: " + Metadata.WORKING_DIR);
     }
 
     private static String format(LogRecord record) {

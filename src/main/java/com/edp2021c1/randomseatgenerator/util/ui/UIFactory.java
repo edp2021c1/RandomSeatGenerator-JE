@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.ui.util;
+package com.edp2021c1.randomseatgenerator.util.ui;
 
-import com.edp2021c1.randomseatgenerator.util.AppConfig;
-import com.edp2021c1.randomseatgenerator.util.ConfigUtils;
-import com.edp2021c1.randomseatgenerator.util.MetaData;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -85,37 +85,37 @@ public class UIFactory {
      */
     public static void decorate(final Stage stage, final StageType type) {
         final ObservableList<String> styleSheets = stage.getScene().getStylesheets();
-        styleSheets.add(MetaData.STYLESHEET_BASE);
+        styleSheets.add(Metadata.STYLESHEET_BASE);
         darkMode.addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 return;
             }
             if (newValue) {
-                styleSheets.remove(MetaData.STYLESHEET_LIGHT);
-                styleSheets.add(MetaData.STYLESHEET_DARK);
+                styleSheets.remove(Metadata.STYLESHEET_LIGHT);
+                styleSheets.add(Metadata.STYLESHEET_DARK);
             } else {
-                styleSheets.remove(MetaData.STYLESHEET_DARK);
-                styleSheets.add(MetaData.STYLESHEET_LIGHT);
+                styleSheets.remove(Metadata.STYLESHEET_DARK);
+                styleSheets.add(Metadata.STYLESHEET_LIGHT);
             }
         });
         if (darkMode.get()) {
-            styleSheets.remove(MetaData.STYLESHEET_LIGHT);
-            styleSheets.add(MetaData.STYLESHEET_DARK);
+            styleSheets.remove(Metadata.STYLESHEET_LIGHT);
+            styleSheets.add(Metadata.STYLESHEET_DARK);
         } else {
-            styleSheets.remove(MetaData.STYLESHEET_DARK);
-            styleSheets.add(MetaData.STYLESHEET_LIGHT);
+            styleSheets.remove(Metadata.STYLESHEET_DARK);
+            styleSheets.add(Metadata.STYLESHEET_LIGHT);
         }
         switch (type) {
             case ERROR -> {
-                stage.getIcons().add(new Image(MetaData.ERROR_ICON_URL));
+                stage.getIcons().add(new Image(Metadata.ERROR_ICON_URL));
                 stage.initModality(Modality.APPLICATION_MODAL);
             }
             case MAIN -> {
-                stage.getIcons().add(new Image(MetaData.ICON_URL));
+                stage.getIcons().add(new Image(Metadata.ICON_URL));
                 stage.setOnCloseRequest(event -> System.exit(0));
             }
             default -> {
-                stage.getIcons().add(new Image(MetaData.ICON_URL));
+                stage.getIcons().add(new Image(Metadata.ICON_URL));
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.setResizable(false);
             }

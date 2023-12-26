@@ -23,12 +23,12 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 /**
- * Saves data of the application.
+ * Metadata of the application.
  *
  * @author Calboot
  * @since 1.2.9
  */
-public class MetaData {
+public class Metadata {
     /**
      * Helping information.
      */
@@ -163,7 +163,7 @@ public class MetaData {
         USER_HOME = System.getProperty("user.home");
         WORKING_DIR = System.getProperty("user.dir");
 
-        VERSION_ID = MetaData.class.getPackage().getImplementationVersion();
+        VERSION_ID = Metadata.class.getPackage().getImplementationVersion();
         VERSION = VERSION_ID == null ? "dev" : "v" + VERSION_ID;
         TITLE = NAME + " - " + VERSION;
 

@@ -21,7 +21,7 @@ package com.edp2021c1.randomseatgenerator;
 import com.edp2021c1.randomseatgenerator.launcher.ConsoleLauncher;
 import com.edp2021c1.randomseatgenerator.launcher.GUILauncher;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.MetaData;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,14 +38,14 @@ public class RandomSeatGenerator {
         final List<String> arguments = Arrays.asList(args);
         // 如果有“--help”参数则打印帮助信息然后退出
         if (arguments.contains("--help")) {
-            System.out.println(MetaData.HELP_INFO);
+            System.out.println(Metadata.HELP_INFO);
             System.exit(0);
         }
 
         // 如果有“--license”参数则打印许可证然后退出
         if (arguments.contains("--license")) {
             System.out.println();
-            System.out.println(MetaData.LICENSE_INFO);
+            System.out.println(Metadata.LICENSE_INFO);
             System.out.println();
             System.exit(0);
         }

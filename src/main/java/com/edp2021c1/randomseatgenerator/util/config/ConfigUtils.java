@@ -16,8 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.util;
+package com.edp2021c1.randomseatgenerator.util.config;
 
+import com.edp2021c1.randomseatgenerator.util.IOUtils;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -46,7 +49,7 @@ public class ConfigUtils {
     private static boolean initialized = false;
 
     static {
-        CONFIG_DIR = Paths.get(MetaData.DATA_DIR, "config");
+        CONFIG_DIR = Paths.get(Metadata.DATA_DIR, "config");
         CONFIG_PATH = CONFIG_DIR.resolve("randomseatgenerator.json");
 
         try {
