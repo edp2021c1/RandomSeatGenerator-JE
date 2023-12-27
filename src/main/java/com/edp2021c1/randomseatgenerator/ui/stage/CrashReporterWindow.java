@@ -59,11 +59,10 @@ public class CrashReporterWindow extends Stage {
 
         final Scene scene = new Scene(mainBox);
 
+        setScene(scene);
         setMaxWidth(1440);
         setMaxHeight(810);
-        setScene(scene);
         setTitle("出错啦");
-        setResizable(false);
         UIFactory.decorate(this, UIFactory.StageType.ERROR);
 
         preLabel.setOnMouseClicked(event -> DesktopUtils.copyText(mainLabel.getText()));

@@ -39,6 +39,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import lombok.Setter;
 
 /**
  * Contains several useful methods for creating or initializing JavaFX controls.
@@ -52,6 +54,8 @@ public class UIFactory {
      */
     public static final Insets DEFAULT_MARGIN = new Insets(5);
     private static final BooleanProperty darkMode;
+    @Setter
+    private static Window mainWindow = new Stage();
 
     static {
         darkMode = new SimpleBooleanProperty();
@@ -59,7 +63,7 @@ public class UIFactory {
             private final AppConfig config = new AppConfig();
 
             @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            public void changed(final ObservableValue<? extends Boolean> observable, final Boolean oldValue, final Boolean newValue) {
                 config.dark_mode = newValue;
                 ConfigUtils.saveConfig(config);
             }
@@ -71,7 +75,7 @@ public class UIFactory {
      *
      * @param isDarkMode value
      */
-    public static void setDarkMode(boolean isDarkMode) {
+    public static void setDarkMode(final boolean isDarkMode) {
         darkMode.set(isDarkMode);
     }
 
@@ -106,16 +110,18 @@ public class UIFactory {
             styleSheets.add(Metadata.STYLESHEET_LIGHT);
         }
         switch (type) {
-            case ERROR -> {
-                stage.getIcons().add(new Image(Metadata.ERROR_ICON_URL));
-                stage.initModality(Modality.APPLICATION_MODAL);
-            }
             case MAIN -> {
                 stage.getIcons().add(new Image(Metadata.ICON_URL));
-                stage.setOnCloseRequest(event -> System.exit(0));
+                setMainWindow(stage);
             }
-            default -> {
+            case DIALOG -> {
                 stage.getIcons().add(new Image(Metadata.ICON_URL));
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setResizable(false);
+            }
+            case ERROR -> {
+                stage.initOwner(mainWindow);
+                stage.getIcons().add(new Image(Metadata.ERROR_ICON_URL));
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.setResizable(false);
             }

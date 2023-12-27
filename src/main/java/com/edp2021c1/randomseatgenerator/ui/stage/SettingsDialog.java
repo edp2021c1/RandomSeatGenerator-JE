@@ -35,7 +35,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -218,7 +217,6 @@ public class SettingsDialog extends Stage {
         setScene(scene);
         setTitle(NAME + " - 设置");
         initOwner(owner);
-        initModality(Modality.APPLICATION_MODAL);
         UIFactory.decorate(this, StageType.DIALOG);
 
         fc = new FileChooser();
