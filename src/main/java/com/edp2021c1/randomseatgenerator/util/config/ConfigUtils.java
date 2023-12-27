@@ -55,7 +55,7 @@ public class ConfigUtils {
         try {
             final BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
-                            Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/default.json"))
+                            Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/conf/default.json"))
                     )
             );
             final StringBuilder buffer = new StringBuilder();
