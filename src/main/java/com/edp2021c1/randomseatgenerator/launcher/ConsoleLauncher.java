@@ -23,8 +23,8 @@ import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.SeatTableUtils;
 import com.edp2021c1.randomseatgenerator.util.StringUtils;
-import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 
 import java.io.IOException;
@@ -90,7 +90,7 @@ public class ConsoleLauncher {
         }
 
         // 处理座位表生成配置
-        AppConfig config;
+        RawAppConfig config;
         try {
             config = ConfigUtils.fromJson(configPath);
         } catch (final IOException e) {
@@ -101,7 +101,7 @@ public class ConsoleLauncher {
         Logging.debug("Config path: " + configPath);
 
         // 生成座位表
-        final SeatTable seatTable = SeatTableFactory.generate(config, seed);
+        final SeatTable seatTable = SeatTableFactory.generate(config.getContent(), seed);
 
         Logging.user("\n" + seatTable);
 

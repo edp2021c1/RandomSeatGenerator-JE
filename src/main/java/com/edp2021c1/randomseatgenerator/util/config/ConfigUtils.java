@@ -34,7 +34,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.Objects;
 
 /**
- * Contains several methods related to {@link AppConfig}.
+ * Contains several methods related to {@link RawAppConfig}.
  *
  * @author Calboot
  * @since 1.2.9
@@ -43,8 +43,8 @@ public class ConfigUtils {
     private static final Path CONFIG_DIR;
     private static final Path CONFIG_PATH;
     private static final Gson GSON = new Gson();
-    private final static AppConfig current = new AppConfig();
-    private static final AppConfig DEFAULT_CONFIG;
+    private final static RawAppConfig current = new RawAppConfig();
+    private static final RawAppConfig DEFAULT_CONFIG;
     private static FileTime configLastModifiedTime = null;
     private static boolean initialized = false;
 
@@ -64,7 +64,7 @@ public class ConfigUtils {
                 buffer.append(str);
             }
             str = buffer.toString();
-            DEFAULT_CONFIG = GSON.fromJson(str, AppConfig.class);
+            DEFAULT_CONFIG = GSON.fromJson(str, RawAppConfig.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -118,19 +118,19 @@ public class ConfigUtils {
      * Load an instance from a JSON path.
      *
      * @param path to load from.
-     * @return {@code SeatConfig} loaded from path.
+     * @return {@code RawSeatConfig} loaded from path.
      * @throws IOException if for some reason the path cannot be opened for reading.
      */
-    public static AppConfig fromJson(final Path path) throws IOException {
-        return GSON.fromJson(Files.readString(path), AppConfig.class);
+    public static RawAppConfig fromJson(final Path path) throws IOException {
+        return GSON.fromJson(Files.readString(path), RawAppConfig.class);
     }
 
     /**
-     * Writes {@code SeatConfig} to {@code seat_config.json} under the current directory.
+     * Writes {@code RawSeatConfig} to {@code seat_config.json} under the current directory.
      *
-     * @param config {@code SeatConfig} to set as the default seat config and save to file.
+     * @param config {@code RawSeatConfig} to set as the default seat config and save to file.
      */
-    public static void saveConfig(final AppConfig config) {
+    public static void saveConfig(final RawAppConfig config) {
         checkInitialized();
         current.set(config);
         try {
@@ -149,7 +149,7 @@ public class ConfigUtils {
      *
      * @return default seat config loaded from file.
      */
-    public static AppConfig getConfig() {
+    public static RawAppConfig getConfig() {
         refreshConfig();
         return current;
     }

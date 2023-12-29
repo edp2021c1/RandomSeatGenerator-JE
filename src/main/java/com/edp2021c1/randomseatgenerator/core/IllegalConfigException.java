@@ -19,7 +19,7 @@
 package com.edp2021c1.randomseatgenerator.core;
 
 /**
- * Thrown if {@code SeatConfig} has an illegal format.
+ * Thrown if {@code RawSeatConfig} has an illegal format.
  *
  * @author Calboot
  * @since 1.2.6

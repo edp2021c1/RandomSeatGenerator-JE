@@ -22,8 +22,8 @@ import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.application.Application;
@@ -55,7 +55,7 @@ public class GUILauncher extends Application {
             if (IOUtils.lackOfPermission(Paths.get(Metadata.DATA_DIR))) {
                 throw new RuntimeException("Does not have read/write permission of the data directory");
             }
-            AppConfig config = ConfigUtils.getConfig();
+            RawAppConfig config = ConfigUtils.getConfig();
             UIFactory.setDarkMode(config.dark_mode != null && config.dark_mode);
             new MainWindow().show();
         } catch (final Throwable e) {

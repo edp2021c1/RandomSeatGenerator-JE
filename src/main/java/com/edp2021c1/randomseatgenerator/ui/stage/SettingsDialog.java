@@ -24,8 +24,8 @@ import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
-import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Pos;
@@ -67,7 +67,7 @@ public class SettingsDialog extends Stage {
     private final FileChooser fc;
     private File importDir = ConfigUtils.getConfigPath().getParent().toFile();
     private File importFile;
-    private AppConfig config;
+    private RawAppConfig config;
 
     /**
      * Creates an instance.
@@ -145,7 +145,7 @@ public class SettingsDialog extends Stage {
                 applyBtnDisabledProperty
         ) {
             @Override
-            protected AppConfig getConfig() {
+            protected RawAppConfig getConfig() {
                 return ConfigUtils.getConfig();
             }
         };
@@ -249,7 +249,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 importDir = importFile.getParentFile();
-                config = new AppConfig();
+                config = new RawAppConfig();
                 config.last_import_dir = importDir.toString();
                 ConfigUtils.saveConfig(config);
             } catch (final Throwable e) {
@@ -259,7 +259,7 @@ public class SettingsDialog extends Stage {
 
         applyBtn.setOnAction(event -> {
             try {
-                config = new AppConfig();
+                config = new RawAppConfig();
                 config.row_count = rowCountInput.getText();
                 config.column_count = columnCountInput.getText();
                 config.random_between_rows = rbrInput.getText();

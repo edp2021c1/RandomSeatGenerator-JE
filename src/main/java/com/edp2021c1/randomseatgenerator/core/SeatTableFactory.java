@@ -45,7 +45,6 @@ public class SeatTableFactory {
         if (config == null) {
             throw new IllegalConfigException("Config cannot be null");
         }
-        config.checkFormat();
 
         long longSeed;
         try {
@@ -62,10 +61,10 @@ public class SeatTableFactory {
         final int rowCount;
         final int columnCount = config.getColumnCount();
         final int randomRowCount;
-        final ArrayList<Integer> notAllowedLastRowPos = config.getNotAllowedLastRowPos();
-        final ArrayList<String> nameList = config.getNameList();
-        final ArrayList<String> groupLeaderList = config.getGroupLeaderList();
-        final boolean lucky = config.lucky_option;
+        final ArrayList<Integer> notAllowedLastRowPos = new ArrayList<>(config.getDisabledLastRowPos());
+        final ArrayList<String> nameList = new ArrayList<>(config.getNames());
+        final ArrayList<String> groupLeaderList = new ArrayList<>(config.getGroupLeaders());
+        final boolean lucky = config.isLucky();
 
         // 防止lucky为true时数组越界
         final int minus = lucky ? 1 : 0;
@@ -188,17 +187,17 @@ public class SeatTableFactory {
     }
 
     private static boolean checkSeatTableFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
-        final List<String> gl = config.getGroupLeaderList();
-        final List<SeparatedPair> sp = config.getSeparatedList();
+        final List<String> gl = new ArrayList<>(config.getGroupLeaders());
+        final List<SeparatedPair> sp = new ArrayList<>(config.getSeparatedPairs());
         boolean hasLeader = false;
         int i, j;
         final int spNum = sp.size();
         final int rowCount;
         final int columnCount = config.getColumnCount();
-        final int minus = config.lucky_option ? 1 : 0;
+        final int minus = config.isLucky() ? 1 : 0;
         rowCount = (int) Math.min(
                 config.getRowCount(),
-                Math.ceil((double) (config.getNameList().size() - minus) / columnCount));
+                Math.ceil((double) (config.getNames().size() - minus) / columnCount));
 
         // 检查每列是否都有组长
         for (i = 0; i < columnCount; i++) {

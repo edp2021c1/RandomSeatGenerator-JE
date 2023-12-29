@@ -93,7 +93,7 @@ public class SeatTable {
             }
         }
 
-        if (config.lucky_option && luckyPerson != null) {
+        if (config.isLucky() && luckyPerson != null) {
             str.append("Lucky Person: ");
             str.append(luckyPerson);
         } else {

@@ -75,4 +75,9 @@ public class SeparatedPair {
         );
         return !notSeparated.contains(Math.abs(seat.indexOf(name_1) - seat.indexOf(name_2)));
     }
+
+    @Override
+    public String toString() {
+        return name_1 + " " + name_2;
+    }
 }

@@ -23,8 +23,8 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
-import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.StringProperty;
@@ -66,8 +66,8 @@ public class MainWindow extends Stage {
     private final SettingsDialog settingsDialog;
     private File exportFile;
     private SeatTable seatTable = null;
-    private AppConfig config;
-    private AppConfig t;
+    private RawAppConfig config;
+    private RawAppConfig t;
     private String previousSeed = null;
     private File exportDir;
 
@@ -110,7 +110,7 @@ public class MainWindow extends Stage {
         topRightBox = createHBox(998, 60, seedInput, randomSeedBtn, dateAsSeedBtn);
 
         // 座位表
-        seatTableView = new SeatTableView(config);
+        seatTableView = new SeatTableView(config.getContent());
 
         // 右侧主体
         rightBox = createVBox(1003, 698, topRightBox, seatTableView);
@@ -157,7 +157,7 @@ public class MainWindow extends Stage {
                 config.checkFormat();
 
                 try {
-                    seatTable = SeatTableFactory.generate(config, seed.get());
+                    seatTable = SeatTableFactory.generate(config.getContent(), seed.get());
                 } catch (final IllegalConfigException e) {
                     CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
                     return;
@@ -199,7 +199,7 @@ public class MainWindow extends Stage {
                 Logging.info("Successfully exported seat table to " + exportFile);
 
                 exportDir = exportFile.getParentFile();
-                t = new AppConfig();
+                t = new RawAppConfig();
                 t.last_export_dir = exportDir.toString();
                 ConfigUtils.saveConfig(t);
             } catch (final Throwable e) {
@@ -246,7 +246,7 @@ public class MainWindow extends Stage {
      * Action to do if config is changed.
      */
     public void onConfigChanged() {
-        seatTableView.setEmptySeatTable(ConfigUtils.getConfig());
+        seatTableView.setEmptySeatTable(ConfigUtils.getConfig().getContent());
         previousSeed = null;
         Logging.debug("Seat table view reset");
     }

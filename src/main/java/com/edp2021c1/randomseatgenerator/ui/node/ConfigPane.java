@@ -18,7 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
-import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Pos;
@@ -136,14 +136,14 @@ public abstract class ConfigPane extends VBox {
     /**
      * @return config loaded from source.
      */
-    protected abstract AppConfig getConfig();
+    protected abstract RawAppConfig getConfig();
 
     /**
      * Resets the pane with the given config.
      *
      * @param config to set to the pane.
      */
-    public void reset(final AppConfig config) {
+    public void reset(final RawAppConfig config) {
         rowCountInput.setText(config.row_count);
         columnCountInput.setText(config.column_count);
         rbrInput.setText(config.random_between_rows);

@@ -112,7 +112,7 @@ public class SeatRowData {
             }
         }
 
-        if (seatTable.getConfig().lucky_option) {
+        if (conf.isLucky()) {
             seatRowData.add(new SeatRowData("Lucky Person", seatTable.getLuckyPerson()));
         }
 

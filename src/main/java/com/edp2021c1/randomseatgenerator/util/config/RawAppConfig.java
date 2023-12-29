@@ -19,12 +19,14 @@
 package com.edp2021c1.randomseatgenerator.util.config;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
-import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 
 /**
- * Stores config of the application.
+ * Stores the raw config of the application.
+ *
+ * @author Calboot
+ * @since 1.4.8
  */
-public class AppConfig extends SeatConfig {
+public class RawAppConfig extends RawSeatConfig {
     /**
      * If seat table is exported writable.
      */
@@ -65,7 +67,7 @@ public class AppConfig extends SeatConfig {
      *
      * @param value the value to set to {@code this}
      */
-    public void set(final AppConfig value) {
+    public void set(final RawAppConfig value) {
         if (value.row_count != null) {
             row_count = value.row_count;
         }

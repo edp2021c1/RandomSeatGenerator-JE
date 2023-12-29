@@ -19,8 +19,8 @@
 package com.edp2021c1.randomseatgenerator.util.ui;
 
 import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -60,7 +60,7 @@ public class UIFactory {
     static {
         darkMode = new SimpleBooleanProperty();
         darkMode.addListener(new ChangeListener<>() {
-            private final AppConfig config = new AppConfig();
+            private final RawAppConfig config = new RawAppConfig();
 
             @Override
             public void changed(final ObservableValue<? extends Boolean> observable, final Boolean oldValue, final Boolean newValue) {
