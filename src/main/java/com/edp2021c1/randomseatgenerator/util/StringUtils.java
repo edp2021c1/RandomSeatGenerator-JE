@@ -33,7 +33,7 @@ public class StringUtils {
     /**
      * Simple date format
      */
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     /**
      * Returns a long hash code of a {@code String}.
