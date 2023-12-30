@@ -24,7 +24,6 @@ import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -134,9 +133,7 @@ public class ConfigUtils {
         checkInitialized();
         current.set(config);
         try {
-            final FileWriter writer = new FileWriter(CONFIG_PATH.toFile());
-            writer.write(GSON.toJson(ConfigUtils.current));
-            writer.close();
+            Files.writeString(CONFIG_PATH, GSON.toJson(ConfigUtils.current));
             configLastModifiedTime = Files.getLastModifiedTime(CONFIG_PATH);
         } catch (final IOException e) {
             throw new RuntimeException(e);

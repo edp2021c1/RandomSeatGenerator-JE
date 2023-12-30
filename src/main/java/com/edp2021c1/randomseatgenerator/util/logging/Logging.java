@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.logging.*;
+import java.util.stream.Stream;
 
 /**
  * Logging related util.
@@ -46,6 +47,7 @@ public class Logging {
     private static final Path[] LOG_PATHS;
     private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
     private static final Formatter DEFAULT_FORMATTER;
+    private static final long MAX_LOG_COUNT = 256;
     private static boolean initialized = false;
 
     static {
@@ -166,6 +168,16 @@ public class Logging {
         if (IOUtils.lackOfPermission(LOG_DIR)) {
             warning("Does not have read/write permission of the log directory");
         }
+        try {
+            Stream<Path> stream = Files.list(LOG_DIR);
+            if (stream.count() > MAX_LOG_COUNT) {
+                debug("Too much log files, will clear the log directory");
+                IOUtils.deleteAllUnder(LOG_DIR);
+            }
+            stream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         for (final Path path : LOG_PATHS) {
             try {
                 final FileHandler fileHandler = new FileHandler(path.toString());
@@ -188,7 +200,6 @@ public class Logging {
         debug("Java VM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
         debug("Java Home: " + System.getProperty("java.home"));
         debug("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
-        debug("Working dir: " + Metadata.WORKING_DIR);
     }
 
     private static String format(LogRecord record) {

@@ -60,7 +60,7 @@ public class ConsoleLauncher {
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
         Path configPath = ConfigUtils.getConfigPath();
         // 导出路径，默认为用户根目录当前路径
-        Path outputPath = Paths.get(Metadata.USER_HOME, "%tF.xlsx".formatted(new Date()));
+        Path outputPath = Paths.get(Metadata.USER_HOME, "SeatTables", "%tF.xlsx".formatted(new Date()));
 
         int i;
 

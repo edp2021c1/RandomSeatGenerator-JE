@@ -90,11 +90,6 @@ public class Metadata {
     public static final String STYLESHEET_DARK = "/assets/css/dark.css";
 
     /**
-     * Current working directory.
-     */
-    public static final String WORKING_DIR;
-
-    /**
      * User home.
      */
     public static final String USER_HOME;
@@ -161,7 +156,6 @@ public class Metadata {
         SYSTEM_NAME = System.getProperty("os.name");
 
         USER_HOME = System.getProperty("user.home");
-        WORKING_DIR = System.getProperty("user.dir");
 
         VERSION_ID = Metadata.class.getPackage().getImplementationVersion();
         VERSION = VERSION_ID == null ? "dev" : "v" + VERSION_ID;
@@ -186,7 +180,7 @@ public class Metadata {
                     "Library",
                     "Application Support",
                     "RandomSeatGenerator").toString();
-            default -> DATA_DIR = Paths.get(WORKING_DIR, ".rdstgnrt").toString();
+            default -> DATA_DIR = Paths.get(USER_HOME, ".rdstgnrt").toString();
         }
     }
 }

@@ -78,7 +78,7 @@ public class MainWindow extends Stage {
         settingsDialog = new SettingsDialog(this);
         config = ConfigUtils.getConfig();
         config.checkFormat();
-        exportDir = new File(config.last_export_dir != null ? config.last_export_dir : Metadata.USER_HOME);
+        exportDir = new File(config.last_export_dir == null ? Metadata.USER_HOME : config.last_export_dir);
 
         final Scene scene;
         final HBox mainBox;
