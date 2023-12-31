@@ -1,1 +1,1 @@
--n RandomSeatGenerator -i build/libs --license-file package_resources/LICENSE --copyright "Copyright © EDP-2021-C1 (GPLv3)" --about-url https://github.com/edp2021c1/RandomSeatGenerator-JE/README.md
+-n RandomSeatGenerator -i build/libs --license-file package_resources/LICENSE --copyright "Copyright © EDP-2021-C1 (GPLv3)" --about-url https://github.com/edp2021c1/RandomSeatGenerator-JE/README.md --add-modules java.base,java.logging,java.desktop,jdk.unsupported

@@ -29,10 +29,8 @@ jobs:
         with:
           gradle-version: 8.5
 
-      - name: Build and Pack
-        run: |
-          gradle build
-          gradle pack
+      - name: Gradle Build
+        run: gradle build
 
       - name: Upload
         uses: actions/upload-artifact@v3.1.3

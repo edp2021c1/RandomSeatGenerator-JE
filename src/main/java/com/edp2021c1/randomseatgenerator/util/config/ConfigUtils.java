@@ -21,7 +21,6 @@ package com.edp2021c1.randomseatgenerator.util.config;
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
-import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,7 +40,6 @@ import java.util.Objects;
 public class ConfigUtils {
     private static final Path CONFIG_DIR;
     private static final Path CONFIG_PATH;
-    private static final Gson GSON = new Gson();
     private final static RawAppConfig current = new RawAppConfig();
     private static final RawAppConfig DEFAULT_CONFIG;
     private static FileTime configLastModifiedTime = null;
@@ -63,7 +61,7 @@ public class ConfigUtils {
                 buffer.append(str);
             }
             str = buffer.toString();
-            DEFAULT_CONFIG = GSON.fromJson(str, RawAppConfig.class);
+            DEFAULT_CONFIG = RawAppConfig.fromJson(str);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -121,7 +119,7 @@ public class ConfigUtils {
      * @throws IOException if for some reason the path cannot be opened for reading.
      */
     public static RawAppConfig fromJson(final Path path) throws IOException {
-        return GSON.fromJson(Files.readString(path), RawAppConfig.class);
+        return RawAppConfig.fromJson(Files.readString(path));
     }
 
     /**
@@ -133,7 +131,7 @@ public class ConfigUtils {
         checkInitialized();
         current.set(config);
         try {
-            Files.writeString(CONFIG_PATH, GSON.toJson(ConfigUtils.current));
+            Files.writeString(CONFIG_PATH, current.toJson());
             configLastModifiedTime = Files.getLastModifiedTime(CONFIG_PATH);
         } catch (final IOException e) {
             throw new RuntimeException(e);

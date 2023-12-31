@@ -19,6 +19,7 @@
 package com.edp2021c1.randomseatgenerator.util.config;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
+import com.google.gson.Gson;
 
 /**
  * Stores the raw config of the application.
@@ -27,6 +28,7 @@ import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
  * @since 1.4.8
  */
 public class RawAppConfig extends RawSeatConfig {
+    private static final Gson GSON = new Gson();
     /**
      * If seat table is exported writable.
      */
@@ -39,11 +41,25 @@ public class RawAppConfig extends RawSeatConfig {
      * The previous directory config is loaded from.
      */
     public String last_import_dir;
-
     /**
      * Determines whether the app is shown in the dark mode.
      */
     public Boolean dark_mode;
+
+    /**
+     * @param json JSON string parsed
+     * @return element parsed from json
+     */
+    public static RawAppConfig fromJson(String json) {
+        return GSON.fromJson(json, RawAppConfig.class);
+    }
+
+    /**
+     * @return parsed json string
+     */
+    public String toJson() {
+        return GSON.toJson(this);
+    }
 
     @Override
     public void checkFormat() {
