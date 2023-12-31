@@ -20,6 +20,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.util.spi.ToolProvider
 
 plugins {
     id("java")
@@ -88,7 +89,8 @@ tasks.jar {
 }
 
 val pack = task("pack") {
-    run { pack() }
+    dependsOn(tasks.build)
+    doLast { pack() }
 }
 
 fun getAllPackingArguments(jarName: String): ArrayList<String> {
@@ -151,7 +153,6 @@ fun pack() {
 
         if (!(isMac || isWin)) {
             println("Warning: not running on Windows or macOS, will use generated jar file as the package.")
-            println("Packing arguments: null")
             println("Moving package to $packageDir")
             Files.move(jarPath, finalPackagePath, StandardCopyOption.REPLACE_EXISTING)
             println("Package: $finalPackagePath")
@@ -159,25 +160,18 @@ fun pack() {
             return
         }
 
-        val prePackagePath: Path = projectPath.resolve(packageName)
+        val prePackagePath: Path = Paths.get(File("").absolutePath, packageName)
 
         val argList: ArrayList<String> = if (isMac) {
             getMacPackingArguments(jarName)
         } else {
             getWinPackingArguments(jarName)
         }
-
-        val argBuilder = StringBuilder("jpackage")
-        for (i in argList) {
-            argBuilder.append(" ")
-            argBuilder.append(i)
-        }
-        val arg = argBuilder.toString()
-
-        println("Packing arguments: $arg")
+        val args = emptyArray<String>()
+        argList.toArray(args)
 
         println("Creating package...")
-        Runtime.getRuntime().exec(arg).waitFor()
+        ToolProvider.findFirst("jpackage").get().run(System.out, System.err, *args)
 
         println("Moving package to $packageDir")
         Files.move(prePackagePath, finalPackagePath, StandardCopyOption.REPLACE_EXISTING)
