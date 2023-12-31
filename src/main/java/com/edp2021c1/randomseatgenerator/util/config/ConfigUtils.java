@@ -86,14 +86,14 @@ public class ConfigUtils {
             throw new RuntimeException(e);
         }
         if (IOUtils.lackOfPermission(CONFIG_DIR)) {
-            throw new RuntimeException("Does not has enough permission to read/write config");
+            throw new RuntimeException(new IOException("Does not has enough permission to read/write config"));
         }
 
         if (Files.notExists(CONFIG_PATH)) {
             saveConfig(DEFAULT_CONFIG);
         }
         if (IOUtils.lackOfPermission(CONFIG_PATH)) {
-            throw new RuntimeException("Does not has enough permission to read/write config");
+            throw new RuntimeException(new IOException("Does not has enough permission to read/write config"));
         }
         if (!Files.isRegularFile(CONFIG_PATH)) {
             try {

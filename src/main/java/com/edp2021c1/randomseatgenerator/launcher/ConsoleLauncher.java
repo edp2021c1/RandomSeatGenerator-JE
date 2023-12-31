@@ -20,9 +20,7 @@ package com.edp2021c1.randomseatgenerator.launcher;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
-import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.SeatTableUtils;
-import com.edp2021c1.randomseatgenerator.util.StringUtils;
+import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
@@ -51,6 +49,10 @@ public class ConsoleLauncher {
     public static void launch(final String[] args) {
         Logging.start(Logging.LoggingMode.CONSOLE);
         ConfigUtils.initConfig();
+
+        if (IOUtils.lackOfPermission(Paths.get(Metadata.DATA_DIR))) {
+            throw new RuntimeException(new IOException("Does not have read/write permission of the data directory"));
+        }
 
         final List<String> arguments = Arrays.asList(args);
 
@@ -112,5 +114,7 @@ public class ConsoleLauncher {
             throw new RuntimeException("Failed to export seat table to " + outputPath, e);
         }
         Logging.user("Seat table successfully exported to " + outputPath);
+
+        RuntimeUtils.exit();
     }
 }
