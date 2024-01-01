@@ -89,7 +89,6 @@ tasks.jar {
 }
 
 tasks.build {
-    options.encoding = "UTF-8"
     doLast {
         try {
             val fName: String = project.name + "-" + version
