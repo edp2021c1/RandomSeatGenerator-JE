@@ -125,13 +125,17 @@ tasks.build {
                 return@doLast
             }
 
+            val prePackagePath: Path = Paths.get(packageName).toAbsolutePath()
+
             val argList: ArrayList<String> = if (isMac) {
-                getMacPackingArguments(jarName, projectPath)
+                getMacPackingArguments(jarName)
             } else {
-                getWinPackingArguments(jarName, projectPath)
+                getWinPackingArguments(jarName)
             }
 
             ToolProvider.findFirst("jpackage").get().run(System.out, System.err, *argList.toArray(arrayOfNulls<String>(argList.size)))
+
+            Files.move(prePackagePath, finalPackagePath, StandardCopyOption.REPLACE_EXISTING)
         } catch (e: Throwable) {
             System.err.println("Packing failed with an exception")
             e.printStackTrace()
@@ -139,31 +143,22 @@ tasks.build {
     }
 }
 
-fun getPackingArguments(jarName: String, projectPath: String): ArrayList<String> {
+fun getAllPackingArguments(jarName: String): ArrayList<String> {
     return ArrayList(listOf(
-            "@" + Paths.get(projectPath, "package_resources", "static_arguments", "all.txt"),
-            "-i", Paths.get(projectPath, "build", "libs").toString(),
-            "--license-file", Paths.get(projectPath, "package_resources", "LICENSE").toString(),
+            "@"+Paths.get(projectDir.path,"package_resources","static_arguments","all.txt"),
             "--app-version", version.toString(),
             "--main-jar", jarName,
-            "-d", Paths.get(projectPath, "packages").toString(),
     ))
 }
 
-fun getMacPackingArguments(jarName: String, projectPath: String): ArrayList<String> {
-    val args = getPackingArguments(jarName, projectPath)
-    args.addAll(listOf(
-            "@" + Paths.get(projectPath, "package_resources", "static_arguments", "mac.txt"),
-            "--icon", Paths.get(projectPath, "package_resources", "app_icon", "mac.icns").toString()
-    ))
+fun getMacPackingArguments(jarName: String): ArrayList<String> {
+    val args = getAllPackingArguments(jarName)
+    args.add("@"+Paths.get(projectDir.path,"package_resources","static_arguments","mac.txt"))
     return args
 }
 
-fun getWinPackingArguments(jarName: String, projectPath: String): ArrayList<String> {
-    val args = getPackingArguments(jarName, projectPath)
-    args.addAll(listOf(
-            "@" + Paths.get(projectPath, "package_resources", "static_arguments", "win.txt"),
-            "--icon", Paths.get(projectPath, "package_resources", "app_icon", "win.ico").toString(),
-    ))
+fun getWinPackingArguments(jarName: String): ArrayList<String> {
+    val args = getAllPackingArguments(jarName)
+    args.add("@"+Paths.get(projectDir.path,"package_resources","static_arguments","win.txt"))
     return args
 }
