@@ -1,1 +1,1 @@
--t dmg --icon package_resources/app_icon/mac_icon.icns --mac-package-name "Random Seat"
+-t dmg --mac-package-name "Random Seat"
