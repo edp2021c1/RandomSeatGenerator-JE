@@ -145,7 +145,7 @@ tasks.build {
 
 fun getAllPackingArguments(jarName: String): ArrayList<String> {
     return ArrayList(listOf(
-            "@package_resources/static_arguments/all.txt",
+            "@"+Paths.get(projectDir.path,"package_resources","static_arguments","all.txt"),
             "--app-version", version.toString(),
             "--main-jar", jarName,
     ))
@@ -153,12 +153,12 @@ fun getAllPackingArguments(jarName: String): ArrayList<String> {
 
 fun getMacPackingArguments(jarName: String): ArrayList<String> {
     val args = getAllPackingArguments(jarName)
-    args.add("@package_resources/static_arguments/mac.txt")
+    args.add("@"+Paths.get(projectDir.path,"package_resources","static_arguments","mac.txt"))
     return args
 }
 
 fun getWinPackingArguments(jarName: String): ArrayList<String> {
     val args = getAllPackingArguments(jarName)
-    args.add("@package_resources/static_arguments/win.txt")
+    args.add("@"+Paths.get(projectDir.path,"package_resources","static_arguments","win.txt"))
     return args
 }
