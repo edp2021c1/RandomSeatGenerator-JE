@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.logging.*;
 import java.util.stream.Stream;
 
@@ -199,7 +200,7 @@ public class Logging {
         debug("Java Version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
         debug("Java VM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
         debug("Java Home: " + System.getProperty("java.home"));
-        debug("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
+        debug("Memory: " + (RuntimeUtils.RUNTIME.maxMemory() >>> 20) + "MB");
     }
 
     private static String format(LogRecord record) {
@@ -209,7 +210,7 @@ public class Logging {
 
         MESSAGE_FORMAT.format(new Object[]{
                 new Date(record.getMillis()),
-                RuntimeUtils.getThreadById(record.getLongThreadID()).getName(), record.getLevel().getName(),
+                Objects.requireNonNull(RuntimeUtils.getThreadById(record.getLongThreadID())).getName(), record.getLevel().getName(),
                 message
         }, buffer, null);
 

@@ -2,7 +2,6 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
-import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -73,7 +72,7 @@ public class CrashReporterWindow extends Stage {
                     return;
                 }
                 switch (event.getCode()) {
-                    case Q -> RuntimeUtils.exit();
+                    case Q -> System.exit(0);
                     case W -> close();
                     case C -> DesktopUtils.copyText(mainLabel.getText());
                 }

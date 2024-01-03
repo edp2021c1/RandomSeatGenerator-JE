@@ -171,14 +171,11 @@ public class UIFactory {
     /**
      * Creates a {@code VBox}.
      *
-     * @param width    of the box
-     * @param height   of the box
      * @param children of the box
      * @return the box created
      */
-    public static VBox createVBox(final double width, final double height, final Node... children) {
+    public static VBox createVBox(final Node... children) {
         final VBox vBox = new VBox(children);
-        vBox.setPrefSize(width, height);
         vBox.setAlignment(Pos.CENTER);
         return vBox;
     }
@@ -186,14 +183,11 @@ public class UIFactory {
     /**
      * Creates a {@code HBox}.
      *
-     * @param width    of the box
-     * @param height   of the box
      * @param children of the box
      * @return the box created
      */
-    public static HBox createHBox(final double width, final double height, final Node... children) {
+    public static HBox createHBox(final Node... children) {
         final HBox hBox = new HBox(children);
-        hBox.setPrefSize(width, height);
         hBox.setAlignment(Pos.CENTER);
         return hBox;
     }

@@ -30,14 +30,24 @@ import java.util.Set;
  * @since 1.4.6
  */
 public class RuntimeUtils {
+    public static final Runtime RUNTIME = Runtime.getRuntime();
     private static final HashMap<Long, Thread> threadIdMap = new HashMap<>();
+    private static final Thread exitHook = new Thread("Exiting Thread") {
+        public void run() {
+            exitImpl();
+        }
+    };
+
+    static {
+        RUNTIME.addShutdownHook(exitHook);
+    }
 
     /**
-     * Returns a thread that matches the given ID.
+     * Returns a thread that matches the given ID,
+     * null if thread does not exist or is not live.
      *
      * @param id of the thread
      * @return thread identified by {@code id}
-     * @throws RuntimeException if no live thread matches the ID
      */
     public static Thread getThreadById(final long id) {
         if (threadIdMap.containsKey(id)) {
@@ -51,14 +61,14 @@ public class RuntimeUtils {
                 return t;
             }
         }
-        throw new RuntimeException("Thread does not exist or is not live");
+        return null;
     }
 
     /**
      * Terminates the application.
      */
-    public static void exit() {
+    private static void exitImpl() {
         Logging.debug("Exiting");
-        System.exit(0);
+        // TODO: Refresh config and save log
     }
 }

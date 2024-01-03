@@ -21,6 +21,10 @@ package com.edp2021c1.randomseatgenerator.util.config;
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 /**
  * Stores the raw config of the application.
  *
@@ -52,6 +56,17 @@ public class RawAppConfig extends RawSeatConfig {
      */
     public static RawAppConfig fromJson(String json) {
         return GSON.fromJson(json, RawAppConfig.class);
+    }
+
+    /**
+     * Load an instance from a JSON path.
+     *
+     * @param path to load from.
+     * @return {@code RawSeatConfig} loaded from path.
+     * @throws IOException if for some reason the path cannot be opened for reading.
+     */
+    public static RawAppConfig fromJson(final Path path) throws IOException {
+        return fromJson(Files.readString(path));
     }
 
     /**

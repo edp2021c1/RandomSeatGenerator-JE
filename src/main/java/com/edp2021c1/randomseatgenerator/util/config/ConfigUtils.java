@@ -49,22 +49,16 @@ public class ConfigUtils {
         CONFIG_DIR = Paths.get(Metadata.DATA_DIR, "config");
         CONFIG_PATH = CONFIG_DIR.resolve("randomseatgenerator.json");
 
-        try {
-            final BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(
-                            Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/conf/default.json"))
-                    )
-            );
-            final StringBuilder buffer = new StringBuilder();
-            String str;
-            while ((str = reader.readLine()) != null) {
-                buffer.append(str);
-            }
-            str = buffer.toString();
-            DEFAULT_CONFIG = RawAppConfig.fromJson(str);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        final BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        Objects.requireNonNull(ConfigUtils.class.getResourceAsStream("/assets/conf/default.json"))
+                )
+        );
+        final StringBuilder str = new StringBuilder();
+        for (final Object s : reader.lines().toArray()) {
+            str.append(s);
         }
+        DEFAULT_CONFIG = RawAppConfig.fromJson(str.toString());
     }
 
     /**
@@ -112,17 +106,6 @@ public class ConfigUtils {
     }
 
     /**
-     * Load an instance from a JSON path.
-     *
-     * @param path to load from.
-     * @return {@code RawSeatConfig} loaded from path.
-     * @throws IOException if for some reason the path cannot be opened for reading.
-     */
-    public static RawAppConfig fromJson(final Path path) throws IOException {
-        return RawAppConfig.fromJson(Files.readString(path));
-    }
-
-    /**
      * Writes {@code RawSeatConfig} to {@code seat_config.json} under the current directory.
      *
      * @param config {@code RawSeatConfig} to set as the default seat config and save to file.
@@ -155,12 +138,14 @@ public class ConfigUtils {
             if (Objects.equals(Files.getLastModifiedTime(CONFIG_PATH), configLastModifiedTime)) {
                 return;
             }
-            if (Files.notExists(CONFIG_PATH)) {
-                Logging.warning("Config file not found, will use default value");
+            if (Files.notExists(CONFIG_PATH) || !Files.isRegularFile(CONFIG_PATH)) {
+                Logging.warning("Config file not found or directory found on the path, will use default value");
+                IOUtils.delete(CONFIG_PATH);
                 Files.createFile(CONFIG_PATH);
                 saveConfig(DEFAULT_CONFIG);
+                return;
             }
-            current.set(ConfigUtils.fromJson(CONFIG_PATH));
+            current.set(RawAppConfig.fromJson(CONFIG_PATH));
             try {
                 current.checkFormat();
             } catch (final RuntimeException e) {

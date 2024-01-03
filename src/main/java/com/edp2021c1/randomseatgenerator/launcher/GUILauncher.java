@@ -22,7 +22,6 @@ import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
@@ -75,6 +74,6 @@ public class GUILauncher extends Application {
 
     @Override
     public void stop() {
-        RuntimeUtils.exit();
+        System.exit(0);
     }
 }

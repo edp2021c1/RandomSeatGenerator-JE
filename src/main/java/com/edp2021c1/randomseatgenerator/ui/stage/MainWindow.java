@@ -98,7 +98,7 @@ public class MainWindow extends Stage {
         settingsBtn = createButton("设置", 80, 26);
         generateBtn = createButton("生成", 80, 26);
         exportBtn = createButton("导出", 80, 26);
-        leftBox = createVBox(121, 711, settingsBtn, generateBtn, exportBtn);
+        leftBox = createVBox(settingsBtn, generateBtn, exportBtn);
         leftBox.getStyleClass().add("left");
 
         separator = new Separator(Orientation.VERTICAL);
@@ -107,17 +107,17 @@ public class MainWindow extends Stage {
         seedInput = createTextField("种子");
         randomSeedBtn = createButton("随机种子", 80, 26);
         dateAsSeedBtn = createButton("填入日期", 80, 26);
-        topRightBox = createHBox(998, 60, seedInput, randomSeedBtn, dateAsSeedBtn);
+        topRightBox = createHBox(seedInput, randomSeedBtn, dateAsSeedBtn);
 
         // 座位表
         seatTableView = new SeatTableView(config.getContent());
 
         // 右侧主体
-        rightBox = createVBox(1003, 698, topRightBox, seatTableView);
+        rightBox = createVBox(topRightBox, seatTableView);
         rightBox.getStyleClass().add("right");
 
         // 整体
-        mainBox = createHBox(1130, 634, leftBox, separator, rightBox);
+        mainBox = createHBox(leftBox, separator, rightBox);
         mainBox.getStyleClass().add("main");
 
         scene = new Scene(mainBox);
@@ -220,7 +220,7 @@ public class MainWindow extends Stage {
                     return;
                 }
                 switch (event.getCode()) {
-                    case Q -> RuntimeUtils.exit();
+                    case Q -> System.exit(0);
                     case W -> close();
                     case F -> setFullScreen(event.isControlDown() != isFullScreen());
                     case COMMA -> settingsBtn.fire();
@@ -240,6 +240,11 @@ public class MainWindow extends Stage {
                 }
             });
         }
+
+        setOnShown(event -> {
+            setMinHeight(getHeight());
+            setMinWidth(getWidth());
+        });
     }
 
     /**
@@ -254,7 +259,7 @@ public class MainWindow extends Stage {
     @Override
     public void close() {
         super.close();
-        RuntimeUtils.exit();
+        System.exit(0);
     }
 
 }

@@ -23,7 +23,6 @@ import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
-import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
@@ -239,7 +238,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 try {
-                    config = ConfigUtils.fromJson(Paths.get(importFile.getAbsolutePath()));
+                    config = RawAppConfig.fromJson(Paths.get(importFile.getAbsolutePath()));
                 } catch (final IOException e) {
                     throw new RuntimeException("Failed to load seat config from file.", e);
                 }
@@ -304,7 +303,7 @@ public class SettingsDialog extends Stage {
                     return;
                 }
                 switch (event.getCode()) {
-                    case Q -> RuntimeUtils.exit();
+                    case Q -> System.exit(0);
                     case W -> close();
                     case O -> loadConfigBtn.fire();
                     case S -> applyBtn.fire();
