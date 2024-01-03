@@ -23,7 +23,6 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
-import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
@@ -45,6 +44,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import static com.edp2021c1.randomseatgenerator.util.StringUtils.DATE_FORMAT;
+import static com.edp2021c1.randomseatgenerator.util.config.ConfigHolder.CONFIG;
 import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
 
 /**
@@ -76,7 +76,11 @@ public class MainWindow extends Stage {
      */
     public MainWindow() {
         settingsDialog = new SettingsDialog(this);
-        config = ConfigUtils.getConfig();
+        try {
+            config = CONFIG.get();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         config.checkFormat();
         exportDir = new File(config.last_export_dir == null ? Metadata.USER_HOME : config.last_export_dir);
 
@@ -150,7 +154,7 @@ public class MainWindow extends Stage {
                     randomSeedBtn.fire();
                 }
 
-                config = ConfigUtils.getConfig();
+                config = CONFIG.get();
                 if (config == null) {
                     throw new IllegalConfigException("Null config");
                 }
@@ -185,7 +189,7 @@ public class MainWindow extends Stage {
                     return;
                 }
                 try {
-                    SeatTableUtils.exportToExcelDocument(seatTable, exportFile, ConfigUtils.getConfig().export_writable);
+                    SeatTableUtils.exportToExcelDocument(seatTable, exportFile, CONFIG.get().export_writable);
                 } catch (final IOException e) {
                     CrashReporter.CRASH_REPORTER_FULL.uncaughtException(
                             Thread.currentThread(),
@@ -201,7 +205,7 @@ public class MainWindow extends Stage {
                 exportDir = exportFile.getParentFile();
                 t = new RawAppConfig();
                 t.last_export_dir = exportDir.toString();
-                ConfigUtils.saveConfig(t);
+                CONFIG.set(t);
             } catch (final Throwable e) {
                 CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
             }
@@ -251,7 +255,11 @@ public class MainWindow extends Stage {
      * Action to do if config is changed.
      */
     public void onConfigChanged() {
-        seatTableView.setEmptySeatTable(ConfigUtils.getConfig().getContent());
+        try {
+            seatTableView.setEmptySeatTable(CONFIG.get().getContent());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         previousSeed = null;
         Logging.debug("Seat table view reset");
     }

@@ -19,7 +19,7 @@
 package com.edp2021c1.randomseatgenerator.util.ui;
 
 import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
+import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -41,6 +41,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import lombok.Setter;
+
+import java.io.IOException;
 
 /**
  * Contains several useful methods for creating or initializing JavaFX controls.
@@ -65,7 +67,11 @@ public class UIFactory {
             @Override
             public void changed(final ObservableValue<? extends Boolean> observable, final Boolean oldValue, final Boolean newValue) {
                 config.dark_mode = newValue;
-                ConfigUtils.saveConfig(config);
+                try {
+                    ConfigHolder.CONFIG.set(config);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }

@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
+import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.BooleanProperty;
@@ -29,6 +30,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 
+import java.io.IOException;
+
 /**
  * Config pane.
  * <p>
@@ -39,7 +42,7 @@ import lombok.Getter;
  * @since 1.3.4
  */
 @Getter
-public abstract class ConfigPane extends VBox {
+public class ConfigPane extends VBox {
     private final TextField rowCountInput;
 
     private final TextField columnCountInput;
@@ -59,6 +62,8 @@ public abstract class ConfigPane extends VBox {
     private final CheckBox exportWritableCheck;
 
     private final CheckBox darkModeCheck;
+
+    private final ConfigHolder configHolder;
 
     /**
      * @param rowCountInput            input of {@code row_count}
@@ -84,7 +89,8 @@ public abstract class ConfigPane extends VBox {
                       final CheckBox luckyOptionCheck,
                       final CheckBox exportWritableCheck,
                       final CheckBox darkModeCheck,
-                      final BooleanProperty applyBtnDisabledProperty) {
+                      final BooleanProperty applyBtnDisabledProperty,
+                      final ConfigHolder configHolder) {
         super();
 
         this.rowCountInput = rowCountInput;
@@ -97,6 +103,7 @@ public abstract class ConfigPane extends VBox {
         this.luckyOptionCheck = luckyOptionCheck;
         this.exportWritableCheck = exportWritableCheck;
         this.darkModeCheck = darkModeCheck;
+        this.configHolder = configHolder;
 
         final HBox box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
         box1.setPrefHeight(60);
@@ -136,7 +143,13 @@ public abstract class ConfigPane extends VBox {
     /**
      * @return config loaded from source.
      */
-    protected abstract RawAppConfig getConfig();
+    protected RawAppConfig getConfig() {
+        try {
+            return configHolder.get();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Resets the pane with the given config.

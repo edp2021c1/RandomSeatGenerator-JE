@@ -23,7 +23,6 @@ import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
-import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.BooleanProperty;
@@ -41,6 +40,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
+import static com.edp2021c1.randomseatgenerator.util.config.ConfigHolder.CONFIG;
 import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
 
 /**
@@ -64,7 +64,7 @@ public class SettingsDialog extends Stage {
     private final Button loadConfigBtn;
     private final Button applyBtn;
     private final FileChooser fc;
-    private File importDir = ConfigUtils.getConfigPath().getParent().toFile();
+    private File importDir = CONFIG.getConfigPath().getParent().toFile();
     private File importFile;
     private RawAppConfig config;
 
@@ -74,7 +74,12 @@ public class SettingsDialog extends Stage {
      * @param owner of the dialog.
      */
     public SettingsDialog(MainWindow owner) {
-        String s = ConfigUtils.getConfig().last_import_dir;
+        String s;
+        try {
+            s = CONFIG.get().last_import_dir;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         if (s != null) {
             importDir = new File(s);
         }
@@ -141,11 +146,16 @@ public class SettingsDialog extends Stage {
                 luckyOptionCheck,
                 exportWritableCheck,
                 darkModeCheck,
-                applyBtnDisabledProperty
+                applyBtnDisabledProperty,
+                CONFIG
         ) {
             @Override
             protected RawAppConfig getConfig() {
-                return ConfigUtils.getConfig();
+                try {
+                    return CONFIG.get();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
 
@@ -250,7 +260,7 @@ public class SettingsDialog extends Stage {
                 importDir = importFile.getParentFile();
                 config = new RawAppConfig();
                 config.last_import_dir = importDir.toString();
-                ConfigUtils.saveConfig(config);
+                CONFIG.set(config);
             } catch (final Throwable e) {
                 CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
             }
@@ -275,7 +285,7 @@ public class SettingsDialog extends Stage {
                     CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
                     return;
                 }
-                ConfigUtils.saveConfig(config);
+                CONFIG.set(config);
 
                 owner.onConfigChanged();
                 applyBtn.setDisable(true);
@@ -321,6 +331,12 @@ public class SettingsDialog extends Stage {
             });
         }
 
-        setOnShown(event -> configPane.reset(ConfigUtils.getConfig()));
+        setOnShown(event -> {
+            try {
+                configPane.reset(CONFIG.get());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

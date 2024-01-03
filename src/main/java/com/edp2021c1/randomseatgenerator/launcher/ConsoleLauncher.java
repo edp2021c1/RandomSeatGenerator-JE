@@ -24,7 +24,6 @@ import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.SeatTableUtils;
 import com.edp2021c1.randomseatgenerator.util.StringUtils;
-import com.edp2021c1.randomseatgenerator.util.config.ConfigUtils;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 
@@ -35,6 +34,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static com.edp2021c1.randomseatgenerator.util.config.ConfigHolder.CONFIG;
 
 /**
  * Launches the application in console mode.
@@ -51,7 +52,6 @@ public class ConsoleLauncher {
      */
     public static void launch(final String[] args) {
         Logging.start(Logging.LoggingMode.CONSOLE);
-        ConfigUtils.initConfig();
 
         if (IOUtils.lackOfPermission(Paths.get(Metadata.DATA_DIR))) {
             throw new RuntimeException(new IOException("Does not have read/write permission of the data directory"));
@@ -63,7 +63,7 @@ public class ConsoleLauncher {
         // 种子，默认为随机字符串
         String seed = StringUtils.randomString(30);
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
-        Path configPath = ConfigUtils.getConfigPath();
+        Path configPath = CONFIG.getConfigPath();
         // 导出路径，默认为用户根目录当前路径
         Path outputPath = Paths.get(Metadata.USER_HOME, "SeatTables", "%tF.xlsx".formatted(new Date()));
 
