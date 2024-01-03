@@ -24,6 +24,8 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
 
@@ -40,7 +42,7 @@ public class SeatTableUtils {
      * @param seatTable to export to Excel document
      * @param file      to export seat table to
      * @param writable  if export seat table to a writable file
-     * @throws IOException if failed to save seat table to Excel document
+     * @throws IOException if an I/O error occurs
      */
     public static void exportToExcelDocument(final SeatTable seatTable, final File file, final boolean writable) throws IOException {
         Objects.requireNonNull(file);
@@ -58,5 +60,22 @@ public class SeatTableUtils {
         if (!file.setReadOnly()) {
             throw new IOException("Failed to save seat table to " + file);
         }
+    }
+
+    /**
+     * Exports this instance to an Excel form file (.xlsx).
+     *
+     * @param seatTable to export to Excel document
+     * @param path      to export seat table to
+     * @param writable  if export seat table to a writable file
+     * @throws IOException if an I/O error occurs
+     */
+    public static void exportToExcelDocument(final SeatTable seatTable, final Path path, final boolean writable) throws IOException {
+        final Path outputDir = path.getParent();
+        if (Files.notExists(outputDir) || Files.isDirectory(outputDir)) {
+            IOUtils.deleteIfExists(outputDir);
+            Files.createDirectories(path);
+        }
+        exportToExcelDocument(seatTable, path.toFile(), writable);
     }
 }

@@ -150,7 +150,7 @@ public class Logging {
 
         try {
             if (!Files.isDirectory(LOG_DIR)) {
-                IOUtils.delete(LOG_DIR);
+                IOUtils.deleteIfExists(LOG_DIR);
             }
             Files.createDirectories(LOG_DIR);
         } catch (final IOException e) {
@@ -160,7 +160,7 @@ public class Logging {
 
         try {
             if (Files.notExists(LOG_DIR) || !Files.isDirectory(LOG_DIR)) {
-                IOUtils.delete(LOG_DIR);
+                IOUtils.deleteIfExists(LOG_DIR);
                 Files.createDirectories(LOG_DIR);
             }
         } catch (IOException e) {

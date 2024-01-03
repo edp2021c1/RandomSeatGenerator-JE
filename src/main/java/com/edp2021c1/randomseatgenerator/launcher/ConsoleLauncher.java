@@ -112,7 +112,7 @@ public class ConsoleLauncher {
 
         // 导出
         try {
-            SeatTableUtils.exportToExcelDocument(seatTable, outputPath.toFile(), config.export_writable);
+            SeatTableUtils.exportToExcelDocument(seatTable, outputPath, config.export_writable);
         } catch (final IOException e) {
             throw new RuntimeException("Failed to export seat table to " + outputPath, e);
         }

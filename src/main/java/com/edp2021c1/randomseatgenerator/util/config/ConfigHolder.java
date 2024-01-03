@@ -70,7 +70,7 @@ public class ConfigHolder {
         final Path configDir = configPath.getParent();
 
         if (!Files.isDirectory(configDir)) {
-            IOUtils.delete(configDir);
+            IOUtils.deleteIfExists(configDir);
         }
         Files.createDirectories(configDir);
         if (IOUtils.lackOfPermission(configDir)) {
@@ -84,7 +84,7 @@ public class ConfigHolder {
             throw new IOException("Does not has enough permission to read/write config");
         }
         if (!Files.isRegularFile(configPath)) {
-            IOUtils.delete(configPath);
+            IOUtils.deleteIfExists(configPath);
             set(DEFAULT_CONFIG);
         }
     }
@@ -106,7 +106,7 @@ public class ConfigHolder {
         }
         if (Files.notExists(configPath) || !Files.isRegularFile(configPath)) {
             Logging.warning("Config file not found or directory found on the path, will use default value");
-            IOUtils.delete(configPath);
+            IOUtils.deleteIfExists(configPath);
             Files.createFile(configPath);
             set(DEFAULT_CONFIG);
             return;

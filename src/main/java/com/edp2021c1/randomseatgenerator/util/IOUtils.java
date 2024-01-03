@@ -56,7 +56,7 @@ public class IOUtils {
      * @param path to delete
      * @throws IOException if an I/O error occurs
      */
-    public static void delete(final Path path) throws IOException {
+    public static void deleteIfExists(final Path path) throws IOException {
         if (Files.notExists(path)) {
             return;
         }
