@@ -30,6 +30,9 @@ import java.util.Set;
  * @since 1.4.6
  */
 public class RuntimeUtils {
+    /**
+     * System runtime instance
+     */
     public static final Runtime RUNTIME = Runtime.getRuntime();
     private static final HashMap<Long, Thread> threadIdMap = new HashMap<>();
     private static final Thread exitHook = new Thread("Exiting Thread") {

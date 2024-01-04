@@ -90,7 +90,7 @@ tasks.jar {
 
 tasks.build {
     doLast {
-        try {
+        runCatching {
             val fName: String = project.name + "-" + version
             val projectPath: String = projectDir.path
             val jarName = "$fName.jar"
@@ -113,12 +113,12 @@ tasks.build {
                     } else {
                         jarName
                     }
-            val finalPackagePath: Path = packageDir.resolve(packageName)
-
             if (!Files.isDirectory(packageDir)) {
                 Files.deleteIfExists(packageDir)
             }
             Files.createDirectories(packageDir)
+
+            val finalPackagePath: Path = packageDir.resolve(packageName)
 
             if (!(isMac || isWin)) {
                 Files.move(jarPath, finalPackagePath, StandardCopyOption.REPLACE_EXISTING)
@@ -132,9 +132,9 @@ tasks.build {
             }
 
             ToolProvider.findFirst("jpackage").get().run(System.out, System.err, *argList.toArray(arrayOfNulls<String>(argList.size)))
-        } catch (e: Throwable) {
+        }.onFailure { exception: Throwable ->
             System.err.println("Packing failed with an exception")
-            e.printStackTrace()
+            exception.printStackTrace()
         }
     }
 }

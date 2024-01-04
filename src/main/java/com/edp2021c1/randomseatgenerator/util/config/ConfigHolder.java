@@ -23,6 +23,9 @@ import java.util.Objects;
  */
 public class ConfigHolder {
 
+    /**
+     * Default config handler.
+     */
     public static final ConfigHolder CONFIG;
 
     private static final RawAppConfig DEFAULT_CONFIG;
@@ -55,6 +58,12 @@ public class ConfigHolder {
 
     private FileTime configLastModifiedTime;
 
+    /**
+     * Creates an instance with the given config path.
+     *
+     * @param configPath path of config
+     * @throws IOException if failed to init config path, or does not have enough permission of the path
+     */
     public ConfigHolder(Path configPath) throws IOException {
         this.current = new RawAppConfig();
         this.configLastModifiedTime = null;
@@ -62,10 +71,18 @@ public class ConfigHolder {
         init();
     }
 
+    /**
+     * Creates an instance with the default config path.
+     *
+     * @throws IOException if failed to init config path, or does not have enough permission of the path
+     */
     public ConfigHolder() throws IOException {
         this(DEFAULT_CONFIG_PATH);
     }
 
+    /**
+     * @throws IOException if failed to init config path, or does not have enough permission of the path
+     */
     private void init() throws IOException {
         final Path configDir = configPath.getParent();
 
@@ -89,12 +106,20 @@ public class ConfigHolder {
         }
     }
 
+    /**
+     * @param config to set
+     * @throws IOException if an I/O error occurs
+     */
     public void set(RawAppConfig config) throws IOException {
         current.set(config);
         Files.writeString(configPath, current.toJson());
         configLastModifiedTime = Files.getLastModifiedTime(configPath);
     }
 
+    /**
+     * @return the config
+     * @throws IOException if an I/O error occurs
+     */
     public RawAppConfig get() throws IOException {
         refresh();
         return current;

@@ -78,6 +78,7 @@ public class ConfigPane extends VBox {
      * @param darkModeCheck            input of {@code dark_mode}
      * @param applyBtnDisabledProperty property of whether the current global config is equal to the config in the pane,
      *                                 usually decides whether the apply button is disabled. Ignored if is null.
+     * @param configHolder             holder of the config
      */
     public ConfigPane(final TextField rowCountInput,
                       final TextField columnCountInput,
