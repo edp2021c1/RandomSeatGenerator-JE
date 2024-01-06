@@ -29,7 +29,7 @@ import java.nio.file.attribute.BasicFileAttributes;
  * @since 1.4.6
  */
 public class IOUtils {
-    private static final FileVisitor<Path> DELETE_ALL_UNDER = new SimpleFileVisitor<>() {
+    private static final FileVisitor<Path> deleteAllUnder = new SimpleFileVisitor<>() {
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
                 throws IOException {
@@ -40,13 +40,11 @@ public class IOUtils {
         @Override
         public FileVisitResult postVisitDirectory(final Path dir, final IOException e)
                 throws IOException {
-            if (e == null) {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            } else {
-                // directory iteration failed
+            if (e != null) {
                 throw e;
             }
+            Files.delete(dir);
+            return FileVisitResult.CONTINUE;
         }
     };
 
@@ -74,7 +72,7 @@ public class IOUtils {
      * @throws IOException if an I/O error occurs
      */
     public static void deleteAllUnder(final Path directory) throws IOException {
-        Files.walkFileTree(directory, DELETE_ALL_UNDER);
+        Files.walkFileTree(directory, deleteAllUnder);
     }
 
     /**

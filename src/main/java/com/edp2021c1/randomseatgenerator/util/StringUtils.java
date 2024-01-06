@@ -21,6 +21,7 @@ package com.edp2021c1.randomseatgenerator.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -33,7 +34,14 @@ public class StringUtils {
     /**
      * Simple date format
      */
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private static final SimpleDateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+    /**
+     * @return now in {@code String}
+     */
+    public static String nowStr() {
+        return defaultDateFormat.format(new Date());
+    }
 
     /**
      * Returns a long hash code of a {@code String}.

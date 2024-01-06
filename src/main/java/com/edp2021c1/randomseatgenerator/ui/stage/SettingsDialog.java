@@ -23,9 +23,11 @@ import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
+import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.BooleanProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -40,7 +42,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
-import static com.edp2021c1.randomseatgenerator.util.config.ConfigHolder.CONFIG;
 import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
 
 /**
@@ -64,7 +65,7 @@ public class SettingsDialog extends Stage {
     private final Button loadConfigBtn;
     private final Button applyBtn;
     private final FileChooser fc;
-    private File importDir = CONFIG.getConfigPath().getParent().toFile();
+    private File importDir = ConfigHolder.getGlobal().getConfigPath().getParent().toFile();
     private File importFile;
     private RawAppConfig config;
 
@@ -76,7 +77,7 @@ public class SettingsDialog extends Stage {
     public SettingsDialog(MainWindow owner) {
         String s;
         try {
-            s = CONFIG.get().last_import_dir;
+            s = ConfigHolder.getGlobal().get().last_import_dir;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -147,12 +148,12 @@ public class SettingsDialog extends Stage {
                 exportWritableCheck,
                 darkModeCheck,
                 applyBtnDisabledProperty,
-                CONFIG
+                ConfigHolder.getGlobal()
         ) {
             @Override
             protected RawAppConfig getConfig() {
                 try {
-                    return CONFIG.get();
+                    return ConfigHolder.getGlobal().get();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -209,7 +210,7 @@ public class SettingsDialog extends Stage {
 
         scene = new Scene(mainBox);
 
-        setMargins(DEFAULT_MARGIN,
+        setMargins(new Insets(5),
                 rowCountInput,
                 columnCountInput,
                 rbrInput,
@@ -260,9 +261,9 @@ public class SettingsDialog extends Stage {
                 importDir = importFile.getParentFile();
                 config = new RawAppConfig();
                 config.last_import_dir = importDir.toString();
-                CONFIG.set(config);
+                ConfigHolder.getGlobal().set(config);
             } catch (final Throwable e) {
-                CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
             }
         });
 
@@ -282,15 +283,15 @@ public class SettingsDialog extends Stage {
                 try {
                     config.checkFormat();
                 } catch (final IllegalConfigException e) {
-                    CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
+                    CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
                     return;
                 }
-                CONFIG.set(config);
+                ConfigHolder.getGlobal().set(config);
 
                 owner.onConfigChanged();
                 applyBtn.setDisable(true);
             } catch (final Throwable e) {
-                CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
             }
         });
 
@@ -307,7 +308,7 @@ public class SettingsDialog extends Stage {
         cancelBtn.setOnAction(event -> close());
         cancelBtn.setCancelButton(true);
 
-        if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
+        if (OperatingSystem.getCurrent() == OperatingSystem.MAC) {
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;
@@ -333,7 +334,7 @@ public class SettingsDialog extends Stage {
 
         setOnShown(event -> {
             try {
-                configPane.reset(CONFIG.get());
+                configPane.reset(ConfigHolder.getGlobal().get());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

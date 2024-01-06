@@ -18,6 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import lombok.Getter;
+
 import static com.edp2021c1.randomseatgenerator.util.Metadata.SYSTEM_NAME;
 
 /**
@@ -47,25 +49,26 @@ public enum OperatingSystem {
     /**
      * Current operating system.
      */
-    public static final OperatingSystem CURRENT;
+    @Getter
+    private static final OperatingSystem current;
 
     static {
         if (SYSTEM_NAME != null) {
             final String osName = SYSTEM_NAME.toLowerCase();
             if (osName.startsWith("windows")) {
-                CURRENT = WINDOWS;
+                current = WINDOWS;
             } else if (osName.startsWith("mac")) {
-                CURRENT = MAC;
+                current = MAC;
             } else if (osName.contains("solaris")
                     || osName.contains("linux")
                     || osName.contains("unix")
                     || osName.contains("sunos")) {
-                CURRENT = LINUX;
+                current = LINUX;
             } else {
-                CURRENT = UNKNOWN;
+                current = UNKNOWN;
             }
         } else {
-            CURRENT = UNKNOWN;
+            current = UNKNOWN;
         }
     }
 

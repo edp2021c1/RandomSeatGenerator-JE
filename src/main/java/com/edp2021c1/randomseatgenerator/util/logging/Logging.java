@@ -42,22 +42,22 @@ public class Logging {
     /**
      * Logger.
      */
-    private static final Logger LOG = Logger.getLogger("RandomSeat");
-    private static final Path LOG_DIR = Paths.get(Metadata.DATA_DIR, "logs");
-    private static final Path[] LOG_PATHS;
+    private static final Logger logger = Logger.getLogger("RandomSeat");
+    private static final Path logDir = Paths.get(Metadata.DATA_DIR, "logs");
+    private static final Path[] logPaths;
     private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
-    private static final Formatter DEFAULT_FORMATTER;
+    private static final Formatter defaultFormatter;
     private static boolean initialized = false;
 
     static {
         String str = "%tF-%%d.log".formatted(new Date());
         int t = 1;
-        while (Files.exists(LOG_DIR.resolve(str.formatted(t)))) {
+        while (Files.exists(logDir.resolve(str.formatted(t)))) {
             t++;
         }
-        LOG_PATHS = new Path[]{LOG_DIR.resolve("latest.log"), LOG_DIR.resolve(str.formatted(t))};
+        logPaths = new Path[]{logDir.resolve("latest.log"), logDir.resolve(str.formatted(t))};
 
-        DEFAULT_FORMATTER = new Formatter() {
+        defaultFormatter = new Formatter() {
             @Override
             public String format(final LogRecord record) {
                 return record.getMessage();
@@ -78,7 +78,7 @@ public class Logging {
      */
     public static void user(final String msg) {
         checkInitialized();
-        LOG.log(LoggingLevels.USER_INFO, msg);
+        logger.log(LoggingLevels.USER_INFO, msg);
     }
 
     /**
@@ -88,7 +88,7 @@ public class Logging {
      */
     public static void info(final String msg) {
         checkInitialized();
-        LOG.log(LoggingLevels.INFO, msg);
+        logger.log(LoggingLevels.INFO, msg);
     }
 
     /**
@@ -98,7 +98,7 @@ public class Logging {
      */
     public static void warning(final String msg) {
         checkInitialized();
-        LOG.log(LoggingLevels.WARNING, msg);
+        logger.log(LoggingLevels.WARNING, msg);
     }
 
     /**
@@ -108,7 +108,7 @@ public class Logging {
      */
     public static void error(final String msg) {
         checkInitialized();
-        LOG.log(LoggingLevels.ERROR, msg);
+        logger.log(LoggingLevels.ERROR, msg);
     }
 
     /**
@@ -118,7 +118,7 @@ public class Logging {
      */
     public static void debug(final String msg) {
         checkInitialized();
-        LOG.log(LoggingLevels.DEBUG, msg);
+        logger.log(LoggingLevels.DEBUG, msg);
     }
 
     /**
@@ -134,46 +134,46 @@ public class Logging {
 
         initialized = true;
 
-        LOG.setLevel(LoggingLevels.ALL);
-        LOG.setUseParentHandlers(false);
-        LOG.setFilter(record -> {
+        logger.setLevel(LoggingLevels.ALL);
+        logger.setUseParentHandlers(false);
+        logger.setFilter(record -> {
             record.setMessage(format(record));
             return true;
         });
 
         final ConsoleHandler consoleHandler = new ConsoleHandler();
-        consoleHandler.setFormatter(DEFAULT_FORMATTER);
+        consoleHandler.setFormatter(defaultFormatter);
         consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? LoggingLevels.USER_INFO : LoggingLevels.INFO);
-        LOG.addHandler(consoleHandler);
+        logger.addHandler(consoleHandler);
 
         try {
-            if (!Files.isDirectory(LOG_DIR)) {
-                IOUtils.deleteIfExists(LOG_DIR);
+            if (!Files.isDirectory(logDir)) {
+                IOUtils.deleteIfExists(logDir);
             }
-            Files.createDirectories(LOG_DIR);
+            Files.createDirectories(logDir);
         } catch (final IOException e) {
             warning("Unable to create log dir, log may not be saved");
             warning(StringUtils.getStackTrace(e));
         }
 
         try {
-            if (Files.notExists(LOG_DIR) || !Files.isDirectory(LOG_DIR)) {
-                IOUtils.deleteIfExists(LOG_DIR);
-                Files.createDirectories(LOG_DIR);
+            if (Files.notExists(logDir) || !Files.isDirectory(logDir)) {
+                IOUtils.deleteIfExists(logDir);
+                Files.createDirectories(logDir);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if (IOUtils.lackOfPermission(LOG_DIR)) {
+        if (IOUtils.lackOfPermission(logDir)) {
             warning("Does not have read/write permission of the log directory");
         }
-        for (final Path path : LOG_PATHS) {
+        for (final Path path : logPaths) {
             try {
                 final FileHandler fileHandler = new FileHandler(path.toString());
                 fileHandler.setLevel(LoggingLevels.DEBUG);
-                fileHandler.setFormatter(DEFAULT_FORMATTER);
+                fileHandler.setFormatter(defaultFormatter);
                 fileHandler.setEncoding("UTF-8");
-                LOG.addHandler(fileHandler);
+                logger.addHandler(fileHandler);
             } catch (final IOException e) {
                 warning("Failed to create log file at " + path);
                 warning(StringUtils.getStackTrace(e));
@@ -188,7 +188,7 @@ public class Logging {
         debug("Java Version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
         debug("Java VM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
         debug("Java Home: " + System.getProperty("java.home"));
-        debug("Memory: " + (RuntimeUtils.RUNTIME.maxMemory() >>> 20) + "MB");
+        debug("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
     }
 
     private static String format(LogRecord record) {
@@ -205,10 +205,13 @@ public class Logging {
         return buffer.toString();
     }
 
+    /**
+     * Ends logging
+     */
     public static void close() {
         debug("Closing log");
-        for (final Handler h : LOG.getHandlers()) {
-            LOG.removeHandler(h);
+        for (final Handler h : logger.getHandlers()) {
+            logger.removeHandler(h);
             h.close();
         }
         initialized = false;

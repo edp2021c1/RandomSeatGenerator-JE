@@ -50,7 +50,7 @@ public class RandomSeatGenerator {
             System.exit(0);
         }
 
-        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.CRASH_REPORTER_LOG_ONLY);
+        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.logOnlyCrashReporter);
         Thread.currentThread().setName("Main Thread");
 
         // 如果是命令行模式则启动命令行程序

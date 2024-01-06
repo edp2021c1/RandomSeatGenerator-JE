@@ -171,16 +171,16 @@ public class RawSeatConfig {
      */
     public ArrayList<String> getNameList() {
         final ArrayList<String> l = new ArrayList<>(Arrays.asList(person_sort_by_height.split(" ")));
-        if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
+        if (l.contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
-                    "Name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.EMPTY_SEAT_PLACEHOLDER)
+                    "Name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
             );
         }
         if (l.contains("")) {
             throw new IllegalConfigException("Name list must not contain empty name");
         }
         for (final String s : l) {
-            if (s.matches(SeatTable.GROUP_LEADER_REGEX)) {
+            if (s.matches(SeatTable.groupLeaderRegex)) {
                 throw new IllegalConfigException("Name list must not contain names in the format of a group leader");
             }
         }
@@ -195,9 +195,9 @@ public class RawSeatConfig {
      */
     public ArrayList<String> getGroupLeaderList() {
         final ArrayList<String> l = new ArrayList<>(Arrays.asList(group_leader_list.split(" ")));
-        if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
+        if (l.contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
-                    "Group leader list must not contain empty seat place holder \"%s\"".formatted(SeatTable.EMPTY_SEAT_PLACEHOLDER)
+                    "Group leader list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
             );
         }
         return l;

@@ -32,20 +32,10 @@ import java.net.URI;
  * @since 1.4.7
  */
 public class DesktopUtils {
-    /**
-     * Is desktop supported.
-     */
-    private static final boolean DESKTOP_SUPPORTED = Desktop.isDesktopSupported();
-
-    /**
-     * Desktop toolkit, null if not supported.
-     */
-    private static final Desktop DESKTOP = DESKTOP_SUPPORTED ? Desktop.getDesktop() : null;
-
-    /**
-     * System clipboard.
-     */
-    private static final Clipboard CLIPBOARD = Clipboard.getSystemClipboard();
+    private static final boolean desktopSupported = Desktop.isDesktopSupported();
+    private static final Desktop desktopTk = desktopSupported ? Desktop.getDesktop() : null;
+    private static final Clipboard clipboard = Clipboard.getSystemClipboard();
+    private static final ClipboardContent content = new ClipboardContent();
 
     /**
      * Launches the default browser to display a {@code URI} if supported.
@@ -72,9 +62,9 @@ public class DesktopUtils {
      * @see java.awt.Desktop#browse(URI)
      */
     public static void browseIfSupported(URI uri) {
-        if (DESKTOP_SUPPORTED) {
+        if (desktopSupported) {
             try {
-                DESKTOP.browse(uri);
+                desktopTk.browse(uri);
             } catch (IOException ignored) {
             }
         }
@@ -86,8 +76,7 @@ public class DesktopUtils {
      * @param text to copy.
      */
     public static void copyText(String text) {
-        final ClipboardContent content = new ClipboardContent();
         content.putString(text);
-        CLIPBOARD.setContent(content);
+        clipboard.setContent(content);
     }
 }

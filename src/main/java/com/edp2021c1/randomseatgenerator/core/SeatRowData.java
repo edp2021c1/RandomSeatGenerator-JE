@@ -105,7 +105,8 @@ public class SeatRowData {
         final List<SeatRowData> seatRowData = new ArrayList<>();
         final String[] tmp = new String[columnCount];
 
-        for (int i = 0, j = 0; i < s.size(); i++, j = i % columnCount) {
+        final int size = s.size();
+        for (int i = 0, j = 0; i < size; i++, j = i % columnCount) {
             tmp[j] = s.get(i);
             if (j == columnCount - 1) {
                 seatRowData.add(new SeatRowData(tmp));

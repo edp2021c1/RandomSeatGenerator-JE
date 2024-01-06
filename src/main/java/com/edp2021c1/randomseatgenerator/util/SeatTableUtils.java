@@ -24,8 +24,6 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
 
@@ -39,43 +37,19 @@ public class SeatTableUtils {
     /**
      * Exports this instance to an Excel form file (.xlsx).
      *
-     * @param seatTable to export to Excel document
-     * @param file      to export seat table to
-     * @param writable  if export seat table to a writable file
+     * @param seatTable        to export to Excel document
+     * @param file             to export seat table to
+     * @param exportToWritable if export seat table to a writable file
      * @throws IOException if an I/O error occurs
      */
-    public static void exportToExcelDocument(final SeatTable seatTable, final File file, final boolean writable) throws IOException {
+    public static void exportToExcelDocument(final SeatTable seatTable, final File file, final boolean exportToWritable) throws IOException {
         Objects.requireNonNull(file);
-        if (!file.createNewFile()) {
-            if (!(file.delete() & file.createNewFile())) {
-                throw new IOException("Failed to save seat table to " + file);
-            }
-        }
         EasyExcel.write(file, SeatRowData.class)
                 .sheet("座位表-%tF".formatted(new Date()))
                 .doWrite(SeatRowData.fromSeat(seatTable));
-        if (writable) {
-            return;
-        }
-        if (!file.setReadOnly()) {
+        if (!(exportToWritable || file.setReadOnly())) {
             throw new IOException("Failed to save seat table to " + file);
         }
     }
 
-    /**
-     * Exports this instance to an Excel form file (.xlsx).
-     *
-     * @param seatTable to export to Excel document
-     * @param path      to export seat table to
-     * @param writable  if export seat table to a writable file
-     * @throws IOException if an I/O error occurs
-     */
-    public static void exportToExcelDocument(final SeatTable seatTable, final Path path, final boolean writable) throws IOException {
-        final Path outputDir = path.getParent();
-        if (Files.notExists(outputDir) || Files.isDirectory(outputDir)) {
-            IOUtils.deleteIfExists(outputDir);
-            Files.createDirectories(path);
-        }
-        exportToExcelDocument(seatTable, path.toFile(), writable);
-    }
 }

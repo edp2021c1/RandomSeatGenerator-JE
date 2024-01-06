@@ -51,16 +51,11 @@ import java.io.IOException;
  * @since 1.3.3
  */
 public class UIFactory {
-    /**
-     * Default margin.
-     */
-    public static final Insets DEFAULT_MARGIN = new Insets(5);
-    private static final BooleanProperty darkMode;
+    private static final BooleanProperty darkMode = new SimpleBooleanProperty();
     @Setter
-    private static Window mainWindow = new Stage();
+    private static Window mainWindow = null;
 
     static {
-        darkMode = new SimpleBooleanProperty();
         darkMode.addListener(new ChangeListener<>() {
             private final RawAppConfig config = new RawAppConfig();
 
@@ -68,7 +63,7 @@ public class UIFactory {
             public void changed(final ObservableValue<? extends Boolean> observable, final Boolean oldValue, final Boolean newValue) {
                 config.dark_mode = newValue;
                 try {
-                    ConfigHolder.CONFIG.set(config);
+                    ConfigHolder.getGlobal().set(config);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -86,35 +81,14 @@ public class UIFactory {
     }
 
     /**
-     * Decorates the given stage by adding an icon and
-     * style sheets related to the window type to the stage.
+     * Decorates the given stage by adding an icon related to
+     * the window type of the stage and stylesheets.
      *
      * @param stage to be decorated
      * @param type  of the window
      * @see StageType
      */
     public static void decorate(final Stage stage, final StageType type) {
-        final ObservableList<String> styleSheets = stage.getScene().getStylesheets();
-        styleSheets.add(Metadata.STYLESHEET_BASE);
-        darkMode.addListener((observable, oldValue, newValue) -> {
-            if (newValue == null) {
-                return;
-            }
-            if (newValue) {
-                styleSheets.remove(Metadata.STYLESHEET_LIGHT);
-                styleSheets.add(Metadata.STYLESHEET_DARK);
-            } else {
-                styleSheets.remove(Metadata.STYLESHEET_DARK);
-                styleSheets.add(Metadata.STYLESHEET_LIGHT);
-            }
-        });
-        if (darkMode.get()) {
-            styleSheets.remove(Metadata.STYLESHEET_LIGHT);
-            styleSheets.add(Metadata.STYLESHEET_DARK);
-        } else {
-            styleSheets.remove(Metadata.STYLESHEET_DARK);
-            styleSheets.add(Metadata.STYLESHEET_LIGHT);
-        }
         switch (type) {
             case MAIN -> {
                 stage.getIcons().add(new Image(Metadata.ICON_URL));
@@ -132,6 +106,25 @@ public class UIFactory {
                 stage.setResizable(false);
             }
         }
+
+        final ObservableList<String> styleSheets = stage.getScene().getStylesheets();
+        styleSheets.add(Metadata.STYLESHEET_BASE);
+        darkMode.addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                styleSheets.remove(Metadata.STYLESHEET_LIGHT);
+                styleSheets.add(Metadata.STYLESHEET_DARK);
+                return;
+            }
+            styleSheets.remove(Metadata.STYLESHEET_DARK);
+            styleSheets.add(Metadata.STYLESHEET_LIGHT);
+        });
+        if (darkMode.get()) {
+            styleSheets.remove(Metadata.STYLESHEET_LIGHT);
+            styleSheets.add(Metadata.STYLESHEET_DARK);
+            return;
+        }
+        styleSheets.remove(Metadata.STYLESHEET_DARK);
+        styleSheets.add(Metadata.STYLESHEET_LIGHT);
     }
 
     /**

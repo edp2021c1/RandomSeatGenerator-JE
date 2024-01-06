@@ -26,10 +26,9 @@ public class ConfigHolder {
     /**
      * Default config handler.
      */
-    public static final ConfigHolder CONFIG;
-
+    @Getter
+    private static final ConfigHolder global;
     private static final RawAppConfig DEFAULT_CONFIG;
-
     private static final Path DEFAULT_CONFIG_PATH = Paths.get(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
 
     static {
@@ -45,7 +44,7 @@ public class ConfigHolder {
         DEFAULT_CONFIG = RawAppConfig.fromJson(str.toString());
 
         try {
-            CONFIG = new ConfigHolder();
+            global = new ConfigHolder();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -53,9 +52,7 @@ public class ConfigHolder {
 
     @Getter
     private final Path configPath;
-
-    private final RawAppConfig current;
-
+    private final RawAppConfig content;
     private FileTime configLastModifiedTime;
 
     /**
@@ -65,7 +62,7 @@ public class ConfigHolder {
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
     public ConfigHolder(Path configPath) throws IOException {
-        this.current = new RawAppConfig();
+        this.content = new RawAppConfig();
         this.configLastModifiedTime = null;
         this.configPath = configPath;
         init();
@@ -111,8 +108,8 @@ public class ConfigHolder {
      * @throws IOException if an I/O error occurs
      */
     public void set(RawAppConfig config) throws IOException {
-        current.set(config);
-        Files.writeString(configPath, current.toJson());
+        content.set(config);
+        Files.writeString(configPath, content.toJson());
         configLastModifiedTime = Files.getLastModifiedTime(configPath);
     }
 
@@ -121,11 +118,11 @@ public class ConfigHolder {
      * @throws IOException if an I/O error occurs
      */
     public RawAppConfig get() throws IOException {
-        refresh();
-        return current;
+        flush();
+        return content;
     }
 
-    private void refresh() throws IOException {
+    private void flush() throws IOException {
         if (Objects.equals(Files.getLastModifiedTime(configPath), configLastModifiedTime)) {
             return;
         }
@@ -136,9 +133,9 @@ public class ConfigHolder {
             set(DEFAULT_CONFIG);
             return;
         }
-        current.set(RawAppConfig.fromJson(configPath));
+        content.set(RawAppConfig.fromJson(configPath));
         try {
-            current.checkFormat();
+            content.checkFormat();
         } catch (final RuntimeException e) {
             Logging.warning("Invalid config");
         }

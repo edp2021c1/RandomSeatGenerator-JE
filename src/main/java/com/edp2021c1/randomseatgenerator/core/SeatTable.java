@@ -33,15 +33,15 @@ public class SeatTable {
     /**
      * Placeholder of an empty seat.
      */
-    public static final String EMPTY_SEAT_PLACEHOLDER = "-";
+    public static final String emptySeatPlaceholder = "-";
     /**
      * Regular expression of a group leader.
      */
-    public static final String GROUP_LEADER_REGEX = "\\*+.+\\*";
+    public static final String groupLeaderRegex = "\\*+.+\\*";
     /**
      * Format of a group leader.
      */
-    public static final String GROUP_LEADER_FORMAT = "*%s*";
+    public static final String groupLeaderFormat = "*%s*";
     /**
      * The seat table stored as a {@code  List}.
      */

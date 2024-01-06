@@ -48,9 +48,9 @@ public class SeparatedPair {
         if (t.length < 2) {
             throw new IllegalConfigException("Invalid separate pair: \"%s\"".formatted(s));
         }
-        if (Arrays.asList(t).contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
+        if (Arrays.asList(t).contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
-                    "Separated name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.EMPTY_SEAT_PLACEHOLDER));
+                    "Separated name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder));
         }
         if (Objects.equals(t[0], t[1])) {
             throw new IllegalConfigException("Two names in one separate pair cannot be the same");

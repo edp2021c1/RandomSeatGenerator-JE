@@ -23,10 +23,12 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.StringProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -43,8 +45,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.util.StringUtils.DATE_FORMAT;
-import static com.edp2021c1.randomseatgenerator.util.config.ConfigHolder.CONFIG;
 import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
 
 /**
@@ -77,7 +77,7 @@ public class MainWindow extends Stage {
     public MainWindow() {
         settingsDialog = new SettingsDialog(this);
         try {
-            config = CONFIG.get();
+            config = ConfigHolder.getGlobal().get();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -126,7 +126,7 @@ public class MainWindow extends Stage {
 
         scene = new Scene(mainBox);
 
-        setMargins(DEFAULT_MARGIN, settingsBtn, generateBtn, exportBtn, seedInput, randomSeedBtn, dateAsSeedBtn);
+        setMargins(new Insets(5), settingsBtn, generateBtn, exportBtn, seedInput, randomSeedBtn, dateAsSeedBtn);
         setGrows(Priority.ALWAYS, seatTableView, rightBox);
 
         setScene(scene);
@@ -154,7 +154,7 @@ public class MainWindow extends Stage {
                     randomSeedBtn.fire();
                 }
 
-                config = CONFIG.get();
+                config = ConfigHolder.getGlobal().get();
                 if (config == null) {
                     throw new IllegalConfigException("Null config");
                 }
@@ -163,14 +163,14 @@ public class MainWindow extends Stage {
                 try {
                     seatTable = SeatTableFactory.generate(config.getContent(), seed.get());
                 } catch (final IllegalConfigException e) {
-                    CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
+                    CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
                     return;
                 }
                 Logging.info("\n" + seatTable);
                 seatTableView.setSeatTable(seatTable);
                 previousSeed = seed.get();
             } catch (final Throwable e) {
-                CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
             }
         });
         generateBtn.setDefaultButton(true);
@@ -189,9 +189,9 @@ public class MainWindow extends Stage {
                     return;
                 }
                 try {
-                    SeatTableUtils.exportToExcelDocument(seatTable, exportFile, CONFIG.get().export_writable);
+                    SeatTableUtils.exportToExcelDocument(seatTable, exportFile, ConfigHolder.getGlobal().get().export_writable);
                 } catch (final IOException e) {
-                    CrashReporter.CRASH_REPORTER_FULL.uncaughtException(
+                    CrashReporter.fullCrashReporter.uncaughtException(
                             Thread.currentThread(),
                             new RuntimeException(
                                     "Failed to export seat table to " + exportFile.getAbsolutePath(),
@@ -205,9 +205,9 @@ public class MainWindow extends Stage {
                 exportDir = exportFile.getParentFile();
                 t = new RawAppConfig();
                 t.last_export_dir = exportDir.toString();
-                CONFIG.set(t);
+                ConfigHolder.getGlobal().set(t);
             } catch (final Throwable e) {
-                CrashReporter.CRASH_REPORTER_FULL.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
             }
         });
 
@@ -215,9 +215,9 @@ public class MainWindow extends Stage {
 
         randomSeedBtn.setOnAction(event -> seedInput.setText(StringUtils.randomString(30)));
 
-        dateAsSeedBtn.setOnAction(event -> seed.set(DATE_FORMAT.format(new Date())));
+        dateAsSeedBtn.setOnAction(event -> seed.set(StringUtils.nowStr()));
 
-        if (OperatingSystem.CURRENT == OperatingSystem.MAC) {
+        if (OperatingSystem.getCurrent() == OperatingSystem.MAC) {
             setFullScreenExitHint("按 Esc / Cmd+Shift+F 退出全屏");
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
@@ -256,7 +256,7 @@ public class MainWindow extends Stage {
      */
     public void onConfigChanged() {
         try {
-            seatTableView.setEmptySeatTable(CONFIG.get().getContent());
+            seatTableView.setEmptySeatTable(ConfigHolder.getGlobal().get().getContent());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

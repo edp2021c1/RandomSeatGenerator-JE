@@ -169,7 +169,7 @@ public class Metadata {
         }
 
 
-        switch (OperatingSystem.CURRENT) {
+        switch (OperatingSystem.getCurrent()) {
             case WINDOWS -> DATA_DIR = Paths.get(
                     USER_HOME,
                     "AppData",

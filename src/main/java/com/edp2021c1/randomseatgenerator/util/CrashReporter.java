@@ -25,60 +25,56 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
- * Reports runtime exceptions.
+ * Reports uncaught exceptions.
  *
  * @author Calboot
  * @since 1.2.8
  */
 public class CrashReporter implements Thread.UncaughtExceptionHandler {
     /**
-     * Default crash reporter.
+     * Full crash reporter, with a window shown on call of {@link #uncaughtException(Thread, Throwable)}
      */
-    public static final CrashReporter CRASH_REPORTER_FULL = new CrashReporter(true, true);
+    public static final CrashReporter fullCrashReporter = new CrashReporter(true);
 
     /**
-     * Shows error message in a {@code Swing} window rather than an {@code JavaFX} window.
+     * Crash reporter will log only.
      */
-    public static final CrashReporter CRASH_REPORTER_LOG_ONLY = new CrashReporter(true, false);
+    public static final CrashReporter logOnlyCrashReporter = new CrashReporter(false);
 
-    private final boolean useLog;
-    private final boolean useFX;
+    private final boolean withGUI;
 
     /**
      * Creates an instance.
      *
-     * @param useLog if the error message will be logged.
-     * @param useFX  if the error message will be shown in a JavaFX stage.
+     * @param withGUI if the error message will be shown in a JavaFX stage.
      */
-    public CrashReporter(final boolean useLog, final boolean useFX) {
-        this.useLog = useLog;
-        this.useFX = useFX;
+    protected CrashReporter(final boolean withGUI) {
+        this.withGUI = withGUI;
     }
 
     /**
-     * Method invoked when the given thread terminates due to the
-     * given uncaught exception.
-     * <p>Any exception thrown by this method will be ignored by the
-     * Java Virtual Machine.
+     * Handles crashes.
      *
      * @param t the thread
      * @param e the exception
      */
     @Override
     public void uncaughtException(final Thread t, final Throwable e) {
-        final String str = "Exception in thread \"%s\":\n".formatted(t.getName()) +
-                (e instanceof IllegalConfigException ? "IllegalConfigException: " + e.getMessage() : StringUtils.getStackTrace(e));
+        try {
+            final String str = "Exception in thread \"%s\":\n".formatted(t.getName()) +
+                    (e instanceof IllegalConfigException ? "IllegalConfigException: " + e.getMessage() : StringUtils.getStackTrace(e));
 
-        if (useLog) {
             Logging.error(str);
-        }
 
-        if (useFX) {
-            try {
-                Application.launch(CrashReporterApp.class, str);
-            } catch (final IllegalStateException exception) {
-                new CrashReporterWindow(str).showAndWait();
+            if (withGUI) {
+                try {
+                    Application.launch(CrashReporterApp.class, str);
+                } catch (final IllegalStateException exception) {
+                    new CrashReporterWindow(str).showAndWait();
+                }
             }
+        } catch (final Throwable ex) {
+            System.err.println(StringUtils.getStackTrace(ex));
         }
     }
 

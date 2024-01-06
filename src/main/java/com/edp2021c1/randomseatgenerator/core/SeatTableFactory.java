@@ -85,7 +85,7 @@ public class SeatTableFactory {
         final int forTimes = peopleLeft > columnCount ? seatNum / randomPeopleCount + 1 : seatNum / randomPeopleCount;
 
         final String[] emptyRow = new String[columnCount];
-        Arrays.fill(emptyRow, SeatTable.EMPTY_SEAT_PLACEHOLDER);
+        Arrays.fill(emptyRow, SeatTable.emptySeatPlaceholder);
 
         // 座位表数据
         ArrayList<String> seatTable = new ArrayList<>(seatNum);
@@ -137,7 +137,7 @@ public class SeatTableFactory {
             do {
                 t = rd.nextInt(rowCount) * columnCount + i;
             } while (!groupLeaderList.contains((tGroupLeader = seatTable.get(t))));
-            seatTable.set(t, SeatTable.GROUP_LEADER_FORMAT.formatted(tGroupLeader));
+            seatTable.set(t, SeatTable.groupLeaderFormat.formatted(tGroupLeader));
         }
 
         return new SeatTable(seatTable, config, seed, luckyPerson);
@@ -182,7 +182,7 @@ public class SeatTableFactory {
      */
     public static SeatTable generateEmpty(final SeatConfig config) {
         List<String> seat = new ArrayList<>(Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]));
-        Collections.fill(seat, SeatTable.EMPTY_SEAT_PLACEHOLDER);
+        Collections.fill(seat, SeatTable.emptySeatPlaceholder);
         return new SeatTable(seat, config, "", "null");
     }
 
