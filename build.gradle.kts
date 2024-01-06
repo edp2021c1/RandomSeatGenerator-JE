@@ -16,10 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import java.nio.file.Files
+import java.nio.file.*
 import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 import java.util.spi.ToolProvider
 
 plugins {
@@ -122,52 +120,56 @@ fun getWinPackingArguments(jarName: String, projectPath: String): ArrayList<Stri
 }
 
 val pack = task("pack") {
+    val fName: String = project.name + "-" + version
+    val projectPath: String = projectDir.path
+    val jarName = "$fName.jar"
+    val jarPath: Path = Paths.get(projectPath, "build", "libs", jarName).toAbsolutePath()
+
+    val jarState = tasks.jar.get().state
+
+    if (!jarState.executed) {
+        dependsOn(tasks.jar)
+    }
+
+    onlyIf { jarState.executed }
     doLast {
-        runCatching {
-            val fName: String = project.name + "-" + version
-            val projectPath: String = projectDir.path
-            val jarName = "$fName.jar"
-            val jarPath: Path = Paths.get(projectPath, "build", "libs", jarName).toAbsolutePath()
+        if (Files.notExists(jarPath)) {
+            throw NoSuchFileException("Jar not found at $jarPath")
+        }
 
-            if (Files.notExists(jarPath)) {
-                return@doLast
-            }
+        val osname: String = System.getProperty("os.name").lowercase()
+        val isMac: Boolean = osname.startsWith("mac")
+        val isWin: Boolean = osname.startsWith("win")
 
-            val osname: String = System.getProperty("os.name").lowercase()
-            val isMac: Boolean = osname.startsWith("mac")
-            val isWin: Boolean = osname.startsWith("win")
+        val packageDir: Path = Paths.get(projectPath, "packages")
+        val packageName: String =
+                if (isMac) {
+                    "$fName.dmg"
+                } else if (isWin) {
+                    "$fName.msi"
+                } else {
+                    jarName
+                }
+        if (!Files.isDirectory(packageDir)) {
+            Files.deleteIfExists(packageDir)
+        }
+        Files.createDirectories(packageDir)
 
-            val packageDir: Path = Paths.get(projectPath, "packages")
-            val packageName: String =
-                    if (isMac) {
-                        "$fName.dmg"
-                    } else if (isWin) {
-                        "$fName.msi"
-                    } else {
-                        jarName
-                    }
-            if (!Files.isDirectory(packageDir)) {
-                Files.deleteIfExists(packageDir)
-            }
-            Files.createDirectories(packageDir)
+        val finalPackagePath: Path = packageDir.resolve(packageName)
 
-            val finalPackagePath: Path = packageDir.resolve(packageName)
+        if (!(isMac || isWin)) {
+            Files.move(jarPath, finalPackagePath, StandardCopyOption.REPLACE_EXISTING)
+            return@doLast
+        }
 
-            if (!(isMac || isWin)) {
-                Files.move(jarPath, finalPackagePath, StandardCopyOption.REPLACE_EXISTING)
-                return@doLast
-            }
+        val argList: ArrayList<String> = if (isMac) {
+            getMacPackingArguments(jarName, projectPath)
+        } else {
+            getWinPackingArguments(jarName, projectPath)
+        }
 
-            val argList: ArrayList<String> = if (isMac) {
-                getMacPackingArguments(jarName, projectPath)
-            } else {
-                getWinPackingArguments(jarName, projectPath)
-            }
-
-            ToolProvider.findFirst("jpackage").get().run(System.out, System.err, *argList.toArray(arrayOfNulls<String>(argList.size)))
-        }.onFailure { exception: Throwable ->
-            System.err.println("Packing failed with an exception")
-            exception.printStackTrace()
+        if (ToolProvider.findFirst("jpackage").get().run(System.out, System.err, *argList.toArray(arrayOfNulls<String>(argList.size))) != 0) {
+            throw Exception("JPackage failed")
         }
     }
 }
