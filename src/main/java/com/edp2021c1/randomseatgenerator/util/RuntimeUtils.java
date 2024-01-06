@@ -72,6 +72,7 @@ public class RuntimeUtils {
      */
     private static void exitImpl() {
         Logging.debug("Exiting");
-        // TODO: Refresh config and save log
+        // TODO: Refresh config
+        Logging.close();
     }
 }

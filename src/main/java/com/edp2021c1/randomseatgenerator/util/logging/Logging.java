@@ -31,7 +31,6 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.logging.*;
-import java.util.stream.Stream;
 
 /**
  * Logging related util.
@@ -48,7 +47,6 @@ public class Logging {
     private static final Path[] LOG_PATHS;
     private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
     private static final Formatter DEFAULT_FORMATTER;
-    private static final long MAX_LOG_COUNT = 256;
     private static boolean initialized = false;
 
     static {
@@ -78,7 +76,7 @@ public class Logging {
      *
      * @param msg logged message
      */
-    public static void user(String msg) {
+    public static void user(final String msg) {
         checkInitialized();
         LOG.log(LoggingLevels.USER_INFO, msg);
     }
@@ -88,7 +86,7 @@ public class Logging {
      *
      * @param msg logged message
      */
-    public static void info(String msg) {
+    public static void info(final String msg) {
         checkInitialized();
         LOG.log(LoggingLevels.INFO, msg);
     }
@@ -98,7 +96,7 @@ public class Logging {
      *
      * @param msg logged message
      */
-    public static void warning(String msg) {
+    public static void warning(final String msg) {
         checkInitialized();
         LOG.log(LoggingLevels.WARNING, msg);
     }
@@ -108,7 +106,7 @@ public class Logging {
      *
      * @param msg logged message
      */
-    public static void error(String msg) {
+    public static void error(final String msg) {
         checkInitialized();
         LOG.log(LoggingLevels.ERROR, msg);
     }
@@ -118,7 +116,7 @@ public class Logging {
      *
      * @param msg logged message
      */
-    public static void debug(String msg) {
+    public static void debug(final String msg) {
         checkInitialized();
         LOG.log(LoggingLevels.DEBUG, msg);
     }
@@ -128,7 +126,7 @@ public class Logging {
      *
      * @param mode logging mode
      */
-    public static void start(LoggingMode mode) {
+    public static void start(final LoggingMode mode) {
         if (initialized) {
             debug("Logging already started, there's no need to start it twice");
             return;
@@ -169,16 +167,6 @@ public class Logging {
         if (IOUtils.lackOfPermission(LOG_DIR)) {
             warning("Does not have read/write permission of the log directory");
         }
-        try {
-            Stream<Path> stream = Files.list(LOG_DIR);
-            if (stream.count() > MAX_LOG_COUNT) {
-                debug("Too much log files, will clear the log directory");
-                IOUtils.deleteAllUnder(LOG_DIR);
-            }
-            stream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         for (final Path path : LOG_PATHS) {
             try {
                 final FileHandler fileHandler = new FileHandler(path.toString());
@@ -194,7 +182,7 @@ public class Logging {
 
         debug("Logging started");
         info("*** " + Metadata.TITLE + " ***");
-        debug("Launching mode: " + mode.toString());
+        debug("Launching mode: " + mode);
         debug("OS: " + Metadata.SYSTEM_NAME + " " + Metadata.SYSTEM_VERSION);
         debug("Architecture: " + Metadata.SYSTEM_ARCH);
         debug("Java Version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
@@ -217,6 +205,15 @@ public class Logging {
         return buffer.toString();
     }
 
+    public static void close() {
+        debug("Closing log");
+        for (final Handler h : LOG.getHandlers()) {
+            LOG.removeHandler(h);
+            h.close();
+        }
+        initialized = false;
+    }
+
     /**
      * Logging modes.
      */
@@ -225,12 +222,28 @@ public class Logging {
          * Console logging mode, sets console logging level
          * to {@link LoggingLevels#USER_INFO}
          */
-        CONSOLE,
+        CONSOLE(false),
         /**
          * GUI logging mode, sets console logging level
          * to {@link LoggingLevels#INFO}
          */
-        GUI
+        GUI(true);
+        private final boolean upperCase;
+
+        LoggingMode(boolean upperCase) {
+            this.upperCase = upperCase;
+        }
+
+        @Override
+        public String toString() {
+            if (upperCase) {
+                return name().toUpperCase();
+            } else {
+                final char[] str = name().toLowerCase().toCharArray();
+                str[0] = Character.toUpperCase(str[0]);
+                return new String(str);
+            }
+        }
     }
 
 }
