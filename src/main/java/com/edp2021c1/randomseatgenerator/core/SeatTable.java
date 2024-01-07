@@ -76,28 +76,19 @@ public class SeatTable {
 
     @Override
     public String toString() {
-        final StringBuilder str = new StringBuilder();
-
         final int columnCount = config.getColumnCount();
 
-        str.append("Seed: ");
-        str.append(seed);
-        str.append("\n");
+        final StringBuilder str = new StringBuilder("Seed: ").append(seed).append("\nSeat Table:\n");
 
-        str.append("Seat Table:\n");
         for (int i = 0; i < seatTable.size(); i++) {
-            str.append(seatTable.get(i));
-            str.append("\t\t");
-            if (i % columnCount == columnCount - 1) {
+            if (i % columnCount == 0) {
                 str.append("\n");
             }
+            str.append(seatTable.get(i)).append("\t\t");
         }
 
-        if (config.isLucky() && luckyPerson != null) {
-            str.append("Lucky Person: ");
-            str.append(luckyPerson);
-        } else {
-            str.deleteCharAt(str.length() - 1);
+        if (config.isLucky()) {
+            str.append("\nLucky Person: ").append(luckyPerson);
         }
 
         return str.toString();

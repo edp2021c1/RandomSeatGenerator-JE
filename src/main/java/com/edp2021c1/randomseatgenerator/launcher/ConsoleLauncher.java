@@ -22,8 +22,8 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.SeatTableUtils;
-import com.edp2021c1.randomseatgenerator.util.StringUtils;
+import com.edp2021c1.randomseatgenerator.util.SeatTables;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
@@ -60,7 +60,7 @@ public class ConsoleLauncher {
 
         // 命令行参数相关
         // 种子，默认为随机字符串
-        String seed = StringUtils.randomString(30);
+        String seed = Strings.randomString(30);
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
         Path configPath = ConfigHolder.getGlobal().getConfigPath();
         // 导出路径，默认为用户根目录当前路径
@@ -111,7 +111,7 @@ public class ConsoleLauncher {
 
         // 导出
         try {
-            SeatTableUtils.exportToExcelDocument(seatTable, outputPath.toFile(), config.export_writable);
+            SeatTables.exportToExcelDocument(seatTable, outputPath.toFile(), config.export_writable);
         } catch (final IOException e) {
             throw new RuntimeException("Failed to export seat table to " + outputPath, e);
         }

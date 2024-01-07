@@ -18,6 +18,10 @@
 
 package com.edp2021c1.randomseatgenerator.core;
 
+import lombok.Getter;
+
+import java.util.List;
+
 /**
  * Thrown if {@code RawSeatConfig} has an illegal format.
  *
@@ -25,6 +29,10 @@ package com.edp2021c1.randomseatgenerator.core;
  * @since 1.2.6
  */
 public class IllegalConfigException extends RuntimeException {
+    private final String localizedMessage;
+
+    @Getter
+    private final boolean single;
 
     /**
      * Constructs an {@code IllegalConfigException} with the specified detail message.
@@ -33,6 +41,25 @@ public class IllegalConfigException extends RuntimeException {
      */
     public IllegalConfigException(final String message) {
         super(message);
+        single = true;
+        localizedMessage = message;
     }
 
+    public IllegalConfigException(final List<IllegalConfigException> causes) {
+        super();
+        single = false;
+        final StringBuilder str = new StringBuilder();
+        for (final IllegalConfigException e : causes) {
+            if (e.isSingle()) {
+                str.append("\n");
+            }
+            str.append(e.getLocalizedMessage());
+        }
+        localizedMessage = str.toString();
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        return localizedMessage;
+    }
 }

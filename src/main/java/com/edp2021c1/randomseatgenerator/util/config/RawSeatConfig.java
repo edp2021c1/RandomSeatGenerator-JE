@@ -25,6 +25,7 @@ import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT;
 
@@ -229,55 +230,47 @@ public class RawSeatConfig {
      * @throws IllegalConfigException if this instance has an illegal format.
      */
     public void checkFormat() throws IllegalConfigException {
-        final StringBuilder str = new StringBuilder();
+        final List<IllegalConfigException> causes = new ArrayList<>();
         try {
             getRowCount();
         } catch (IllegalConfigException e) {
-            str.append(e.getMessage());
-            str.append("\n");
+            causes.add(e);
         }
         try {
             getColumnCount();
         } catch (IllegalConfigException e) {
-            str.append(e.getMessage());
-            str.append("\n");
+            causes.add(e);
         }
         try {
             getRandomBetweenRows();
         } catch (IllegalConfigException e) {
-            str.append(e.getMessage());
-            str.append("\n");
+            causes.add(e);
         }
         try {
             getNotAllowedLastRowPos();
         } catch (IllegalConfigException e) {
-            str.append(e.getMessage());
-            str.append("\n");
+            causes.add(e);
         }
         try {
             getNameList();
         } catch (IllegalConfigException e) {
-            str.append(e.getMessage());
-            str.append("\n");
+            causes.add(e);
         }
         try {
             getGroupLeaderList();
         } catch (IllegalConfigException e) {
-            str.append(e.getMessage());
-            str.append("\n");
+            causes.add(e);
         }
         try {
             getSeparatedList();
         } catch (IllegalConfigException e) {
-            str.append(e.getMessage());
-            str.append("\n");
+            causes.add(e);
         }
         if (lucky_option == null) {
-            str.append("Lucky option cannot be null\n");
+            causes.add(new IllegalConfigException("Lucky option cannot be null"));
         }
-        if (!str.isEmpty()) {
-            str.deleteCharAt(str.length() - 1);
-            throw new IllegalConfigException(str.toString());
+        if (!causes.isEmpty()) {
+            throw new IllegalConfigException(causes);
         }
     }
 

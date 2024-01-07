@@ -31,17 +31,17 @@ import javafx.scene.layout.VBox;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Config pane.
  * <p>
- * Method {@link #getConfig()} needs to be overridden because
+ * Method {@link #getConfigFromSource()} needs to be overridden because
  * the source of config might not be specific.
  *
  * @author Calboot
  * @since 1.3.4
  */
-@Getter
 public class ConfigPane extends VBox {
     private final TextField rowCountInput;
 
@@ -63,7 +63,10 @@ public class ConfigPane extends VBox {
 
     private final CheckBox darkModeCheck;
 
-    private final ConfigHolder configHolder;
+    private final ConfigHolder source;
+
+    @Getter
+    private final RawAppConfig current;
 
     /**
      * @param rowCountInput            input of {@code row_count}
@@ -78,7 +81,7 @@ public class ConfigPane extends VBox {
      * @param darkModeCheck            input of {@code dark_mode}
      * @param applyBtnDisabledProperty property of whether the current global config is equal to the config in the pane,
      *                                 usually decides whether the apply button is disabled. Ignored if is null.
-     * @param configHolder             holder of the config
+     * @param configSource             holder of the config
      */
     public ConfigPane(final TextField rowCountInput,
                       final TextField columnCountInput,
@@ -91,7 +94,7 @@ public class ConfigPane extends VBox {
                       final CheckBox exportWritableCheck,
                       final CheckBox darkModeCheck,
                       final BooleanProperty applyBtnDisabledProperty,
-                      final ConfigHolder configHolder) {
+                      final ConfigHolder configSource) {
         super();
 
         this.rowCountInput = rowCountInput;
@@ -104,7 +107,9 @@ public class ConfigPane extends VBox {
         this.luckyOptionCheck = luckyOptionCheck;
         this.exportWritableCheck = exportWritableCheck;
         this.darkModeCheck = darkModeCheck;
-        this.configHolder = configHolder;
+        this.source = configSource;
+
+        this.current = getConfigFromSource();
 
         final HBox box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
         box1.setPrefHeight(60);
@@ -120,33 +125,64 @@ public class ConfigPane extends VBox {
         if (applyBtnDisabledProperty == null) {
             return;
         }
-        rowCountInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(getConfig().row_count.equals(newValue)));
-        columnCountInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(getConfig().column_count.equals(newValue)));
-        rbrInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(getConfig().random_between_rows.equals(newValue)));
-        disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(getConfig().last_row_pos_cannot_be_chosen.equals(newValue)));
-        nameListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(getConfig().person_sort_by_height.equals(newValue)));
-        groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(getConfig().group_leader_list.equals(newValue)));
-        separateListInput.textProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(getConfig().separate_list.equals(newValue)));
-        luckyOptionCheck.selectedProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(newValue == getConfig().lucky_option));
-        exportWritableCheck.selectedProperty().addListener((observable, oldValue, newValue) ->
-                applyBtnDisabledProperty.set(newValue == getConfig().export_writable));
+        rowCountInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            current.row_count = newValue;
+            applyBtnDisabledProperty.set(checkEquals());
+        });
+        columnCountInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            current.column_count = newValue;
+            applyBtnDisabledProperty.set(checkEquals());
+        });
+        rbrInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            current.random_between_rows = newValue;
+            applyBtnDisabledProperty.set(checkEquals());
+        });
+        disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            current.last_row_pos_cannot_be_chosen = newValue;
+            applyBtnDisabledProperty.set(checkEquals());
+        });
+        nameListInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            current.person_sort_by_height = newValue;
+            applyBtnDisabledProperty.set(checkEquals());
+        });
+        groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            current.group_leader_list = newValue;
+            applyBtnDisabledProperty.set(checkEquals());
+        });
+        separateListInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            current.separate_list = newValue;
+            applyBtnDisabledProperty.set(checkEquals());
+        });
+        luckyOptionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            current.lucky_option = newValue;
+            applyBtnDisabledProperty.set(checkEquals());
+        });
+        exportWritableCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            current.export_writable = newValue;
+            applyBtnDisabledProperty.set(checkEquals());
+        });
         darkModeCheck.selectedProperty().addListener((observable, oldValue, newValue) -> UIFactory.setDarkMode(newValue));
+    }
+
+    private boolean checkEquals() {
+        final RawAppConfig configFromSource = getConfigFromSource();
+        return Objects.equals(current.row_count, configFromSource.row_count)
+                && Objects.equals(current.column_count, configFromSource.column_count)
+                && Objects.equals(current.random_between_rows, configFromSource.random_between_rows)
+                && Objects.equals(current.last_row_pos_cannot_be_chosen, configFromSource.last_row_pos_cannot_be_chosen)
+                && Objects.equals(current.person_sort_by_height, configFromSource.person_sort_by_height)
+                && Objects.equals(current.group_leader_list, configFromSource.group_leader_list)
+                && Objects.equals(current.separate_list, configFromSource.separate_list)
+                && Objects.equals(current.lucky_option, configFromSource.lucky_option)
+                && Objects.equals(current.export_writable, configFromSource.export_writable);
     }
 
     /**
      * @return config loaded from source.
      */
-    protected RawAppConfig getConfig() {
+    protected RawAppConfig getConfigFromSource() {
         try {
-            return configHolder.get();
+            return source.get();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

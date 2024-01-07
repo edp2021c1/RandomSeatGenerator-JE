@@ -189,7 +189,7 @@ public class MainWindow extends Stage {
                     return;
                 }
                 try {
-                    SeatTableUtils.exportToExcelDocument(seatTable, exportFile, ConfigHolder.getGlobal().get().export_writable);
+                    SeatTables.exportToExcelDocument(seatTable, exportFile, ConfigHolder.getGlobal().get().export_writable);
                 } catch (final IOException e) {
                     CrashReporter.fullCrashReporter.uncaughtException(
                             Thread.currentThread(),
@@ -213,9 +213,9 @@ public class MainWindow extends Stage {
 
         seedInput.setOnAction(event -> generateBtn.fire());
 
-        randomSeedBtn.setOnAction(event -> seedInput.setText(StringUtils.randomString(30)));
+        randomSeedBtn.setOnAction(event -> seedInput.setText(Strings.randomString(30)));
 
-        dateAsSeedBtn.setOnAction(event -> seed.set(StringUtils.nowStr()));
+        dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
 
         if (OperatingSystem.getCurrent() == OperatingSystem.MAC) {
             setFullScreenExitHint("按 Esc / Cmd+Shift+F 退出全屏");

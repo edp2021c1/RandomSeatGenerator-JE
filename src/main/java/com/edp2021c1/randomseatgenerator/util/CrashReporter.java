@@ -62,7 +62,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     public void uncaughtException(final Thread t, final Throwable e) {
         try {
             final String str = "Exception in thread \"%s\":\n".formatted(t.getName()) +
-                    (e instanceof IllegalConfigException ? "IllegalConfigException: " + e.getMessage() : StringUtils.getStackTrace(e));
+                    (e instanceof IllegalConfigException ? e.toString() : Strings.getStackTrace(e));
 
             Logging.error(str);
 
@@ -74,7 +74,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
                 }
             }
         } catch (final Throwable ex) {
-            System.err.println(StringUtils.getStackTrace(ex));
+            System.err.println(Strings.getStackTrace(ex));
         }
     }
 

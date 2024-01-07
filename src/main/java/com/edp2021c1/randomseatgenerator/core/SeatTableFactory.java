@@ -18,7 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.core;
 
-import com.edp2021c1.randomseatgenerator.util.StringUtils;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -51,7 +51,7 @@ public class SeatTableFactory {
             longSeed = Long.parseLong(seed);
             seed += " (integer)";
         } catch (RuntimeException e) {
-            longSeed = StringUtils.longHash(seed);
+            longSeed = Strings.longHashOf(seed);
             seed += " (string)";
         }
 

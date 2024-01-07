@@ -33,7 +33,7 @@ import java.util.Objects;
  * @author Calboot
  * @since 1.2.9
  */
-public class SeatTableUtils {
+public class SeatTables {
     /**
      * Exports this instance to an Excel form file (.xlsx).
      *

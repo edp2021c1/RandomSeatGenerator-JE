@@ -24,6 +24,8 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Stores the raw config of the application.
@@ -31,7 +33,7 @@ import java.nio.file.Path;
  * @author Calboot
  * @since 1.4.8
  */
-public class RawAppConfig extends RawSeatConfig {
+public class RawAppConfig extends RawSeatConfig implements Cloneable {
     private static final Gson GSON = new Gson();
     /**
      * If seat table is exported writable.
@@ -78,17 +80,17 @@ public class RawAppConfig extends RawSeatConfig {
 
     @Override
     public void checkFormat() {
-        StringBuilder str = new StringBuilder();
+        final List<IllegalConfigException> causes = new ArrayList<>();
         try {
             super.checkFormat();
         } catch (IllegalConfigException e) {
-            str.append(e.getMessage());
+            causes.add(e);
         }
         if (export_writable == null) {
-            str.append("\nExport writable cannot be null");
+            causes.add(new IllegalConfigException("Export writable cannot be null"));
         }
-        if (!str.isEmpty()) {
-            throw new IllegalConfigException(str.toString());
+        if (!causes.isEmpty()) {
+            throw new IllegalConfigException(causes);
         }
     }
 
@@ -134,6 +136,16 @@ public class RawAppConfig extends RawSeatConfig {
         }
         if (value.dark_mode != null) {
             dark_mode = value.dark_mode;
+        }
+    }
+
+    @Override
+    public RawAppConfig clone() {
+        try {
+            return (RawAppConfig) super.clone();
+        } catch (CloneNotSupportedException e) {
+            // This is impossible, since we are cloneable
+            throw new RuntimeException(e);
         }
     }
 }

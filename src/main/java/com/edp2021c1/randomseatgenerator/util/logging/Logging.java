@@ -21,7 +21,7 @@ package com.edp2021c1.randomseatgenerator.util.logging;
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
-import com.edp2021c1.randomseatgenerator.util.StringUtils;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -153,7 +153,7 @@ public class Logging {
             Files.createDirectories(logDir);
         } catch (final IOException e) {
             warning("Unable to create log dir, log may not be saved");
-            warning(StringUtils.getStackTrace(e));
+            warning(Strings.getStackTrace(e));
         }
 
         try {
@@ -176,7 +176,7 @@ public class Logging {
                 logger.addHandler(fileHandler);
             } catch (final IOException e) {
                 warning("Failed to create log file at " + path);
-                warning(StringUtils.getStackTrace(e));
+                warning(Strings.getStackTrace(e));
             }
         }
 

@@ -30,11 +30,16 @@ import java.util.Random;
  * @author Calboot
  * @since 1.4.5
  */
-public class StringUtils {
+public class Strings {
     /**
      * Simple date format
      */
     private static final SimpleDateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private static final char[] CHARACTERS_AND_DIGITS = {
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+    };
 
     /**
      * @return now in {@code String}
@@ -49,7 +54,7 @@ public class StringUtils {
      * @param str owner of the hash code
      * @return hash code of {@code str}
      */
-    public static long longHash(final String str) {
+    public static long longHashOf(final String str) {
         final byte[] val = str.getBytes();
         long h = 0;
         for (final byte v : val) {
@@ -82,16 +87,8 @@ public class StringUtils {
     public static String randomString(final int len) {
         final char[] chars = new char[len];
         final Random random = new Random();
-        int t;
         for (int i = 0; i < len; i++) {
-            t = random.nextInt(62) + 48;
-            if (t > 57) {
-                t += 7;
-            }
-            if (t > 90) {
-                t += 6;
-            }
-            chars[i] = (char) t;
+            chars[i] = CHARACTERS_AND_DIGITS[random.nextInt(CHARACTERS_AND_DIGITS.length)];
         }
         return new String(chars);
     }

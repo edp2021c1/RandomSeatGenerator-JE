@@ -151,7 +151,7 @@ public class SettingsDialog extends Stage {
                 ConfigHolder.getGlobal()
         ) {
             @Override
-            protected RawAppConfig getConfig() {
+            protected RawAppConfig getConfigFromSource() {
                 try {
                     return ConfigHolder.getGlobal().get();
                 } catch (IOException e) {
@@ -269,16 +269,7 @@ public class SettingsDialog extends Stage {
 
         applyBtn.setOnAction(event -> {
             try {
-                config = new RawAppConfig();
-                config.row_count = rowCountInput.getText();
-                config.column_count = columnCountInput.getText();
-                config.random_between_rows = rbrInput.getText();
-                config.last_row_pos_cannot_be_chosen = disabledLastRowPosInput.getText();
-                config.person_sort_by_height = nameListInput.getText();
-                config.group_leader_list = groupLeaderListInput.getText();
-                config.separate_list = separateListInput.getText();
-                config.lucky_option = luckyOptionCheck.isSelected();
-                config.export_writable = exportWritableCheck.isSelected();
+                config = configPane.getCurrent();
 
                 try {
                     config.checkFormat();

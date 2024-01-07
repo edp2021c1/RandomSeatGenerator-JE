@@ -28,7 +28,7 @@ public class ConfigHolder {
      */
     @Getter
     private static final ConfigHolder global;
-    private static final RawAppConfig DEFAULT_CONFIG;
+    private static final RawAppConfig BUILT_IN;
     private static final Path DEFAULT_CONFIG_PATH = Paths.get(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
 
     static {
@@ -41,7 +41,7 @@ public class ConfigHolder {
         for (final Object s : reader.lines().toArray()) {
             str.append(s);
         }
-        DEFAULT_CONFIG = RawAppConfig.fromJson(str.toString());
+        BUILT_IN = RawAppConfig.fromJson(str.toString());
 
         try {
             global = new ConfigHolder();
@@ -92,14 +92,14 @@ public class ConfigHolder {
         }
 
         if (Files.notExists(configPath)) {
-            set(DEFAULT_CONFIG);
+            set(BUILT_IN);
         }
         if (IOUtils.lackOfPermission(configPath)) {
             throw new IOException("Does not has enough permission to read/write config");
         }
         if (!Files.isRegularFile(configPath)) {
             IOUtils.deleteIfExists(configPath);
-            set(DEFAULT_CONFIG);
+            set(BUILT_IN);
         }
     }
 
@@ -119,7 +119,7 @@ public class ConfigHolder {
      */
     public RawAppConfig get() throws IOException {
         flush();
-        return content;
+        return content.clone();
     }
 
     private void flush() throws IOException {
@@ -130,7 +130,7 @@ public class ConfigHolder {
             Logging.warning("Config file not found or directory found on the path, will use default value");
             IOUtils.deleteIfExists(configPath);
             Files.createFile(configPath);
-            set(DEFAULT_CONFIG);
+            set(BUILT_IN);
             return;
         }
         content.set(RawAppConfig.fromJson(configPath));
