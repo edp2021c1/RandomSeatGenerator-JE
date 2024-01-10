@@ -56,7 +56,7 @@ public class RawAppConfig extends RawSeatConfig implements Cloneable {
      * @param json JSON string parsed
      * @return element parsed from json
      */
-    public static RawAppConfig fromJson(String json) {
+    public static RawAppConfig fromJson(final String json) {
         return GSON.fromJson(json, RawAppConfig.class);
     }
 
@@ -101,6 +101,9 @@ public class RawAppConfig extends RawSeatConfig implements Cloneable {
      * @param value the value to set to {@code this}
      */
     public void set(final RawAppConfig value) {
+        if (value == null) {
+            return;
+        }
         if (value.row_count != null) {
             row_count = value.row_count;
         }
@@ -139,13 +142,20 @@ public class RawAppConfig extends RawSeatConfig implements Cloneable {
         }
     }
 
+    /**
+     * Returns a clone of {@code this}.
+     * Note that this method is native-based,
+     * so it is fast but might not be safe.
+     *
+     * @return a clone of {@code this}
+     * @see Object#clone()
+     */
     @Override
     public RawAppConfig clone() {
         try {
             return (RawAppConfig) super.clone();
         } catch (CloneNotSupportedException e) {
-            // This is impossible, since we are cloneable
-            throw new RuntimeException(e);
+            throw new RuntimeException("This is impossible, since we are Cloneable");
         }
     }
 }

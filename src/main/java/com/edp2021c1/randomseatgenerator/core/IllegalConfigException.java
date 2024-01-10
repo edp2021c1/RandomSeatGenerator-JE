@@ -28,14 +28,22 @@ import java.util.List;
  * @author Calboot
  * @since 1.2.6
  */
+@Getter
 public class IllegalConfigException extends RuntimeException {
+
+    /**
+     * Localized message.
+     */
     private final String localizedMessage;
 
-    @Getter
+    /**
+     * If the exception is single.
+     * True means one cause only, false otherwise.
+     */
     private final boolean single;
 
     /**
-     * Constructs an {@code IllegalConfigException} with the specified detail message.
+     * Constructs a single {@code IllegalConfigException} with the specified detail message.
      *
      * @param message the detail message.
      */
@@ -45,21 +53,22 @@ public class IllegalConfigException extends RuntimeException {
         localizedMessage = message;
     }
 
+    /**
+     * Constructs a multiple exception with the given causes.
+     *
+     * @param causes of the exception
+     */
     public IllegalConfigException(final List<IllegalConfigException> causes) {
         super();
         single = false;
         final StringBuilder str = new StringBuilder();
-        for (final IllegalConfigException e : causes) {
+        causes.forEach(e -> {
             if (e.isSingle()) {
                 str.append("\n");
             }
             str.append(e.getLocalizedMessage());
-        }
+        });
         localizedMessage = str.toString();
     }
 
-    @Override
-    public String getLocalizedMessage() {
-        return localizedMessage;
-    }
 }

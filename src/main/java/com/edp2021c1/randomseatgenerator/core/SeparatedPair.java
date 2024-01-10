@@ -18,7 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.core;
 
-import java.util.Arrays;
+import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -44,19 +45,19 @@ public class SeparatedPair {
      * @throws IllegalConfigException if the {@code String} contains only one name.
      */
     public SeparatedPair(final String s) throws IllegalConfigException {
-        final String[] t = s.split(" ", 2);
-        if (t.length < 2) {
+        final List<String> t = CollectionUtils.modifyFreeList(s.split(" ", 2));
+        if (t.size() < 2) {
             throw new IllegalConfigException("Invalid separate pair: \"%s\"".formatted(s));
         }
-        if (Arrays.asList(t).contains(SeatTable.emptySeatPlaceholder)) {
+        if (t.contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
                     "Separated name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder));
         }
-        if (Objects.equals(t[0], t[1])) {
+        if (Objects.equals(t.get(0), t.get(1))) {
             throw new IllegalConfigException("Two names in one separate pair cannot be the same");
         }
-        name_1 = t[0];
-        name_2 = t[1];
+        name_1 = t.get(0);
+        name_2 = t.get(1);
     }
 
     /**
@@ -67,7 +68,7 @@ public class SeparatedPair {
      * @return if {@code name_1} and {@code name_2} are separated in the seat table.
      */
     public boolean check(final List<String> seat, final int columnCount) {
-        final List<Integer> notSeparated = Arrays.asList(
+        final List<Integer> notSeparated = CollectionUtils.modifyFreeList(
                 1,
                 columnCount - 1,
                 columnCount,

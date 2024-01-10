@@ -51,21 +51,7 @@ import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
  * @since 1.3.3
  */
 public class SettingsDialog extends Stage {
-    private final ConfigPane configPane;
-    private final TextField rowCountInput;
-    private final TextField columnCountInput;
-    private final TextField rbrInput;
-    private final TextField disabledLastRowPosInput;
-    private final TextField nameListInput;
-    private final TextField groupLeaderListInput;
-    private final TextArea separateListInput;
-    private final CheckBox luckyOptionCheck;
-    private final CheckBox exportWritableCheck;
-    private final CheckBox darkModeCheck;
-    private final Button loadConfigBtn;
-    private final Button applyBtn;
-    private final FileChooser fc;
-    private File importDir = ConfigHolder.getGlobal().getConfigPath().getParent().toFile();
+    private File importDir = ConfigHolder.globalHolder().getConfigPath().getParent().toFile();
     private File importFile;
     private RawAppConfig config;
 
@@ -75,34 +61,10 @@ public class SettingsDialog extends Stage {
      * @param owner of the dialog.
      */
     public SettingsDialog(MainWindow owner) {
-        String s;
-        try {
-            s = ConfigHolder.getGlobal().get().last_import_dir;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        String s = ConfigHolder.globalHolder().get().last_import_dir;
         if (s != null) {
             importDir = new File(s);
         }
-
-        final Scene scene;
-        final VBox mainBox;
-        final TabPane topPane;
-        final Tab appConfigTab;
-        final VBox appConfigBox;
-        final HBox loadConfigBtnBox;
-        final Tab aboutInfoTab;
-        final HBox aboutInfoBox;
-        final ImageView iconView;
-        final VBox bottomRightBox;
-        final Label randomSeatGeneratorLabel;
-        final Label versionLabel;
-        final Label gitRepositoryUrlLabel;
-        final Label licenseLabel;
-        final TextArea licenseText;
-        final ButtonBar confirm_apply_cancelBar;
-        final Button confirmBtn;
-        final Button cancelBtn;
 
         /* *************************************************************************
          *                                                                         *
@@ -110,33 +72,33 @@ public class SettingsDialog extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        rowCountInput = createTextField("行数");
+        final TextField rowCountInput = createTextField("行数");
 
-        columnCountInput = createTextField("列数");
+        final TextField columnCountInput = createTextField("列数");
 
-        rbrInput = createTextField("随机轮换的行数");
+        final TextField rbrInput = createTextField("随机轮换的行数");
 
-        disabledLastRowPosInput = createTextField("最后一排不可选位置");
+        final TextField disabledLastRowPosInput = createTextField("最后一排不可选位置");
 
-        nameListInput = createTextField("名单 (按身高排序)");
+        final TextField nameListInput = createTextField("名单 (按身高排序)");
 
-        groupLeaderListInput = createTextField("组长列表");
+        final TextField groupLeaderListInput = createTextField("组长列表");
 
-        separateListInput = createTextArea("拆分列表", 165, 56);
+        final TextArea separateListInput = createTextArea("拆分列表", 165, 56);
 
-        luckyOptionCheck = new CheckBox("随机挑选一名幸运儿");
+        final CheckBox luckyOptionCheck = new CheckBox("随机挑选一名幸运儿");
 
-        exportWritableCheck = new CheckBox("导出为可写");
+        final CheckBox exportWritableCheck = new CheckBox("导出为可写");
 
-        darkModeCheck = new CheckBox("深色模式");
+        final CheckBox darkModeCheck = new CheckBox("深色模式");
 
-        loadConfigBtn = createButton("从文件加载", 90, 26);
+        final Button loadConfigBtn = createButton("从文件加载", 90, 26);
 
-        applyBtn = createButton("应用", 80, 26);
+        final Button applyBtn = createButton("应用", 80, 26);
         applyBtn.setDisable(true);
         BooleanProperty applyBtnDisabledProperty = applyBtn.disableProperty();
 
-        configPane = new ConfigPane(
+        final ConfigPane configPane = new ConfigPane(
                 rowCountInput,
                 columnCountInput,
                 rbrInput,
@@ -148,67 +110,58 @@ public class SettingsDialog extends Stage {
                 exportWritableCheck,
                 darkModeCheck,
                 applyBtnDisabledProperty,
-                ConfigHolder.getGlobal()
-        ) {
-            @Override
-            protected RawAppConfig getConfigFromSource() {
-                try {
-                    return ConfigHolder.getGlobal().get();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        };
+                ConfigHolder.globalHolder()
+        );
 
-        loadConfigBtnBox = new HBox(loadConfigBtn);
+        final HBox loadConfigBtnBox = new HBox(loadConfigBtn);
         loadConfigBtnBox.setPrefHeight(45);
         loadConfigBtnBox.setAlignment(Pos.CENTER);
 
-        appConfigBox = new VBox(configPane, loadConfigBtnBox);
+        final VBox appConfigBox = new VBox(configPane, loadConfigBtnBox);
 
-        iconView = createImageView(ICON_URL, 275, 275);
+        final ImageView iconView = createImageView(ICON_URL, 275, 275);
 
-        randomSeatGeneratorLabel = new Label(NAME);
+        final Label randomSeatGeneratorLabel = new Label(NAME);
         randomSeatGeneratorLabel.setPrefHeight(32);
         randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
 
-        versionLabel = new Label("版本:       " + VERSION);
+        final Label versionLabel = new Label("版本:       " + VERSION);
 
-        gitRepositoryUrlLabel = new Label("Git仓库:   " + GIT_REPOSITORY_URL);
+        final Label gitRepositoryUrlLabel = new Label("Git仓库:   " + GIT_REPOSITORY_URL);
 
-        licenseLabel = new Label("许可证:    %s(%s)".formatted(LICENSE_NAME, LICENSE_URL));
+        final Label licenseLabel = new Label("许可证:    %s(%s)".formatted(LICENSE_NAME, LICENSE_URL));
 
-        licenseText = createTextArea(null, 960, 288);
+        final TextArea licenseText = createTextArea(null, 960, 288);
         licenseText.setText(LICENSE_INFO);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");
 
-        bottomRightBox = new VBox(randomSeatGeneratorLabel, versionLabel, gitRepositoryUrlLabel, licenseLabel, licenseText);
+        final VBox bottomRightBox = new VBox(randomSeatGeneratorLabel, versionLabel, gitRepositoryUrlLabel, licenseLabel, licenseText);
         bottomRightBox.setAlignment(Pos.CENTER_LEFT);
 
-        aboutInfoBox = new HBox(iconView, bottomRightBox);
+        final HBox aboutInfoBox = new HBox(iconView, bottomRightBox);
 
-        confirmBtn = createButton("确定", 80, 26);
+        final Button confirmBtn = createButton("确定", 80, 26);
 
-        cancelBtn = createButton("取消", 80, 26);
+        final Button cancelBtn = createButton("取消", 80, 26);
 
-        confirm_apply_cancelBar = new ButtonBar();
+        final ButtonBar confirm_apply_cancelBar = new ButtonBar();
         confirm_apply_cancelBar.getButtons().addAll(confirmBtn, applyBtn, cancelBtn);
         confirm_apply_cancelBar.setPrefHeight(66);
         confirm_apply_cancelBar.getStyleClass().add("bottom");
 
-        appConfigTab = new Tab("常规", appConfigBox);
+        final Tab appConfigTab = new Tab("常规", appConfigBox);
         appConfigTab.setClosable(false);
 
-        aboutInfoTab = new Tab("关于", aboutInfoBox);
+        final Tab aboutInfoTab = new Tab("关于", aboutInfoBox);
         aboutInfoTab.setClosable(false);
 
-        topPane = new TabPane(appConfigTab, aboutInfoTab);
+        final TabPane topPane = new TabPane(appConfigTab, aboutInfoTab);
 
-        mainBox = new VBox(topPane, confirm_apply_cancelBar);
+        final VBox mainBox = new VBox(topPane, confirm_apply_cancelBar);
         mainBox.getStyleClass().add("main");
 
-        scene = new Scene(mainBox);
+        final Scene scene = new Scene(mainBox);
 
         setMargins(new Insets(5),
                 rowCountInput,
@@ -229,7 +182,7 @@ public class SettingsDialog extends Stage {
         initOwner(owner);
         UIFactory.decorate(this, StageType.DIALOG);
 
-        fc = new FileChooser();
+        final FileChooser fc = new FileChooser();
         fc.setTitle("加载配置文件");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
 
@@ -251,17 +204,15 @@ public class SettingsDialog extends Stage {
                 try {
                     config = RawAppConfig.fromJson(Paths.get(importFile.getAbsolutePath()));
                 } catch (final IOException e) {
-                    throw new RuntimeException("Failed to load seat config from file.", e);
+                    throw new RuntimeException("Failed to load seat config from file", e);
                 }
 
-                if (config != null) {
-                    configPane.reset(config);
-                }
+                configPane.reset(config);
 
                 importDir = importFile.getParentFile();
                 config = new RawAppConfig();
                 config.last_import_dir = importDir.toString();
-                ConfigHolder.getGlobal().set(config);
+                ConfigHolder.globalHolder().set(config);
             } catch (final Throwable e) {
                 CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
             }
@@ -277,7 +228,7 @@ public class SettingsDialog extends Stage {
                     CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
                     return;
                 }
-                ConfigHolder.getGlobal().set(config);
+                ConfigHolder.globalHolder().set(config);
 
                 owner.onConfigChanged();
                 applyBtn.setDisable(true);
@@ -323,12 +274,6 @@ public class SettingsDialog extends Stage {
             });
         }
 
-        setOnShown(event -> {
-            try {
-                configPane.reset(ConfigHolder.getGlobal().get());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        setOnShown(event -> configPane.reset(ConfigHolder.globalHolder().get()));
     }
 }

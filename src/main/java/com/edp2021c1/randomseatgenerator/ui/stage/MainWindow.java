@@ -54,16 +54,9 @@ import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
  * @since 1.3.3
  */
 public class MainWindow extends Stage {
-    private final Button settingsBtn;
-    private final Button generateBtn;
-    private final Button exportBtn;
-    private final Button randomSeedBtn;
-    private final Button dateAsSeedBtn;
     private final SeatTableView seatTableView;
-    private final TextField seedInput;
-    private final StringProperty seed;
-    private final FileChooser fc;
     private final SettingsDialog settingsDialog;
+    private final ConfigHolder cfHolder;
     private File exportFile;
     private SeatTable seatTable = null;
     private RawAppConfig config;
@@ -75,22 +68,12 @@ public class MainWindow extends Stage {
      * Creates an instance.
      */
     public MainWindow() {
+        cfHolder = ConfigHolder.globalHolder();
+
         settingsDialog = new SettingsDialog(this);
-        try {
-            config = ConfigHolder.getGlobal().get();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        config = cfHolder.get();
         config.checkFormat();
         exportDir = new File(config.last_export_dir == null ? Metadata.USER_HOME : config.last_export_dir);
-
-        final Scene scene;
-        final HBox mainBox;
-        final VBox leftBox;
-        final Separator separator;
-        final VBox rightBox;
-        final HBox topRightBox;
-
 
         /* *************************************************************************
          *                                                                         *
@@ -99,32 +82,32 @@ public class MainWindow extends Stage {
          **************************************************************************/
 
         // 左侧按钮栏
-        settingsBtn = createButton("设置", 80, 26);
-        generateBtn = createButton("生成", 80, 26);
-        exportBtn = createButton("导出", 80, 26);
-        leftBox = createVBox(settingsBtn, generateBtn, exportBtn);
+        final Button settingsBtn = createButton("设置", 80, 26);
+        final Button generateBtn = createButton("生成", 80, 26);
+        final Button exportBtn = createButton("导出", 80, 26);
+        final VBox leftBox = createVBox(settingsBtn, generateBtn, exportBtn);
         leftBox.getStyleClass().add("left");
 
-        separator = new Separator(Orientation.VERTICAL);
+        final Separator separator = new Separator(Orientation.VERTICAL);
 
         // 右上种子输入栏
-        seedInput = createTextField("种子");
-        randomSeedBtn = createButton("随机种子", 80, 26);
-        dateAsSeedBtn = createButton("填入日期", 80, 26);
-        topRightBox = createHBox(seedInput, randomSeedBtn, dateAsSeedBtn);
+        final TextField seedInput = createTextField("种子");
+        final Button randomSeedBtn = createButton("随机种子", 80, 26);
+        final Button dateAsSeedBtn = createButton("填入日期", 80, 26);
+        final HBox topRightBox = createHBox(seedInput, randomSeedBtn, dateAsSeedBtn);
 
         // 座位表
         seatTableView = new SeatTableView(config.getContent());
 
         // 右侧主体
-        rightBox = createVBox(topRightBox, seatTableView);
+        final VBox rightBox = createVBox(topRightBox, seatTableView);
         rightBox.getStyleClass().add("right");
 
         // 整体
-        mainBox = createHBox(leftBox, separator, rightBox);
+        final HBox mainBox = createHBox(leftBox, separator, rightBox);
         mainBox.getStyleClass().add("main");
 
-        scene = new Scene(mainBox);
+        final Scene scene = new Scene(mainBox);
 
         setMargins(new Insets(5), settingsBtn, generateBtn, exportBtn, seedInput, randomSeedBtn, dateAsSeedBtn);
         setGrows(Priority.ALWAYS, seatTableView, rightBox);
@@ -134,9 +117,9 @@ public class MainWindow extends Stage {
         UIFactory.decorate(this, StageType.MAIN);
         setOnCloseRequest(event -> close());
 
-        seed = seedInput.textProperty();
+        final StringProperty seed = seedInput.textProperty();
 
-        fc = new FileChooser();
+        final FileChooser fc = new FileChooser();
         fc.setTitle("导出座位表");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
 
@@ -154,7 +137,7 @@ public class MainWindow extends Stage {
                     randomSeedBtn.fire();
                 }
 
-                config = ConfigHolder.getGlobal().get();
+                config = cfHolder.get();
                 if (config == null) {
                     throw new IllegalConfigException("Null config");
                 }
@@ -189,7 +172,7 @@ public class MainWindow extends Stage {
                     return;
                 }
                 try {
-                    SeatTables.exportToExcelDocument(seatTable, exportFile, ConfigHolder.getGlobal().get().export_writable);
+                    SeatTables.exportToExcelDocument(seatTable, exportFile, cfHolder.get().export_writable);
                 } catch (final IOException e) {
                     CrashReporter.fullCrashReporter.uncaughtException(
                             Thread.currentThread(),
@@ -205,7 +188,7 @@ public class MainWindow extends Stage {
                 exportDir = exportFile.getParentFile();
                 t = new RawAppConfig();
                 t.last_export_dir = exportDir.toString();
-                ConfigHolder.getGlobal().set(t);
+                cfHolder.set(t);
             } catch (final Throwable e) {
                 CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
             }
@@ -255,11 +238,7 @@ public class MainWindow extends Stage {
      * Action to do if config is changed.
      */
     public void onConfigChanged() {
-        try {
-            seatTableView.setEmptySeatTable(ConfigHolder.getGlobal().get().getContent());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        seatTableView.setEmptySeatTable(cfHolder.get().getContent());
         previousSeed = null;
         Logging.debug("Seat table view reset");
     }

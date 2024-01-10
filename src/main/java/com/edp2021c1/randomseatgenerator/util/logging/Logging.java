@@ -18,10 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util.logging;
 
-import com.edp2021c1.randomseatgenerator.util.IOUtils;
-import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
-import com.edp2021c1.randomseatgenerator.util.Strings;
+import com.edp2021c1.randomseatgenerator.util.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.*;
 
@@ -44,18 +42,18 @@ public class Logging {
      */
     private static final Logger logger = Logger.getLogger("RandomSeat");
     private static final Path logDir = Paths.get(Metadata.DATA_DIR, "logs");
-    private static final Path[] logPaths;
+    private static final List<Path> logPaths;
     private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
     private static final Formatter defaultFormatter;
     private static boolean initialized = false;
 
     static {
-        String str = "%tF-%%d.log".formatted(new Date());
+        final String str = "%tF-%%d.log".formatted(new Date());
         int t = 1;
         while (Files.exists(logDir.resolve(str.formatted(t)))) {
             t++;
         }
-        logPaths = new Path[]{logDir.resolve("latest.log"), logDir.resolve(str.formatted(t))};
+        logPaths = CollectionUtils.modifyFreeList(logDir.resolve("latest.log"), logDir.resolve(str.formatted(t)));
 
         defaultFormatter = new Formatter() {
             @Override
@@ -167,7 +165,7 @@ public class Logging {
         if (IOUtils.lackOfPermission(logDir)) {
             warning("Does not have read/write permission of the log directory");
         }
-        for (final Path path : logPaths) {
+        logPaths.forEach(path -> {
             try {
                 final FileHandler fileHandler = new FileHandler(path.toString());
                 fileHandler.setLevel(LoggingLevels.DEBUG);
@@ -178,7 +176,7 @@ public class Logging {
                 warning("Failed to create log file at " + path);
                 warning(Strings.getStackTrace(e));
             }
-        }
+        });
 
         debug("Logging started");
         info("*** " + Metadata.TITLE + " ***");

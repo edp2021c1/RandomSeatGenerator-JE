@@ -23,9 +23,7 @@ import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT;
 
@@ -40,16 +38,18 @@ import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT
 public class SeatRowData {
 
     @ExcelIgnore
-    private static final Map<Integer, Field> fields = new HashMap<>(MAX_COLUMN_COUNT);
+    @Getter
+    private static final Field[] fields = new Field[MAX_COLUMN_COUNT];
 
     static {
+        final Class<SeatRowData> clazz = SeatRowData.class;
         try {
             for (int i = 0; i < MAX_COLUMN_COUNT; i++) {
-                final Field field = SeatRowData.class.getDeclaredField("c" + (i + 1));
+                final Field field = clazz.getDeclaredField("c" + (i + 1));
                 field.setAccessible(true);
-                fields.put(i, field);
+                fields[i] = field;
             }
-        } catch (NoSuchFieldException e) {
+        } catch (final NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
     }
@@ -84,9 +84,8 @@ public class SeatRowData {
         }
         for (int i = 0; i < len; i++) {
             try {
-                final Field f = fields.get(i);
-                f.set(this, c[i]);
-            } catch (final ReflectiveOperationException e) {
+                fields[i].set(this, c[i]);
+            } catch (final IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -102,7 +101,7 @@ public class SeatRowData {
         final SeatConfig conf = seatTable.getConfig();
         final int columnCount = conf.getColumnCount();
         final List<String> s = seatTable.getSeatTable();
-        final List<SeatRowData> seatRowData = new ArrayList<>();
+        final List<SeatRowData> seatRowData = new ArrayList<>(conf.getRowCount());
         final String[] tmp = new String[columnCount];
 
         final int size = s.size();

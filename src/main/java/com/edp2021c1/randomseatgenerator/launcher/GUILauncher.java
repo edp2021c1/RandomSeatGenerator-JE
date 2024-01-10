@@ -63,7 +63,7 @@ public class GUILauncher extends Application {
     @Override
     public void start(final Stage primaryStage) {
         try {
-            RawAppConfig config = ConfigHolder.getGlobal().get();
+            RawAppConfig config = ConfigHolder.globalHolder().get();
             UIFactory.setDarkMode(config.dark_mode != null && config.dark_mode);
             new MainWindow().show();
         } catch (final Throwable e) {

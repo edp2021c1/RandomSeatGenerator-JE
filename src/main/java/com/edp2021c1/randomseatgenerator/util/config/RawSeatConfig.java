@@ -24,10 +24,10 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifyFreeList;
 
 /**
  * Stores raw {@link  SeatConfig}.
@@ -127,7 +127,7 @@ public class RawSeatConfig {
      * @see #random_between_rows
      */
     public int getRandomBetweenRows() throws IllegalConfigException {
-        if (random_between_rows.isBlank()) {
+        if (random_between_rows.isEmpty()) {
             return getRowCount();
         }
         final int r;
@@ -146,16 +146,14 @@ public class RawSeatConfig {
      * @throws IllegalConfigException if failed to parse {@code last_row_pos_cannot_be_choosed}.
      * @see #last_row_pos_cannot_be_chosen
      */
-    public ArrayList<Integer> getNotAllowedLastRowPos() throws IllegalConfigException {
+    public List<Integer> getNotAllowedLastRowPos() throws IllegalConfigException {
         if (last_row_pos_cannot_be_chosen.isBlank()) {
             return new ArrayList<>();
         }
-        final String[] t = last_row_pos_cannot_be_chosen.split(" ");
-        final ArrayList<Integer> i = new ArrayList<>(t.length);
+        final List<String> t = modifyFreeList(last_row_pos_cannot_be_chosen.split(" "));
+        final List<Integer> i = new ArrayList<>(t.size());
         try {
-            for (final String s : t) {
-                i.add(Integer.parseUnsignedInt(s));
-            }
+            t.forEach(s -> i.add(Integer.parseUnsignedInt(s)));
         } catch (final IllegalArgumentException e) {
             throw new IllegalConfigException(
                     "Invalid last row positions: " + last_row_pos_cannot_be_chosen
@@ -170,8 +168,8 @@ public class RawSeatConfig {
      * @return {@code  person_sort_by_height} as a list of {@code String}.
      * @see #person_sort_by_height
      */
-    public ArrayList<String> getNameList() {
-        final ArrayList<String> l = new ArrayList<>(Arrays.asList(person_sort_by_height.split(" ")));
+    public List<String> getNameList() {
+        final List<String> l = modifyFreeList(person_sort_by_height.split(" "));
         if (l.contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
                     "Name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
@@ -180,11 +178,11 @@ public class RawSeatConfig {
         if (l.contains("")) {
             throw new IllegalConfigException("Name list must not contain empty name");
         }
-        for (final String s : l) {
+        l.forEach(s -> {
             if (s.matches(SeatTable.groupLeaderRegex)) {
                 throw new IllegalConfigException("Name list must not contain names in the format of a group leader");
             }
-        }
+        });
         return l;
     }
 
@@ -194,8 +192,8 @@ public class RawSeatConfig {
      * @return {@code  group_leader_list} as a list of {@code String}.
      * @see #group_leader_list
      */
-    public ArrayList<String> getGroupLeaderList() {
-        final ArrayList<String> l = new ArrayList<>(Arrays.asList(group_leader_list.split(" ")));
+    public List<String> getGroupLeaderList() {
+        final List<String> l = modifyFreeList(group_leader_list.split(" "));
         if (l.contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
                     "Group leader list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
@@ -211,15 +209,15 @@ public class RawSeatConfig {
      * @throws IllegalConfigException if {@code separate_list} contains one or more invalid pairs.
      * @see #separate_list
      */
-    public ArrayList<SeparatedPair> getSeparatedList() throws IllegalConfigException {
-        final String[] t = separate_list.split("\n");
-        final ArrayList<SeparatedPair> s = new ArrayList<>(t.length);
+    public List<SeparatedPair> getSeparatedList() throws IllegalConfigException {
+        final List<String> t = modifyFreeList(separate_list.split("\n"));
+        final List<SeparatedPair> s = new ArrayList<>(t.size());
 
-        for (final String m : t) {
+        t.forEach(m -> {
             if (!m.isBlank()) {
                 s.add(new SeparatedPair(m));
             }
-        }
+        });
 
         return s;
     }

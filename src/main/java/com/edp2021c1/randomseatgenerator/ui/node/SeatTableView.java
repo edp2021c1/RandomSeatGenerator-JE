@@ -67,7 +67,7 @@ public class SeatTableView extends VBox {
     public void setSeatTable(final SeatTable seatTable) {
         this.seatTable = seatTable;
 
-        SeatConfig config = seatTable.getConfig();
+        final SeatConfig config = seatTable.getConfig();
         this.rowCount = config.getRowCount();
         this.columnCount = config.getColumnCount();
 

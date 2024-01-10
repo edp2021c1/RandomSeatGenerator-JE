@@ -1,3 +1,21 @@
+/*
+ * RandomSeatGenerator
+ * Copyright (C) 2023  EDP2021C1
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.edp2021c1.randomseatgenerator.util.config;
 
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
@@ -26,7 +44,6 @@ public class ConfigHolder {
     /**
      * Default config handler.
      */
-    @Getter
     private static final ConfigHolder global;
     private static final RawAppConfig BUILT_IN;
     private static final Path DEFAULT_CONFIG_PATH = Paths.get(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
@@ -78,6 +95,15 @@ public class ConfigHolder {
     }
 
     /**
+     * Returns the global config holder.
+     *
+     * @return the global config holder
+     */
+    public static ConfigHolder globalHolder() {
+        return global;
+    }
+
+    /**
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
     private void init() throws IOException {
@@ -105,20 +131,28 @@ public class ConfigHolder {
 
     /**
      * @param config to set
-     * @throws IOException if an I/O error occurs
+     * @throws RuntimeException if an I/O error occurs
      */
-    public void set(RawAppConfig config) throws IOException {
+    public void set(RawAppConfig config) {
         content.set(config);
-        Files.writeString(configPath, content.toJson());
-        configLastModifiedTime = Files.getLastModifiedTime(configPath);
+        try {
+            Files.writeString(configPath, content.toJson());
+            configLastModifiedTime = Files.getLastModifiedTime(configPath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * @return the config
-     * @throws IOException if an I/O error occurs
+     * @throws RuntimeException if an I/O error occurs
      */
-    public RawAppConfig get() throws IOException {
-        flush();
+    public RawAppConfig get() {
+        try {
+            flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return content.clone();
     }
 
@@ -138,6 +172,7 @@ public class ConfigHolder {
             content.checkFormat();
         } catch (final RuntimeException e) {
             Logging.warning("Invalid config");
+            Logging.error(e.getLocalizedMessage());
         }
     }
 }

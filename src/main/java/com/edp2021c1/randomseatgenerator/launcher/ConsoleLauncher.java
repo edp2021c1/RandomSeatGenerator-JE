@@ -20,10 +20,7 @@ package com.edp2021c1.randomseatgenerator.launcher;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
-import com.edp2021c1.randomseatgenerator.util.IOUtils;
-import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.SeatTables;
-import com.edp2021c1.randomseatgenerator.util.Strings;
+import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
@@ -32,7 +29,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -49,20 +45,20 @@ public class ConsoleLauncher {
      *
      * @param args arguments used to launch the application.
      */
-    public static void launch(final String[] args) {
+    public static void launch(final String... args) {
         Logging.start(Logging.LoggingMode.CONSOLE);
 
         if (IOUtils.lackOfPermission(Paths.get(Metadata.DATA_DIR))) {
             throw new RuntimeException(new IOException("Does not have read/write permission of the data directory"));
         }
 
-        final List<String> arguments = Arrays.asList(args);
+        final List<String> arguments = CollectionUtils.modifyFreeList(args);
 
         // 命令行参数相关
         // 种子，默认为随机字符串
         String seed = Strings.randomString(30);
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
-        Path configPath = ConfigHolder.getGlobal().getConfigPath();
+        Path configPath = ConfigHolder.globalHolder().getConfigPath();
         // 导出路径，默认为用户根目录当前路径
         Path outputPath = Paths.get(Metadata.USER_HOME, "SeatTables", "%tF.xlsx".formatted(new Date()));
 
@@ -71,10 +67,6 @@ public class ConsoleLauncher {
         // 获取配置文件路径
         if ((i = arguments.lastIndexOf("--config-path")) != -1 && i < arguments.size() - 1) {
             configPath = Paths.get(arguments.get(i + 1)).toAbsolutePath();
-            if (!Files.isRegularFile(configPath) || !configPath.endsWith(".json")) {
-                Logging.error("Invalid config path: " + configPath);
-                return;
-            }
             Logging.user("Config path set to " + configPath);
         }
 
@@ -87,7 +79,7 @@ public class ConsoleLauncher {
         // 获取导出路径
         if ((i = arguments.lastIndexOf("--output-path")) != -1 && i < arguments.size() - 1) {
             outputPath = Paths.get(arguments.get(i + 1)).toAbsolutePath();
-            if (Files.isDirectory(outputPath) || !outputPath.endsWith(".xlsx")) {
+            if (!outputPath.endsWith(".xlsx") || (Files.exists(outputPath))) {
                 Logging.error("Invalid output path: " + outputPath);
             }
             Logging.user("Output path set to " + outputPath);
@@ -96,8 +88,8 @@ public class ConsoleLauncher {
         // 处理座位表生成配置
         RawAppConfig config;
         try {
-            config = RawAppConfig.fromJson(configPath);
-        } catch (final IOException e) {
+            config = new ConfigHolder(configPath).get();
+        } catch (IOException e) {
             throw new RuntimeException("Failed to load config from specific file", e);
         }
 

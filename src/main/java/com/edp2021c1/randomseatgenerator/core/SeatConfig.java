@@ -3,7 +3,7 @@ package com.edp2021c1.randomseatgenerator.core;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Stores config used to generate seat table.
@@ -22,9 +22,9 @@ public class SeatConfig {
     private int rowCount;
     private int columnCount;
     private int randomBetweenRows;
-    private ArrayList<Integer> disabledLastRowPos;
-    private ArrayList<String> names;
-    private ArrayList<String> groupLeaders;
-    private ArrayList<SeparatedPair> separatedPairs;
+    private List<Integer> disabledLastRowPos;
+    private List<String> names;
+    private List<String> groupLeaders;
+    private List<SeparatedPair> separatedPairs;
     private boolean lucky;
 }

@@ -47,12 +47,11 @@ class SeatTableRow extends HBox {
         final SeatTableCell[] cells = new SeatTableCell[cellCount];
         for (int i = 0; i < cellCount; i++) {
             try {
-                Field f = SeatRowData.class.getDeclaredField("c" + (i + 1));
-                f.setAccessible(true);
+                final Field f = SeatRowData.getFields()[i];
                 cells[i] = new SeatTableCell(f.get(seatRowData));
                 cells[i].prefHeightProperty().bind(heightProperty());
                 cells[i].prefWidthProperty().bind(widthProperty().divide(columnCount));
-            } catch (final NoSuchFieldException | IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }

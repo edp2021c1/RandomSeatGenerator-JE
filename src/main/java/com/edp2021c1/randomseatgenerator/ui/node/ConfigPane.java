@@ -28,9 +28,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import lombok.Getter;
 
-import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -65,7 +63,6 @@ public class ConfigPane extends VBox {
 
     private final ConfigHolder source;
 
-    @Getter
     private final RawAppConfig current;
 
     /**
@@ -79,7 +76,7 @@ public class ConfigPane extends VBox {
      * @param luckyOptionCheck         input of {@code lucky_option}
      * @param exportWritableCheck      input of {@code export_writable}
      * @param darkModeCheck            input of {@code dark_mode}
-     * @param applyBtnDisabledProperty property of whether the current global config is equal to the config in the pane,
+     * @param applyBtnDisabledProperty property of whether the current globalHolder config is equal to the config in the pane,
      *                                 usually decides whether the apply button is disabled. Ignored if is null.
      * @param configSource             holder of the config
      */
@@ -164,28 +161,33 @@ public class ConfigPane extends VBox {
         darkModeCheck.selectedProperty().addListener((observable, oldValue, newValue) -> UIFactory.setDarkMode(newValue));
     }
 
+    /**
+     * Returns a copy of the current config
+     *
+     * @return a copy of {@link #current}
+     */
+    public RawAppConfig getCurrent() {
+        return current.clone();
+    }
+
     private boolean checkEquals() {
-        final RawAppConfig configFromSource = getConfigFromSource();
-        return Objects.equals(current.row_count, configFromSource.row_count)
-                && Objects.equals(current.column_count, configFromSource.column_count)
-                && Objects.equals(current.random_between_rows, configFromSource.random_between_rows)
-                && Objects.equals(current.last_row_pos_cannot_be_chosen, configFromSource.last_row_pos_cannot_be_chosen)
-                && Objects.equals(current.person_sort_by_height, configFromSource.person_sort_by_height)
-                && Objects.equals(current.group_leader_list, configFromSource.group_leader_list)
-                && Objects.equals(current.separate_list, configFromSource.separate_list)
-                && Objects.equals(current.lucky_option, configFromSource.lucky_option)
-                && Objects.equals(current.export_writable, configFromSource.export_writable);
+        final RawAppConfig cf = getConfigFromSource();
+        return Objects.equals(current.row_count, cf.row_count)
+                && Objects.equals(current.column_count, cf.column_count)
+                && Objects.equals(current.random_between_rows, cf.random_between_rows)
+                && Objects.equals(current.last_row_pos_cannot_be_chosen, cf.last_row_pos_cannot_be_chosen)
+                && Objects.equals(current.person_sort_by_height, cf.person_sort_by_height)
+                && Objects.equals(current.group_leader_list, cf.group_leader_list)
+                && Objects.equals(current.separate_list, cf.separate_list)
+                && Objects.equals(current.lucky_option, cf.lucky_option)
+                && Objects.equals(current.export_writable, cf.export_writable);
     }
 
     /**
      * @return config loaded from source.
      */
     protected RawAppConfig getConfigFromSource() {
-        try {
-            return source.get();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return source.get();
     }
 
     /**
@@ -194,6 +196,9 @@ public class ConfigPane extends VBox {
      * @param config to set to the pane.
      */
     public void reset(final RawAppConfig config) {
+        if (config == null) {
+            return;
+        }
         rowCountInput.setText(config.row_count);
         columnCountInput.setText(config.column_count);
         rbrInput.setText(config.random_between_rows);

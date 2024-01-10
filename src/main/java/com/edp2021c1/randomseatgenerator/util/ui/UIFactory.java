@@ -42,8 +42,6 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import lombok.Setter;
 
-import java.io.IOException;
-
 /**
  * Contains several useful methods for creating or initializing JavaFX controls.
  *
@@ -62,11 +60,7 @@ public class UIFactory {
             @Override
             public void changed(final ObservableValue<? extends Boolean> observable, final Boolean oldValue, final Boolean newValue) {
                 config.dark_mode = newValue;
-                try {
-                    ConfigHolder.getGlobal().set(config);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                ConfigHolder.globalHolder().set(config);
             }
         });
     }

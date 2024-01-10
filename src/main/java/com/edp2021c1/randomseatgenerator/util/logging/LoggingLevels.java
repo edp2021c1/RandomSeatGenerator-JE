@@ -30,18 +30,18 @@ class LoggingLevels extends Level {
     /**
      * Indicates messages for user to see.
      */
-    public static final Level USER_INFO = new LoggingLevels("INFO", 950);
+    static final Level USER_INFO = new LoggingLevels("INFO", 950);
 
     /**
      * Indicates debug messages.
      */
-    public static final Level DEBUG = new LoggingLevels("DEBUG", 200);
+    static final Level DEBUG = new LoggingLevels("DEBUG", 200);
     /**
      * @see Level#SEVERE
      */
-    public static final Level ERROR = SEVERE;
+    static final Level ERROR = SEVERE;
 
-    protected LoggingLevels(String name, int value) {
+    LoggingLevels(String name, int value) {
         super(name, value);
     }
 
