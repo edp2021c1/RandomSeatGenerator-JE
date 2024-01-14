@@ -43,7 +43,7 @@ repositories {
 
 dependencies {
     // EasyExcel，用于导出座位表
-    implementation("com.alibaba:easyexcel:3.3.2")
+    implementation("com.alibaba:easyexcel:3.3.3")
 
     // EasyExcel不加这个就会报错。。。
     implementation("org.slf4j:slf4j-simple:2.0.5")
