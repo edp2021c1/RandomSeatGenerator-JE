@@ -155,8 +155,9 @@ public class SeatTableFactory {
      *                                costs too much time to generate the seat table.
      */
     public static SeatTable generate(final SeatConfig config, final String seed) {
-        final Future<SeatTable> future = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"))
-                .submit(() -> generate0(config, seed));
+        final ExecutorService exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
+        final Future<SeatTable> future = exe.submit(() -> generate0(config, seed));
+        exe.close();
 
         try {
             return future.get(3, TimeUnit.SECONDS);

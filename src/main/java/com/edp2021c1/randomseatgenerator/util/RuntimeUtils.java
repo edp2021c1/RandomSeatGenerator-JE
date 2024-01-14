@@ -55,7 +55,7 @@ public class RuntimeUtils {
 
         final Set<Thread> threads = Thread.getAllStackTraces().keySet();
         for (final Thread t : threads) {
-            if (t.getId() == id) {
+            if (t.threadId() == id) {
                 threadIdMap.put(id, t);
                 return t;
             }
