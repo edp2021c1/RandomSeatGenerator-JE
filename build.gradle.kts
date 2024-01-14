@@ -46,7 +46,7 @@ dependencies {
     implementation("com.alibaba:easyexcel:3.3.3")
 
     // EasyExcel不加这个就会报错。。。
-    implementation("org.slf4j:slf4j-simple:2.0.9")
+    implementation("org.slf4j:slf4j-nop:2.0.11")
 
     // Gson，用于读取配置文件
     implementation("com.google.code.gson:gson:2.10.1")
@@ -54,9 +54,6 @@ dependencies {
     // Lombok，主要为了 @Getter 注解，反正不占空间
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
-
-    // JUnit，测试用
-    testImplementation("junit:junit:4.13.2")
 }
 
 tasks.compileJava {

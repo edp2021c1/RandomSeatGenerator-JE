@@ -44,6 +44,9 @@ public class SeatTables {
      */
     public static void exportToExcelDocument(final SeatTable seatTable, final File file, final boolean exportToWritable) throws IOException {
         Objects.requireNonNull(file);
+        if (file.exists()) {
+            file.delete();
+        }
         EasyExcel.write(file, SeatRowData.class)
                 .sheet("座位表-%tF".formatted(new Date()))
                 .doWrite(SeatRowData.fromSeat(seatTable));

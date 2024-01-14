@@ -55,10 +55,13 @@ public class Metadata {
             You should have received a copy of the GNU General Public License along with this program.
             If not, see <https://www.gnu.org/licenses/>.
                 
-            Libraries that have been used in RandomSeatGenerator are listed below (Sorted by date added):
-            JavaFX v20.0.1 (GPLv2)
-            Gson v2.10.1 (Apache 2.0)
-            EasyExcel v3.3.2 (Apache 2.0)
+            Libraries that have been used in RandomSeatGenerator are listed below :
+            Name\t\tVersion\tOwner\t\t\tLicense\t\tGithub Repository
+            JavaFX\t\t21.0.1\tOracle\t\t\tGPLv2\t\thttps://github.com/openjdk/jfx
+            Gson\t\t2.10.1\tGoogle\t\t\tApache 2.0\thttps://github.com/google/gson
+            EasyExcel\t3.3.3\tAlibaba\t\t\tApache 2.0\thttps://github.com/alibaba/easyexcel
+            SLF4J-NOP\t2.0.11\tQOS.ch\t\t\tMIT\t\t\thttps://github.com/qos-ch/slf4j
+            Lombok\t\t1.18.30\tProjectLombok\tunknown\t\thttps://github.com/projectlombok/lombok
                 
             Contributors:
             Calboot <calboot39@outlook.com>""";

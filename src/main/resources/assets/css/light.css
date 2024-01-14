@@ -27,6 +27,7 @@
     -background-color-root: #f2f2f2;
     -background-color-button-default: #398bfa;
     -background-color-button-default-hover: #589eff;
+    -background-color-scroll-bar-thumb: #c3c3c3;
     -background-color-seat-table-cell: white;
     -background-color-seat-table-cell-leader: #fff9ab;
 
@@ -107,6 +108,19 @@
 
 .check-box:selected .box .mark {
     -fx-background-color: -text-fill-root;
+}
+
+.scroll-bar {
+    -fx-pref-width: 12;
+}
+
+.scroll-bar .track-background {
+    -fx-background-color: -background-color-root;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -background-color-scroll-bar-thumb;
+    -fx-background-radius: 6;
 }
 
 .scroll-pane .viewport {

@@ -131,7 +131,7 @@ public class SettingsDialog extends Stage {
 
         final Label licenseLabel = new Label("许可证:    %s(%s)".formatted(LICENSE_NAME, LICENSE_URL));
 
-        final TextArea licenseText = createTextArea(null, 960, 288);
+        final TextArea licenseText = createTextArea(null, 650, 288);
         licenseText.setText(LICENSE_INFO);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");
