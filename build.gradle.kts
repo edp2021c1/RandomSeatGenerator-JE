@@ -16,8 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import java.nio.file.*
-import java.nio.file.Path
+import java.nio.file.Files
+import java.nio.file.NoSuchFileException
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.util.spi.ToolProvider
 
 plugins {
@@ -90,18 +92,18 @@ tasks.build {
     dependsOn(pack)
 }
 
-fun getPackingArguments(jarName: String, projectPath: String): ArrayList<String> {
-    return ArrayList(listOf(
+fun getPackingArguments(jarName: String, projectPath: String): MutableList<String> {
+    return mutableListOf(
             "@" + Paths.get(projectPath, "package_resources", "static_arguments", "all.txt"),
             "-i", Paths.get(projectPath, "build", "libs").toString(),
             "--license-file", Paths.get(projectPath, "package_resources", "LICENSE").toString(),
             "--app-version", version.toString(),
             "--main-jar", jarName,
             "-d", Paths.get(projectPath, "packages").toString(),
-    ))
+    )
 }
 
-fun getMacPackingArguments(jarName: String, projectPath: String): ArrayList<String> {
+fun getMacPackingArguments(jarName: String, projectPath: String): MutableList<String> {
     val args = getPackingArguments(jarName, projectPath)
     args.addAll(listOf(
             "@" + Paths.get(projectPath, "package_resources", "static_arguments", "mac.txt"),
@@ -110,7 +112,7 @@ fun getMacPackingArguments(jarName: String, projectPath: String): ArrayList<Stri
     return args
 }
 
-fun getWinPackingArguments(jarName: String, projectPath: String): ArrayList<String> {
+fun getWinPackingArguments(jarName: String, projectPath: String): MutableList<String> {
     val args = getPackingArguments(jarName, projectPath)
     args.addAll(listOf(
             "@" + Paths.get(projectPath, "package_resources", "static_arguments", "win.txt"),
@@ -120,10 +122,10 @@ fun getWinPackingArguments(jarName: String, projectPath: String): ArrayList<Stri
 }
 
 val pack = task("pack") {
-    val fName: String = project.name + "-" + version
-    val projectPath: String = projectDir.path
+    val fName = project.name + "-" + version
+    val projectPath = projectDir.path
     val jarName = "$fName.jar"
-    val jarPath: Path = Paths.get(projectPath, "build", "libs", jarName).toAbsolutePath()
+    val jarPath = Paths.get(projectPath, "build", "libs", jarName)
 
     val jarState = tasks.jar.get().state
 
@@ -137,12 +139,12 @@ val pack = task("pack") {
             throw NoSuchFileException("Jar not found at $jarPath")
         }
 
-        val osname: String = System.getProperty("os.name").lowercase()
-        val isMac: Boolean = osname.startsWith("mac")
-        val isWin: Boolean = osname.startsWith("win")
+        val osname = System.getProperty("os.name").lowercase()
+        val isMac = osname.startsWith("mac")
+        val isWin = osname.startsWith("win")
 
-        val packageDir: Path = Paths.get(projectPath, "packages")
-        val packageName: String =
+        val packageDir = Paths.get(projectPath, "packages")
+        val packageName =
                 if (isMac) {
                     "$fName.dmg"
                 } else if (isWin) {
@@ -155,21 +157,21 @@ val pack = task("pack") {
         }
         Files.createDirectories(packageDir)
 
-        val finalPackagePath: Path = packageDir.resolve(packageName)
+        val finalPackagePath = packageDir.resolve(packageName)
 
-        if (!(isMac || isWin)) {
+        val argList = if (isMac) {
+            getMacPackingArguments(jarName, projectPath)
+        } else if (isWin) {
+            getWinPackingArguments(jarName, projectPath)
+        } else {
             Files.move(jarPath, finalPackagePath, StandardCopyOption.REPLACE_EXISTING)
             return@doLast
         }
 
-        val argList: ArrayList<String> = if (isMac) {
-            getMacPackingArguments(jarName, projectPath)
-        } else {
-            getWinPackingArguments(jarName, projectPath)
+        val exitCode = ToolProvider.findFirst("jpackage").get().run(System.out, System.err, *argList.toTypedArray<String>())
+        if (exitCode != 0) {
+            throw RuntimeException("jpackage failed with exit code $exitCode")
         }
-
-        if (ToolProvider.findFirst("jpackage").get().run(System.out, System.err, *argList.toArray(arrayOfNulls<String>(argList.size))) != 0) {
-            throw Exception("JPackage failed")
-        }
+        println("${"jpackage"} succeeded with exit code 0")
     }
 }
