@@ -250,13 +250,12 @@ public class SettingsDialog extends Stage {
         cancelBtn.setOnAction(event -> close());
         cancelBtn.setCancelButton(true);
 
-        if (OperatingSystem.getCurrent() == OperatingSystem.MAC) {
+        if (OperatingSystem.getCurrent().isMac()) {
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;
                 }
                 switch (event.getCode()) {
-                    case Q -> System.exit(0);
                     case W -> close();
                     case O -> loadConfigBtn.fire();
                     case S -> applyBtn.fire();

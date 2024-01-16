@@ -53,7 +53,7 @@ public class Logging {
         while (Files.exists(logDir.resolve(str.formatted(t)))) {
             t++;
         }
-        logPaths = CollectionUtils.modifyFreeList(logDir.resolve("latest.log"), logDir.resolve(str.formatted(t)));
+        logPaths = CollectionUtils.mutableListOf(logDir.resolve("latest.log"), logDir.resolve(str.formatted(t)));
 
         defaultFormatter = new Formatter() {
             @Override
@@ -135,24 +135,25 @@ public class Logging {
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);
         logger.setFilter(record -> {
-            record.setMessage(format(record));
+            format(record);
             return true;
         });
 
-        final ConsoleHandler consoleHandler = new ConsoleHandler();
+        final ConsoleHandler consoleHandler = new ConsoleHandler() {
+            @Override
+            public void close() {
+                final LogRecord record = new LogRecord(LoggingLevels.DEBUG, "Closing console log handler");
+                format(record);
+                for (final Handler h : logger.getHandlers()) {
+                    h.publish(record);
+                }
+                publish(record);
+                super.close();
+            }
+        };
         consoleHandler.setFormatter(defaultFormatter);
         consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? LoggingLevels.USER_INFO : LoggingLevels.INFO);
         logger.addHandler(consoleHandler);
-
-        try {
-            if (!Files.isDirectory(logDir)) {
-                IOUtils.deleteIfExists(logDir);
-            }
-            Files.createDirectories(logDir);
-        } catch (final IOException e) {
-            warning("Unable to create log dir, log may not be saved");
-            warning(Strings.getStackTrace(e));
-        }
 
         try {
             if (Files.notExists(logDir) || !Files.isDirectory(logDir)) {
@@ -160,14 +161,26 @@ public class Logging {
                 Files.createDirectories(logDir);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            warning("Unable to create log dir, log may not be saved");
+            warning(Strings.getStackTrace(e));
         }
         if (IOUtils.lackOfPermission(logDir)) {
             warning("Does not have read/write permission of the log directory");
         }
         logPaths.forEach(path -> {
             try {
-                final FileHandler fileHandler = new FileHandler(path.toString());
+                final FileHandler fileHandler = new FileHandler(path.toString()) {
+                    @Override
+                    public void close() throws SecurityException {
+                        final LogRecord record = new LogRecord(LoggingLevels.DEBUG, "Closing log file " + path);
+                        format(record);
+                        for (final Handler h : logger.getHandlers()) {
+                            h.publish(record);
+                        }
+                        publish(record);
+                        super.close();
+                    }
+                };
                 fileHandler.setLevel(LoggingLevels.DEBUG);
                 fileHandler.setFormatter(defaultFormatter);
                 fileHandler.setEncoding("UTF-8");
@@ -189,7 +202,7 @@ public class Logging {
         debug("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
     }
 
-    private static String format(LogRecord record) {
+    private static void format(LogRecord record) {
         final String message = record.getMessage();
 
         final StringBuffer buffer = new StringBuffer(1024);
@@ -200,14 +213,13 @@ public class Logging {
                 message
         }, buffer, null);
 
-        return buffer.toString();
+        record.setMessage(buffer.toString());
     }
 
     /**
      * Ends logging
      */
     public static void close() {
-        debug("Closing log");
         for (final Handler h : logger.getHandlers()) {
             logger.removeHandler(h);
             h.close();

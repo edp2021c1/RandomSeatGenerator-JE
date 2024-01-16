@@ -45,7 +45,7 @@ public class SeparatedPair {
      * @throws IllegalConfigException if the {@code String} contains only one name.
      */
     public SeparatedPair(final String s) throws IllegalConfigException {
-        final List<String> t = CollectionUtils.modifyFreeList(s.split(" ", 2));
+        final List<String> t = CollectionUtils.mutableListOf(s.split(" ", 2));
         if (t.size() < 2) {
             throw new IllegalConfigException("Invalid separate pair: \"%s\"".formatted(s));
         }
@@ -68,7 +68,7 @@ public class SeparatedPair {
      * @return if {@code name_1} and {@code name_2} are separated in the seat table.
      */
     public boolean check(final List<String> seat, final int columnCount) {
-        final List<Integer> notSeparated = CollectionUtils.modifyFreeList(
+        final List<Integer> notSeparated = CollectionUtils.mutableListOf(
                 1,
                 columnCount - 1,
                 columnCount,

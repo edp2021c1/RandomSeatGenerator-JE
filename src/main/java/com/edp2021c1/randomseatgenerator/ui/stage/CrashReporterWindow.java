@@ -66,13 +66,12 @@ public class CrashReporterWindow extends Stage {
 
         preLabel.setOnMouseClicked(event -> DesktopUtils.copyText(mainLabel.getText()));
 
-        if (OperatingSystem.getCurrent() == OperatingSystem.MAC) {
+        if (OperatingSystem.getCurrent().isMac()) {
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;
                 }
                 switch (event.getCode()) {
-                    case Q -> System.exit(0);
                     case W -> close();
                     case C -> DesktopUtils.copyText(mainLabel.getText());
                 }

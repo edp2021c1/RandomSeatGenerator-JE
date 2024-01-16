@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 
 import java.util.HashMap;
@@ -31,9 +32,9 @@ import java.util.Set;
  */
 public class RuntimeUtils {
     private static final HashMap<Long, Thread> threadIdMap = new HashMap<>();
-    private static final Thread exitHook = new Thread("Exiting Thread") {
+    private static final Thread exitHook = new Thread("Exit Hook") {
         public void run() {
-            exitImpl();
+            exitTask();
         }
     };
 
@@ -66,9 +67,9 @@ public class RuntimeUtils {
     /**
      * Terminates the application.
      */
-    private static void exitImpl() {
+    private static void exitTask() {
         Logging.debug("Exiting");
-        // TODO: Refresh config
+        ConfigHolder.closeAll();
         Logging.close();
     }
 }

@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
+import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
@@ -26,10 +27,13 @@ import lombok.Getter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -47,6 +51,7 @@ public class ConfigHolder {
     private static final ConfigHolder global;
     private static final RawAppConfig BUILT_IN;
     private static final Path DEFAULT_CONFIG_PATH = Paths.get(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
+    private static final List<ConfigHolder> holders = new ArrayList<>();
 
     static {
         final BufferedReader reader = new BufferedReader(
@@ -70,6 +75,7 @@ public class ConfigHolder {
     @Getter
     private final Path configPath;
     private final RawAppConfig content;
+    private final FileChannel fileChannel;
     private FileTime configLastModifiedTime;
 
     /**
@@ -82,33 +88,9 @@ public class ConfigHolder {
         this.content = new RawAppConfig();
         this.configLastModifiedTime = null;
         this.configPath = configPath;
-        init();
-    }
+        holders.add(this);
 
-    /**
-     * Creates an instance with the default config path.
-     *
-     * @throws IOException if failed to init config path, or does not have enough permission of the path
-     */
-    public ConfigHolder() throws IOException {
-        this(DEFAULT_CONFIG_PATH);
-    }
-
-    /**
-     * Returns the global config holder.
-     *
-     * @return the global config holder
-     */
-    public static ConfigHolder globalHolder() {
-        return global;
-    }
-
-    /**
-     * @throws IOException if failed to init config path, or does not have enough permission of the path
-     */
-    private void init() throws IOException {
         final Path configDir = configPath.getParent();
-
         if (!Files.isDirectory(configDir)) {
             IOUtils.deleteIfExists(configDir);
         }
@@ -126,6 +108,40 @@ public class ConfigHolder {
         if (!Files.isRegularFile(configPath)) {
             IOUtils.deleteIfExists(configPath);
             set(BUILT_IN);
+        }
+
+        this.fileChannel = FileChannel.open(configPath);
+    }
+
+    /**
+     * Creates an instance with the default config path.
+     *
+     * @throws IOException if failed to init config path, or does not have enough permission of the path
+     */
+    public ConfigHolder() throws IOException {
+        this(DEFAULT_CONFIG_PATH);
+    }
+
+    public static void closeAll() {
+        Logging.debug("Closing all config handlers");
+        CollectionUtils.mutableListOf(holders).forEach(ConfigHolder::close);
+    }
+
+    /**
+     * Returns the global config holder.
+     *
+     * @return the global config holder
+     */
+    public static ConfigHolder globalHolder() {
+        return global;
+    }
+
+    public void close() {
+        try {
+            holders.remove(this);
+            fileChannel.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -157,9 +173,6 @@ public class ConfigHolder {
     }
 
     private void flush() throws IOException {
-        if (Objects.equals(Files.getLastModifiedTime(configPath), configLastModifiedTime)) {
-            return;
-        }
         if (Files.notExists(configPath) || !Files.isRegularFile(configPath)) {
             Logging.warning("Config file not found or directory found on the path, will use default value");
             IOUtils.deleteIfExists(configPath);
@@ -167,12 +180,15 @@ public class ConfigHolder {
             set(BUILT_IN);
             return;
         }
+        if (Objects.equals(Files.getLastModifiedTime(configPath), configLastModifiedTime)) {
+            return;
+        }
         content.set(RawAppConfig.fromJson(configPath));
         try {
             content.checkFormat();
         } catch (final RuntimeException e) {
-            Logging.warning("Invalid config");
-            Logging.error(e.getLocalizedMessage());
+            Logging.warning("Invalid config loaded");
+            Logging.warning(e.getLocalizedMessage());
         }
     }
 }

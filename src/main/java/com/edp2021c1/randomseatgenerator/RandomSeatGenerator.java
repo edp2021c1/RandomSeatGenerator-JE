@@ -35,7 +35,7 @@ public class RandomSeatGenerator {
      * @param args used to start the application.
      */
     public static void main(final String... args) {
-        final List<String> arguments = CollectionUtils.modifyFreeList(args);
+        final List<String> arguments = CollectionUtils.mutableListOf(args);
         // 如果有“--help”参数则打印帮助信息然后退出
         if (arguments.contains("--help")) {
             System.out.println(Metadata.HELP_INFO);

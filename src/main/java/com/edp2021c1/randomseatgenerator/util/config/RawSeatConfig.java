@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifyFreeList;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.mutableListOf;
 
 /**
- * Stores raw {@link  SeatConfig}.
+ * Stores raw {@link SeatConfig}.
  *
  * @author Calboot
  * @see SeatConfig
@@ -150,7 +150,7 @@ public class RawSeatConfig {
         if (last_row_pos_cannot_be_chosen.isBlank()) {
             return new ArrayList<>();
         }
-        final List<String> t = modifyFreeList(last_row_pos_cannot_be_chosen.split(" "));
+        final List<String> t = mutableListOf(last_row_pos_cannot_be_chosen.split(" "));
         final List<Integer> i = new ArrayList<>(t.size());
         try {
             t.forEach(s -> i.add(Integer.parseUnsignedInt(s)));
@@ -169,7 +169,7 @@ public class RawSeatConfig {
      * @see #person_sort_by_height
      */
     public List<String> getNameList() {
-        final List<String> l = modifyFreeList(person_sort_by_height.split(" "));
+        final List<String> l = mutableListOf(person_sort_by_height.split(" "));
         if (l.contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
                     "Name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
@@ -193,7 +193,7 @@ public class RawSeatConfig {
      * @see #group_leader_list
      */
     public List<String> getGroupLeaderList() {
-        final List<String> l = modifyFreeList(group_leader_list.split(" "));
+        final List<String> l = mutableListOf(group_leader_list.split(" "));
         if (l.contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
                     "Group leader list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
@@ -210,7 +210,7 @@ public class RawSeatConfig {
      * @see #separate_list
      */
     public List<SeparatedPair> getSeparatedList() throws IllegalConfigException {
-        final List<String> t = modifyFreeList(separate_list.split("\n"));
+        final List<String> t = mutableListOf(separate_list.split("\n"));
         final List<SeparatedPair> s = new ArrayList<>(t.size());
 
         t.forEach(m -> {

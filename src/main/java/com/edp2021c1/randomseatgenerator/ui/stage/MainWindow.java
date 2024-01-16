@@ -200,14 +200,13 @@ public class MainWindow extends Stage {
 
         dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
 
-        if (OperatingSystem.getCurrent() == OperatingSystem.MAC) {
+        if (OperatingSystem.getCurrent().isMac()) {
             setFullScreenExitHint("按 Esc / Cmd+Shift+F 退出全屏");
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;
                 }
                 switch (event.getCode()) {
-                    case Q -> System.exit(0);
                     case W -> close();
                     case F -> setFullScreen(event.isControlDown() != isFullScreen());
                     case COMMA -> settingsBtn.fire();

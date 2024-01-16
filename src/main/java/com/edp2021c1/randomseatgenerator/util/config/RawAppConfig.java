@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.util.config;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +35,7 @@ import java.util.List;
  * @since 1.4.8
  */
 public class RawAppConfig extends RawSeatConfig implements Cloneable {
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     /**
      * If seat table is exported writable.
      */

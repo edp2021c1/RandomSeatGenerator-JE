@@ -52,7 +52,7 @@ public class ConsoleLauncher {
             throw new RuntimeException(new IOException("Does not have read/write permission of the data directory"));
         }
 
-        final List<String> arguments = CollectionUtils.modifyFreeList(args);
+        final List<String> arguments = CollectionUtils.mutableListOf(args);
 
         // 命令行参数相关
         // 种子，默认为随机字符串

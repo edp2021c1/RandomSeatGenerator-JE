@@ -32,19 +32,19 @@ public enum OperatingSystem {
     /**
      * Microsoft Windows.
      */
-    WINDOWS,
-    /**
-     * Linux and Unix like OS, including Solaris.
-     */
-    LINUX,
+    WINDOWS("windows"),
     /**
      * Mac OS X.
      */
-    MAC,
+    MAC("mac"),
+    /**
+     * Linux and Unix like OS, including Solaris.
+     */
+    LINUX("linux"),
     /**
      * Unknown operating system.
      */
-    UNKNOWN;
+    UNKNOWN("unknown");
 
     /**
      * Current operating system.
@@ -69,6 +69,36 @@ public enum OperatingSystem {
             }
         } else {
             current = UNKNOWN;
+        }
+    }
+
+    @Getter
+    private final boolean windows;
+    @Getter
+    private final boolean mac;
+    @Getter
+    private final boolean linux;
+    @Getter
+    private final boolean unknown;
+
+    OperatingSystem(String osName) {
+        switch (osName) {
+            case "windows" -> {
+                windows = true;
+                mac = linux = unknown = false;
+            }
+            case "mac" -> {
+                mac = true;
+                windows = linux = unknown = false;
+            }
+            case "linux" -> {
+                linux = true;
+                windows = mac = unknown = false;
+            }
+            default -> {
+                unknown = true;
+                windows = mac = linux = false;
+            }
         }
     }
 
