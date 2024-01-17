@@ -19,11 +19,12 @@
 package com.edp2021c1.randomseatgenerator.util;
 
 import com.alibaba.excel.EasyExcel;
+import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatRowData;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
 
@@ -34,24 +35,24 @@ import java.util.Objects;
  * @since 1.2.9
  */
 public class SeatTables {
+
     /**
-     * Exports this instance to an Excel form file (.xlsx).
+     * Exports this instance to an Excel document (.xlsx).
      *
      * @param seatTable        to export to Excel document
-     * @param file             to export seat table to
+     * @param filePath         path of file to export seat table to
      * @param exportToWritable if export seat table to a writable file
      * @throws IOException if an I/O error occurs
      */
-    public static void exportToExcelDocument(final SeatTable seatTable, final File file, final boolean exportToWritable) throws IOException {
-        Objects.requireNonNull(file);
-        if (file.exists()) {
-            file.delete();
-        }
-        EasyExcel.write(file, SeatRowData.class)
+    public static void exportToExcelDocument(final SeatTable seatTable, final Path filePath, final boolean exportToWritable) throws IOException {
+        Objects.requireNonNull(filePath);
+        IOUtils.deleteIfExists(filePath);
+        EasyExcel.write(filePath.toFile(), SeatRowData.class)
                 .sheet("座位表-%tF".formatted(new Date()))
+                .excludeColumnIndexes(CollectionUtils.range(Math.max(seatTable.getConfig().getColumnCount(), 2), SeatConfig.MAX_COLUMN_COUNT))
                 .doWrite(SeatRowData.fromSeat(seatTable));
-        if (!(exportToWritable || file.setReadOnly())) {
-            throw new IOException("Failed to save seat table to " + file);
+        if (!(exportToWritable || filePath.toFile().setReadOnly())) {
+            throw new IOException("Failed to save seat table to " + filePath);
         }
     }
 

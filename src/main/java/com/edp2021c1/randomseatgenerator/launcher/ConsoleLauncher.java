@@ -49,7 +49,7 @@ public class ConsoleLauncher {
         Logging.start(Logging.LoggingMode.CONSOLE);
 
         if (IOUtils.lackOfPermission(Paths.get(Metadata.DATA_DIR))) {
-            throw new RuntimeException(new IOException("Does not have read/write permission of the data directory"));
+            throw new RuntimeException(new IOException("Does not have read/exportToExcelDocument permission of the data directory"));
         }
 
         final List<String> arguments = CollectionUtils.mutableListOf(args);
@@ -103,7 +103,7 @@ public class ConsoleLauncher {
 
         // 导出
         try {
-            SeatTables.exportToExcelDocument(seatTable, outputPath.toFile(), config.export_writable);
+            SeatTables.exportToExcelDocument(seatTable, outputPath, config.export_writable);
         } catch (final IOException e) {
             throw new RuntimeException("Failed to export seat table to " + outputPath, e);
         }

@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 
 /**
  * An instance of this class saves a row of a seat table. This class also provides a method to
@@ -39,19 +41,20 @@ public class SeatRowData {
 
     @ExcelIgnore
     @Getter
-    private static final Field[] fields = new Field[MAX_COLUMN_COUNT];
+    private static final List<Field> fields;
 
     static {
         final Class<SeatRowData> clazz = SeatRowData.class;
-        try {
-            for (int i = 0; i < MAX_COLUMN_COUNT; i++) {
-                final Field field = clazz.getDeclaredField("c" + (i + 1));
-                field.setAccessible(true);
-                fields[i] = field;
+        fields = buildList(range(1, MAX_COLUMN_COUNT + 1), i -> {
+            final Field field;
+            try {
+                field = clazz.getDeclaredField("c" + i);
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
             }
-        } catch (final NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
+            field.setAccessible(true);
+            return field;
+        });
     }
 
     private final String c1 = null;
@@ -84,7 +87,7 @@ public class SeatRowData {
         }
         for (int i = 0; i < len; i++) {
             try {
-                fields[i].set(this, c[i]);
+                fields.get(i).set(this, c[i]);
             } catch (final IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

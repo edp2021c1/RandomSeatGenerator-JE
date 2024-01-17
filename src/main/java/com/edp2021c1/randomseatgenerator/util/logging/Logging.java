@@ -165,7 +165,7 @@ public class Logging {
             warning(Strings.getStackTrace(e));
         }
         if (IOUtils.lackOfPermission(logDir)) {
-            warning("Does not have read/write permission of the log directory");
+            warning("Does not have read/exportToExcelDocument permission of the log directory");
         }
         logPaths.forEach(path -> {
             try {

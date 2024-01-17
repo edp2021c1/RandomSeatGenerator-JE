@@ -76,12 +76,13 @@ public class IOUtils {
     }
 
     /**
-     * Check if this application has permission to read and write a specific path.
+     * Check if this application has permission to read and exportToExcelDocument a specific path.
      *
      * @param path to check permission
-     * @return if this app has read and write permission of the target path.
+     * @return if this app has read and exportToExcelDocument permission of the target path.
      */
-    public static boolean lackOfPermission(Path path) {
+    public static boolean lackOfPermission(final Path path) {
         return !Files.isReadable(path) || !Files.isWritable(path);
     }
+
 }

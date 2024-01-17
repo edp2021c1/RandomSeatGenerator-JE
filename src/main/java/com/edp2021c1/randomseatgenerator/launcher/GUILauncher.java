@@ -53,7 +53,7 @@ public class GUILauncher extends Application {
             Logging.start(Logging.LoggingMode.GUI);
 
             if (IOUtils.lackOfPermission(Paths.get(Metadata.DATA_DIR))) {
-                throw new IOException("Does not have read/write permission of the data directory");
+                throw new IOException("Does not have read/exportToExcelDocument permission of the data directory");
             }
         } catch (final Throwable e) {
             CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);

@@ -96,14 +96,14 @@ public class ConfigHolder {
         }
         Files.createDirectories(configDir);
         if (IOUtils.lackOfPermission(configDir)) {
-            throw new IOException("Does not has enough permission to read/write config");
+            throw new IOException("Does not has enough permission to read/exportToExcelDocument config");
         }
 
         if (Files.notExists(configPath)) {
             set(BUILT_IN);
         }
         if (IOUtils.lackOfPermission(configPath)) {
-            throw new IOException("Does not has enough permission to read/write config");
+            throw new IOException("Does not has enough permission to read/exportToExcelDocument config");
         }
         if (!Files.isRegularFile(configPath)) {
             IOUtils.deleteIfExists(configPath);

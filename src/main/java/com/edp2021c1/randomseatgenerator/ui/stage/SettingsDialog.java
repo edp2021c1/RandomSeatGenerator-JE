@@ -39,7 +39,6 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
 import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
@@ -202,7 +201,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 try {
-                    config = RawAppConfig.fromJson(Paths.get(importFile.getAbsolutePath()));
+                    config = RawAppConfig.fromJson(importFile.toPath());
                 } catch (final IOException e) {
                     throw new RuntimeException("Failed to load seat config from file", e);
                 }

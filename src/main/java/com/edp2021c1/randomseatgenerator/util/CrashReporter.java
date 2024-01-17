@@ -85,7 +85,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
 
         @Override
         public void start(final Stage primaryStage) {
-            new CrashReporterWindow(getParameters().getRaw().get(0)).show();
+            new CrashReporterWindow(getParameters().getRaw().getFirst()).show();
         }
     }
 }

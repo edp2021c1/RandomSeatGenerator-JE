@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 import java.util.random.RandomGenerator;
 
 /**
@@ -96,6 +97,12 @@ public class CollectionUtils {
     @SafeVarargs
     public static <T> List<T> mutableListOf(final T... arr) {
         return mutableListOf(Arrays.asList(arr));
+    }
+
+    public static <T, R> List<R> buildList(final List<? extends T> input, final Function<T, R> builder) {
+        final List<R> res = new ArrayList<>(input.size());
+        input.forEach(t -> res.add(builder.apply(t)));
+        return res;
     }
 
 }

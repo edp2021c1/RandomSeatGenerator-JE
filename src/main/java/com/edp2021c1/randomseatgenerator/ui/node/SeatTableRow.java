@@ -47,7 +47,7 @@ class SeatTableRow extends HBox {
         final SeatTableCell[] cells = new SeatTableCell[cellCount];
         for (int i = 0; i < cellCount; i++) {
             try {
-                final Field f = SeatRowData.getFields()[i];
+                final Field f = SeatRowData.getFields().get(i);
                 cells[i] = new SeatTableCell(f.get(seatRowData));
                 cells[i].prefHeightProperty().bind(heightProperty());
                 cells[i].prefWidthProperty().bind(widthProperty().divide(columnCount));
