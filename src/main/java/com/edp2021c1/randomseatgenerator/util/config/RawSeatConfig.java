@@ -22,6 +22,7 @@ import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
+import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,18 +41,18 @@ public class RawSeatConfig {
     /**
      * Row count (int).
      */
-    public String row_count;
+    public Integer row_count;
     /**
      * Column count (int).
      * Cannot be larger than {@link SeatConfig#MAX_COLUMN_COUNT}.
      *
      * @see SeatConfig#MAX_COLUMN_COUNT
      */
-    public String column_count;
+    public Integer column_count;
     /**
      * Count of the rows rotated randomly together as group (int).
      */
-    public String random_between_rows;
+    public Integer random_between_rows;
     /**
      * Positions in the last row that cannot be chosen, in case something blocks
      * the last row ({@code space} between two numbers).
@@ -78,65 +79,48 @@ public class RawSeatConfig {
      * Returns {@link #row_count} as an integer.
      *
      * @return {@code  row_count} as an integer.
-     * @throws IllegalConfigException if {@code row_count} cannot be parsed into an unsigned integer.
+     * @throws IllegalConfigException if {@code row_count} cannot be parsed into an unsignedProperty integer.
      * @see #row_count
      */
     public int getRowCount() throws IllegalConfigException {
-        final int r;
-        try {
-            r = Integer.parseUnsignedInt(row_count);
-        } catch (final NumberFormatException e) {
-            throw new IllegalConfigException("Invalid row_count: " + row_count);
+        if (row_count <= 0) {
+            throw new IllegalConfigException("Row count cannot be equal to or less than 0");
         }
-        if (r == 0) {
-            throw new IllegalConfigException("Row count cannot be zero");
-        }
-        return r;
+        return row_count;
     }
 
     /**
      * Returns {@link #column_count} as an integer.
      *
      * @return {@code  column_count} as an integer.
-     * @throws IllegalConfigException if {@code column_count} cannot be parsed into an unsigned integer
+     * @throws IllegalConfigException if {@code column_count} cannot be parsed into an unsignedProperty integer
      *                                or is larger than {@link SeatConfig#MAX_COLUMN_COUNT}
      * @see #column_count
      * @see SeatConfig#MAX_COLUMN_COUNT
      */
     public int getColumnCount() throws IllegalConfigException {
-        final int c;
-        try {
-            c = Integer.parseUnsignedInt(column_count);
-        } catch (final NumberFormatException e) {
-            throw new IllegalConfigException("Invalid column_count: " + column_count);
+        if (column_count <= 0) {
+            throw new IllegalConfigException("Column count cannot be equal to or less than 0");
         }
-        if (c == 0) {
-            throw new IllegalConfigException("Column count cannot be zero");
-        }
-        if (c > MAX_COLUMN_COUNT) {
+        if (column_count > MAX_COLUMN_COUNT) {
             throw new IllegalConfigException("Column count cannot be larger than " + MAX_COLUMN_COUNT);
         }
-        return c;
+        return column_count;
     }
 
     /**
      * Returns {@link #random_between_rows} as an integer.
      *
      * @return {@code  random_between_rows} as an integer.
-     * @throws IllegalConfigException if {@code random_between_rows} cannot be parsed into an unsigned integer.
+     * @throws IllegalConfigException if {@code random_between_rows} cannot be parsed into an unsignedProperty integer.
      * @see #random_between_rows
      */
     public int getRandomBetweenRows() throws IllegalConfigException {
-        if (random_between_rows.isEmpty()) {
+        if (random_between_rows <= 0) {
             return getRowCount();
         }
-        final int r;
-        try {
-            r = Integer.parseUnsignedInt(random_between_rows);
-        } catch (final NumberFormatException e) {
-            throw new IllegalConfigException("Invalid random_between_rows: " + random_between_rows);
-        }
-        return r;
+
+        return random_between_rows;
     }
 
     /**
@@ -150,16 +134,15 @@ public class RawSeatConfig {
         if (last_row_pos_cannot_be_chosen.isBlank()) {
             return new ArrayList<>();
         }
-        final List<String> t = mutableListOf(last_row_pos_cannot_be_chosen.split(" "));
-        final List<Integer> i = new ArrayList<>(t.size());
-        try {
-            t.forEach(s -> i.add(Integer.parseUnsignedInt(s)));
-        } catch (final IllegalArgumentException e) {
-            throw new IllegalConfigException(
-                    "Invalid last row positions: " + last_row_pos_cannot_be_chosen
-            );
-        }
-        return i;
+        return CollectionUtils.buildList(mutableListOf(last_row_pos_cannot_be_chosen.split(" ")), s -> {
+            try {
+                return Integer.parseUnsignedInt(s);
+            } catch (final IllegalArgumentException e) {
+                throw new IllegalConfigException(
+                        "Invalid last row positions: " + last_row_pos_cannot_be_chosen
+                );
+            }
+        });
     }
 
     /**
@@ -180,7 +163,7 @@ public class RawSeatConfig {
         }
         l.forEach(s -> {
             if (s.matches(SeatTable.groupLeaderRegex)) {
-                throw new IllegalConfigException("Name list must not contain names in the format of a group leader");
+                throw new IllegalConfigException("Name list must not contain names matching the format of a group leader");
             }
         });
         return l;

@@ -41,11 +41,11 @@ import java.util.Objects;
  * @since 1.3.4
  */
 public class ConfigPane extends VBox {
-    private final TextField rowCountInput;
+    private final IntegerField rowCountInput;
 
-    private final TextField columnCountInput;
+    private final IntegerField columnCountInput;
 
-    private final TextField rbrInput;
+    private final IntegerField rbrInput;
 
     private final TextField disabledLastRowPosInput;
 
@@ -80,9 +80,9 @@ public class ConfigPane extends VBox {
      *                                 usually decides whether the apply button is disabled. Ignored if is null.
      * @param configSource             holder of the config
      */
-    public ConfigPane(final TextField rowCountInput,
-                      final TextField columnCountInput,
-                      final TextField rbrInput,
+    public ConfigPane(final IntegerField rowCountInput,
+                      final IntegerField columnCountInput,
+                      final IntegerField rbrInput,
                       final TextField disabledLastRowPosInput,
                       final TextField nameListInput,
                       final TextField groupLeaderListInput,
@@ -122,16 +122,16 @@ public class ConfigPane extends VBox {
         if (applyBtnDisabledProperty == null) {
             return;
         }
-        rowCountInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.row_count = newValue;
+        rowCountInput.integerValueProperty().addListener((observable, oldValue, newValue) -> {
+            current.row_count = (Integer) newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
-        columnCountInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.column_count = newValue;
+        columnCountInput.integerValueProperty().addListener((observable, oldValue, newValue) -> {
+            current.column_count = (Integer) newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
-        rbrInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.random_between_rows = newValue;
+        rbrInput.integerValueProperty().addListener((observable, oldValue, newValue) -> {
+            current.random_between_rows = (Integer) newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
         disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -199,9 +199,9 @@ public class ConfigPane extends VBox {
         if (config == null) {
             return;
         }
-        rowCountInput.setText(config.row_count);
-        columnCountInput.setText(config.column_count);
-        rbrInput.setText(config.random_between_rows);
+        rowCountInput.integerValueProperty().set(config.row_count);
+        columnCountInput.integerValueProperty().set(config.column_count);
+        rbrInput.integerValueProperty().set(config.random_between_rows);
         disabledLastRowPosInput.setText(config.last_row_pos_cannot_be_chosen);
         nameListInput.setText(config.person_sort_by_height);
         groupLeaderListInput.setText(config.group_leader_list);

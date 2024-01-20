@@ -1,7 +1,7 @@
 {
-  "row_count": "7",
-  "column_count": "7",
-  "random_between_rows": "2",
+  "row_count": 7,
+  "column_count": 7,
+  "random_between_rows": 2,
   "last_row_pos_cannot_be_chosen": "1 2 7",
   "person_sort_by_height": "31 28 22 3 37 24 34 1 6 44 38 7 2 4 16 19 13 40 12 36 8 21 18 10 41 14 20 43 35 15 26 32 17 42 27 29 9 5 25 30 11 23 39 33",
   "group_leader_list": "2 4 10 16 19 20 24 25 26 27 28 29 30 31 32 33 34 38 39 44",

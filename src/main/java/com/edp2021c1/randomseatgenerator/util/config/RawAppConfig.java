@@ -99,7 +99,7 @@ public class RawAppConfig extends RawSeatConfig implements Cloneable {
      * Pulls {@code this} and {@code value} together.
      * Fields of {@code value} that are not null will override the field in {@code this}.
      *
-     * @param value the value to set to {@code this}
+     * @param value to set to {@code this}
      */
     public void set(final RawAppConfig value) {
         if (value == null) {

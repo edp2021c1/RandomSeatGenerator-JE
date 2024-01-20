@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
+import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
@@ -71,11 +72,11 @@ public class SettingsDialog extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        final TextField rowCountInput = createTextField("行数");
+        final IntegerField rowCountInput = new IntegerField(true, "行数");
 
-        final TextField columnCountInput = createTextField("列数");
+        final IntegerField columnCountInput = new IntegerField(true, "列数");
 
-        final TextField rbrInput = createTextField("随机轮换的行数");
+        final IntegerField rbrInput = new IntegerField(true, "随机轮换的行数");
 
         final TextField disabledLastRowPosInput = createTextField("最后一排不可选位置");
 

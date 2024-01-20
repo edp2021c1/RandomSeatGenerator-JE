@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 /**
  * Useful methods related to {@link String}.
@@ -33,6 +34,8 @@ import java.util.Random;
  * @since 1.4.5
  */
 public class Strings {
+    public static final Pattern integerPattern = Pattern.compile("-?\\d+");
+    public static final Pattern unsignedIntegerPattern = Pattern.compile("\\d+");
     /**
      * Simple date format
      */
