@@ -87,6 +87,7 @@ tasks.jar {
 
 tasks.build {
     dependsOn(pack)
+    dependsOn(tasks.javadoc)
 }
 
 fun getPackingArguments(jarName: String, projectPath: String): MutableList<String> {

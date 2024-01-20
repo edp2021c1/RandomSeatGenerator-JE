@@ -38,6 +38,7 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.mutableList
  * @since 1.4.8
  */
 public class RawSeatConfig {
+
     /**
      * Row count (int).
      */
@@ -74,6 +75,12 @@ public class RawSeatConfig {
      * Whether there will be a lucky person specially chosen from the last rows.
      */
     public Boolean lucky_option;
+
+    /**
+     * Constructs an instance.
+     */
+    public RawSeatConfig() {
+    }
 
     /**
      * Returns {@link #row_count} as an integer.

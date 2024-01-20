@@ -14,11 +14,11 @@ import java.util.List;
 @Getter
 @Setter
 public class SeatConfig {
+
     /**
      * Max count of column in a {@code SeatRowData}.
      */
     public static final int MAX_COLUMN_COUNT = 20;
-
     private int rowCount;
     private int columnCount;
     private int randomBetweenRows;
@@ -27,4 +27,10 @@ public class SeatConfig {
     private List<String> groupLeaders;
     private List<SeparatedPair> separatedPairs;
     private boolean lucky;
+
+    /**
+     * Constructs an instance.
+     */
+    public SeatConfig() {
+    }
 }

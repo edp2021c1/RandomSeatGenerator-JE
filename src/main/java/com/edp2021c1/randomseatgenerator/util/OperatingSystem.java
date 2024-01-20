@@ -29,6 +29,7 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.SYSTEM_NAME;
  * @since 1.2.9
  */
 public enum OperatingSystem {
+
     /**
      * Microsoft Windows.
      */

@@ -37,6 +37,12 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.*;
 public class SeatTableFactory {
 
     /**
+     * Don't let anyone else instantiate this class.
+     */
+    private SeatTableFactory() {
+    }
+
+    /**
      * Generates a seat table.
      *
      * @param config used to generate the seat table.

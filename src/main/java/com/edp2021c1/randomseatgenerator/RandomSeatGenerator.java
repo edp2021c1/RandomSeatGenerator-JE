@@ -32,6 +32,14 @@ import java.util.List;
 public class RandomSeatGenerator {
 
     /**
+     * Don't let anyone else instantiate this class.
+     */
+    private RandomSeatGenerator() {
+    }
+
+    /**
+     * App entrance.
+     *
      * @param args used to start the application.
      */
     public static void main(final String... args) {

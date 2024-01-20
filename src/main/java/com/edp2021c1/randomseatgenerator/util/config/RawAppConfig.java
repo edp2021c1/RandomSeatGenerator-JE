@@ -54,6 +54,14 @@ public class RawAppConfig extends RawSeatConfig implements Cloneable {
     public Boolean dark_mode;
 
     /**
+     * Constructs an instance.
+     */
+    public RawAppConfig() {
+    }
+
+    /**
+     * Returns an instance created from a JSON string.
+     *
      * @param json JSON string parsed
      * @return element parsed from json
      */
@@ -73,6 +81,8 @@ public class RawAppConfig extends RawSeatConfig implements Cloneable {
     }
 
     /**
+     * Returns JSON string of this.
+     *
      * @return parsed json string
      */
     public String toJson() {

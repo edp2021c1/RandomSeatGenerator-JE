@@ -29,6 +29,13 @@ import java.util.random.RandomGenerator;
  * Utils of {@code arrays} and {@link Collection} and its subclasses.
  */
 public class CollectionUtils {
+
+    /**
+     * Don't let anyone else instantiate this class.
+     */
+    private CollectionUtils() {
+    }
+
     /**
      * Returns a range of integers from origin (inclusive) to bound (exclusive).
      *
@@ -99,6 +106,15 @@ public class CollectionUtils {
         return mutableListOf(Arrays.asList(arr));
     }
 
+    /**
+     * Generates a list with a source list and a builder.
+     *
+     * @param input   source list
+     * @param builder {@code Function} used to generate elements of the output list
+     * @param <T>     type of input
+     * @param <R>     type of output
+     * @return list generated
+     */
     public static <T, R> List<R> buildList(final List<? extends T> input, final Function<T, R> builder) {
         final List<R> res = new ArrayList<>(input.size());
         input.forEach(t -> res.add(builder.apply(t)));

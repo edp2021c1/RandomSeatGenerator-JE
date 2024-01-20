@@ -43,6 +43,12 @@ public class RuntimeUtils {
     }
 
     /**
+     * Don't let anyone else instantiate this class.
+     */
+    private RuntimeUtils() {
+    }
+
+    /**
      * Returns a thread that matches the given ID,
      * null if thread does not exist or is not live.
      *

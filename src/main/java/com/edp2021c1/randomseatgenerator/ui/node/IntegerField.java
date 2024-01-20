@@ -7,10 +7,13 @@ import javafx.scene.control.TextField;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * Input for integer.
+ */
 public class IntegerField extends TextField {
     private final ObjectProperty<Pattern> pattern = new SimpleObjectProperty<>(this, "pattern");
 
-    private final IntegerProperty integerValue = new SimpleIntegerProperty(this, "integerValue") {
+    private final IntegerProperty value = new SimpleIntegerProperty(this, "integerValue") {
         protected void invalidated() {
             textProperty().set(getValue().toString());
         }
@@ -22,6 +25,12 @@ public class IntegerField extends TextField {
         }
     };
 
+    /**
+     * Constructs an instance.
+     *
+     * @param unsigned   whether the value should be unsigned
+     * @param promptText pre-set value of {@link #promptTextProperty()}
+     */
     public IntegerField(final boolean unsigned, final String promptText) {
         super();
         promptTextProperty().set(promptText);
@@ -33,13 +42,13 @@ public class IntegerField extends TextField {
                 return;
             }
             if (newValue.isEmpty()) {
-                integerValueProperty().set(0);
+                valueProperty().set(0);
                 return;
             }
             if (!patternProperty().get().matcher(newValue).matches()) {
                 textProperty().set(oldValue);
             }
-            integerValueProperty().set(Integer.parseInt(textProperty().get()));
+            valueProperty().set(Integer.parseInt(textProperty().get()));
         });
 
         setOnKeyPressed(event -> {
@@ -50,15 +59,31 @@ public class IntegerField extends TextField {
         });
     }
 
+    /**
+     * Returns the pattern used for checking the input text.
+     * <p>Note that value of this property should not be changed optionally.
+     *
+     * @return {@link #pattern}
+     */
     protected ObjectProperty<Pattern> patternProperty() {
         return pattern;
     }
 
+    /**
+     * Returns property of whether the value must be unsigned.
+     *
+     * @return {@link #unsigned}
+     */
     public BooleanProperty unsignedProperty() {
         return unsigned;
     }
 
-    public IntegerProperty integerValueProperty() {
-        return integerValue;
+    /**
+     * Returns property of the integer value.
+     *
+     * @return {@link #value}
+     */
+    public IntegerProperty valueProperty() {
+        return value;
     }
 }

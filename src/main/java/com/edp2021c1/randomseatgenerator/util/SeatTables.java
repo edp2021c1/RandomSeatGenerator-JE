@@ -37,6 +37,12 @@ import java.util.Objects;
 public class SeatTables {
 
     /**
+     * Don't let anyone else instantiate this class.
+     */
+    private SeatTables() {
+    }
+
+    /**
      * Exports this instance to an Excel document (.xlsx).
      *
      * @param seatTable        to export to Excel document

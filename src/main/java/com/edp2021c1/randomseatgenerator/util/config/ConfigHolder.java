@@ -74,6 +74,7 @@ public class ConfigHolder {
 
     @Getter
     private final Path configPath;
+    private final Path lockerPath;
     private final RawAppConfig content;
     private final FileChannel fileChannel;
     private FileTime configLastModifiedTime;
@@ -110,7 +111,9 @@ public class ConfigHolder {
             set(BUILT_IN);
         }
 
-        this.fileChannel = FileChannel.open(configPath);
+        this.lockerPath = Paths.get(configPath + ".lck");
+        IOUtils.deleteIfExists(lockerPath);
+        this.fileChannel = FileChannel.open(lockerPath);
     }
 
     /**
@@ -122,6 +125,9 @@ public class ConfigHolder {
         this(DEFAULT_CONFIG_PATH);
     }
 
+    /**
+     * Closes all opened holders.
+     */
     public static void closeAll() {
         Logging.debug("Closing all config handlers");
         CollectionUtils.mutableListOf(holders).forEach(ConfigHolder::close);
@@ -136,16 +142,22 @@ public class ConfigHolder {
         return global;
     }
 
+    /**
+     * Closes this.
+     */
     public void close() {
         try {
             holders.remove(this);
             fileChannel.close();
+            IOUtils.deleteIfExists(lockerPath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
+     * Sets the value of config
+     *
      * @param config to set
      * @throws RuntimeException if an I/O error occurs
      */
@@ -160,6 +172,8 @@ public class ConfigHolder {
     }
 
     /**
+     * Returns the config.
+     *
      * @return the config
      * @throws RuntimeException if an I/O error occurs
      */

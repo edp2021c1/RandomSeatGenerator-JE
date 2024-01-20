@@ -41,6 +41,12 @@ import java.util.List;
 public class ConsoleLauncher {
 
     /**
+     * Don't let anyone else instantiate this class.
+     */
+    private ConsoleLauncher() {
+    }
+
+    /**
      * Launches the application.
      *
      * @param args arguments used to launch the application.

@@ -49,6 +49,12 @@ public class IOUtils {
     };
 
     /**
+     * Don't let anyone else instantiate this class.
+     */
+    private IOUtils() {
+    }
+
+    /**
      * Deletes a path and (if exists) everything under it.
      *
      * @param path to delete

@@ -66,6 +66,12 @@ public class UIFactory {
     }
 
     /**
+     * Don't let anyone else instantiate this class.
+     */
+    private UIFactory() {
+    }
+
+    /**
      * Sets whether the app is shown in the dark mode.
      *
      * @param isDarkMode value

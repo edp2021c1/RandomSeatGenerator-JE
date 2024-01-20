@@ -37,6 +37,7 @@ import java.util.logging.*;
  * @since 1.4.4
  */
 public class Logging {
+
     /**
      * Logger.
      */
@@ -61,6 +62,12 @@ public class Logging {
                 return record.getMessage();
             }
         };
+    }
+
+    /**
+     * Don't let anyone else instantiate this class.
+     */
+    private Logging() {
     }
 
     private static void checkInitialized() {

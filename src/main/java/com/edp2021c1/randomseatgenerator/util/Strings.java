@@ -34,7 +34,14 @@ import java.util.regex.Pattern;
  * @since 1.4.5
  */
 public class Strings {
+
+    /**
+     * Pattern of integer.
+     */
     public static final Pattern integerPattern = Pattern.compile("-?\\d+");
+    /**
+     * Pattern of unsigned integer.
+     */
     public static final Pattern unsignedIntegerPattern = Pattern.compile("\\d+");
     /**
      * Simple date format
@@ -47,6 +54,14 @@ public class Strings {
     );
 
     /**
+     * Don't let anyone else instantiate this class.
+     */
+    private Strings() {
+    }
+
+    /**
+     * Returns the instant of now formatted into string.
+     *
      * @return now in {@code String}
      */
     public static String nowStr() {

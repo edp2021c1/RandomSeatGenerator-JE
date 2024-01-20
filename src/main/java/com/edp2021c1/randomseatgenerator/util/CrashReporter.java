@@ -83,6 +83,12 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     public static class CrashReporterApp extends Application {
 
+        /**
+         * Don't let anyone else instantiate this class.
+         */
+        private CrashReporterApp() {
+        }
+
         @Override
         public void start(final Stage primaryStage) {
             new CrashReporterWindow(getParameters().getRaw().getFirst()).show();

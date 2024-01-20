@@ -33,9 +33,6 @@ import java.util.Objects;
 
 /**
  * Config pane.
- * <p>
- * Method {@link #getConfigFromSource()} needs to be overridden because
- * the source of config might not be specific.
  *
  * @author Calboot
  * @since 1.3.4
@@ -66,6 +63,8 @@ public class ConfigPane extends VBox {
     private final RawAppConfig current;
 
     /**
+     * Constructs an instance.
+     *
      * @param rowCountInput            input of {@code row_count}
      * @param columnCountInput         input of {@code column_count}
      * @param rbrInput                 input of {@code random_between_rows}
@@ -122,15 +121,15 @@ public class ConfigPane extends VBox {
         if (applyBtnDisabledProperty == null) {
             return;
         }
-        rowCountInput.integerValueProperty().addListener((observable, oldValue, newValue) -> {
+        rowCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
             current.row_count = (Integer) newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
-        columnCountInput.integerValueProperty().addListener((observable, oldValue, newValue) -> {
+        columnCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
             current.column_count = (Integer) newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
-        rbrInput.integerValueProperty().addListener((observable, oldValue, newValue) -> {
+        rbrInput.valueProperty().addListener((observable, oldValue, newValue) -> {
             current.random_between_rows = (Integer) newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
@@ -184,6 +183,8 @@ public class ConfigPane extends VBox {
     }
 
     /**
+     * Returns the config loaded from source.
+     *
      * @return config loaded from source.
      */
     protected RawAppConfig getConfigFromSource() {
@@ -199,9 +200,9 @@ public class ConfigPane extends VBox {
         if (config == null) {
             return;
         }
-        rowCountInput.integerValueProperty().set(config.row_count);
-        columnCountInput.integerValueProperty().set(config.column_count);
-        rbrInput.integerValueProperty().set(config.random_between_rows);
+        rowCountInput.valueProperty().set(config.row_count);
+        columnCountInput.valueProperty().set(config.column_count);
+        rbrInput.valueProperty().set(config.random_between_rows);
         disabledLastRowPosInput.setText(config.last_row_pos_cannot_be_chosen);
         nameListInput.setText(config.person_sort_by_height);
         groupLeaderListInput.setText(config.group_leader_list);

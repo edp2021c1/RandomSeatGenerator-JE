@@ -41,6 +41,12 @@ import java.nio.file.Paths;
 public class GUILauncher extends Application {
 
     /**
+     * Don't let anyone else instantiate this class.
+     */
+    private GUILauncher() {
+    }
+
+    /**
      * Launches the JavaFX application.
      */
     public static void launch() {

@@ -43,7 +43,6 @@ public class Metadata {
                         --output-path <path>    Path to export seat table to. Only useful in console mode. (optional, default to yyyy-mm-dd.xlsx under the current directory)
                         
                     """;
-
     /**
      * License.
      */
@@ -65,38 +64,31 @@ public class Metadata {
                 
             Contributors:
             Calboot <calboot39@outlook.com>""";
-
     /**
      * URL of the default app icon.
      */
     public static final String ICON_URL = "/assets/img/icon.png";
-
     /**
      * URL of the icon shown when an error occurs.
      */
     public static final String ERROR_ICON_URL = "/assets/img/error_icon.png";
-
     /**
      * Base stylesheet of the windows of the app.
      * Defines everything except from colour.
      */
     public static final String STYLESHEET_BASE = "/assets/css/base.css";
-
     /**
      * Light stylesheet of the windows of the app.
      */
     public static final String STYLESHEET_LIGHT = "/assets/css/light.css";
-
     /**
      * Dark stylesheet of the windows of the app.
      */
     public static final String STYLESHEET_DARK = "/assets/css/dark.css";
-
     /**
      * User home.
      */
     public static final String USER_HOME;
-
     /**
      * URL of the git repository.
      */
@@ -105,7 +97,6 @@ public class Metadata {
      * URI of the git repository.
      */
     public static final URI GIT_REPOSITORY_URI;
-
     /**
      * URL of the license.
      */
@@ -114,12 +105,10 @@ public class Metadata {
      * URI of the license.
      */
     public static final URI LICENSE_URI;
-
     /**
      * Name of the license of this application.
      */
     public static final String LICENSE_NAME = "GPLv3";
-
     /**
      * Data directory.
      */
@@ -185,5 +174,11 @@ public class Metadata {
                     "RandomSeatGenerator").toString();
             default -> DATA_DIR = Paths.get(USER_HOME, ".rdstgnrt").toString();
         }
+    }
+
+    /**
+     * Don't let anyone else instantiate this class.
+     */
+    private Metadata() {
     }
 }
