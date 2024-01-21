@@ -1,7 +1,8 @@
 package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.util.Strings;
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TextField;
 
 import java.util.Objects;
@@ -11,17 +12,16 @@ import java.util.regex.Pattern;
  * Input for integer.
  */
 public class IntegerField extends TextField {
+
+    /**
+     * The pattern used for checking the input text.
+     * <p>Note that value of this property should not be changed optionally.
+     */
     private final ObjectProperty<Pattern> pattern = new SimpleObjectProperty<>(this, "pattern");
 
-    private final IntegerProperty value = new SimpleIntegerProperty(this, "integerValue") {
+    private final ObjectProperty<Integer> value = new SimpleObjectProperty<>(this, "value") {
         protected void invalidated() {
-            textProperty().set(getValue().toString());
-        }
-    };
-
-    private final BooleanProperty unsigned = new SimpleBooleanProperty(this, "unsigned") {
-        protected void invalidated() {
-            pattern.set(get() ? Strings.unsignedIntegerPattern : Strings.integerPattern);
+            setText(get().toString());
         }
     };
 
@@ -33,49 +33,31 @@ public class IntegerField extends TextField {
      */
     public IntegerField(final boolean unsigned, final String promptText) {
         super();
-        promptTextProperty().set(promptText);
+        setPromptText(promptText);
 
-        unsignedProperty().set(unsigned);
+        pattern.set(unsigned ? Strings.unsignedIntegerPattern : Strings.integerPattern);
 
         textProperty().addListener((observable, oldValue, newValue) -> {
             if (Objects.equals(oldValue, newValue)) {
                 return;
             }
             if (newValue.isEmpty()) {
-                valueProperty().set(0);
+                setValue(0);
                 return;
             }
-            if (!patternProperty().get().matcher(newValue).matches()) {
-                textProperty().set(oldValue);
+            if (!pattern.get().matcher(newValue).matches()) {
+                setText(oldValue);
+                return;
             }
-            valueProperty().set(Integer.parseInt(textProperty().get()));
+            setValue(Integer.parseInt(getText()));
         });
 
         setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case UP, KP_UP -> textProperty().set(Integer.toString(Integer.parseInt(textProperty().get()) + 1));
-                case DOWN, KP_DOWN -> textProperty().set(Integer.toString(Integer.parseInt(textProperty().get()) - 1));
+                case UP, KP_UP -> setText(Integer.toString(Integer.parseInt(getText()) + 1));
+                case DOWN, KP_DOWN -> setText(Integer.toString(Integer.parseInt(getText()) - 1));
             }
         });
-    }
-
-    /**
-     * Returns the pattern used for checking the input text.
-     * <p>Note that value of this property should not be changed optionally.
-     *
-     * @return {@link #pattern}
-     */
-    protected ObjectProperty<Pattern> patternProperty() {
-        return pattern;
-    }
-
-    /**
-     * Returns property of whether the value must be unsigned.
-     *
-     * @return {@link #unsigned}
-     */
-    public BooleanProperty unsignedProperty() {
-        return unsigned;
     }
 
     /**
@@ -83,7 +65,16 @@ public class IntegerField extends TextField {
      *
      * @return {@link #value}
      */
-    public IntegerProperty valueProperty() {
+    public ObjectProperty<Integer> valueProperty() {
         return value;
+    }
+
+    /**
+     * Sets the value of {@link #valueProperty()}
+     *
+     * @param val value
+     */
+    public void setValue(final Integer val) {
+        value.set(val);
     }
 }

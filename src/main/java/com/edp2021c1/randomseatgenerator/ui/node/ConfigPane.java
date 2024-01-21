@@ -122,15 +122,15 @@ public class ConfigPane extends VBox {
             return;
         }
         rowCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.row_count = (Integer) newValue;
+            current.row_count = newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
         columnCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.column_count = (Integer) newValue;
+            current.column_count = newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
         rbrInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.random_between_rows = (Integer) newValue;
+            current.random_between_rows = newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
         disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -200,9 +200,9 @@ public class ConfigPane extends VBox {
         if (config == null) {
             return;
         }
-        rowCountInput.valueProperty().set(config.row_count);
-        columnCountInput.valueProperty().set(config.column_count);
-        rbrInput.valueProperty().set(config.random_between_rows);
+        rowCountInput.setValue(config.row_count);
+        columnCountInput.setValue(config.column_count);
+        rbrInput.setValue(config.random_between_rows);
         disabledLastRowPosInput.setText(config.last_row_pos_cannot_be_chosen);
         nameListInput.setText(config.person_sort_by_height);
         groupLeaderListInput.setText(config.group_leader_list);
