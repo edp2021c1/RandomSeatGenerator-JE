@@ -27,6 +27,11 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 javafx {
     version = "21.0.1"
     modules("javafx.controls")
@@ -123,7 +128,8 @@ val pack = task("pack") {
     val fName = project.name + "-" + version
     val projectPath = projectDir.path
     val jarName = "$fName.jar"
-    val jarPath = Paths.get(projectPath, "build", "libs", jarName)
+    val libsPath = Paths.get(projectPath, "build", "libs")
+    val jarPath = libsPath.resolve(jarName)
 
     val jarState = tasks.jar.get().state
 
@@ -155,14 +161,16 @@ val pack = task("pack") {
         }
         Files.createDirectories(packageDir)
 
-        val finalPackagePath = packageDir.resolve(packageName)
-
         val argList = if (isMac) {
             getMacPackingArguments(jarName, projectPath)
         } else if (isWin) {
             getWinPackingArguments(jarName, projectPath)
         } else {
-            Files.move(jarPath, finalPackagePath, StandardCopyOption.REPLACE_EXISTING)
+            val sourcesJarName = "$fName-sources.jar"
+            val docJarName = "$fName-javadoc.jar"
+            Files.move(jarPath, packageDir.resolve(packageName), StandardCopyOption.REPLACE_EXISTING)
+            Files.move(libsPath.resolve(sourcesJarName), packageDir.resolve(sourcesJarName), StandardCopyOption.REPLACE_EXISTING)
+            Files.move(libsPath.resolve(docJarName), packageDir.resolve(docJarName), StandardCopyOption.REPLACE_EXISTING)
             return@doLast
         }
 
