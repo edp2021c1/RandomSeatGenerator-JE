@@ -16,8 +16,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import java.io.PrintWriter
-import java.io.StringWriter
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Paths
@@ -176,10 +174,7 @@ val pack = task("pack") {
             return@doLast
         }
 
-        val str = StringWriter()
-        val out = PrintWriter(str)
-        val exitCode = ToolProvider.findFirst("jpackage").get().run(out, out, *argList.toTypedArray<String>())
-        println(str)
+        val exitCode = ToolProvider.findFirst("jpackage").get().run(System.out, System.err, *argList.toTypedArray<String>())
         if (exitCode != 0) {
             throw RuntimeException("jpackage failed with exit code $exitCode")
         }
