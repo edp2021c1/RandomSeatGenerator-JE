@@ -31,6 +31,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +75,6 @@ public class ConfigHolder {
 
     @Getter
     private final Path configPath;
-    private final Path lockerPath;
     private final RawAppConfig content;
     private final FileChannel fileChannel;
     private FileTime configLastModifiedTime;
@@ -111,9 +111,10 @@ public class ConfigHolder {
             set(BUILT_IN);
         }
 
-        this.lockerPath = Paths.get(configPath + ".lck");
+        Path lockerPath = Paths.get(configPath + ".lck");
         IOUtils.deleteIfExists(lockerPath);
-        this.fileChannel = FileChannel.open(lockerPath);
+        Files.createFile(lockerPath);
+        this.fileChannel = FileChannel.open(lockerPath, StandardOpenOption.DELETE_ON_CLOSE);
     }
 
     /**
@@ -149,7 +150,6 @@ public class ConfigHolder {
         try {
             holders.remove(this);
             fileChannel.close();
-            IOUtils.deleteIfExists(lockerPath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

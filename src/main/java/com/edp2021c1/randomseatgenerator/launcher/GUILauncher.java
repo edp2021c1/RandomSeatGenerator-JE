@@ -41,9 +41,10 @@ import java.nio.file.Paths;
 public class GUILauncher extends Application {
 
     /**
-     * Don't let anyone else instantiate this class.
+     * Default constructor.
      */
-    private GUILauncher() {
+    public GUILauncher() {
+        super();
     }
 
     /**
