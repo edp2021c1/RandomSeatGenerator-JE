@@ -16,10 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import java.nio.file.Files
-import java.nio.file.NoSuchFileException
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
+import java.nio.file.*
+import java.nio.file.Path
 import java.util.spi.ToolProvider
 
 plugins {
@@ -101,8 +99,8 @@ tasks.build {
     dependsOn(tasks.javadoc)
 }
 
-fun getPackingArguments(jarName: String, projectPath: String): MutableList<String> {
-    return mutableListOf(
+fun getPackingArguments(jarName: String, projectPath: String): Array<String> {
+    val args = mutableListOf(
             "@" + Paths.get(projectPath, "package_resources", "static_arguments", "all.txt"),
             "-i", Paths.get(projectPath, "build", "libs").toString(),
             "--license-file", Paths.get(projectPath, "package_resources", "LICENSE").toString(),
@@ -110,24 +108,22 @@ fun getPackingArguments(jarName: String, projectPath: String): MutableList<Strin
             "--main-jar", jarName,
             "-d", Paths.get(projectPath, "packages").toString(),
     )
+    args.addAll(if (isWin) {
+        listOf(
+                "@" + Paths.get(projectPath, "package_resources", "static_arguments", "win.txt"),
+                "--icon", Paths.get(projectPath, "package_resources", "app_icon", "win.ico").toString(),
+        )
+    } else {
+        listOf(
+                "@" + Paths.get(projectPath, "package_resources", "static_arguments", "mac.txt"),
+                "--icon", Paths.get(projectPath, "package_resources", "app_icon", "mac.icns").toString()
+        )
+    })
+    return args.toTypedArray()
 }
 
-fun getMacPackingArguments(jarName: String, projectPath: String): MutableList<String> {
-    val args = getPackingArguments(jarName, projectPath)
-    args.addAll(listOf(
-            "@" + Paths.get(projectPath, "package_resources", "static_arguments", "mac.txt"),
-            "--icon", Paths.get(projectPath, "package_resources", "app_icon", "mac.icns").toString()
-    ))
-    return args
-}
-
-fun getWinPackingArguments(jarName: String, projectPath: String): MutableList<String> {
-    val args = getPackingArguments(jarName, projectPath)
-    args.addAll(listOf(
-            "@" + Paths.get(projectPath, "package_resources", "static_arguments", "win.txt"),
-            "--icon", Paths.get(projectPath, "package_resources", "app_icon", "win.ico").toString(),
-    ))
-    return args
+fun copyToDir(source: Path, targetDir: Path, vararg options: CopyOption) {
+    Files.copy(source, targetDir.resolve(source.fileName), *options)
 }
 
 val pack = task("pack") {
@@ -151,33 +147,21 @@ val pack = task("pack") {
         }
 
         val packageDir = Paths.get(projectPath, "packages")
-        val packageName =
-                if (isMac) {
-                    "$fName.dmg"
-                } else if (isWin) {
-                    "$fName.msi"
-                } else {
-                    jarName
-                }
         if (!Files.isDirectory(packageDir)) {
             Files.deleteIfExists(packageDir)
         }
         Files.createDirectories(packageDir)
 
-        val argList = if (isMac) {
-            getMacPackingArguments(jarName, projectPath)
-        } else if (isWin) {
-            getWinPackingArguments(jarName, projectPath)
-        } else {
+        if (!(isMac || isWin)) {
             val sourcesJarName = "$fName-sources.jar"
             val docJarName = "$fName-javadoc.jar"
-            Files.move(jarPath, packageDir.resolve(packageName), StandardCopyOption.REPLACE_EXISTING)
-            Files.move(libsPath.resolve(sourcesJarName), packageDir.resolve(sourcesJarName), StandardCopyOption.REPLACE_EXISTING)
-            Files.move(libsPath.resolve(docJarName), packageDir.resolve(docJarName), StandardCopyOption.REPLACE_EXISTING)
+            copyToDir(jarPath, packageDir, StandardCopyOption.REPLACE_EXISTING)
+            copyToDir(libsPath.resolve(sourcesJarName), packageDir, StandardCopyOption.REPLACE_EXISTING)
+            copyToDir(libsPath.resolve(docJarName), packageDir, StandardCopyOption.REPLACE_EXISTING)
             return@doLast
         }
 
-        val exitCode = ToolProvider.findFirst("jpackage").get().run(System.out, System.err, *argList.toTypedArray<String>())
+        val exitCode = ToolProvider.findFirst("jpackage").get().run(System.out, System.err, *getPackingArguments(jarName, projectPath))
         if (exitCode != 0) {
             throw RuntimeException("jpackage failed with exit code $exitCode")
         }
