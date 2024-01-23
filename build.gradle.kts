@@ -96,7 +96,6 @@ tasks.jar {
 
 tasks.build {
     dependsOn(pack)
-    dependsOn(tasks.javadoc)
 }
 
 fun getPackingArguments(jarName: String, projectPath: String): Array<String> {
@@ -127,9 +126,7 @@ fun copyToDir(source: Path, targetDir: Path, vararg options: CopyOption) {
 }
 
 val pack = task("pack") {
-
     val jarState = tasks.jar.get().state
-
     if (!jarState.executed) {
         dependsOn(tasks.jar)
     }
