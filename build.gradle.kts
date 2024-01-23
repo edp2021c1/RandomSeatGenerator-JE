@@ -27,20 +27,26 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
+group = "com.edp2021c1"
+version = "1.5.0"
+
+val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
+
+val os = System.getProperty("os.name").lowercase()
+val isWin = os.startsWith("win")
+val isMac = os.startsWith("mac")
+
 java {
-    withSourcesJar()
-    withJavadocJar()
+    if (!(isWin || isMac)) {
+        withSourcesJar()
+        withJavadocJar()
+    }
 }
 
 javafx {
     version = "21.0.1"
     modules("javafx.controls")
 }
-
-group = "com.edp2021c1"
-version = "1.5.0"
-
-val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
 
 repositories {
     mavenCentral()
@@ -125,11 +131,6 @@ fun getWinPackingArguments(jarName: String, projectPath: String): MutableList<St
 }
 
 val pack = task("pack") {
-    val fName = project.name + "-" + version
-    val projectPath = projectDir.path
-    val jarName = "$fName.jar"
-    val libsPath = Paths.get(projectPath, "build", "libs")
-    val jarPath = libsPath.resolve(jarName)
 
     val jarState = tasks.jar.get().state
 
@@ -139,13 +140,15 @@ val pack = task("pack") {
 
     onlyIf { jarState.executed }
     doLast {
+        val fName = project.name + "-" + version
+        val projectPath = projectDir.path
+        val jarName = "$fName.jar"
+        val libsPath = Paths.get(projectPath, "build", "libs")
+        val jarPath = libsPath.resolve(jarName)
+
         if (Files.notExists(jarPath)) {
             throw NoSuchFileException("Jar not found at $jarPath")
         }
-
-        val osname = System.getProperty("os.name").lowercase()
-        val isMac = osname.startsWith("mac")
-        val isWin = osname.startsWith("win")
 
         val packageDir = Paths.get(projectPath, "packages")
         val packageName =
