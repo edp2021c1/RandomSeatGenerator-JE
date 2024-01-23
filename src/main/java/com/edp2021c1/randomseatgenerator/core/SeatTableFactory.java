@@ -72,9 +72,9 @@ public class SeatTableFactory {
         final int rowCount;
         final int columnCount = config.getColumnCount();
         final int randomRowCount;
-        final List<Integer> notAllowedLastRowPos = mutableListOf(config.getDisabledLastRowPos());
-        final List<String> nameList = mutableListOf(config.getNames());
-        final List<String> groupLeaderList = mutableListOf(config.getGroupLeaders());
+        final List<Integer> notAllowedLastRowPos = modifiableListOf(config.getDisabledLastRowPos());
+        final List<String> nameList = modifiableListOf(config.getNames());
+        final List<String> groupLeaderList = modifiableListOf(config.getGroupLeaders());
         final boolean lucky = config.isLucky();
 
         // 防止lucky为true时数组越界
@@ -95,7 +95,7 @@ public class SeatTableFactory {
 
         final int forTimes = (peopleLeft > columnCount ? seatNum / randomPeopleCount + 1 : seatNum / randomPeopleCount) - 1;
 
-        final List<String> emptyRow = mutableListOf(new String[columnCount]);
+        final List<String> emptyRow = modifiableListOf(new String[columnCount]);
         Collections.fill(emptyRow, SeatTable.emptySeatPlaceholder);
 
         final List<Integer> availableLastRowPos = range(1, columnCount + 1);
@@ -112,7 +112,7 @@ public class SeatTableFactory {
 
         do {
             seatTable.clear();
-            tNameList = mutableListOf(nameList);
+            tNameList = modifiableListOf(nameList);
 
             if (lucky) {
                 luckyPerson = pickRandomlyAndRemove(tNameList.subList(peopleNum - randomPeopleCount, peopleNum), rd);
@@ -189,14 +189,14 @@ public class SeatTableFactory {
      * @return an empty seat table
      */
     public static SeatTable generateEmpty(final SeatConfig config) {
-        List<String> seat = mutableListOf(new String[config.getRowCount() * config.getColumnCount()]);
+        List<String> seat = modifiableListOf(new String[config.getRowCount() * config.getColumnCount()]);
         Collections.fill(seat, SeatTable.emptySeatPlaceholder);
         return new SeatTable(seat, config, "", "null");
     }
 
     private static boolean checkSeatTableFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
-        final List<String> gl = mutableListOf(config.getGroupLeaders());
-        final List<SeparatedPair> sp = mutableListOf(config.getSeparatedPairs());
+        final List<String> gl = modifiableListOf(config.getGroupLeaders());
+        final List<SeparatedPair> sp = modifiableListOf(config.getSeparatedPairs());
         boolean hasLeader = false;
         int i, j;
         final int spNum = sp.size();

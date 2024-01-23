@@ -31,16 +31,15 @@ import javafx.stage.Stage;
  * @since 1.2.8
  */
 public class CrashReporter implements Thread.UncaughtExceptionHandler {
+
     /**
      * Full crash reporter, with a window shown on call of {@link #uncaughtException(Thread, Throwable)}
      */
     public static final CrashReporter fullCrashReporter = new CrashReporter(true);
-
     /**
      * Crash reporter will log only.
      */
     public static final CrashReporter logOnlyCrashReporter = new CrashReporter(false);
-
     private final boolean withGUI;
 
     /**
@@ -50,6 +49,15 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     protected CrashReporter(final boolean withGUI) {
         this.withGUI = withGUI;
+    }
+
+    /**
+     * Reports an exception with {@link #fullCrashReporter}
+     *
+     * @param e exception to report
+     */
+    public static void report(final Throwable e) {
+        fullCrashReporter.uncaughtException(Thread.currentThread(), e);
     }
 
     /**

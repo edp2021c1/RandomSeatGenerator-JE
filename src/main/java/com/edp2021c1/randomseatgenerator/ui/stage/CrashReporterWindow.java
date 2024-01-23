@@ -1,7 +1,7 @@
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
-import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
+import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -49,16 +49,14 @@ public class CrashReporterWindow extends Stage {
         buttonBar.getStyleClass().add("bottom");
 
         final ScrollPane scrollPane = new ScrollPane(mainLabel);
-        scrollPane.autosize();
         scrollPane.getStyleClass().add("err-scroll-pane");
+        scrollPane.autosize();
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         final VBox mainBox = new VBox(preLabel, scrollPane, buttonBar);
         mainBox.getStyleClass().add("main");
 
-        final Scene scene = new Scene(mainBox);
-
-        setScene(scene);
+        setScene(new Scene(mainBox));
         setMaxWidth(1440);
         setMaxHeight(810);
         setTitle("出错啦");
@@ -66,7 +64,7 @@ public class CrashReporterWindow extends Stage {
 
         preLabel.setOnMouseClicked(event -> DesktopUtils.copyText(mainLabel.getText()));
 
-        if (OperatingSystem.getCurrent().isMac()) {
+        if (Utils.isMac()) {
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;

@@ -68,27 +68,17 @@ public class IOUtils {
             Files.delete(path);
             return;
         }
-        deleteAllUnder(path);
+        Files.walkFileTree(path, deleteAllUnder);
     }
 
     /**
-     * Deletes a directory and everything under it.
-     *
-     * @param directory to delete
-     * @throws IOException if an I/O error occurs
-     */
-    public static void deleteAllUnder(final Path directory) throws IOException {
-        Files.walkFileTree(directory, deleteAllUnder);
-    }
-
-    /**
-     * Check if this application has permission to read and exportToExcelDocument a specific path.
+     * Checks if this application has permission to read and exportToExcelDocument a specific path.
      *
      * @param path to check permission
-     * @return if this app has read and exportToExcelDocument permission of the target path.
+     * @return if this app does not have read and write permission of the target path.
      */
-    public static boolean lackOfPermission(final Path path) {
-        return !Files.isReadable(path) || !Files.isWritable(path);
+    public static boolean notFullyPermitted(final Path path) {
+        return !(Files.isReadable(path) || Files.isWritable(path));
     }
 
 }

@@ -18,16 +18,16 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
-import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
-import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
+import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -51,9 +51,10 @@ import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
  * @since 1.3.3
  */
 public class SettingsDialog extends Stage {
-    private File importDir = ConfigHolder.globalHolder().getConfigPath().getParent().toFile();
+    private final ObjectProperty<File> importDir;
+    private final ConfigHolder cfHolder;
     private File importFile;
-    private RawAppConfig config;
+    private RawAppConfig t;
 
     /**
      * Creates an instance.
@@ -61,10 +62,8 @@ public class SettingsDialog extends Stage {
      * @param owner of the dialog.
      */
     public SettingsDialog(MainWindow owner) {
-        String s = ConfigHolder.globalHolder().get().last_import_dir;
-        if (s != null) {
-            importDir = new File(s);
-        }
+        cfHolder = ConfigHolder.globalHolder();
+        t = cfHolder.get();
 
         /* *************************************************************************
          *                                                                         *
@@ -110,7 +109,7 @@ public class SettingsDialog extends Stage {
                 exportWritableCheck,
                 darkModeCheck,
                 applyBtnDisabledProperty,
-                ConfigHolder.globalHolder()
+                cfHolder
         );
 
         final HBox loadConfigBtnBox = new HBox(loadConfigBtn);
@@ -186,6 +185,8 @@ public class SettingsDialog extends Stage {
         fc.setTitle("加载配置文件");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
 
+        importDir = fc.initialDirectoryProperty();
+        importDir.set(t.last_import_dir == null ? cfHolder.getConfigPath().getParent().toFile() : new File(t.last_import_dir));
 
         /* *************************************************************************
          *                                                                         *
@@ -195,45 +196,36 @@ public class SettingsDialog extends Stage {
 
         loadConfigBtn.setOnAction(event -> {
             try {
-                fc.setInitialDirectory(importDir);
                 importFile = fc.showOpenDialog(SettingsDialog.this);
                 if (importFile == null) {
                     return;
                 }
 
                 try {
-                    config = RawAppConfig.fromJson(importFile.toPath());
+                    configPane.reset(RawAppConfig.fromJson(importFile.toPath()));
                 } catch (final IOException e) {
-                    throw new RuntimeException("Failed to load seat config from file", e);
+                    throw new RuntimeException("Failed to load config from file", e);
                 }
 
-                configPane.reset(config);
-
-                importDir = importFile.getParentFile();
-                config = new RawAppConfig();
-                config.last_import_dir = importDir.toString();
-                ConfigHolder.globalHolder().set(config);
+                importDir.set(importFile.getParentFile());
+                t = new RawAppConfig();
+                t.last_import_dir = importDir.toString();
+                cfHolder.set(t);
             } catch (final Throwable e) {
-                CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.report(e);
             }
         });
 
         applyBtn.setOnAction(event -> {
             try {
-                config = configPane.getCurrent();
-
-                try {
-                    config.checkFormat();
-                } catch (final IllegalConfigException e) {
-                    CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
-                    return;
-                }
-                ConfigHolder.globalHolder().set(config);
+                t = configPane.getCurrent();
+                t.checkFormat();
+                cfHolder.set(t);
 
                 owner.onConfigChanged();
                 applyBtn.setDisable(true);
             } catch (final Throwable e) {
-                CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.report(e);
             }
         });
 
@@ -250,7 +242,7 @@ public class SettingsDialog extends Stage {
         cancelBtn.setOnAction(event -> close());
         cancelBtn.setCancelButton(true);
 
-        if (OperatingSystem.getCurrent().isMac()) {
+        if (Utils.isMac()) {
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;
@@ -273,6 +265,6 @@ public class SettingsDialog extends Stage {
             });
         }
 
-        setOnShown(event -> configPane.reset(ConfigHolder.globalHolder().get()));
+        setOnShown(event -> configPane.reset(cfHolder.get()));
     }
 }

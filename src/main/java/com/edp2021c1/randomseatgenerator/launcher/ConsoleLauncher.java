@@ -20,7 +20,9 @@ package com.edp2021c1.randomseatgenerator.launcher;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.SeatTables;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
@@ -28,7 +30,6 @@ import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
@@ -51,14 +52,12 @@ public class ConsoleLauncher {
      *
      * @param args arguments used to launch the application.
      */
-    public static void launch(final String... args) {
+    public static void launch(final List<String> args) {
         Logging.start(Logging.LoggingMode.CONSOLE);
 
-        if (IOUtils.lackOfPermission(Paths.get(Metadata.DATA_DIR))) {
-            throw new RuntimeException(new IOException("Does not have read/exportToExcelDocument permission of the data directory"));
+        if (!Files.isReadable(Metadata.DATA_DIR)) {
+            throw new RuntimeException(new IOException("Does not have read permission of the data directory"));
         }
-
-        final List<String> arguments = CollectionUtils.mutableListOf(args);
 
         // 命令行参数相关
         // 种子，默认为随机字符串
@@ -66,25 +65,25 @@ public class ConsoleLauncher {
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
         Path configPath = ConfigHolder.globalHolder().getConfigPath();
         // 导出路径，默认为用户根目录当前路径
-        Path outputPath = Paths.get(Metadata.USER_HOME, "SeatTables", "%tF.xlsx".formatted(new Date()));
+        Path outputPath = SeatTables.DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date()));
 
         int i;
 
         // 获取配置文件路径
-        if ((i = arguments.lastIndexOf("--config-path")) != -1 && i < arguments.size() - 1) {
-            configPath = Paths.get(arguments.get(i + 1)).toAbsolutePath();
+        if ((i = args.lastIndexOf("--config-path")) != -1 && i < args.size() - 1) {
+            configPath = Path.of(args.get(i + 1)).toAbsolutePath();
             Logging.user("Config path set to " + configPath);
         }
 
         // 获取种子
-        if ((i = arguments.lastIndexOf("--seed")) != -1 && i < arguments.size() - 1) {
-            seed = arguments.get(i + 1);
+        if ((i = args.lastIndexOf("--seed")) != -1 && i < args.size() - 1) {
+            seed = args.get(i + 1);
             Logging.user("Seed set to " + seed);
         }
 
         // 获取导出路径
-        if ((i = arguments.lastIndexOf("--output-path")) != -1 && i < arguments.size() - 1) {
-            outputPath = Paths.get(arguments.get(i + 1)).toAbsolutePath();
+        if ((i = args.lastIndexOf("--output-path")) != -1 && i < args.size() - 1) {
+            outputPath = Path.of(args.get(i + 1)).toAbsolutePath();
             if (!outputPath.endsWith(".xlsx") || (Files.exists(outputPath))) {
                 Logging.error("Invalid output path: " + outputPath);
             }

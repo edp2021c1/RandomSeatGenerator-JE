@@ -37,6 +37,11 @@ import java.util.Objects;
 public class SeatTables {
 
     /**
+     * Default exporting directory.
+     */
+    public static final Path DEFAULT_EXPORTING_DIR = Path.of(Metadata.USER_HOME, "Seat Tables");
+
+    /**
      * Don't let anyone else instantiate this class.
      */
     private SeatTables() {
@@ -45,20 +50,24 @@ public class SeatTables {
     /**
      * Exports this instance to an Excel document (.xlsx).
      *
-     * @param seatTable        to export to Excel document
-     * @param filePath         path of file to export seat table to
-     * @param exportToWritable if export seat table to a writable file
+     * @param seatTable to export to Excel document
+     * @param filePath  path of file to export seat table to
+     * @param writable  if export seat table to a writable file
      * @throws IOException if an I/O error occurs
      */
-    public static void exportToExcelDocument(final SeatTable seatTable, final Path filePath, final boolean exportToWritable) throws IOException {
-        Objects.requireNonNull(filePath);
-        IOUtils.deleteIfExists(filePath);
-        EasyExcel.write(filePath.toFile(), SeatRowData.class)
-                .sheet("座位表-%tF".formatted(new Date()))
-                .excludeColumnIndexes(CollectionUtils.range(Math.max(seatTable.getConfig().getColumnCount(), 2), SeatConfig.MAX_COLUMN_COUNT))
-                .doWrite(SeatRowData.fromSeat(seatTable));
-        if (!(exportToWritable || filePath.toFile().setReadOnly())) {
-            throw new IOException("Failed to save seat table to " + filePath);
+    public static void exportToExcelDocument(final SeatTable seatTable, final Path filePath, final boolean writable) throws IOException {
+        try {
+            Objects.requireNonNull(filePath);
+            Utils.delete(filePath);
+            EasyExcel.write(filePath.toFile(), SeatRowData.class)
+                    .sheet("座位表-%tF".formatted(new Date()))
+                    .excludeColumnIndexes(CollectionUtils.range(Math.max(seatTable.getConfig().getColumnCount(), 2), SeatConfig.MAX_COLUMN_COUNT))
+                    .doWrite(SeatRowData.fromSeat(seatTable));
+            if (!(writable || filePath.toFile().setReadOnly())) {
+                throw new RuntimeException("Failed to save seat table to " + filePath);
+            }
+        } catch (final IOException e) {
+            throw new IOException("Failed to save seat table to " + filePath, e);
         }
     }
 

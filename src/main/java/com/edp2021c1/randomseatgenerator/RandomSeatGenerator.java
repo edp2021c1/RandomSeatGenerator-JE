@@ -43,7 +43,7 @@ public class RandomSeatGenerator {
      * @param args used to start the application.
      */
     public static void main(final String... args) {
-        final List<String> arguments = CollectionUtils.mutableListOf(args);
+        final List<String> arguments = CollectionUtils.modifiableListOf(args);
         // 如果有“--help”参数则打印帮助信息然后退出
         if (arguments.contains("--help")) {
             System.out.println(Metadata.HELP_INFO);
@@ -63,7 +63,7 @@ public class RandomSeatGenerator {
 
         // 如果是命令行模式则启动命令行程序
         if (arguments.contains("--nogui")) {
-            ConsoleLauncher.launch(args);
+            ConsoleLauncher.launch(arguments);
         }
 
         // 如果不是命令行模式则启动JavaFX程序

@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.mutableListOf;
 
 /**
  * Stores raw {@link SeatConfig}.
@@ -133,15 +132,15 @@ public class RawSeatConfig {
     /**
      * Returns {@link #last_row_pos_cannot_be_chosen} as a list of {@code int}.
      *
-     * @return {@code  last_row_pos_cannot_be_choosed} as a list of {@code int}.
-     * @throws IllegalConfigException if failed to parse {@code last_row_pos_cannot_be_choosed}.
+     * @return {@code  last_row_pos_cannot_be_chosen} as a list of {@code int}.
+     * @throws IllegalConfigException if failed to parse {@code last_row_pos_cannot_be_chosen}.
      * @see #last_row_pos_cannot_be_chosen
      */
     public List<Integer> getNotAllowedLastRowPos() throws IllegalConfigException {
         if (last_row_pos_cannot_be_chosen.isBlank()) {
             return new ArrayList<>();
         }
-        return CollectionUtils.buildList(mutableListOf(last_row_pos_cannot_be_chosen.split(" ")), s -> {
+        return CollectionUtils.buildList(CollectionUtils.modifiableListOf(last_row_pos_cannot_be_chosen.split(" ")), s -> {
             try {
                 return Integer.parseUnsignedInt(s);
             } catch (final IllegalArgumentException e) {
@@ -159,7 +158,7 @@ public class RawSeatConfig {
      * @see #person_sort_by_height
      */
     public List<String> getNameList() {
-        final List<String> l = mutableListOf(person_sort_by_height.split(" "));
+        final List<String> l = CollectionUtils.modifiableListOf(person_sort_by_height.split(" "));
         if (l.contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
                     "Name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
@@ -183,7 +182,7 @@ public class RawSeatConfig {
      * @see #group_leader_list
      */
     public List<String> getGroupLeaderList() {
-        final List<String> l = mutableListOf(group_leader_list.split(" "));
+        final List<String> l = CollectionUtils.modifiableListOf(group_leader_list.split(" "));
         if (l.contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
                     "Group leader list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
@@ -200,7 +199,7 @@ public class RawSeatConfig {
      * @see #separate_list
      */
     public List<SeparatedPair> getSeparatedList() throws IllegalConfigException {
-        final List<String> t = mutableListOf(separate_list.split("\n"));
+        final List<String> t = CollectionUtils.modifiableListOf(separate_list.split("\n"));
         final List<SeparatedPair> s = new ArrayList<>(t.size());
 
         t.forEach(m -> {

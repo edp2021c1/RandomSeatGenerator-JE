@@ -100,22 +100,22 @@ tasks.build {
 
 fun getPackingArguments(jarName: String, projectPath: String): Array<String> {
     val args = mutableListOf(
-            "@" + Paths.get(projectPath, "package_resources", "static_arguments", "all.txt"),
-            "-i", Paths.get(projectPath, "build", "libs").toString(),
-            "--license-file", Paths.get(projectPath, "package_resources", "LICENSE").toString(),
+            "@" + Path.of(projectPath, "package_resources", "static_arguments", "all.txt"),
+            "-i", Path.of(projectPath, "build", "libs").toString(),
+            "--license-file", Path.of(projectPath, "package_resources", "LICENSE").toString(),
             "--app-version", version.toString(),
             "--main-jar", jarName,
-            "-d", Paths.get(projectPath, "packages").toString(),
+            "-d", Path.of(projectPath, "packages").toString(),
     )
     args.addAll(if (isWin) {
         listOf(
-                "@" + Paths.get(projectPath, "package_resources", "static_arguments", "win.txt"),
-                "--icon", Paths.get(projectPath, "package_resources", "app_icon", "win.ico").toString(),
+                "@" + Path.of(projectPath, "package_resources", "static_arguments", "win.txt"),
+                "--icon", Path.of(projectPath, "package_resources", "app_icon", "win.ico").toString(),
         )
     } else {
         listOf(
-                "@" + Paths.get(projectPath, "package_resources", "static_arguments", "mac.txt"),
-                "--icon", Paths.get(projectPath, "package_resources", "app_icon", "mac.icns").toString()
+                "@" + Path.of(projectPath, "package_resources", "static_arguments", "mac.txt"),
+                "--icon", Path.of(projectPath, "package_resources", "app_icon", "mac.icns").toString()
         )
     })
     return args.toTypedArray()
@@ -136,14 +136,14 @@ val pack = task("pack") {
         val fName = project.name + "-" + version
         val projectPath = projectDir.path
         val jarName = "$fName.jar"
-        val libsPath = Paths.get(projectPath, "build", "libs")
+        val libsPath = Path.of(projectPath, "build", "libs")
         val jarPath = libsPath.resolve(jarName)
 
         if (Files.notExists(jarPath)) {
             throw NoSuchFileException("Jar not found at $jarPath")
         }
 
-        val packageDir = Paths.get(projectPath, "packages")
+        val packageDir = Path.of(projectPath, "packages")
         if (!Files.isDirectory(packageDir)) {
             Files.deleteIfExists(packageDir)
         }

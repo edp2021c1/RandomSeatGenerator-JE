@@ -21,6 +21,7 @@ package com.edp2021c1.randomseatgenerator.util.config;
 import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import lombok.Getter;
 
@@ -30,7 +31,6 @@ import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class ConfigHolder {
      */
     private static final ConfigHolder global;
     private static final RawAppConfig BUILT_IN;
-    private static final Path DEFAULT_CONFIG_PATH = Paths.get(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
+    private static final Path DEFAULT_CONFIG_PATH = Utils.join(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
     private static final List<ConfigHolder> holders = new ArrayList<>();
 
     static {
@@ -93,26 +93,26 @@ public class ConfigHolder {
 
         final Path configDir = configPath.getParent();
         if (!Files.isDirectory(configDir)) {
-            IOUtils.deleteIfExists(configDir);
+            Utils.delete(configDir);
         }
         Files.createDirectories(configDir);
-        if (IOUtils.lackOfPermission(configDir)) {
-            throw new IOException("Does not has enough permission to read/exportToExcelDocument config");
+        if (IOUtils.notFullyPermitted(configDir)) {
+            throw new IOException("Does not has enough permission to read/write config");
         }
 
         if (Files.notExists(configPath)) {
             set(BUILT_IN);
         }
-        if (IOUtils.lackOfPermission(configPath)) {
-            throw new IOException("Does not has enough permission to read/exportToExcelDocument config");
+        if (IOUtils.notFullyPermitted(configPath)) {
+            throw new IOException("Does not has enough permission to read/write config");
         }
         if (!Files.isRegularFile(configPath)) {
-            IOUtils.deleteIfExists(configPath);
+            Utils.delete(configPath);
             set(BUILT_IN);
         }
 
-        Path lockerPath = Paths.get(configPath + ".lck");
-        IOUtils.deleteIfExists(lockerPath);
+        Path lockerPath = Path.of(configPath + ".lck");
+        Utils.delete(lockerPath);
         Files.createFile(lockerPath);
         this.fileChannel = FileChannel.open(lockerPath, StandardOpenOption.DELETE_ON_CLOSE);
     }
@@ -131,7 +131,7 @@ public class ConfigHolder {
      */
     public static void closeAll() {
         Logging.debug("Closing all config handlers");
-        CollectionUtils.mutableListOf(holders).forEach(ConfigHolder::close);
+        CollectionUtils.modifiableListOf(holders).forEach(ConfigHolder::close);
     }
 
     /**
@@ -189,7 +189,7 @@ public class ConfigHolder {
     private void flush() throws IOException {
         if (Files.notExists(configPath) || !Files.isRegularFile(configPath)) {
             Logging.warning("Config file not found or directory found on the path, will use default value");
-            IOUtils.deleteIfExists(configPath);
+            Utils.delete(configPath);
             Files.createFile(configPath);
             set(BUILT_IN);
             return;

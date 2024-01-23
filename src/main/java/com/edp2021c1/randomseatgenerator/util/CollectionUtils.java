@@ -27,6 +27,9 @@ import java.util.random.RandomGenerator;
 
 /**
  * Utils of {@code arrays} and {@link Collection} and its subclasses.
+ *
+ * @author Calboot
+ * @since 1.4.9
  */
 public class CollectionUtils {
 
@@ -63,7 +66,7 @@ public class CollectionUtils {
      * @return a randomly picked element of the source collection
      */
     public static <T> T pickRandomly(final Collection<? extends T> src, final RandomGenerator rd) {
-        return CollectionUtils.<T>mutableListOf(src).get(rd.nextInt(src.size()));
+        return CollectionUtils.<T>modifiableListOf(src).get(rd.nextInt(src.size()));
     }
 
     /**
@@ -89,7 +92,7 @@ public class CollectionUtils {
      * @param <T> type of the
      * @return a modify-free list
      */
-    public static <T> List<T> mutableListOf(final Collection<? extends T> src) {
+    public static <T> List<T> modifiableListOf(final Collection<? extends T> src) {
         return new ArrayList<>(src);
     }
 
@@ -102,8 +105,8 @@ public class CollectionUtils {
      * @return a modify-free list
      */
     @SafeVarargs
-    public static <T> List<T> mutableListOf(final T... arr) {
-        return mutableListOf(Arrays.asList(arr));
+    public static <T> List<T> modifiableListOf(final T... arr) {
+        return modifiableListOf(Arrays.asList(arr));
     }
 
     /**

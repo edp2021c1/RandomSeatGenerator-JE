@@ -23,7 +23,6 @@ import com.edp2021c1.randomseatgenerator.util.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +41,7 @@ public class Logging {
      * Logger.
      */
     private static final Logger logger = Logger.getLogger("RandomSeat");
-    private static final Path logDir = Paths.get(Metadata.DATA_DIR, "logs");
+    private static final Path logDir = Metadata.DATA_DIR.resolve("logs");
     private static final List<Path> logPaths;
     private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
     private static final Formatter defaultFormatter;
@@ -54,7 +53,7 @@ public class Logging {
         while (Files.exists(logDir.resolve(str.formatted(t)))) {
             t++;
         }
-        logPaths = CollectionUtils.mutableListOf(logDir.resolve("latest.log"), logDir.resolve(str.formatted(t)));
+        logPaths = CollectionUtils.modifiableListOf(logDir.resolve("latest.log"), logDir.resolve(str.formatted(t)));
 
         defaultFormatter = new Formatter() {
             @Override
@@ -164,15 +163,15 @@ public class Logging {
 
         try {
             if (Files.notExists(logDir) || !Files.isDirectory(logDir)) {
-                IOUtils.deleteIfExists(logDir);
+                Utils.delete(logDir);
                 Files.createDirectories(logDir);
             }
         } catch (IOException e) {
             warning("Unable to create log dir, log may not be saved");
             warning(Strings.getStackTrace(e));
         }
-        if (IOUtils.lackOfPermission(logDir)) {
-            warning("Does not have read/exportToExcelDocument permission of the log directory");
+        if (IOUtils.notFullyPermitted(logDir)) {
+            warning("Does not have read/write permission of the log directory");
         }
         logPaths.forEach(path -> {
             try {

@@ -27,6 +27,7 @@ import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -57,12 +58,12 @@ public class MainWindow extends Stage {
     private final SeatTableView seatTableView;
     private final SettingsDialog settingsDialog;
     private final ConfigHolder cfHolder;
+    private final StringProperty seed;
+    private final ObjectProperty<File> exportDir;
     private File exportFile;
     private SeatTable seatTable = null;
-    private RawAppConfig config;
     private RawAppConfig t;
     private String previousSeed = null;
-    private File exportDir;
 
     /**
      * Creates an instance.
@@ -71,9 +72,7 @@ public class MainWindow extends Stage {
         cfHolder = ConfigHolder.globalHolder();
 
         settingsDialog = new SettingsDialog(this);
-        config = cfHolder.get();
-        config.checkFormat();
-        exportDir = new File(config.last_export_dir == null ? Metadata.USER_HOME : config.last_export_dir);
+        t = cfHolder.get();
 
         /* *************************************************************************
          *                                                                         *
@@ -96,8 +95,10 @@ public class MainWindow extends Stage {
         final Button dateAsSeedBtn = createButton("填入日期", 80, 26);
         final HBox topRightBox = createHBox(seedInput, randomSeedBtn, dateAsSeedBtn);
 
+        seed = seedInput.textProperty();
+
         // 座位表
-        seatTableView = new SeatTableView(config.getContent());
+        seatTableView = new SeatTableView(t.getContent());
 
         // 右侧主体
         final VBox rightBox = createVBox(topRightBox, seatTableView);
@@ -117,11 +118,12 @@ public class MainWindow extends Stage {
         UIFactory.decorate(this, StageType.MAIN);
         setOnCloseRequest(event -> close());
 
-        final StringProperty seed = seedInput.textProperty();
-
         final FileChooser fc = new FileChooser();
         fc.setTitle("导出座位表");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
+
+        exportDir = fc.initialDirectoryProperty();
+        exportDir.set(t.last_export_dir == null ? SeatTables.DEFAULT_EXPORTING_DIR.toFile() : new File(t.last_export_dir));
 
         /* *************************************************************************
          *                                                                         *
@@ -137,23 +139,18 @@ public class MainWindow extends Stage {
                     randomSeedBtn.fire();
                 }
 
-                config = cfHolder.get();
-                if (config == null) {
+                t = cfHolder.get();
+                if (t == null) {
                     throw new IllegalConfigException("Null config");
                 }
-                config.checkFormat();
+                t.checkFormat();
 
-                try {
-                    seatTable = SeatTableFactory.generate(config.getContent(), seed.get());
-                } catch (final IllegalConfigException e) {
-                    CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
-                    return;
-                }
+                seatTable = SeatTableFactory.generate(t.getContent(), seed.get());
                 Logging.info("\n" + seatTable);
                 seatTableView.setSeatTable(seatTable);
                 previousSeed = seed.get();
             } catch (final Throwable e) {
-                CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.report(e);
             }
         });
         generateBtn.setDefaultButton(true);
@@ -164,7 +161,6 @@ public class MainWindow extends Stage {
                     generateBtn.fire();
                 }
 
-                fc.setInitialDirectory(exportDir);
                 fc.setInitialFileName("%tF".formatted(new Date()));
 
                 exportFile = fc.showSaveDialog(MainWindow.this);
@@ -174,33 +170,30 @@ public class MainWindow extends Stage {
                 try {
                     SeatTables.exportToExcelDocument(seatTable, exportFile.toPath(), cfHolder.get().export_writable);
                 } catch (final IOException e) {
-                    CrashReporter.fullCrashReporter.uncaughtException(
-                            Thread.currentThread(),
-                            new RuntimeException(
-                                    "Failed to export seat table to " + exportFile,
-                                    e
-                            )
+                    throw new RuntimeException(
+                            "Failed to export seat table to " + exportFile,
+                            e
                     );
                 }
 
                 Logging.info("Successfully exported seat table to " + exportFile);
 
-                exportDir = exportFile.getParentFile();
+                exportDir.set(exportFile.getParentFile());
                 t = new RawAppConfig();
-                t.last_export_dir = exportDir.toString();
+                t.last_export_dir = exportDir.get().toString();
                 cfHolder.set(t);
             } catch (final Throwable e) {
-                CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
+                CrashReporter.report(e);
             }
         });
 
         seedInput.setOnAction(event -> generateBtn.fire());
 
-        randomSeedBtn.setOnAction(event -> seedInput.setText(Strings.randomString(30)));
+        randomSeedBtn.setOnAction(event -> seed.set(Strings.randomString(30)));
 
         dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
 
-        if (OperatingSystem.getCurrent().isMac()) {
+        if (Utils.isMac()) {
             setFullScreenExitHint("按 Esc / Cmd+Shift+F 退出全屏");
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {

@@ -20,7 +20,6 @@ package com.edp2021c1.randomseatgenerator.launcher;
 
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
@@ -30,7 +29,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.nio.file.Files;
 
 /**
  * JavaFX application intro.
@@ -59,11 +58,11 @@ public class GUILauncher extends Application {
         try {
             Logging.start(Logging.LoggingMode.GUI);
 
-            if (IOUtils.lackOfPermission(Paths.get(Metadata.DATA_DIR))) {
-                throw new IOException("Does not have read/exportToExcelDocument permission of the data directory");
+            if (!Files.isReadable(Metadata.DATA_DIR)) {
+                throw new IOException("Does not have read/write permission of the data directory");
             }
         } catch (final Throwable e) {
-            CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
+            CrashReporter.report(e);
         }
     }
 
@@ -74,7 +73,7 @@ public class GUILauncher extends Application {
             UIFactory.setDarkMode(config.dark_mode != null && config.dark_mode);
             new MainWindow().show();
         } catch (final Throwable e) {
-            CrashReporter.fullCrashReporter.uncaughtException(Thread.currentThread(), e);
+            CrashReporter.report(e);
         }
     }
 
