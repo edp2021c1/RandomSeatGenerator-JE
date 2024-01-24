@@ -157,7 +157,7 @@ public class ConfigPane extends VBox {
             current.export_writable = newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
-        darkModeCheck.selectedProperty().addListener((observable, oldValue, newValue) -> UIFactory.setDarkMode(newValue));
+        darkModeCheck.selectedProperty().bindBidirectional(UIFactory.globalDarkModeProperty());
     }
 
     /**

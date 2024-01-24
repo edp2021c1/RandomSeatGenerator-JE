@@ -16,16 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.ui.node;
+package com.edp2021c1.randomseatgenerator.ui.node.table;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.BooleanPropertyBase;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+
+import java.util.Objects;
 
 /**
  * Cell of {@code SeatTableView}.
@@ -33,7 +34,7 @@ import javafx.scene.layout.Priority;
  * @author Calboot
  * @since 1.4.0
  */
-class SeatTableCell extends Label {
+public class SeatTableCell extends Label {
     private static final String DEFAULT_STYLE_CLASS = "seat-table-cell";
     private static final PseudoClass PSEUDO_CLASS_LEADER
             = PseudoClass.getPseudoClass("leader");
@@ -48,27 +49,15 @@ class SeatTableCell extends Label {
         HBox.setHgrow(this, Priority.ALWAYS);
         setMinSize(120, 60);
 
-        final String s = o == null ? "" : o.toString();
+        final String s = Objects.toString(o, "");
         setText(s);
 
-        final BooleanProperty leader = new BooleanPropertyBase(false) {
+        new SimpleBooleanProperty(this, "leader") {
             @Override
             protected void invalidated() {
                 pseudoClassStateChanged(PSEUDO_CLASS_LEADER, get());
             }
-
-            @Override
-            public Object getBean() {
-                return SeatTableCell.this;
-            }
-
-            @Override
-            public String getName() {
-                return "leader";
-            }
-        };
-
-        leader.set(s.matches(SeatTable.groupLeaderRegex));
+        }.set(s.matches(SeatTable.groupLeaderRegex));
 
         getStyleClass().add(DEFAULT_STYLE_CLASS);
     }

@@ -110,17 +110,12 @@
     -fx-background-color: -text-fill-root;
 }
 
-.scroll-bar {
-    -fx-pref-width: 12;
-}
-
 .scroll-bar .track-background {
     -fx-background-color: -background-color-root;
 }
 
 .scroll-bar .thumb {
     -fx-background-color: -background-color-scroll-bar-thumb;
-    -fx-background-radius: 6;
 }
 
 .scroll-pane .viewport {

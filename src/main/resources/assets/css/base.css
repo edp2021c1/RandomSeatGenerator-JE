@@ -60,6 +60,14 @@
     -fx-border-radius: 4;
 }
 
+.scroll-bar {
+    -fx-pref-width: 12;
+}
+
+.scroll-bar .thumb {
+    -fx-background-radius: 6;
+}
+
 .tab-pane {
     -fx-padding: 10;
 }

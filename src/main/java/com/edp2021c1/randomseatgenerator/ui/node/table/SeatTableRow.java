@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.ui.node;
+package com.edp2021c1.randomseatgenerator.ui.node.table;
 
 import com.edp2021c1.randomseatgenerator.core.SeatRowData;
 import javafx.geometry.Pos;
@@ -32,28 +32,29 @@ import java.lang.reflect.Field;
  * @author Calboot
  * @since 1.4.0
  */
-class SeatTableRow extends HBox {
+public class SeatTableRow extends HBox {
+
     /**
      * Creates a row with the given data.
      *
-     * @param seatRowData of this row
+     * @param rowData     of this row
      * @param columnCount of this row
      */
-    public SeatTableRow(final SeatRowData seatRowData, final int columnCount) {
+    public SeatTableRow(final SeatRowData rowData, final int columnCount) {
         VBox.setVgrow(this, Priority.ALWAYS);
         setAlignment(Pos.CENTER);
 
-        final int cellCount = Math.max(columnCount, 2);
+        final int cellCount = Math.max(2, columnCount);
         final SeatTableCell[] cells = new SeatTableCell[cellCount];
         for (int i = 0; i < cellCount; i++) {
             try {
                 final Field f = SeatRowData.getFields().get(i);
-                cells[i] = new SeatTableCell(f.get(seatRowData));
-                cells[i].prefHeightProperty().bind(heightProperty());
-                cells[i].prefWidthProperty().bind(widthProperty().divide(columnCount));
+                cells[i] = new SeatTableCell(f.get(rowData));
             } catch (final IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
+            cells[i].prefHeightProperty().bind(heightProperty());
+            cells[i].prefWidthProperty().bind(widthProperty().divide(columnCount));
         }
         getChildren().addAll(cells);
     }

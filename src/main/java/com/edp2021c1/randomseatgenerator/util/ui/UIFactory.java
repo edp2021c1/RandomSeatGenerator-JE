@@ -23,9 +23,6 @@ import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -40,7 +37,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * Contains several useful methods for creating or initializing JavaFX controls.
@@ -49,21 +49,18 @@ import lombok.Setter;
  * @since 1.3.3
  */
 public class UIFactory {
-    private static final BooleanProperty darkMode = new SimpleBooleanProperty();
+    @Getter
+    private static final BooleanProperty globalDarkMode = new SimpleBooleanProperty(null, "globalDarkMode") {
+        private final RawAppConfig config = new RawAppConfig();
+
+        @Override
+        protected void invalidated() {
+            config.dark_mode = get();
+            ConfigHolder.globalHolder().set(config);
+        }
+    };
     @Setter
     private static Window mainWindow = null;
-
-    static {
-        darkMode.addListener(new ChangeListener<>() {
-            private final RawAppConfig config = new RawAppConfig();
-
-            @Override
-            public void changed(final ObservableValue<? extends Boolean> observable, final Boolean oldValue, final Boolean newValue) {
-                config.dark_mode = newValue;
-                ConfigHolder.globalHolder().set(config);
-            }
-        });
-    }
 
     /**
      * Don't let anyone else instantiate this class.
@@ -71,13 +68,27 @@ public class UIFactory {
     private UIFactory() {
     }
 
+    public static BooleanProperty globalDarkModeProperty() {
+        return globalDarkMode;
+    }
+
     /**
      * Sets whether the app is shown in the dark mode.
      *
      * @param isDarkMode value
      */
-    public static void setDarkMode(final boolean isDarkMode) {
-        darkMode.set(isDarkMode);
+    public static void setGlobalDarkMode(final Boolean isDarkMode) {
+        globalDarkMode.setValue(isDarkMode);
+    }
+
+    private static void setToDark(List<String> stylesheets) {
+        stylesheets.remove(Metadata.STYLESHEET_LIGHT);
+        stylesheets.add(Metadata.STYLESHEET_DARK);
+    }
+
+    private static void setToLight(List<String> stylesheets) {
+        stylesheets.remove(Metadata.STYLESHEET_DARK);
+        stylesheets.add(Metadata.STYLESHEET_LIGHT);
     }
 
     /**
@@ -107,24 +118,20 @@ public class UIFactory {
             }
         }
 
-        final ObservableList<String> styleSheets = stage.getScene().getStylesheets();
-        styleSheets.add(Metadata.STYLESHEET_BASE);
-        darkMode.addListener((observable, oldValue, newValue) -> {
+        final List<String> stylesheets = stage.getScene().getStylesheets();
+        stylesheets.add(Metadata.STYLESHEET_BASE);
+        globalDarkMode.addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                styleSheets.remove(Metadata.STYLESHEET_LIGHT);
-                styleSheets.add(Metadata.STYLESHEET_DARK);
+                setToDark(stylesheets);
                 return;
             }
-            styleSheets.remove(Metadata.STYLESHEET_DARK);
-            styleSheets.add(Metadata.STYLESHEET_LIGHT);
+            setToLight(stylesheets);
         });
-        if (darkMode.get()) {
-            styleSheets.remove(Metadata.STYLESHEET_LIGHT);
-            styleSheets.add(Metadata.STYLESHEET_DARK);
+        if (globalDarkMode.get()) {
+            setToDark(stylesheets);
             return;
         }
-        styleSheets.remove(Metadata.STYLESHEET_DARK);
-        styleSheets.add(Metadata.STYLESHEET_LIGHT);
+        setToLight(stylesheets);
     }
 
     /**

@@ -22,7 +22,6 @@ import com.alibaba.excel.annotation.ExcelIgnore;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT;
@@ -78,7 +77,7 @@ public class SeatRowData {
     private final String c19 = null;
     private final String c20 = null;
 
-    private SeatRowData(final String... c) {
+    public SeatRowData(final String... c) {
         final int len = c.length;
         if (len > MAX_COLUMN_COUNT) {
             throw new IllegalConfigException(
@@ -92,40 +91,6 @@ public class SeatRowData {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    /**
-     * Returns a list of {@code SeatRowData} containing data of a seat table.
-     *
-     * @param seatTable an instance of {@link SeatTable} being transferred.
-     * @return a {@code List} storing {@code SeatRowData} transferred from a {@code SeatTable}.
-     */
-    public static List<SeatRowData> fromSeat(final SeatTable seatTable) {
-        final SeatConfig conf = seatTable.getConfig();
-        final int columnCount = conf.getColumnCount();
-        final List<String> s = seatTable.getSeatTable();
-        final List<SeatRowData> seatRowData = new ArrayList<>(conf.getRowCount());
-        final String[] tmp = new String[columnCount];
-
-        final int size = s.size();
-        for (int i = 0, j = 0; i < size; i++, j = i % columnCount) {
-            tmp[j] = s.get(i);
-            if (j == columnCount - 1) {
-                seatRowData.add(new SeatRowData(tmp));
-            }
-        }
-
-        if (conf.isLucky()) {
-            seatRowData.add(new SeatRowData("Lucky Person", seatTable.getLuckyPerson()));
-        }
-
-        final String seed = seatTable.getSeed();
-        if (seed.isEmpty()) {
-            seatRowData.add(new SeatRowData("Seed", "empty_string"));
-            return seatRowData;
-        }
-        seatRowData.add(new SeatRowData("Seed", seatTable.getSeed()));
-        return seatRowData;
     }
 
 }

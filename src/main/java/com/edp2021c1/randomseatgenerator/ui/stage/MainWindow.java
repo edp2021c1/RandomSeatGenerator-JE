@@ -21,7 +21,7 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
-import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
+import com.edp2021c1.randomseatgenerator.ui.node.table.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;

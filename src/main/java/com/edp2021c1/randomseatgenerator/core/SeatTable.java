@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.core;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public class SeatTable {
     /**
      * The seat table stored as a {@code  List}.
      */
-    private final List<String> seatTable;
+    private final List<String> table;
     /**
      * The config used to generate the seat table.
      */
@@ -62,16 +63,46 @@ public class SeatTable {
     /**
      * Creates an instance.
      *
-     * @param seatTable   {@link #seatTable}
+     * @param table       {@link #table}
      * @param config      {@link #config}
      * @param seed        {@link #seed}
      * @param luckyPerson {@link #luckyPerson}
      */
-    public SeatTable(final List<String> seatTable, final SeatConfig config, final String seed, final String luckyPerson) {
-        this.seatTable = seatTable;
+    public SeatTable(final List<String> table, final SeatConfig config, final String seed, final String luckyPerson) {
+        this.table = table;
         this.config = config;
         this.seed = seed;
         this.luckyPerson = luckyPerson;
+    }
+
+    /**
+     * Returns a list of {@code SeatRowData} containing data of this.
+     *
+     * @return a {@code List} storing {@code SeatRowData} transferred from this.
+     */
+    public List<SeatRowData> toRowData() {
+        final int columnCount = config.getColumnCount();
+        final List<SeatRowData> seatRowData = new ArrayList<>(config.getRowCount());
+        final String[] tmp = new String[columnCount];
+
+        final int size = table.size();
+        for (int i = 0, j = 0; i < size; i++, j = i % columnCount) {
+            tmp[j] = table.get(i);
+            if (j == columnCount - 1) {
+                seatRowData.add(new SeatRowData(tmp));
+            }
+        }
+
+        if (config.isLucky()) {
+            seatRowData.add(new SeatRowData("Lucky Person", luckyPerson));
+        }
+
+        if (seed.isEmpty()) {
+            seatRowData.add(new SeatRowData("Seed", "empty_string"));
+            return seatRowData;
+        }
+        seatRowData.add(new SeatRowData("Seed", seed));
+        return seatRowData;
     }
 
     @Override
@@ -80,11 +111,11 @@ public class SeatTable {
 
         final StringBuilder str = new StringBuilder("Seed: ").append(seed).append("\nSeat Table:\n");
 
-        for (int i = 0; i < seatTable.size(); i++) {
+        for (int i = 0; i < table.size(); i++) {
             if (i % columnCount == 0) {
                 str.append("\n");
             }
-            str.append(seatTable.get(i)).append("\t\t");
+            str.append(table.get(i)).append("\t\t");
         }
 
         if (config.isLucky()) {

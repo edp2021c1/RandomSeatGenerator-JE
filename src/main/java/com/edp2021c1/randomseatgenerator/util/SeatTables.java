@@ -62,7 +62,7 @@ public class SeatTables {
             EasyExcel.write(filePath.toFile(), SeatRowData.class)
                     .sheet("座位表-%tF".formatted(new Date()))
                     .excludeColumnIndexes(CollectionUtils.range(Math.max(seatTable.getConfig().getColumnCount(), 2), SeatConfig.MAX_COLUMN_COUNT))
-                    .doWrite(SeatRowData.fromSeat(seatTable));
+                    .doWrite(seatTable.toRowData());
             if (!(writable || filePath.toFile().setReadOnly())) {
                 throw new RuntimeException("Failed to save seat table to " + filePath);
             }
