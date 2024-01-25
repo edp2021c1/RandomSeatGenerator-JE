@@ -39,7 +39,6 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 public class SeatRowData {
 
     @ExcelIgnore
-    @Getter
     private static final List<Field> fields;
 
     static {
@@ -76,6 +75,8 @@ public class SeatRowData {
     private final String c18 = null;
     private final String c19 = null;
     private final String c20 = null;
+    @ExcelIgnore
+    private final String[] data = new String[20];
 
     public SeatRowData(final String... c) {
         final int len = c.length;
@@ -84,13 +85,21 @@ public class SeatRowData {
                     "Count of people in a row cannot be larger than " + MAX_COLUMN_COUNT
             );
         }
-        for (int i = 0; i < len; i++) {
-            try {
+        try {
+            for (int i = 0; i < len; i++) {
                 fields.get(i).set(this, c[i]);
-            } catch (final IllegalAccessException e) {
-                throw new RuntimeException(e);
             }
+        } catch (final IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
+        System.arraycopy(c, 0, data, 0, len);
+    }
+
+    public String getData(final int index) {
+        if (index >= MAX_COLUMN_COUNT) {
+            throw new IndexOutOfBoundsException();
+        }
+        return data[index];
     }
 
 }

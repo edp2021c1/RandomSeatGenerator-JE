@@ -124,18 +124,18 @@ public class SettingsDialog extends Stage {
         randomSeatGeneratorLabel.setPrefHeight(32);
         randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
 
-        final Label versionLabel = new Label("版本:       " + VERSION);
+        final Hyperlink versionLink = new Hyperlink("版本:        " + VERSION);
 
-        final Label gitRepositoryUrlLabel = new Label("Git仓库:   " + GIT_REPOSITORY_URL);
+        final Hyperlink gitRepositoryLink = new Hyperlink("Git仓库:   " + GIT_REPOSITORY_URI);
 
-        final Label licenseLabel = new Label("许可证:    %s(%s)".formatted(LICENSE_NAME, LICENSE_URL));
+        final Hyperlink licenseLink = new Hyperlink("许可证:    %s(%s)".formatted(LICENSE_NAME, LICENSE_URI));
 
         final TextArea licenseText = createTextArea(null, 650, 288);
         licenseText.setText(LICENSE_INFO);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");
 
-        final VBox bottomRightBox = new VBox(randomSeatGeneratorLabel, versionLabel, gitRepositoryUrlLabel, licenseLabel, licenseText);
+        final VBox bottomRightBox = new VBox(randomSeatGeneratorLabel, versionLink, gitRepositoryLink, licenseLink, licenseText);
         bottomRightBox.setAlignment(Pos.CENTER_LEFT);
 
         final HBox aboutInfoBox = new HBox(iconView, bottomRightBox);
@@ -162,7 +162,7 @@ public class SettingsDialog extends Stage {
 
         final Scene scene = new Scene(mainBox);
 
-        setMargins(new Insets(5),
+        setInsets(new Insets(5),
                 rowCountInput,
                 columnCountInput,
                 rbrInput,
@@ -229,9 +229,11 @@ public class SettingsDialog extends Stage {
             }
         });
 
-        gitRepositoryUrlLabel.setOnMouseClicked(event -> DesktopUtils.browseIfSupported(GIT_REPOSITORY_URI));
+        versionLink.setOnAction(event -> DesktopUtils.browseIfSupported(VERSION_PAGE_URI));
 
-        licenseLabel.setOnMouseClicked(event -> DesktopUtils.browseIfSupported(LICENSE_URI));
+        gitRepositoryLink.setOnAction(event -> DesktopUtils.browseIfSupported(GIT_REPOSITORY_URI));
+
+        licenseLink.setOnAction(event -> DesktopUtils.browseIfSupported(LICENSE_URI));
 
         confirmBtn.setOnAction(event -> {
             applyBtn.fire();

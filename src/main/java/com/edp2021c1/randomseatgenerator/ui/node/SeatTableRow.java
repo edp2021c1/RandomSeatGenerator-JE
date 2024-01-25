@@ -16,15 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.ui.node.table;
+package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.core.SeatRowData;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-
-import java.lang.reflect.Field;
 
 /**
  * Row of {@code SeatTableView}.
@@ -41,21 +41,28 @@ public class SeatTableRow extends HBox {
      * @param columnCount of this row
      */
     public SeatTableRow(final SeatRowData rowData, final int columnCount) {
+        super();
         VBox.setVgrow(this, Priority.ALWAYS);
         setAlignment(Pos.CENTER);
+
+        getChildren().addListener((ListChangeListener<Node>) c -> {
+            while (c.next()) {
+                for (final Node n : c.getAddedSubList()) {
+                    if (!(n instanceof SeatTableCell)) {
+                        throw new UnsupportedOperationException("Cannot add a non-cell child");
+                    }
+                }
+            }
+        });
 
         final int cellCount = Math.max(2, columnCount);
         final SeatTableCell[] cells = new SeatTableCell[cellCount];
         for (int i = 0; i < cellCount; i++) {
-            try {
-                final Field f = SeatRowData.getFields().get(i);
-                cells[i] = new SeatTableCell(f.get(rowData));
-            } catch (final IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-            cells[i].prefHeightProperty().bind(heightProperty());
-            cells[i].prefWidthProperty().bind(widthProperty().divide(columnCount));
+            final SeatTableCell cell = new SeatTableCell(rowData.getData(i));
+            cell.prefHeightProperty().bind(heightProperty());
+            cell.prefWidthProperty().bind(widthProperty().divide(columnCount));
+            cells[i] = cell;
         }
-        getChildren().addAll(cells);
+        getChildren().setAll(cells);
     }
 }

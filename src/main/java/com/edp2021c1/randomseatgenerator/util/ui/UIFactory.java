@@ -23,6 +23,7 @@ import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -32,15 +33,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 /**
  * Contains several useful methods for creating or initializing JavaFX controls.
@@ -49,6 +47,15 @@ import java.util.List;
  * @since 1.3.3
  */
 public class UIFactory {
+
+    /**
+     * Dark stylesheets of the windows of the app.
+     */
+    private static final String[] STYLESHEETS_DARK = {"/assets/css/base.css", "/assets/css/dark.css"};
+    /**
+     * Light stylesheets of the windows of the app.
+     */
+    private static final String[] STYLESHEETS_LIGHT = {"/assets/css/base.css", "/assets/css/light.css"};
     @Getter
     private static final BooleanProperty globalDarkMode = new SimpleBooleanProperty(null, "globalDarkMode") {
         private final RawAppConfig config = new RawAppConfig();
@@ -81,16 +88,6 @@ public class UIFactory {
         globalDarkMode.setValue(isDarkMode);
     }
 
-    private static void setToDark(List<String> stylesheets) {
-        stylesheets.remove(Metadata.STYLESHEET_LIGHT);
-        stylesheets.add(Metadata.STYLESHEET_DARK);
-    }
-
-    private static void setToLight(List<String> stylesheets) {
-        stylesheets.remove(Metadata.STYLESHEET_DARK);
-        stylesheets.add(Metadata.STYLESHEET_LIGHT);
-    }
-
     /**
      * Decorates the given stage by adding an icon related to
      * the window type of the stage and stylesheets.
@@ -118,20 +115,19 @@ public class UIFactory {
             }
         }
 
-        final List<String> stylesheets = stage.getScene().getStylesheets();
-        stylesheets.add(Metadata.STYLESHEET_BASE);
+        final ObservableList<String> stylesheets = stage.getScene().getStylesheets();
         globalDarkMode.addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                setToDark(stylesheets);
+                stylesheets.setAll(STYLESHEETS_DARK);
                 return;
             }
-            setToLight(stylesheets);
+            stylesheets.setAll(STYLESHEETS_LIGHT);
         });
         if (globalDarkMode.get()) {
-            setToDark(stylesheets);
+            stylesheets.setAll(STYLESHEETS_DARK);
             return;
         }
-        setToLight(stylesheets);
+        stylesheets.setAll(STYLESHEETS_LIGHT);
     }
 
     /**
@@ -140,23 +136,10 @@ public class UIFactory {
      * @param margin   of the elements.
      * @param elements where margin will be set to
      */
-    public static void setMargins(final Insets margin, final Node... elements) {
+    public static void setInsets(final Insets margin, final Node... elements) {
         for (final Node n : elements) {
             HBox.setMargin(n, margin);
             VBox.setMargin(n, margin);
-        }
-    }
-
-    /**
-     * Sets {@code HGrow} and {@code VGrow} of elements.
-     *
-     * @param priority {@code HGrow} and {@code VGrow} value to be set to the elements
-     * @param elements where priority will be set to
-     */
-    public static void setGrows(final Priority priority, final Node... elements) {
-        for (final Node n : elements) {
-            HBox.setHgrow(n, priority);
-            VBox.setVgrow(n, priority);
         }
     }
 

@@ -29,6 +29,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -77,6 +78,7 @@ public class ConfigHolder {
     private final Path configPath;
     private final RawAppConfig content;
     private final FileChannel fileChannel;
+    private final FileLock fileLock;
     private FileTime configLastModifiedTime;
 
     /**
@@ -92,10 +94,7 @@ public class ConfigHolder {
         holders.add(this);
 
         final Path configDir = configPath.getParent();
-        if (!Files.isDirectory(configDir)) {
-            Utils.delete(configDir);
-        }
-        Files.createDirectories(configDir);
+        IOUtils.replaceWithDirectory(configDir);
         if (IOUtils.notFullyPermitted(configDir)) {
             throw new IOException("Does not has enough permission to read/write config");
         }
@@ -111,10 +110,10 @@ public class ConfigHolder {
             set(BUILT_IN);
         }
 
-        Path lockerPath = Path.of(configPath + ".lck");
-        Utils.delete(lockerPath);
-        Files.createFile(lockerPath);
-        this.fileChannel = FileChannel.open(lockerPath, StandardOpenOption.DELETE_ON_CLOSE);
+        final Path lockerPath = Path.of(configPath + ".lck");
+        IOUtils.replaceWithNewFile(lockerPath);
+        fileChannel = FileChannel.open(lockerPath, StandardOpenOption.DELETE_ON_CLOSE, StandardOpenOption.WRITE);
+        fileLock = this.fileChannel.lock();
     }
 
     /**
@@ -131,7 +130,10 @@ public class ConfigHolder {
      */
     public static void closeAll() {
         Logging.debug("Closing all config handlers");
-        CollectionUtils.modifiableListOf(holders).forEach(ConfigHolder::close);
+        CollectionUtils.modifiableListOf(holders).forEach(configHolder -> {
+            holders.remove(configHolder);
+            configHolder.close();
+        });
     }
 
     /**
@@ -148,7 +150,7 @@ public class ConfigHolder {
      */
     public void close() {
         try {
-            holders.remove(this);
+            fileLock.release();
             fileChannel.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -162,10 +162,7 @@ public class Logging {
         logger.addHandler(consoleHandler);
 
         try {
-            if (Files.notExists(logDir) || !Files.isDirectory(logDir)) {
-                Utils.delete(logDir);
-                Files.createDirectories(logDir);
-            }
+            IOUtils.replaceWithDirectory(logDir);
         } catch (IOException e) {
             warning("Unable to create log dir, log may not be saved");
             warning(Strings.getStackTrace(e));

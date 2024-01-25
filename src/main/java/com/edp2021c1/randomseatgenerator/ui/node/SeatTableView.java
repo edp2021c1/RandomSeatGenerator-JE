@@ -16,14 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.ui.node.table;
+package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
@@ -41,14 +41,16 @@ public class SeatTableView extends VBox {
     private final ObjectProperty<SeatTable> seatTable = new SimpleObjectProperty<>(this, "seatTable") {
         @Override
         protected void invalidated() {
+            if (get() == null) return;
+
             rowCount = get().getConfig().getRowCount();
             columnCount = get().getConfig().getColumnCount();
 
-            clearRows();
+            getChildren().clear();
             get().toRowData().forEach(s -> {
-                SeatTableRow row = new SeatTableRow(s, columnCount);
+                final SeatTableRow row = new SeatTableRow(s, columnCount);
                 row.prefHeightProperty().bind(heightProperty().divide(rowCount));
-                addRow(row);
+                getChildren().add(row);
             });
         }
     };
@@ -59,7 +61,17 @@ public class SeatTableView extends VBox {
     private SeatTableView() {
         super();
         setAlignment(Pos.CENTER);
-        getStyleClass().add(DEFAULT_STYLE_CLASS);
+        getStyleClass().setAll(DEFAULT_STYLE_CLASS);
+
+        getChildren().addListener((ListChangeListener<Node>) c -> {
+            while (c.next()) {
+                for (final Node n : c.getAddedSubList()) {
+                    if (!(n instanceof SeatTableRow)) {
+                        throw new UnsupportedOperationException("Cannot add a non-row child");
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -70,19 +82,6 @@ public class SeatTableView extends VBox {
     public SeatTableView(final SeatConfig config) {
         this();
         setEmptySeatTable(config);
-    }
-
-    @Override
-    public ObservableList<Node> getChildren() {
-        return getChildrenUnmodifiable();
-    }
-
-    private void clearRows() {
-        super.getChildren().clear();
-    }
-
-    private void addRow(final SeatTableRow row) {
-        super.getChildren().add(row);
     }
 
     /**

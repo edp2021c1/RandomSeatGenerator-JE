@@ -73,38 +73,21 @@ public class Metadata {
      */
     public static final String ERROR_ICON_URL = "/assets/img/error_icon.png";
     /**
-     * Base stylesheet of the windows of the app.
-     * Defines everything except from colour.
-     */
-    public static final String STYLESHEET_BASE = "/assets/css/base.css";
-    /**
-     * Light stylesheet of the windows of the app.
-     */
-    public static final String STYLESHEET_LIGHT = "/assets/css/light.css";
-    /**
-     * Dark stylesheet of the windows of the app.
-     */
-    public static final String STYLESHEET_DARK = "/assets/css/dark.css";
-    /**
      * User home.
      */
     public static final String USER_HOME;
-    /**
-     * URL of the git repository.
-     */
-    public static final String GIT_REPOSITORY_URL = "https://github.com/edp2021c1/RandomSeatGenerator-JE.git";
     /**
      * URI of the git repository.
      */
     public static final URI GIT_REPOSITORY_URI;
     /**
-     * URL of the license.
-     */
-    public static final String LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.txt";
-    /**
      * URI of the license.
      */
     public static final URI LICENSE_URI;
+    /**
+     * URI of the version page of this app on GitHub.
+     */
+    public static final URI VERSION_PAGE_URI;
     /**
      * Name of the license of this application.
      */
@@ -154,8 +137,9 @@ public class Metadata {
         TITLE = NAME + " - " + VERSION;
 
         try {
-            GIT_REPOSITORY_URI = new URI(GIT_REPOSITORY_URL);
-            LICENSE_URI = new URI(LICENSE_URL);
+            GIT_REPOSITORY_URI = new URI("https://github.com/edp2021c1/RandomSeatGenerator-JE");
+            LICENSE_URI = new URI("https://www.gnu.org/licenses/gpl-3.0.txt");
+            VERSION_PAGE_URI = new URI("https://github.com/edp2021c1/RandomSeatGenerator-JE/releases" + (VERSION_ID == null ? "" : ("/tags/" + VERSION)));
         } catch (final URISyntaxException e) {
             throw new RuntimeException(e);
         }

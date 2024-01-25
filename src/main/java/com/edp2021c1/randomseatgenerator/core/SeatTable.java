@@ -18,9 +18,16 @@
 
 package com.edp2021c1.randomseatgenerator.core;
 
+import com.alibaba.excel.EasyExcel;
+import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.Utils;
 import lombok.Getter;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +38,11 @@ import java.util.List;
  */
 @Getter
 public class SeatTable {
+
+    /**
+     * Default exporting directory.
+     */
+    public static final Path DEFAULT_EXPORTING_DIR = Path.of(Metadata.USER_HOME, "Seat Tables");
     /**
      * Placeholder of an empty seat.
      */
@@ -97,11 +109,7 @@ public class SeatTable {
             seatRowData.add(new SeatRowData("Lucky Person", luckyPerson));
         }
 
-        if (seed.isEmpty()) {
-            seatRowData.add(new SeatRowData("Seed", "empty_string"));
-            return seatRowData;
-        }
-        seatRowData.add(new SeatRowData("Seed", seed));
+        seatRowData.add(new SeatRowData("Seed", seed.isEmpty() ? "empty_string" : seed));
         return seatRowData;
     }
 
@@ -123,6 +131,28 @@ public class SeatTable {
         }
 
         return str.toString();
+    }
+
+    /**
+     * Exports this instance to an Excel document (.xlsx).
+     *
+     * @param filePath path of file to export to
+     * @param writable if exports to a writable file
+     * @throws IOException if an I/O error occurs
+     */
+    public void exportToExcelDocument(final Path filePath, final boolean writable) throws IOException {
+        try {
+            Utils.delete(filePath);
+            EasyExcel.write(filePath.toFile(), SeatRowData.class)
+                    .sheet("座位表-%tF".formatted(new Date()))
+                    .excludeColumnIndexes(CollectionUtils.range(Math.max(config.getColumnCount(), 2), SeatConfig.MAX_COLUMN_COUNT))
+                    .doWrite(toRowData());
+            if (!(writable || filePath.toFile().setReadOnly())) {
+                throw new RuntimeException("Failed to save seat table to " + filePath);
+            }
+        } catch (final IOException e) {
+            throw new IOException("Failed to save seat table to " + filePath, e);
+        }
     }
 
 }

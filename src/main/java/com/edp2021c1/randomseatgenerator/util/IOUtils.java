@@ -72,13 +72,25 @@ public class IOUtils {
     }
 
     /**
-     * Checks if this application has permission to read and exportToExcelDocument a specific path.
+     * Checks if this application has permission to read and write a specific path.
      *
      * @param path to check permission
      * @return if this app does not have read and write permission of the target path.
      */
     public static boolean notFullyPermitted(final Path path) {
         return !(Files.isReadable(path) || Files.isWritable(path));
+    }
+
+    public static void replaceWithDirectory(final Path path) throws IOException {
+        if (!Files.isDirectory(path)) {
+            deleteIfExists(path);
+            Files.createDirectories(path);
+        }
+    }
+
+    public static void replaceWithNewFile(final Path path) throws IOException {
+        deleteIfExists(path);
+        Files.createFile(path);
     }
 
 }

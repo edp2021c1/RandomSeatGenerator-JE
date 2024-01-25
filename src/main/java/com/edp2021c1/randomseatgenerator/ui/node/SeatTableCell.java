@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.ui.node.table;
+package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -59,6 +59,6 @@ public class SeatTableCell extends Label {
             }
         }.set(s.matches(SeatTable.groupLeaderRegex));
 
-        getStyleClass().add(DEFAULT_STYLE_CLASS);
+        getStyleClass().setAll(DEFAULT_STYLE_CLASS);
     }
 }

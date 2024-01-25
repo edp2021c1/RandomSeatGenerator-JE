@@ -21,7 +21,7 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
-import com.edp2021c1.randomseatgenerator.ui.node.table.SeatTableView;
+import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
@@ -110,8 +110,9 @@ public class MainWindow extends Stage {
 
         final Scene scene = new Scene(mainBox);
 
-        setMargins(new Insets(5), settingsBtn, generateBtn, exportBtn, seedInput, randomSeedBtn, dateAsSeedBtn);
-        setGrows(Priority.ALWAYS, seatTableView, rightBox);
+        setInsets(new Insets(5), settingsBtn, generateBtn, exportBtn, seedInput, randomSeedBtn, dateAsSeedBtn);
+        VBox.setVgrow(seatTableView, Priority.ALWAYS);
+        HBox.setHgrow(rightBox, Priority.ALWAYS);
 
         setScene(scene);
         setTitle(Metadata.TITLE);
@@ -123,7 +124,14 @@ public class MainWindow extends Stage {
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
 
         exportDir = fc.initialDirectoryProperty();
-        exportDir.set(t.last_export_dir == null ? SeatTables.DEFAULT_EXPORTING_DIR.toFile() : new File(t.last_export_dir));
+        exportDir.addListener((observable, oldValue, newValue) -> {
+            try {
+                IOUtils.replaceWithDirectory(newValue.toPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        exportDir.set(t.last_export_dir == null ? SeatTable.DEFAULT_EXPORTING_DIR.toFile() : new File(t.last_export_dir));
 
         /* *************************************************************************
          *                                                                         *
@@ -168,7 +176,7 @@ public class MainWindow extends Stage {
                     return;
                 }
                 try {
-                    SeatTables.exportToExcelDocument(seatTable, exportFile.toPath(), cfHolder.get().export_writable);
+                    seatTable.exportToExcelDocument(exportFile.toPath(), cfHolder.get().export_writable);
                 } catch (final IOException e) {
                     throw new RuntimeException(
                             "Failed to export seat table to " + exportFile,

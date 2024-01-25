@@ -18,6 +18,7 @@
 
 * {
     -highlight-fill: #2571d5;
+    -hyperlink-text-fill: #4998ff;
 
     -text-fill-root: black;
     -text-fill-button-disabled: #9b9b9b;
@@ -48,7 +49,9 @@
     -fx-background-color: -background-color-root;
 }
 
-.label, .tab-label {
+.label,
+.tab-label,
+.seat-table-cell {
     -fx-text-fill: -text-fill-root;
 }
 
@@ -153,6 +156,10 @@
 .tab:selected,
 .tab:hover {
     -fx-border-color: -border-color-focused;
+}
+
+.hyperlink {
+    -fx-text-fill: -hyperlink-text-fill;
 }
 
 .seat-table-cell {
