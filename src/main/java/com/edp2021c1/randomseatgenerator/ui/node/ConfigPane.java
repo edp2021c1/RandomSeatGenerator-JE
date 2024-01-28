@@ -103,8 +103,8 @@ public class ConfigPane extends VBox {
         this.luckyOptionCheck = luckyOptionCheck;
         this.exportWritableCheck = exportWritableCheck;
         this.darkModeCheck = darkModeCheck;
-        this.source = configSource;
 
+        this.source = configSource;
         this.current = getConfigFromSource();
 
         final HBox box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
@@ -122,15 +122,15 @@ public class ConfigPane extends VBox {
             return;
         }
         rowCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.row_count = newValue;
+            current.row_count = newValue.intValue();
             applyBtnDisabledProperty.set(checkEquals());
         });
         columnCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.column_count = newValue;
+            current.column_count = newValue.intValue();
             applyBtnDisabledProperty.set(checkEquals());
         });
         rbrInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.random_between_rows = newValue;
+            current.random_between_rows = newValue.intValue();
             applyBtnDisabledProperty.set(checkEquals());
         });
         disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {

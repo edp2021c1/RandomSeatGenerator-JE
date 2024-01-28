@@ -56,9 +56,11 @@ public class SeatTableView extends VBox {
     };
 
     /**
-     * Default constructor.
+     * Creates a view showing an empty {@code SeatTable}.
+     *
+     * @param config used to generate the empty seat table
      */
-    private SeatTableView() {
+    public SeatTableView(final SeatConfig config) {
         super();
         setAlignment(Pos.CENTER);
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
@@ -72,15 +74,6 @@ public class SeatTableView extends VBox {
                 }
             }
         });
-    }
-
-    /**
-     * Creates a view showing an empty {@code SeatTable}.
-     *
-     * @param config used to generate the empty seat table
-     */
-    public SeatTableView(final SeatConfig config) {
-        this();
         setEmptySeatTable(config);
     }
 

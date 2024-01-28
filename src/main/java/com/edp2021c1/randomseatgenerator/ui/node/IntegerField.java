@@ -1,12 +1,13 @@
 package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.util.Strings;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.TextField;
 
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 /**
  * Input for integer.
@@ -17,11 +18,11 @@ public class IntegerField extends TextField {
      * The pattern used for checking the input text.
      * <p>Note that value of this property should not be changed optionally.
      */
-    private final ObjectProperty<Pattern> pattern = new SimpleObjectProperty<>(this, "pattern");
+    private final StringProperty pattern = new SimpleStringProperty(this, "pattern");
 
-    private final ObjectProperty<Integer> value = new SimpleObjectProperty<>(this, "value") {
+    private final IntegerProperty value = new SimpleIntegerProperty(this, "value") {
         protected void invalidated() {
-            setText(get().toString());
+            setText(String.valueOf(get()));
         }
     };
 
@@ -45,7 +46,7 @@ public class IntegerField extends TextField {
                 setValue(0);
                 return;
             }
-            if (!pattern.get().matcher(newValue).matches()) {
+            if (!newValue.matches(pattern.get())) {
                 setText(oldValue);
                 return;
             }
@@ -65,7 +66,7 @@ public class IntegerField extends TextField {
      *
      * @return {@link #value}
      */
-    public ObjectProperty<Integer> valueProperty() {
+    public IntegerProperty valueProperty() {
         return value;
     }
 
@@ -75,6 +76,6 @@ public class IntegerField extends TextField {
      * @param val value
      */
     public void setValue(final Integer val) {
-        value.set(val);
+        value.setValue(val);
     }
 }
