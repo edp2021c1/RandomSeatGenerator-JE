@@ -60,6 +60,16 @@ public class IllegalConfigException extends RuntimeException {
      */
     public IllegalConfigException(final List<IllegalConfigException> causes) {
         super();
+        if (causes == null) {
+            single = true;
+            localizedMessage = null;
+            return;
+        }
+        if (causes.size() == 1) {
+            single = true;
+            localizedMessage = causes.getFirst().getLocalizedMessage();
+            return;
+        }
         single = false;
         final StringBuilder str = new StringBuilder();
         causes.forEach(e -> {

@@ -176,8 +176,6 @@
     -fx-text-fill: -text-fill-err;
 }
 
-.err-scroll-pane {
-    -fx-background-color: -background-color-root;
-
+.err-main-text {
     -fx-border-color: -border-color-err;
 }

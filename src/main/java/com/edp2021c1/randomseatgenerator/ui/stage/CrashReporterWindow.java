@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -36,30 +35,21 @@ public class CrashReporterWindow extends Stage {
         final HBox preBox = new HBox(preLabelBeforeLink, here, preLabelAfterLink);
         preBox.setAlignment(Pos.CENTER_LEFT);
 
-        final Label mainLabel = new Label(msg);
-        mainLabel.getStyleClass().add("err-main-label");
+        final TextArea mainText = new TextArea(msg);
+        mainText.getStyleClass().add("err-main-text");
 
         final Button confirmBtn = UIFactory.createButton("关闭", 80, 26);
         confirmBtn.setOnAction(event -> close());
         confirmBtn.setDefaultButton(true);
 
         final Button copyBtn = UIFactory.createButton("复制并关闭", 80, 26);
-        copyBtn.setOnAction(event -> {
-            DesktopUtils.copyPlainText(mainLabel.getText());
-            close();
-        });
 
         final ButtonBar buttonBar = new ButtonBar();
         buttonBar.getButtons().addAll(copyBtn, confirmBtn);
         buttonBar.setPrefHeight(66);
         buttonBar.getStyleClass().add("bottom");
 
-        final ScrollPane scrollPane = new ScrollPane(mainLabel);
-        scrollPane.getStyleClass().add("err-scroll-pane");
-        scrollPane.autosize();
-        VBox.setVgrow(scrollPane, Priority.ALWAYS);
-
-        final VBox mainBox = new VBox(preBox, scrollPane, buttonBar);
+        final VBox mainBox = new VBox(preBox, mainText, buttonBar);
         mainBox.getStyleClass().add("main");
 
         setScene(new Scene(mainBox));
@@ -68,7 +58,12 @@ public class CrashReporterWindow extends Stage {
         setTitle("出错啦");
         UIFactory.decorate(this, UIFactory.StageType.ERROR);
 
-        here.setOnAction(event -> DesktopUtils.copyPlainText(mainLabel.getText()));
+        here.setOnAction(event -> DesktopUtils.copyPlainText(mainText.getText()));
+
+        copyBtn.setOnAction(event -> {
+            DesktopUtils.copyPlainText(mainText.getText());
+            close();
+        });
 
         if (Utils.isMac()) {
             mainBox.setOnKeyPressed(event -> {
@@ -77,7 +72,7 @@ public class CrashReporterWindow extends Stage {
                 }
                 switch (event.getCode()) {
                     case W -> close();
-                    case C -> DesktopUtils.copyPlainText(mainLabel.getText());
+                    case C -> DesktopUtils.copyPlainText(mainText.getText());
                 }
             });
         } else {
@@ -86,7 +81,7 @@ public class CrashReporterWindow extends Stage {
                     return;
                 }
                 if (KeyCode.C.equals(event.getCode())) {
-                    DesktopUtils.copyPlainText(mainLabel.getText());
+                    DesktopUtils.copyPlainText(mainText.getText());
                 }
             });
         }

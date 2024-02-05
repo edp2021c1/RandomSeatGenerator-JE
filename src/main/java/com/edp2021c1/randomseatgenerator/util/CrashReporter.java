@@ -47,7 +47,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      *
      * @param withGUI if the error message will be shown in a JavaFX stage.
      */
-    protected CrashReporter(final boolean withGUI) {
+    private CrashReporter(final boolean withGUI) {
         this.withGUI = withGUI;
     }
 
@@ -69,8 +69,16 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(final Thread t, final Throwable e) {
         try {
-            final String str = "Exception in thread \"%s\":\n".formatted(t.getName()) +
-                    (e instanceof IllegalConfigException ? e.toString() : Strings.getStackTrace(e));
+            final String str;
+            if (e instanceof final IllegalConfigException ex) {
+                if (ex.isSingle()) {
+                    str = ex.toString();
+                } else {
+                    str = ex.getClass().getName() + "\n" + ex.getLocalizedMessage();
+                }
+            } else {
+                str = Strings.getStackTrace(e);
+            }
 
             Logging.error(str);
 

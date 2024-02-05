@@ -180,8 +180,7 @@ public class RawSeatConfig {
         for (final String s : l) {
             if (SeatTable.groupLeaderRegex.matcher(s).matches()) {
                 throw new IllegalConfigException(
-                        "Invalid name list, name list must not contain names matching the format of a group leader: "
-                                + person_sort_by_height
+                        "Name list must not contain names matching the format of a group leader"
                 );
             }
         }
