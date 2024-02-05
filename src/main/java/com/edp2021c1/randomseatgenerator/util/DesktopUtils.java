@@ -81,7 +81,7 @@ public class DesktopUtils {
      *
      * @param text to copy.
      */
-    public static void copyText(String text) {
+    public static void copyPlainText(String text) {
         content.putString(text);
         clipboard.setContent(content);
     }

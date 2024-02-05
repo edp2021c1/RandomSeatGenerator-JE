@@ -22,12 +22,14 @@ import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
-import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static com.edp2021c1.randomseatgenerator.core.SeatConfig.MAX_COLUMN_COUNT;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableListOf;
 
 /**
  * Stores raw {@link SeatConfig}.
@@ -44,9 +46,9 @@ public class RawSeatConfig {
     public Integer row_count;
     /**
      * Column count (int).
-     * Cannot be larger than {@link SeatConfig#MAX_COLUMN_COUNT}.
+     * Cannot be larger than {@link SeatTable#MAX_COLUMN_COUNT}.
      *
-     * @see SeatConfig#MAX_COLUMN_COUNT
+     * @see SeatTable#MAX_COLUMN_COUNT
      */
     public Integer column_count;
     /**
@@ -82,47 +84,55 @@ public class RawSeatConfig {
     }
 
     /**
-     * Returns {@link #row_count} as an integer.
+     * Returns {@link #row_count}.
      *
-     * @return {@code  row_count} as an integer.
-     * @throws IllegalConfigException if {@code row_count} cannot be parsed into an unsignedProperty integer.
+     * @return {@code  row_count}
+     * @throws IllegalConfigException if {@code row_count} is null or not larger than 0.
      * @see #row_count
      */
     public int getRowCount() throws IllegalConfigException {
-        if (row_count <= 0) {
+        return row_count;
+    }
+
+    private void checkRowCount() throws IllegalConfigException {
+        if (row_count == null || row_count <= 0) {
             throw new IllegalConfigException("Row count cannot be equal to or less than 0");
         }
-        return row_count;
     }
 
     /**
      * Returns {@link #column_count} as an integer.
      *
      * @return {@code  column_count} as an integer.
-     * @throws IllegalConfigException if {@code column_count} cannot be parsed into an unsignedProperty integer
-     *                                or is larger than {@link SeatConfig#MAX_COLUMN_COUNT}
+     * @throws IllegalConfigException if {@code column_count} is null or not larger than 0,
+     *                                or larger than {@link SeatTable#MAX_COLUMN_COUNT}
      * @see #column_count
-     * @see SeatConfig#MAX_COLUMN_COUNT
+     * @see SeatTable#MAX_COLUMN_COUNT
      */
     public int getColumnCount() throws IllegalConfigException {
-        if (column_count <= 0) {
-            throw new IllegalConfigException("Column count cannot be equal to or less than 0");
-        }
-        if (column_count > MAX_COLUMN_COUNT) {
-            throw new IllegalConfigException("Column count cannot be larger than " + MAX_COLUMN_COUNT);
-        }
+        checkColumnCount();
         return column_count;
     }
 
+    private void checkColumnCount() throws IllegalConfigException {
+        if (column_count == null || column_count <= 0) {
+            throw new IllegalConfigException("Column count cannot be null or equal to/less than 0");
+        }
+        if (column_count > SeatTable.MAX_COLUMN_COUNT) {
+            throw new IllegalConfigException("Column count cannot be larger than " + SeatTable.MAX_COLUMN_COUNT);
+        }
+    }
+
     /**
-     * Returns {@link #random_between_rows} as an integer.
+     * Returns {@link #random_between_rows}, {@link #column_count} if is null or not larger than 0.
      *
-     * @return {@code  random_between_rows} as an integer.
-     * @throws IllegalConfigException if {@code random_between_rows} cannot be parsed into an unsignedProperty integer.
+     * @return {@code  random_between_rows}
+     * @throws IllegalConfigException if {@code column_count} is null or not larger than zero,
+     *                                *                                or larger than {@link SeatTable#MAX_COLUMN_COUNT}
      * @see #random_between_rows
      */
     public int getRandomBetweenRows() throws IllegalConfigException {
-        if (random_between_rows <= 0) {
+        if (random_between_rows == null || random_between_rows <= 0) {
             return getRowCount();
         }
 
@@ -130,25 +140,27 @@ public class RawSeatConfig {
     }
 
     /**
-     * Returns {@link #last_row_pos_cannot_be_chosen} as a list of {@code int}.
+     * Returns {@link #last_row_pos_cannot_be_chosen} as a list of {@link Integer}.
      *
-     * @return {@code  last_row_pos_cannot_be_chosen} as a list of {@code int}.
+     * @return {@code  last_row_pos_cannot_be_chosen} as a list of {@link Integer}.
      * @throws IllegalConfigException if failed to parse {@code last_row_pos_cannot_be_chosen}.
      * @see #last_row_pos_cannot_be_chosen
      */
-    public List<Integer> getNotAllowedLastRowPos() throws IllegalConfigException {
-        if (last_row_pos_cannot_be_chosen.isBlank()) {
+    public List<Integer> getDisabledLastRowPos() throws IllegalConfigException {
+        if (last_row_pos_cannot_be_chosen == null || last_row_pos_cannot_be_chosen.isBlank()) {
             return new ArrayList<>();
         }
-        return CollectionUtils.buildList(CollectionUtils.modifiableListOf(last_row_pos_cannot_be_chosen.split(" ")), s -> {
-            try {
-                return Integer.parseUnsignedInt(s);
-            } catch (final IllegalArgumentException e) {
-                throw new IllegalConfigException(
-                        "Invalid last row positions: " + last_row_pos_cannot_be_chosen
-                );
-            }
-        });
+        checkDisabledLastRowPos();
+        return buildList(
+                Arrays.asList(last_row_pos_cannot_be_chosen.split(" ")),
+                Integer::parseUnsignedInt
+        );
+    }
+
+    private void checkDisabledLastRowPos() throws IllegalConfigException {
+        if (!Strings.integerListPattern.matcher(last_row_pos_cannot_be_chosen).matches()) {
+            throw new IllegalConfigException("Invalid last row positions: " + last_row_pos_cannot_be_chosen);
+        }
     }
 
     /**
@@ -157,21 +169,22 @@ public class RawSeatConfig {
      * @return {@code  person_sort_by_height} as a list of {@code String}.
      * @see #person_sort_by_height
      */
-    public List<String> getNameList() {
-        final List<String> l = CollectionUtils.modifiableListOf(person_sort_by_height.split(" "));
+    public List<String> getNameList() throws IllegalConfigException {
+        final List<String> l = modifiableListOf(person_sort_by_height.split(" "));
         if (l.contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
                     "Name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
             );
         }
-        if (l.contains("")) {
-            throw new IllegalConfigException("Name list must not contain empty name");
-        }
-        l.forEach(s -> {
-            if (s.matches(SeatTable.groupLeaderRegex)) {
-                throw new IllegalConfigException("Name list must not contain names matching the format of a group leader");
+        l.removeAll(List.of(""));
+        for (final String s : l) {
+            if (SeatTable.groupLeaderRegex.matcher(s).matches()) {
+                throw new IllegalConfigException(
+                        "Invalid name list, name list must not contain names matching the format of a group leader: "
+                                + person_sort_by_height
+                );
             }
-        });
+        }
         return l;
     }
 
@@ -181,8 +194,8 @@ public class RawSeatConfig {
      * @return {@code  group_leader_list} as a list of {@code String}.
      * @see #group_leader_list
      */
-    public List<String> getGroupLeaderList() {
-        final List<String> l = CollectionUtils.modifiableListOf(group_leader_list.split(" "));
+    public List<String> getGroupLeaderList() throws IllegalConfigException {
+        final List<String> l = modifiableListOf(group_leader_list.split(" "));
         if (l.contains(SeatTable.emptySeatPlaceholder)) {
             throw new IllegalConfigException(
                     "Group leader list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
@@ -199,7 +212,7 @@ public class RawSeatConfig {
      * @see #separate_list
      */
     public List<SeparatedPair> getSeparatedList() throws IllegalConfigException {
-        final List<String> t = CollectionUtils.modifiableListOf(separate_list.split("\n"));
+        final List<String> t = Arrays.asList(separate_list.split("\n"));
         final List<SeparatedPair> s = new ArrayList<>(t.size());
 
         t.forEach(m -> {
@@ -219,22 +232,17 @@ public class RawSeatConfig {
     public void checkFormat() throws IllegalConfigException {
         final List<IllegalConfigException> causes = new ArrayList<>();
         try {
-            getRowCount();
+            checkRowCount();
         } catch (IllegalConfigException e) {
             causes.add(e);
         }
         try {
-            getColumnCount();
+            checkColumnCount();
         } catch (IllegalConfigException e) {
             causes.add(e);
         }
         try {
-            getRandomBetweenRows();
-        } catch (IllegalConfigException e) {
-            causes.add(e);
-        }
-        try {
-            getNotAllowedLastRowPos();
+            checkDisabledLastRowPos();
         } catch (IllegalConfigException e) {
             causes.add(e);
         }
@@ -273,7 +281,7 @@ public class RawSeatConfig {
         config.setRowCount(getRowCount());
         config.setColumnCount(getColumnCount());
         config.setRandomBetweenRows(getRandomBetweenRows());
-        config.setDisabledLastRowPos(getNotAllowedLastRowPos());
+        config.setDisabledLastRowPos(getDisabledLastRowPos());
         config.setNames(getNameList());
         config.setGroupLeaders(getGroupLeaderList());
         config.setSeparatedPairs(getSeparatedList());

@@ -18,7 +18,10 @@
 
 package com.edp2021c1.randomseatgenerator.util.logging;
 
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.IOUtils;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -53,7 +56,7 @@ public class Logging {
         while (Files.exists(logDir.resolve(str.formatted(t)))) {
             t++;
         }
-        logPaths = CollectionUtils.modifiableListOf(logDir.resolve("latest.log"), logDir.resolve(str.formatted(t)));
+        logPaths = List.of(logDir.resolve("latest.log"), logDir.resolve(str.formatted(t)));
 
         defaultFormatter = new Formatter() {
             @Override

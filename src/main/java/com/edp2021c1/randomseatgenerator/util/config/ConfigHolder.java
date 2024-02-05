@@ -18,7 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
-import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Utils;
@@ -52,7 +51,7 @@ public class ConfigHolder {
      */
     private static final ConfigHolder global;
     private static final RawAppConfig BUILT_IN;
-    private static final Path DEFAULT_CONFIG_PATH = Utils.join(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
+    private static final Path globalConfigPath = Utils.join(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
     private static final List<ConfigHolder> holders = new ArrayList<>();
 
     static {
@@ -68,7 +67,7 @@ public class ConfigHolder {
         BUILT_IN = RawAppConfig.fromJson(str.toString());
 
         try {
-            global = new ConfigHolder();
+            global = of(globalConfigPath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -80,6 +79,7 @@ public class ConfigHolder {
     private final FileChannel fileChannel;
     private final FileLock fileLock;
     private FileTime configLastModifiedTime;
+    private boolean closed;
 
     /**
      * Creates an instance with the given config path.
@@ -87,11 +87,10 @@ public class ConfigHolder {
      * @param configPath path of config
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
-    public ConfigHolder(Path configPath) throws IOException {
+    private ConfigHolder(Path configPath) throws IOException {
         this.content = new RawAppConfig();
         this.configLastModifiedTime = null;
         this.configPath = configPath;
-        holders.add(this);
 
         final Path configDir = configPath.getParent();
         IOUtils.replaceWithDirectory(configDir);
@@ -114,15 +113,8 @@ public class ConfigHolder {
         IOUtils.replaceWithNewFile(lockerPath);
         fileChannel = FileChannel.open(lockerPath, StandardOpenOption.DELETE_ON_CLOSE, StandardOpenOption.WRITE);
         fileLock = this.fileChannel.lock();
-    }
 
-    /**
-     * Creates an instance with the default config path.
-     *
-     * @throws IOException if failed to init config path, or does not have enough permission of the path
-     */
-    public ConfigHolder() throws IOException {
-        this(DEFAULT_CONFIG_PATH);
+        closed = false;
     }
 
     /**
@@ -130,10 +122,8 @@ public class ConfigHolder {
      */
     public static void closeAll() {
         Logging.debug("Closing all config handlers");
-        CollectionUtils.modifiableListOf(holders).forEach(configHolder -> {
-            holders.remove(configHolder);
-            configHolder.close();
-        });
+        holders.forEach(ConfigHolder::close);
+        holders.clear();
     }
 
     /**
@@ -145,15 +135,30 @@ public class ConfigHolder {
         return global;
     }
 
+    public static ConfigHolder of(Path configPath) throws IOException {
+        final ConfigHolder h = new ConfigHolder(configPath);
+        holders.add(h);
+        return h;
+    }
+
     /**
      * Closes this.
      */
-    public void close() {
+    private void close() {
+        if (closed) return;
         try {
             fileLock.release();
             fileChannel.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            closed = true;
+        }
+    }
+
+    private void checkState() {
+        if (closed) {
+            throw new IllegalStateException("Closed ConfigHolder");
         }
     }
 
@@ -164,6 +169,7 @@ public class ConfigHolder {
      * @throws RuntimeException if an I/O error occurs
      */
     public void set(RawAppConfig config) {
+        checkState();
         content.set(config);
         try {
             Files.writeString(configPath, content.toJson());
@@ -189,6 +195,7 @@ public class ConfigHolder {
     }
 
     private void flush() throws IOException {
+        checkState();
         if (Files.notExists(configPath) || !Files.isRegularFile(configPath)) {
             Logging.warning("Config file not found or directory found on the path, will use default value");
             Utils.delete(configPath);

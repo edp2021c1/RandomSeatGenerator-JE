@@ -3,12 +3,11 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -27,8 +26,15 @@ public class CrashReporterWindow extends Stage {
      * @param msg to be shown.
      */
     public CrashReporterWindow(final String msg) {
-        final Label preLabel = new Label("Something's wrong... click here to copy the error message.\n");
-        preLabel.getStyleClass().add("err-pre-label");
+        final Label preLabelBeforeLink = new Label("Something's wrong... Click");
+        final Hyperlink here = new Hyperlink("here");
+        final Label preLabelAfterLink = new Label("to copy the error message");
+        preLabelBeforeLink.getStyleClass().add("err-pre-label");
+        here.getStyleClass().add("err-pre-label");
+        preLabelAfterLink.getStyleClass().add("err-pre-label");
+
+        final HBox preBox = new HBox(preLabelBeforeLink, here, preLabelAfterLink);
+        preBox.setAlignment(Pos.CENTER_LEFT);
 
         final Label mainLabel = new Label(msg);
         mainLabel.getStyleClass().add("err-main-label");
@@ -39,7 +45,7 @@ public class CrashReporterWindow extends Stage {
 
         final Button copyBtn = UIFactory.createButton("复制并关闭", 80, 26);
         copyBtn.setOnAction(event -> {
-            DesktopUtils.copyText(mainLabel.getText());
+            DesktopUtils.copyPlainText(mainLabel.getText());
             close();
         });
 
@@ -53,7 +59,7 @@ public class CrashReporterWindow extends Stage {
         scrollPane.autosize();
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
-        final VBox mainBox = new VBox(preLabel, scrollPane, buttonBar);
+        final VBox mainBox = new VBox(preBox, scrollPane, buttonBar);
         mainBox.getStyleClass().add("main");
 
         setScene(new Scene(mainBox));
@@ -62,7 +68,7 @@ public class CrashReporterWindow extends Stage {
         setTitle("出错啦");
         UIFactory.decorate(this, UIFactory.StageType.ERROR);
 
-        preLabel.setOnMouseClicked(event -> DesktopUtils.copyText(mainLabel.getText()));
+        here.setOnAction(event -> DesktopUtils.copyPlainText(mainLabel.getText()));
 
         if (Utils.isMac()) {
             mainBox.setOnKeyPressed(event -> {
@@ -71,7 +77,7 @@ public class CrashReporterWindow extends Stage {
                 }
                 switch (event.getCode()) {
                     case W -> close();
-                    case C -> DesktopUtils.copyText(mainLabel.getText());
+                    case C -> DesktopUtils.copyPlainText(mainLabel.getText());
                 }
             });
         } else {
@@ -80,7 +86,7 @@ public class CrashReporterWindow extends Stage {
                     return;
                 }
                 if (KeyCode.C.equals(event.getCode())) {
-                    DesktopUtils.copyText(mainLabel.getText());
+                    DesktopUtils.copyPlainText(mainLabel.getText());
                 }
             });
         }

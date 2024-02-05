@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Used to pack some useful data related to a seat table.
@@ -40,6 +41,10 @@ import java.util.List;
 public class SeatTable {
 
     /**
+     * Max count of column in a {@code SeatRowData}.
+     */
+    public static final int MAX_COLUMN_COUNT = 20;
+    /**
      * Default exporting directory.
      */
     public static final Path DEFAULT_EXPORTING_DIR = Path.of(Metadata.USER_HOME, "Seat Tables");
@@ -50,7 +55,7 @@ public class SeatTable {
     /**
      * Regular expression of a group leader.
      */
-    public static final String groupLeaderRegex = "\\*+.+\\*";
+    public static final Pattern groupLeaderRegex = Pattern.compile("\\*.*\\*");
     /**
      * Format of a group leader.
      */
@@ -145,7 +150,7 @@ public class SeatTable {
             Utils.delete(filePath);
             EasyExcel.write(filePath.toFile(), SeatRowData.class)
                     .sheet("座位表-%tF".formatted(new Date()))
-                    .excludeColumnIndexes(CollectionUtils.range(Math.max(config.getColumnCount(), 2), SeatConfig.MAX_COLUMN_COUNT))
+                    .excludeColumnIndexes(CollectionUtils.range(Math.max(config.getColumnCount(), 2), MAX_COLUMN_COUNT))
                     .doWrite(toRowData());
             if (!(writable || filePath.toFile().setReadOnly())) {
                 throw new RuntimeException("Failed to save seat table to " + filePath);

@@ -22,6 +22,7 @@ import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
@@ -78,6 +79,7 @@ public class SettingsDialog extends Stage {
         final IntegerField rbrInput = new IntegerField(true, "随机轮换的行数");
 
         final TextField disabledLastRowPosInput = createTextField("最后一排不可选位置");
+        addTextFormatter(disabledLastRowPosInput, Strings.integerListPattern);
 
         final TextField nameListInput = createTextField("名单 (按身高排序)");
 

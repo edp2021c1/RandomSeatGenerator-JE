@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 /**
  * Useful methods related to {@link String}.
@@ -36,11 +37,15 @@ public class Strings {
     /**
      * Pattern of integer.
      */
-    public static final String integerPattern = "-?\\d+";
+    public static final Pattern integerPattern = Pattern.compile("-?\\d+");
     /**
      * Pattern of unsigned integer.
      */
-    public static final String unsignedIntegerPattern = "\\d+";
+    public static final Pattern unsignedIntegerPattern = Pattern.compile("\\d+");
+    /**
+     * Pattern of list of integer, divided by spaces.
+     */
+    public static final Pattern integerListPattern = Pattern.compile("[0-9 ]+");
     /**
      * Simple date format
      */

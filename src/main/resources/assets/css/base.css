@@ -104,6 +104,10 @@
     -fx-border-radius: 5;
 }
 
+.hyperlink {
+    -fx-border-width: 0;
+}
+
 .license-text-area {
     -fx-font-family: "Arial";
     -fx-font-weight: bold;

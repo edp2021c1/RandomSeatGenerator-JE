@@ -20,12 +20,11 @@ package com.edp2021c1.randomseatgenerator.core;
 
 import com.edp2021c1.randomseatgenerator.util.Strings;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.*;
 
+import static com.edp2021c1.randomseatgenerator.core.SeatTable.emptySeatPlaceholder;
+import static com.edp2021c1.randomseatgenerator.core.SeatTable.groupLeaderFormat;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.*;
 
 /**
@@ -95,8 +94,8 @@ public class SeatTableFactory {
 
         final int forTimes = (peopleLeft > columnCount ? seatNum / randomPeopleCount + 1 : seatNum / randomPeopleCount) - 1;
 
-        final List<String> emptyRow = modifiableListOf(new String[columnCount]);
-        Collections.fill(emptyRow, SeatTable.emptySeatPlaceholder);
+        final List<String> emptyRow = Arrays.asList(new String[columnCount]);
+        Collections.fill(emptyRow, emptySeatPlaceholder);
 
         final List<Integer> availableLastRowPos = range(1, columnCount + 1);
         availableLastRowPos.removeAll(notAllowedLastRowPos);
@@ -144,7 +143,7 @@ public class SeatTableFactory {
             do {
                 t = rd.nextInt(rowCount) * columnCount + i;
             } while (!groupLeaderList.contains((tGroupLeader = seatTable.get(t))));
-            seatTable.set(t, SeatTable.groupLeaderFormat.formatted(tGroupLeader));
+            seatTable.set(t, groupLeaderFormat.formatted(tGroupLeader));
         }
 
         return new SeatTable(seatTable, config, seed, luckyPerson);
@@ -189,8 +188,8 @@ public class SeatTableFactory {
      * @return an empty seat table
      */
     public static SeatTable generateEmpty(final SeatConfig config) {
-        List<String> seat = modifiableListOf(new String[config.getRowCount() * config.getColumnCount()]);
-        Collections.fill(seat, SeatTable.emptySeatPlaceholder);
+        List<String> seat = Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]);
+        Collections.fill(seat, emptySeatPlaceholder);
         return new SeatTable(seat, config, "", "null");
     }
 

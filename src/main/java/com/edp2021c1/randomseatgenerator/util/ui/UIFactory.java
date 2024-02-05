@@ -37,8 +37,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Contains several useful methods for creating or initializing JavaFX controls.
@@ -56,7 +58,7 @@ public class UIFactory {
      * Light stylesheets of the windows of the app.
      */
     private static final String[] STYLESHEETS_LIGHT = {"/assets/css/base.css", "/assets/css/light.css"};
-    @Getter
+
     private static final BooleanProperty globalDarkMode = new SimpleBooleanProperty(null, "globalDarkMode") {
         private final RawAppConfig config = new RawAppConfig();
 
@@ -66,6 +68,7 @@ public class UIFactory {
             ConfigHolder.globalHolder().set(config);
         }
     };
+
     @Setter
     private static Window mainWindow = null;
 
@@ -100,7 +103,7 @@ public class UIFactory {
         switch (type) {
             case MAIN -> {
                 stage.getIcons().add(new Image(Metadata.ICON_URL));
-                setMainWindow(stage);
+                mainWindow = stage;
             }
             case DIALOG -> {
                 stage.getIcons().add(new Image(Metadata.ICON_URL));
@@ -191,6 +194,17 @@ public class UIFactory {
         final TextField t = new TextField();
         t.setPromptText(promptText);
         return t;
+    }
+
+    public static void addTextFormatter(final TextField field, final Pattern pattern) {
+        field.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (Objects.equals(oldValue, newValue)) {
+                return;
+            }
+            if (newValue == null || !pattern.matcher(newValue).matches()) {
+                field.setText(oldValue);
+            }
+        });
     }
 
     /**

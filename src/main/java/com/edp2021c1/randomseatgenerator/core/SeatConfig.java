@@ -15,10 +15,6 @@ import java.util.List;
 @Setter
 public class SeatConfig {
 
-    /**
-     * Max count of column in a {@code SeatRowData}.
-     */
-    public static final int MAX_COLUMN_COUNT = 20;
     private int rowCount;
     private int columnCount;
     private int randomBetweenRows;

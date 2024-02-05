@@ -20,10 +20,10 @@ package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.launcher.ConsoleLauncher;
 import com.edp2021c1.randomseatgenerator.launcher.GUILauncher;
-import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,7 +43,7 @@ public class RandomSeatGenerator {
      * @param args used to start the application.
      */
     public static void main(final String... args) {
-        final List<String> arguments = CollectionUtils.modifiableListOf(args);
+        final List<String> arguments = Arrays.asList(args);
         // 如果有“--help”参数则打印帮助信息然后退出
         if (arguments.contains("--help")) {
             System.out.println(Metadata.HELP_INFO);

@@ -18,10 +18,11 @@
 
 package com.edp2021c1.randomseatgenerator.core;
 
-import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static com.edp2021c1.randomseatgenerator.core.SeatTable.emptySeatPlaceholder;
 
 /**
  * This class packs the names of a pair of people separated when generating the seat and
@@ -45,19 +46,19 @@ public class SeparatedPair {
      * @throws IllegalConfigException if the {@code String} contains only one name.
      */
     public SeparatedPair(final String s) throws IllegalConfigException {
-        final List<String> t = CollectionUtils.modifiableListOf(s.split(" ", 2));
+        final List<String> t = Arrays.asList(s.split(" ", 2));
         if (t.size() < 2) {
             throw new IllegalConfigException("Invalid separate pair: \"%s\"".formatted(s));
         }
-        if (t.contains(SeatTable.emptySeatPlaceholder)) {
+        if (t.contains(emptySeatPlaceholder)) {
             throw new IllegalConfigException(
-                    "Separated name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder));
+                    "Separated name list must not contain empty seat place holder \"%s\"".formatted(emptySeatPlaceholder));
         }
         if (Objects.equals(t.get(0), t.get(1))) {
             throw new IllegalConfigException("Two names in one separate pair cannot be the same");
         }
-        name_1 = t.get(0);
-        name_2 = t.get(1);
+        name_1 = t.getFirst();
+        name_2 = t.getLast();
     }
 
     /**
@@ -68,17 +69,15 @@ public class SeparatedPair {
      * @return if {@code name_1} and {@code name_2} are separated in the seat table.
      */
     public boolean check(final List<String> seat, final int columnCount) {
-        final List<Integer> notSeparated = CollectionUtils.modifiableListOf(
+        if (seat == null || !(seat.contains(name_1) && seat.contains(name_2))) {
+            return true;
+        }
+        return !Arrays.asList(
                 1,
                 columnCount - 1,
                 columnCount,
                 columnCount + 1
-        );
-        return !notSeparated.contains(Math.abs(seat.indexOf(name_1) - seat.indexOf(name_2)));
+        ).contains(Math.abs(seat.indexOf(name_1) - seat.indexOf(name_2)));
     }
 
-    @Override
-    public String toString() {
-        return name_1 + " " + name_2;
-    }
 }
