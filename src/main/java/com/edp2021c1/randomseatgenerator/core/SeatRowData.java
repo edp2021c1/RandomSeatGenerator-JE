@@ -98,8 +98,13 @@ public class SeatRowData {
 
     private final String[] data = new String[20];
 
-    public SeatRowData(final String... c) {
-        final int len = c.length;
+    /**
+     * Instantiates this class with the given names.
+     *
+     * @param names name data
+     */
+    SeatRowData(final String... names) {
+        final int len = names.length;
         if (len > SeatTable.MAX_COLUMN_COUNT) {
             throw new IllegalConfigException(
                     "Count of people in a row cannot be larger than " + SeatTable.MAX_COLUMN_COUNT
@@ -107,19 +112,25 @@ public class SeatRowData {
         }
         try {
             for (int i = 0; i < len; i++) {
-                fields.get(i).set(this, c[i]);
+                fields.get(i).set(this, names[i]);
             }
         } catch (final IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        System.arraycopy(c, 0, data, 0, len);
+        System.arraycopy(names, 0, data, 0, len);
     }
 
-    public String getData(final int index) {
-        if (index >= SeatTable.MAX_COLUMN_COUNT) {
+    /**
+     * Returns name on the given index
+     *
+     * @param columnIndex column index
+     * @return name on the given index
+     */
+    public String getName(final int columnIndex) {
+        if (columnIndex >= SeatTable.MAX_COLUMN_COUNT) {
             throw new IndexOutOfBoundsException();
         }
-        return data[index];
+        return data[columnIndex];
     }
 
 }

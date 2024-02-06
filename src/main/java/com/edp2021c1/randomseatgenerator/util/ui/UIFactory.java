@@ -39,9 +39,6 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import lombok.Setter;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
-
 /**
  * Contains several useful methods for creating or initializing JavaFX controls.
  *
@@ -78,6 +75,11 @@ public class UIFactory {
     private UIFactory() {
     }
 
+    /**
+     * Returns the global dark mode property.
+     *
+     * @return global dark mode property
+     */
     public static BooleanProperty globalDarkModeProperty() {
         return globalDarkMode;
     }
@@ -194,17 +196,6 @@ public class UIFactory {
         final TextField t = new TextField();
         t.setPromptText(promptText);
         return t;
-    }
-
-    public static void addTextFormatter(final TextField field, final Pattern pattern) {
-        field.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (Objects.equals(oldValue, newValue)) {
-                return;
-            }
-            if (newValue == null || !pattern.matcher(newValue).matches()) {
-                field.setText(oldValue);
-            }
-        });
     }
 
     /**

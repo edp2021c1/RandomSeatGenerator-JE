@@ -75,12 +75,18 @@ public class IOUtils {
      * Checks if this application has permission to read and write a specific path.
      *
      * @param path to check permission
-     * @return if this app does not have read and write permission of the target path.
+     * @return if this app does not have read and write permission of the target path
      */
     public static boolean notFullyPermitted(final Path path) {
         return !(Files.isReadable(path) || Files.isWritable(path));
     }
 
+    /**
+     * Replaces the file on the given path (if exists) with an empty directory.
+     *
+     * @param path to replace
+     * @throws IOException if an I/O error occurs
+     */
     public static void replaceWithDirectory(final Path path) throws IOException {
         if (!Files.isDirectory(path)) {
             deleteIfExists(path);
@@ -88,6 +94,12 @@ public class IOUtils {
         }
     }
 
+    /**
+     * Replaces the file/directory on the given path (if exists) with a newly created file.
+     *
+     * @param path to replace
+     * @throws IOException if an I/O error occurs
+     */
     public static void replaceWithNewFile(final Path path) throws IOException {
         deleteIfExists(path);
         Files.createFile(path);

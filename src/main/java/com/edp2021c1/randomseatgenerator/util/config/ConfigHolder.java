@@ -33,9 +33,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Handles {@link RawAppConfig}.
@@ -52,7 +52,7 @@ public class ConfigHolder {
     private static final ConfigHolder global;
     private static final RawAppConfig BUILT_IN;
     private static final Path globalConfigPath = Utils.join(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
-    private static final List<ConfigHolder> holders = new ArrayList<>();
+    private static final Set<ConfigHolder> holders = new HashSet<>();
 
     static {
         final BufferedReader reader = new BufferedReader(
@@ -135,6 +135,13 @@ public class ConfigHolder {
         return global;
     }
 
+    /**
+     * Creates an instance with the given config path and adds it to the holders set.
+     *
+     * @param configPath path of config
+     * @return the holder created
+     * @throws IOException if failed to init config path, or does not have enough permission of the path
+     */
     public static ConfigHolder of(Path configPath) throws IOException {
         final ConfigHolder h = new ConfigHolder(configPath);
         holders.add(h);

@@ -41,6 +41,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
 import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
@@ -79,7 +80,14 @@ public class SettingsDialog extends Stage {
         final IntegerField rbrInput = new IntegerField(true, "随机轮换的行数");
 
         final TextField disabledLastRowPosInput = createTextField("最后一排不可选位置");
-        addTextFormatter(disabledLastRowPosInput, Strings.integerListPattern);
+        disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (Objects.equals(oldValue, newValue)) {
+                return;
+            }
+            if (newValue == null || !Strings.integerListPattern.matcher(newValue).matches()) {
+                disabledLastRowPosInput.setText(oldValue);
+            }
+        });
 
         final TextField nameListInput = createTextField("名单 (按身高排序)");
 

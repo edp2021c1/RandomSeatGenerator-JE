@@ -35,14 +35,35 @@ public class Utils {
     private Utils() {
     }
 
+    /**
+     * Returns if the current os is macOS.
+     * <p>AKA shorter usage of {@code  OperatingSystem.getCurrent().isMac()}
+     *
+     * @return if the current os is macOS.
+     */
     public static boolean isMac() {
         return OperatingSystem.getCurrent().isMac();
     }
 
+    /**
+     * Deletes a path and (if exists) everything under it.
+     * <p>AKA shorter usage of {@link IOUtils#deleteIfExists(Path)}
+     *
+     * @param path to delete
+     * @throws IOException if an I/O error occurs
+     * @see IOUtils#deleteIfExists(Path)
+     */
     public static void delete(final Path path) throws IOException {
         IOUtils.deleteIfExists(path);
     }
 
+    /**
+     * Joins the parent path and the children.
+     *
+     * @param parent   the path or initial part of the path
+     * @param children additional strings to be joined to form the path string
+     * @return the resulting path
+     */
     public static Path join(final Path parent, final String... children) {
         return Path.of(parent.toString(), children);
     }
