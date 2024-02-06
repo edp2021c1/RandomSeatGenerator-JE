@@ -85,7 +85,7 @@ public class SeatTable {
      * @param seed        {@link #seed}
      * @param luckyPerson {@link #luckyPerson}
      */
-    public SeatTable(final List<String> table, final SeatConfig config, final String seed, final String luckyPerson) {
+    SeatTable(final List<String> table, final SeatConfig config, final String seed, final String luckyPerson) {
         this.table = table;
         this.config = config;
         this.seed = seed;
@@ -114,7 +114,7 @@ public class SeatTable {
             seatRowData.add(new SeatRowData("Lucky Person", luckyPerson));
         }
 
-        seatRowData.add(new SeatRowData("Seed", seed.isEmpty() ? "empty_string" : seed));
+        seatRowData.add(new SeatRowData("Seed", seed));
         return seatRowData;
     }
 
@@ -122,7 +122,7 @@ public class SeatTable {
     public String toString() {
         final int columnCount = config.getColumnCount();
 
-        final StringBuilder str = new StringBuilder("Seed: ").append(seed).append("\nSeat Table:\n");
+        final StringBuilder str = new StringBuilder("Seat Table:\n");
 
         for (int i = 0; i < table.size(); i++) {
             if (i % columnCount == 0) {
@@ -135,7 +135,7 @@ public class SeatTable {
             str.append("\nLucky Person: ").append(luckyPerson);
         }
 
-        return str.toString();
+        return str.append("\nSeed: ").append(seed).toString();
     }
 
     /**
@@ -143,9 +143,9 @@ public class SeatTable {
      *
      * @param filePath path of file to export to
      * @param writable if exports to a writable file
-     * @throws IOException if an I/O error occurs
+     * @throws RuntimeException if an I/O error occurs
      */
-    public void exportToExcelDocument(final Path filePath, final boolean writable) throws IOException {
+    public void exportToExcelDocument(final Path filePath, final boolean writable) {
         try {
             Utils.delete(filePath);
             EasyExcel.write(filePath.toFile(), SeatRowData.class)
@@ -156,7 +156,7 @@ public class SeatTable {
                 throw new RuntimeException("Failed to save seat table to " + filePath);
             }
         } catch (final IOException e) {
-            throw new IOException("Failed to save seat table to " + filePath, e);
+            throw new RuntimeException("Failed to save seat table to " + filePath, e);
         }
     }
 

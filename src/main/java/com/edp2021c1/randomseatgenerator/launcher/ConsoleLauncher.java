@@ -106,11 +106,7 @@ public class ConsoleLauncher {
         Logging.user("\n" + seatTable);
 
         // 导出
-        try {
-            seatTable.exportToExcelDocument(outputPath, config.export_writable);
-        } catch (final IOException e) {
-            throw new RuntimeException("Failed to export seat table to " + outputPath, e);
-        }
+        seatTable.exportToExcelDocument(outputPath, config.export_writable);
         Logging.user("Seat table successfully exported to " + outputPath);
 
         System.exit(0);

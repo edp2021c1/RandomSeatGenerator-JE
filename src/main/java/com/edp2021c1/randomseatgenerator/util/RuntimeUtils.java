@@ -22,7 +22,7 @@ import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 
 import java.util.HashMap;
-import java.util.Set;
+import java.util.Optional;
 
 /**
  * Runtime utils.
@@ -32,14 +32,9 @@ import java.util.Set;
  */
 public class RuntimeUtils {
     private static final HashMap<Long, Thread> threadIdMap = new HashMap<>();
-    private static final Thread exitHook = new Thread("Exit Hook") {
-        public void run() {
-            exitTask();
-        }
-    };
 
     static {
-        Runtime.getRuntime().addShutdownHook(exitHook);
+        Runtime.getRuntime().addShutdownHook(new Thread(RuntimeUtils::exit, "Exit Hook"));
     }
 
     /**
@@ -59,21 +54,15 @@ public class RuntimeUtils {
         if (threadIdMap.containsKey(id)) {
             return threadIdMap.get(id);
         }
-
-        final Set<Thread> threads = Thread.getAllStackTraces().keySet();
-        for (final Thread t : threads) {
-            if (t.threadId() == id) {
-                threadIdMap.put(id, t);
-                return t;
-            }
-        }
-        return null;
+        final Optional<Thread> op = Thread.getAllStackTraces().keySet().stream().filter(t -> t.threadId() == id).findFirst();
+        op.ifPresent(t -> threadIdMap.put(id, t));
+        return op.orElse(null);
     }
 
     /**
      * Terminates the application.
      */
-    private static void exitTask() {
+    private static void exit() {
         Logging.debug("Exiting");
         ConfigHolder.closeAll();
         Logging.close();

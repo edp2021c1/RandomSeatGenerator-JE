@@ -175,14 +175,7 @@ public class MainWindow extends Stage {
                 if (exportFile == null) {
                     return;
                 }
-                try {
-                    seatTable.exportToExcelDocument(exportFile.toPath(), cfHolder.get().export_writable);
-                } catch (final IOException e) {
-                    throw new RuntimeException(
-                            "Failed to export seat table to " + exportFile,
-                            e
-                    );
-                }
+                seatTable.exportToExcelDocument(exportFile.toPath(), cfHolder.get().export_writable);
 
                 Logging.info("Successfully exported seat table to " + exportFile);
 

@@ -61,8 +61,13 @@ public class SeatTableFactory {
             longSeed = Long.parseLong(seed);
             seed += " (integer)";
         } catch (RuntimeException e) {
-            longSeed = Strings.longHashOf(seed);
-            seed += " (string)";
+            if (seed == null || seed.isEmpty()) {
+                longSeed = 0;
+                seed = "empty_string";
+            } else {
+                longSeed = Strings.longHashOf(seed);
+                seed += " (string)";
+            }
         }
 
         final Random rd = new Random(longSeed);

@@ -19,7 +19,6 @@
 package com.edp2021c1.randomseatgenerator.util.logging;
 
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
-import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 
@@ -31,6 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.*;
+
+import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
 
 /**
  * Logging related util.
@@ -44,7 +45,7 @@ public class Logging {
      * Logger.
      */
     private static final Logger logger = Logger.getLogger("RandomSeat");
-    private static final Path logDir = Metadata.DATA_DIR.resolve("logs");
+    private static final Path logDir = DATA_DIR.resolve("logs");
     private static final List<Path> logPaths;
     private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
     private static final Formatter defaultFormatter;
@@ -198,14 +199,15 @@ public class Logging {
         });
 
         debug("Logging started");
-        info("*** " + Metadata.TITLE + " ***");
+        info("*** " + TITLE + " ***");
         debug("Launching mode: " + mode);
-        debug("OS: " + Metadata.SYSTEM_NAME + " " + Metadata.SYSTEM_VERSION);
-        debug("Architecture: " + Metadata.SYSTEM_ARCH);
+        debug("OS: " + SYSTEM_NAME + " " + SYSTEM_VERSION);
+        debug("Architecture: " + SYSTEM_ARCH);
         debug("Java Version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
         debug("Java VM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
         debug("Java Home: " + System.getProperty("java.home"));
         debug("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
+        info("Data directory: " + DATA_DIR);
     }
 
     private static void format(LogRecord record) {
