@@ -26,7 +26,6 @@ import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
-import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
@@ -40,10 +39,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
@@ -55,8 +56,14 @@ import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
  * @since 1.3.3
  */
 public class MainWindow extends Stage {
+    @Getter
+    private static final MainWindow mainWindow = new MainWindow();
+
+    static {
+        setMainWindow(mainWindow);
+    }
+
     private final SeatTableView seatTableView;
-    private final SettingsDialog settingsDialog;
     private final ConfigHolder cfHolder;
     private final StringProperty seed;
     private final ObjectProperty<File> exportDir;
@@ -68,10 +75,11 @@ public class MainWindow extends Stage {
     /**
      * Creates an instance.
      */
-    public MainWindow() {
+    private MainWindow() {
+        super();
+
         cfHolder = ConfigHolder.globalHolder();
 
-        settingsDialog = new SettingsDialog(this);
         t = cfHolder.get();
 
         /* *************************************************************************
@@ -98,7 +106,14 @@ public class MainWindow extends Stage {
         seed = seedInput.textProperty();
 
         // 座位表
-        seatTableView = new SeatTableView(t.getContent());
+        try {
+            seatTableView = new SeatTableView(t.getContent());
+        } catch (final IllegalConfigException e) {
+            throw new IllegalConfigException(List.of(
+                    new IllegalConfigException("Illegal config loaded from " + cfHolder.getConfigPath()),
+                    e
+            ));
+        }
 
         // 右侧主体
         final VBox rightBox = createVBox(topRightBox, seatTableView);
@@ -108,15 +123,13 @@ public class MainWindow extends Stage {
         final HBox mainBox = createHBox(leftBox, separator, rightBox);
         mainBox.getStyleClass().add("main");
 
-        final Scene scene = new Scene(mainBox);
-
         setInsets(new Insets(5), settingsBtn, generateBtn, exportBtn, seedInput, randomSeedBtn, dateAsSeedBtn);
         VBox.setVgrow(seatTableView, Priority.ALWAYS);
         HBox.setHgrow(rightBox, Priority.ALWAYS);
 
-        setScene(scene);
+        setScene(new Scene(mainBox));
         setTitle(Metadata.TITLE);
-        UIFactory.decorate(this, StageType.MAIN);
+        decorate(this, StageType.MAIN);
         setOnCloseRequest(event -> close());
 
         final FileChooser fc = new FileChooser();
@@ -139,7 +152,7 @@ public class MainWindow extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        settingsBtn.setOnAction(event -> settingsDialog.show());
+        settingsBtn.setOnAction(event -> SettingsDialog.getSettingsDialog().showAndWait());
 
         generateBtn.setOnAction(event -> {
             try {

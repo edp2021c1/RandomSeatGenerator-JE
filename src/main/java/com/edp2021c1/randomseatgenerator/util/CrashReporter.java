@@ -19,10 +19,11 @@
 package com.edp2021c1.randomseatgenerator.util;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
-import com.edp2021c1.randomseatgenerator.ui.stage.CrashReporterWindow;
+import com.edp2021c1.randomseatgenerator.ui.stage.CrashReporterDialog;
+import com.edp2021c1.randomseatgenerator.ui.stage.MessageDialog;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
-import javafx.application.Application;
-import javafx.stage.Stage;
+
+import java.util.Objects;
 
 /**
  * Reports uncaught exceptions.
@@ -68,39 +69,27 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(final Thread t, final Throwable e) {
+        if (e == null) return;
+        Objects.requireNonNull(t);
         try {
-            final String str = e instanceof final IllegalConfigException ex
-                    ? (ex.isSingle() ? "IllegalConfigException: " : "IllegalConfigException:\n") + ex.getLocalizedMessage()
-                    : Strings.getStackTrace(e);
+            if (e instanceof final IllegalConfigException ex) {
+                Logging.error(
+                        (ex.isSingle() ? "IllegalConfigException: " : "IllegalConfigException:") + ex.getLocalizedMessage()
+                );
+                MessageDialog.showMessage(
+                        "配置格式错误",
+                        (ex.isSingle() ? "配置格式错误\n" : "配置格式错误") + ex.getLocalizedMessage()
+                );
+                return;
+            }
 
+            final String str = Strings.getStackTrace(e);
             Logging.error(str);
-
             if (withGUI) {
-                try {
-                    Application.launch(CrashReporterApp.class, str);
-                } catch (final IllegalStateException exception) {
-                    new CrashReporterWindow(str).showAndWait();
-                }
+                CrashReporterDialog.showCrashReporter(e.getClass().getName(), str);
             }
         } catch (final Throwable ex) {
             System.err.println(Strings.getStackTrace(ex));
-        }
-    }
-
-    /**
-     * JavaFX application used to launch {@code CrashReporterWindow}.
-     */
-    public static class CrashReporterApp extends Application {
-
-        /**
-         * Don't let anyone else instantiate this class.
-         */
-        private CrashReporterApp() {
-        }
-
-        @Override
-        public void start(final Stage primaryStage) {
-            new CrashReporterWindow(getParameters().getRaw().getFirst()).show();
         }
     }
 }

@@ -3,6 +3,7 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
+import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -12,19 +13,16 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
- * Windows of FX crash reporter.
+ * Stage of FX crash reporter.
  *
  * @author Calboot
  * @since 1.4.1
  */
-public class CrashReporterWindow extends Stage {
+public class CrashReporterDialog extends Stage {
 
-    /**
-     * Creates an instance showing the given error message.
-     *
-     * @param msg to be shown.
-     */
-    public CrashReporterWindow(final String msg) {
+    private CrashReporterDialog(final String title, final String msg) {
+        super();
+
         final Label preLabelBeforeLink = new Label("Something's wrong... Click");
         final Hyperlink here = new Hyperlink("here");
         final Label preLabelAfterLink = new Label("to copy the error message");
@@ -36,6 +34,7 @@ public class CrashReporterWindow extends Stage {
         preBox.setAlignment(Pos.CENTER_LEFT);
 
         final TextArea mainText = new TextArea(msg);
+        mainText.setEditable(false);
         mainText.getStyleClass().add("err-main-text");
 
         final Button confirmBtn = UIFactory.createButton("关闭", 80, 26);
@@ -55,7 +54,7 @@ public class CrashReporterWindow extends Stage {
         setScene(new Scene(mainBox));
         setMaxWidth(1440);
         setMaxHeight(810);
-        setTitle("出错啦");
+        setTitle(title);
         UIFactory.decorate(this, UIFactory.StageType.ERROR);
 
         here.setOnAction(event -> DesktopUtils.copyPlainText(mainText.getText()));
@@ -84,6 +83,37 @@ public class CrashReporterWindow extends Stage {
                     DesktopUtils.copyPlainText(mainText.getText());
                 }
             });
+        }
+    }
+
+    /**
+     * Shows a crash reporter dialog.
+     *
+     * @param title dialog title
+     * @param msg   error message
+     */
+    public static void showCrashReporter(final String title, final String msg) {
+        try {
+            new CrashReporterDialog(title, msg).showAndWait();
+        } catch (final IllegalStateException exception) {
+            Application.launch(CrashReporterApp.class, title, msg);
+        }
+    }
+
+    /**
+     * JavaFX application used to launch {@code CrashReporterDialog}.
+     */
+    public static class CrashReporterApp extends Application {
+
+        /**
+         * Don't let anyone else instantiate this class.
+         */
+        private CrashReporterApp() {
+        }
+
+        @Override
+        public void start(final Stage primaryStage) {
+            new CrashReporterDialog(getParameters().getRaw().getFirst(), getParameters().getRaw().getLast()).showAndWait();
         }
     }
 

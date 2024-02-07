@@ -124,4 +124,17 @@ public class CollectionUtils {
         return res;
     }
 
+    public static <T extends Comparable<T>> T getMax(final List<? extends T> list) {
+        if (list == null || list.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        T max = list.getFirst();
+        for (final T t : list) {
+            if (max.compareTo(t) < 0) {
+                max = t;
+            }
+        }
+        return max;
+    }
+
 }

@@ -148,9 +148,7 @@
     -fx-font-weight: bold;
 }
 
-.err-scroll-pane {
-    -fx-padding: 5;
-
-    -fx-border-width: 1.5;
-    -fx-border-radius: 3;
+.err-main-text {
+    -fx-min-height: 450;
+    -fx-min-width: 1080;
 }

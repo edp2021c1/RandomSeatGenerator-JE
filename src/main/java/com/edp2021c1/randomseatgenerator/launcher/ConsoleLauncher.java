@@ -92,7 +92,7 @@ public class ConsoleLauncher {
         // 处理座位表生成配置
         RawAppConfig config;
         try {
-            config = ConfigHolder.of(configPath).get();
+            config = ConfigHolder.createHolder(configPath).get();
         } catch (IOException e) {
             throw new RuntimeException("Failed to load config from specific file", e);
         }

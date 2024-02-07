@@ -36,10 +36,13 @@ class LoggingLevels extends Level {
      * Indicates debug messages.
      */
     static final Level DEBUG = new LoggingLevels("DEBUG", 200);
+
     /**
+     * Same as {@link Level#SEVERE} but have different names.
+     *
      * @see Level#SEVERE
      */
-    static final Level ERROR = SEVERE;
+    static final Level ERROR = new LoggingLevels("ERROR", 1000);
 
     LoggingLevels(String name, int value) {
         super(name, value);

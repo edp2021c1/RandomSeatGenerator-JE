@@ -71,9 +71,13 @@ public class GUILauncher extends Application {
         try {
             RawAppConfig config = ConfigHolder.globalHolder().get();
             UIFactory.setGlobalDarkMode(config.dark_mode);
-            new MainWindow().show();
+            MainWindow.getMainWindow().show();
         } catch (final Throwable e) {
-            CrashReporter.report(e);
+            if (e instanceof ExceptionInInitializerError) {
+                CrashReporter.report(e.getCause());
+            } else {
+                CrashReporter.report(e);
+            }
         }
     }
 

@@ -47,7 +47,7 @@ public class Logging {
     private static final Logger logger = Logger.getLogger("RandomSeat");
     private static final Path logDir = DATA_DIR.resolve("logs");
     private static final List<Path> logPaths;
-    private static final MessageFormat MESSAGE_FORMAT = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
+    private static final MessageFormat messageFormat = new MessageFormat("[{0,date,yyyy-MM-dd HH:mm:ss.SSS}] [{1}/{2}] {3}\n");
     private static final Formatter defaultFormatter;
     private static boolean initialized = false;
 
@@ -162,7 +162,7 @@ public class Logging {
             }
         };
         consoleHandler.setFormatter(defaultFormatter);
-        consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? LoggingLevels.USER_INFO : LoggingLevels.INFO);
+        consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? LoggingLevels.USER_INFO : LoggingLevels.DEBUG);
         logger.addHandler(consoleHandler);
 
         try {
@@ -204,21 +204,20 @@ public class Logging {
         debug("OS: " + SYSTEM_NAME + " " + SYSTEM_VERSION);
         debug("Architecture: " + SYSTEM_ARCH);
         debug("Java Version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
-        debug("Java VM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
+        debug("JVM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
         debug("Java Home: " + System.getProperty("java.home"));
         debug("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
         info("Data directory: " + DATA_DIR);
     }
 
     private static void format(LogRecord record) {
-        final String message = record.getMessage();
-
         final StringBuffer buffer = new StringBuffer(1024);
 
-        MESSAGE_FORMAT.format(new Object[]{
+        messageFormat.format(new Object[]{
                 new Date(record.getMillis()),
-                Objects.requireNonNull(RuntimeUtils.getThreadById(record.getLongThreadID())).getName(), record.getLevel().getName(),
-                message
+                Objects.requireNonNull(RuntimeUtils.getThreadById(record.getLongThreadID())).getName(),
+                record.getLevel().getName(),
+                record.getMessage()
         }, buffer, null);
 
         record.setMessage(buffer.toString());

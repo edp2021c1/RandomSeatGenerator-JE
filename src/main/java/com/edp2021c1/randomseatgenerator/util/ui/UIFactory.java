@@ -31,12 +31,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import lombok.Getter;
 import lombok.Setter;
 
 /**
@@ -65,7 +65,9 @@ public class UIFactory {
             ConfigHolder.globalHolder().set(config);
         }
     };
-
+    @Getter
+    private static final Image icon = new Image(Metadata.ICON_URL);
+    private static final Image errorIcon = new Image(Metadata.ERROR_ICON_URL);
     @Setter
     private static Window mainWindow = null;
 
@@ -103,18 +105,15 @@ public class UIFactory {
      */
     public static void decorate(final Stage stage, final StageType type) {
         switch (type) {
-            case MAIN -> {
-                stage.getIcons().add(new Image(Metadata.ICON_URL));
-                mainWindow = stage;
-            }
+            case MAIN -> stage.getIcons().add(icon);
             case DIALOG -> {
-                stage.getIcons().add(new Image(Metadata.ICON_URL));
+                stage.getIcons().add(icon);
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.setResizable(false);
             }
             case ERROR -> {
                 stage.initOwner(mainWindow);
-                stage.getIcons().add(new Image(Metadata.ERROR_ICON_URL));
+                stage.getIcons().add(errorIcon);
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.setResizable(false);
             }
@@ -211,23 +210,6 @@ public class UIFactory {
         t.setPromptText(promptText);
         t.setPrefSize(width, height);
         return t;
-    }
-
-    /**
-     * Creates a {@code ImageView}.
-     *
-     * @param imageUrl  URL of the image of the view
-     * @param fitWidth  of the view
-     * @param fitHeight of the view
-     * @return the view created
-     */
-    public static ImageView createImageView(final String imageUrl, final double fitWidth, final double fitHeight) {
-        final ImageView i = new ImageView(new Image(imageUrl));
-        i.setFitWidth(fitWidth);
-        i.setFitHeight(fitHeight);
-        i.setPickOnBounds(true);
-        i.setPreserveRatio(true);
-        return i;
     }
 
     /**

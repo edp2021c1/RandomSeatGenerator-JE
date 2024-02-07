@@ -67,7 +67,7 @@ public class ConfigHolder {
         BUILT_IN = RawAppConfig.fromJson(str.toString());
 
         try {
-            global = of(globalConfigPath);
+            global = createHolder(globalConfigPath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -111,8 +111,8 @@ public class ConfigHolder {
 
         final Path lockerPath = Path.of(configPath + ".lck");
         IOUtils.replaceWithNewFile(lockerPath);
-        fileChannel = FileChannel.open(lockerPath, StandardOpenOption.DELETE_ON_CLOSE, StandardOpenOption.WRITE);
-        fileLock = this.fileChannel.lock();
+        this.fileChannel = FileChannel.open(lockerPath, StandardOpenOption.DELETE_ON_CLOSE, StandardOpenOption.WRITE);
+        this.fileLock = this.fileChannel.tryLock();
 
         closed = false;
     }
@@ -142,7 +142,7 @@ public class ConfigHolder {
      * @return the holder created
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
-    public static ConfigHolder of(Path configPath) throws IOException {
+    public static ConfigHolder createHolder(Path configPath) throws IOException {
         final ConfigHolder h = new ConfigHolder(configPath);
         holders.add(h);
         return h;

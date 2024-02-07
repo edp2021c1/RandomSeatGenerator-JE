@@ -22,12 +22,9 @@
 
     -text-fill-root: white;
     -text-fill-button-disabled: #9b9b9b;
-    -text-fill-button-default: white;
     -text-fill-err: #e74f4f;
 
     -background-color-root: #232323;
-    -background-color-button-default: #276fce;
-    -background-color-button-default-hover: #589eff;
     -background-color-scroll-bar-thumb: #696969;
     -background-color-scroll-bar-thumb-hover: #9b9b9b;
     -background-color-seat-table-cell: #313131;
@@ -37,8 +34,8 @@
     -border-color-button-disabled: #9b9b9b;
     -border-color-focused: #d9d9d9;
     -border-color-checkbox-box: white;
-    -border-color-button-default: #276fce;
-    -border-color-button-default-hover: #589eff;
+    -border-color-button-default: #358dff;
+    -border-color-button-default-hover: #85b7ff;
     -border-color-seat-table-cell: #282828;
     -border-color-err: #e74f4f;
 }
@@ -83,16 +80,10 @@
 }
 
 .button:default {
-    -fx-text-fill: -text-fill-button-default;
-
-    -fx-background-color: -background-color-button-default;
-
     -fx-border-color: -border-color-button-default;
 }
 
 .button:default:hover {
-    -fx-background-color: -background-color-button-default-hover;
-
     -fx-border-color: -border-color-button-default-hover;
 }
 
@@ -176,6 +167,7 @@
     -fx-text-fill: -text-fill-err;
 }
 
-.err-main-text {
+.err-main-text,
+.err-main-text:focused {
     -fx-border-color: -border-color-err;
 }

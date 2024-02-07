@@ -38,6 +38,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +54,8 @@ import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
  * @since 1.3.3
  */
 public class SettingsDialog extends Stage {
+    @Getter
+    private static final SettingsDialog settingsDialog = new SettingsDialog();
     private final ObjectProperty<File> importDir;
     private final ConfigHolder cfHolder;
     private File importFile;
@@ -60,10 +63,10 @@ public class SettingsDialog extends Stage {
 
     /**
      * Creates an instance.
-     *
-     * @param owner of the dialog.
      */
-    public SettingsDialog(MainWindow owner) {
+    private SettingsDialog() {
+        super();
+
         cfHolder = ConfigHolder.globalHolder();
         t = cfHolder.get();
 
@@ -128,7 +131,9 @@ public class SettingsDialog extends Stage {
 
         final VBox appConfigBox = new VBox(configPane, loadConfigBtnBox);
 
-        final ImageView iconView = createImageView(ICON_URL, 275, 275);
+        final ImageView iconView = new ImageView(getIcon());
+        iconView.setFitWidth(275);
+        iconView.setFitHeight(275);
 
         final Label randomSeatGeneratorLabel = new Label(NAME);
         randomSeatGeneratorLabel.setPrefHeight(32);
@@ -170,8 +175,6 @@ public class SettingsDialog extends Stage {
         final VBox mainBox = new VBox(topPane, confirm_apply_cancelBar);
         mainBox.getStyleClass().add("main");
 
-        final Scene scene = new Scene(mainBox);
-
         setInsets(new Insets(5),
                 rowCountInput,
                 columnCountInput,
@@ -186,9 +189,9 @@ public class SettingsDialog extends Stage {
                 cancelBtn
         );
 
-        setScene(scene);
+        setScene(new Scene(mainBox));
         setTitle(NAME + " - 设置");
-        initOwner(owner);
+        initOwner(MainWindow.getMainWindow());
         UIFactory.decorate(this, StageType.DIALOG);
 
         final FileChooser fc = new FileChooser();
@@ -232,7 +235,7 @@ public class SettingsDialog extends Stage {
                 t.checkFormat();
                 cfHolder.set(t);
 
-                owner.onConfigChanged();
+                MainWindow.getMainWindow().onConfigChanged();
                 applyBtn.setDisable(true);
             } catch (final Throwable e) {
                 CrashReporter.report(e);
