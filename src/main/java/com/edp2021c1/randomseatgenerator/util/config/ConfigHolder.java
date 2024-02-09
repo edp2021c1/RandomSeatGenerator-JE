@@ -21,6 +21,8 @@ package com.edp2021c1.randomseatgenerator.util.config;
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Utils;
+import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
+import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
 import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import lombok.Getter;
 
@@ -51,7 +53,7 @@ public class ConfigHolder {
      */
     private static final ConfigHolder global;
     private static final RawAppConfig BUILT_IN;
-    private static final Path globalConfigPath = Utils.join(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
+    private static final Path GLOBAL_CONFIG_PATH = Utils.join(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
     private static final Set<ConfigHolder> holders = new HashSet<>();
 
     static {
@@ -67,7 +69,9 @@ public class ConfigHolder {
         BUILT_IN = RawAppConfig.fromJson(str.toString());
 
         try {
-            global = createHolder(globalConfigPath);
+            global = createHolder(GLOBAL_CONFIG_PATH);
+        } catch (FileAlreadyLockedException e) {
+            throw new ApplicationAlreadyRunningException();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -76,8 +80,8 @@ public class ConfigHolder {
     @Getter
     private final Path configPath;
     private final RawAppConfig content;
-    private final FileChannel fileChannel;
-    private final FileLock fileLock;
+    private final FileChannel lockChannel;
+    private final FileLock lock;
     private FileTime configLastModifiedTime;
     private boolean closed;
 
@@ -110,9 +114,12 @@ public class ConfigHolder {
         }
 
         final Path lockerPath = Path.of(configPath + ".lck");
+        if (Files.exists(lockerPath) && Files.isRegularFile(lockerPath)) {
+            throw new FileAlreadyLockedException(lockerPath);
+        }
         IOUtils.replaceWithNewFile(lockerPath);
-        this.fileChannel = FileChannel.open(lockerPath, StandardOpenOption.DELETE_ON_CLOSE, StandardOpenOption.WRITE);
-        this.fileLock = this.fileChannel.tryLock();
+        this.lockChannel = FileChannel.open(lockerPath, StandardOpenOption.DELETE_ON_CLOSE, StandardOpenOption.WRITE);
+        this.lock = this.lockChannel.lock();
 
         closed = false;
     }
@@ -154,8 +161,8 @@ public class ConfigHolder {
     private void close() {
         if (closed) return;
         try {
-            fileLock.release();
-            fileChannel.close();
+            lock.release();
+            lockChannel.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {

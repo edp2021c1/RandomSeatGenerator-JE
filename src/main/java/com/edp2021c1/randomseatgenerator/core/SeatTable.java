@@ -51,7 +51,7 @@ public class SeatTable {
     /**
      * Placeholder of an empty seat.
      */
-    public static final String emptySeatPlaceholder = "-";
+    public static final String EMPTY_SEAT_PLACEHOLDER = "-";
     /**
      * Regular expression of a group leader.
      */

@@ -71,13 +71,13 @@ public class ConsoleLauncher {
         // 获取配置文件路径
         if ((i = args.lastIndexOf("--config-path")) != -1 && i < args.size() - 1) {
             configPath = Path.of(args.get(i + 1)).toAbsolutePath();
-            Logging.user("Config path set to " + configPath);
+            Logging.info("Config path set to " + configPath);
         }
 
         // 获取种子
         if ((i = args.lastIndexOf("--seed")) != -1 && i < args.size() - 1) {
             seed = args.get(i + 1);
-            Logging.user("Seed set to " + seed);
+            Logging.info("Seed set to " + seed);
         }
 
         // 获取导出路径
@@ -86,7 +86,7 @@ public class ConsoleLauncher {
             if (!outputPath.endsWith(".xlsx") || (Files.exists(outputPath))) {
                 Logging.error("Invalid output path: " + outputPath);
             }
-            Logging.user("Output path set to " + outputPath);
+            Logging.info("Output path set to " + outputPath);
         }
 
         // 处理座位表生成配置
@@ -103,11 +103,11 @@ public class ConsoleLauncher {
         // 生成座位表
         final SeatTable seatTable = SeatTableFactory.generate(config.getContent(), seed);
 
-        Logging.user("\n" + seatTable);
+        Logging.info("\n" + seatTable);
 
         // 导出
         seatTable.exportToExcelDocument(outputPath, config.export_writable);
-        Logging.user("Seat table successfully exported to " + outputPath);
+        Logging.info("Seat table successfully exported to " + outputPath);
 
         System.exit(0);
     }

@@ -16,32 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.util.logging;
+package com.edp2021c1.randomseatgenerator.util.exception;
 
-import java.util.logging.Level;
+import java.io.IOException;
+import java.nio.file.Path;
 
 /**
- * Logging levels.
- *
- * @author Calboot
- * @since 1.4.6
+ * Thrown if a file is already locked by another process when it is tried to be locked.
  */
-class LoggingLevels extends Level {
-
-    /**
-     * Indicates debug messages.
-     */
-    static final Level DEBUG = new LoggingLevels("DEBUG", 200);
-
-    /**
-     * Same as {@link Level#SEVERE} but have different names.
-     *
-     * @see Level#SEVERE
-     */
-    static final Level ERROR = new LoggingLevels("ERROR", 1000);
-
-    LoggingLevels(final String name, final int value) {
-        super(name, value, null);
+public class FileAlreadyLockedException extends IOException {
+    public FileAlreadyLockedException(final Path filePath) {
+        super(filePath.toAbsolutePath().toString());
     }
-
 }

@@ -92,7 +92,7 @@ public class Strings {
      * @return stack trace of {@code e}
      */
     public static String getStackTrace(final Throwable e) {
-        final StringWriter writer = new StringWriter(512);
+        final StringWriter writer = new StringWriter(1024);
         try (final PrintWriter printWriter = new PrintWriter(writer)) {
             e.printStackTrace(printWriter);
         }

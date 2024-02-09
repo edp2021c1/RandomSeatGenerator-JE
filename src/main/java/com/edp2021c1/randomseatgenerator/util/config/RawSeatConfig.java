@@ -171,9 +171,9 @@ public class RawSeatConfig {
      */
     public List<String> getNameList() throws IllegalConfigException {
         final List<String> l = modifiableListOf(person_sort_by_height.split(" "));
-        if (l.contains(SeatTable.emptySeatPlaceholder)) {
+        if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
-                    "Name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
+                    "Name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.EMPTY_SEAT_PLACEHOLDER)
             );
         }
         l.removeAll(List.of(""));
@@ -195,9 +195,9 @@ public class RawSeatConfig {
      */
     public List<String> getGroupLeaderList() throws IllegalConfigException {
         final List<String> l = modifiableListOf(group_leader_list.split(" "));
-        if (l.contains(SeatTable.emptySeatPlaceholder)) {
+        if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
-                    "Group leader list must not contain empty seat place holder \"%s\"".formatted(SeatTable.emptySeatPlaceholder)
+                    "Group leader list must not contain empty seat place holder \"%s\"".formatted(SeatTable.EMPTY_SEAT_PLACEHOLDER)
             );
         }
         return l;

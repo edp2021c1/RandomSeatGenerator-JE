@@ -21,9 +21,7 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -42,12 +40,18 @@ public class MessageDialog extends Stage {
     private MessageDialog(final String title, final String msg) {
         super();
 
-        final TextArea txt = new TextArea(msg);
-        txt.setEditable(false);
-        txt.setPrefColumnCount(Math.min(
-                75,
-                getMax(buildList(txt.getParagraphs(), charSequence -> charSequence.length() / 2))
-        ));
+        final Control txt;
+        if (msg == null || msg.lines().toList().size() < 2) {
+            txt = new Label(msg);
+        } else {
+            final TextArea t = new TextArea(msg);
+            t.setEditable(false);
+            t.setPrefColumnCount(Math.min(
+                    75,
+                    getMax(buildList(t.getParagraphs(), charSequence -> charSequence.length() / 2))
+            ));
+            txt = t;
+        }
 
         final Button button = createButton("确定", 80, 26);
         button.setDefaultButton(true);

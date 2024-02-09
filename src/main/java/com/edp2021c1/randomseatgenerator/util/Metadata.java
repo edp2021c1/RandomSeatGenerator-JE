@@ -22,6 +22,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
+import static java.lang.System.getProperty;
+
 /**
  * Metadata of the application.
  *
@@ -100,18 +102,21 @@ public class Metadata {
      * Application name.
      */
     public static final String NAME = "Random Seat Generator";
+    public static final String JAVA_HOME;
+    public static final String JAVA_VERSION;
+    public static final String JVM_VERSION;
     /**
      * Operating system name.
      */
-    public static final String SYSTEM_NAME;
+    public static final String OS_NAME;
     /**
      * Operating system version.
      */
-    public static final String SYSTEM_VERSION;
+    public static final String OS_VERSION;
     /**
      * Current architecture.
      */
-    public static final String SYSTEM_ARCH;
+    public static final String OS_ARCH;
     /**
      * Application title.
      */
@@ -126,11 +131,15 @@ public class Metadata {
     private static final String VERSION_ID;
 
     static {
-        SYSTEM_ARCH = System.getProperty("os.arch");
-        SYSTEM_VERSION = System.getProperty("os.version");
-        SYSTEM_NAME = System.getProperty("os.name");
+        OS_ARCH = getProperty("os.arch");
+        OS_VERSION = getProperty("os.version");
+        OS_NAME = getProperty("os.name");
 
-        USER_HOME = System.getProperty("user.home");
+        JAVA_HOME = getProperty("java.home");
+        JAVA_VERSION = "%s, %s".formatted(getProperty("java.version"), getProperty("java.vendor"));
+        JVM_VERSION = "%s (%s), %s".formatted(getProperty("java.vm.name"), getProperty("java.vm.info"), getProperty("java.vm.vendor"));
+
+        USER_HOME = getProperty("user.home");
 
         VERSION_ID = Metadata.class.getPackage().getImplementationVersion();
         VERSION = VERSION_ID == null ? "dev" : "v" + VERSION_ID;

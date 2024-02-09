@@ -16,32 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.util.logging;
-
-import java.util.logging.Level;
+package com.edp2021c1.randomseatgenerator.util.exception;
 
 /**
- * Logging levels.
- *
- * @author Calboot
- * @since 1.4.6
+ * Thrown if another instance of this application is detected.
  */
-class LoggingLevels extends Level {
+public class ApplicationAlreadyRunningException extends RuntimeException {
 
     /**
-     * Indicates debug messages.
+     * Default constructor.
      */
-    static final Level DEBUG = new LoggingLevels("DEBUG", 200);
-
-    /**
-     * Same as {@link Level#SEVERE} but have different names.
-     *
-     * @see Level#SEVERE
-     */
-    static final Level ERROR = new LoggingLevels("ERROR", 1000);
-
-    LoggingLevels(final String name, final int value) {
-        super(name, value, null);
+    public ApplicationAlreadyRunningException() {
+        super();
     }
-
 }

@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.logging.*;
 
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
+import static com.edp2021c1.randomseatgenerator.util.logging.LoggingLevels.*;
 
 /**
  * Logging related util.
@@ -48,8 +49,8 @@ public class Logging {
     private static final Path logDir = DATA_DIR.resolve("logs");
     private static final List<Path> logPaths;
     private static final MessageFormat messageFormat = new MessageFormat("[{0,date,yyyy-MM-dd HH:mm:ss.SSS}] [{1}/{2}] {3}\n");
-    private static final Formatter defaultFormatter;
-    private static boolean initialized = false;
+    private static final Formatter DEFAULT_FORMATTER;
+    private static boolean closed = true;
 
     static {
         final String str = "%tF-%%d.log".formatted(new Date());
@@ -59,7 +60,7 @@ public class Logging {
         }
         logPaths = List.of(logDir.resolve("latest.log"), logDir.resolve(str.formatted(t)));
 
-        defaultFormatter = new Formatter() {
+        DEFAULT_FORMATTER = new Formatter() {
             @Override
             public String format(final LogRecord record) {
                 return record.getMessage();
@@ -73,20 +74,10 @@ public class Logging {
     private Logging() {
     }
 
-    private static void checkInitialized() {
-        if (!initialized) {
+    private static void checkStage() {
+        if (closed) {
             throw new IllegalStateException("Logger not initialized");
         }
-    }
-
-    /**
-     * Logs an USER message.
-     *
-     * @param msg logged message
-     */
-    public static void user(final String msg) {
-        checkInitialized();
-        logger.log(LoggingLevels.USER_INFO, msg);
     }
 
     /**
@@ -95,8 +86,8 @@ public class Logging {
      * @param msg logged message
      */
     public static void info(final String msg) {
-        checkInitialized();
-        logger.log(LoggingLevels.INFO, msg);
+        checkStage();
+        logger.log(INFO, msg);
     }
 
     /**
@@ -105,8 +96,8 @@ public class Logging {
      * @param msg logged message
      */
     public static void warning(final String msg) {
-        checkInitialized();
-        logger.log(LoggingLevels.WARNING, msg);
+        checkStage();
+        logger.log(WARNING, msg);
     }
 
     /**
@@ -115,8 +106,8 @@ public class Logging {
      * @param msg logged message
      */
     public static void error(final String msg) {
-        checkInitialized();
-        logger.log(LoggingLevels.ERROR, msg);
+        checkStage();
+        logger.log(ERROR, msg);
     }
 
     /**
@@ -125,8 +116,8 @@ public class Logging {
      * @param msg logged message
      */
     public static void debug(final String msg) {
-        checkInitialized();
-        logger.log(LoggingLevels.DEBUG, msg);
+        checkStage();
+        logger.log(DEBUG, msg);
     }
 
     /**
@@ -135,14 +126,14 @@ public class Logging {
      * @param mode logging mode
      */
     public static void start(final LoggingMode mode) {
-        if (initialized) {
+        if (!closed) {
             debug("Logging already started, there's no need to start it twice");
             return;
         }
 
-        initialized = true;
+        closed = false;
 
-        logger.setLevel(LoggingLevels.ALL);
+        logger.setLevel(ALL);
         logger.setUseParentHandlers(false);
         logger.setFilter(record -> {
             format(record);
@@ -152,7 +143,7 @@ public class Logging {
         final ConsoleHandler consoleHandler = new ConsoleHandler() {
             @Override
             public void close() {
-                final LogRecord record = new LogRecord(LoggingLevels.DEBUG, "Closing console log handler");
+                final LogRecord record = new LogRecord(DEBUG, "Closing console log handler");
                 format(record);
                 for (final Handler h : logger.getHandlers()) {
                     h.publish(record);
@@ -161,8 +152,8 @@ public class Logging {
                 super.close();
             }
         };
-        consoleHandler.setFormatter(defaultFormatter);
-        consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? LoggingLevels.USER_INFO : LoggingLevels.DEBUG);
+        consoleHandler.setFormatter(DEFAULT_FORMATTER);
+        consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? INFO : DEBUG);
         logger.addHandler(consoleHandler);
 
         try {
@@ -179,7 +170,7 @@ public class Logging {
                 final FileHandler fileHandler = new FileHandler(path.toString()) {
                     @Override
                     public void close() throws SecurityException {
-                        final LogRecord record = new LogRecord(LoggingLevels.DEBUG, "Closing log file " + path);
+                        final LogRecord record = new LogRecord(DEBUG, "Closing log file " + path);
                         format(record);
                         for (final Handler h : logger.getHandlers()) {
                             h.publish(record);
@@ -188,25 +179,25 @@ public class Logging {
                         super.close();
                     }
                 };
-                fileHandler.setLevel(LoggingLevels.DEBUG);
-                fileHandler.setFormatter(defaultFormatter);
+                fileHandler.setLevel(DEBUG);
+                fileHandler.setFormatter(DEFAULT_FORMATTER);
                 fileHandler.setEncoding("UTF-8");
                 logger.addHandler(fileHandler);
-            } catch (final IOException e) {
+            } catch (final Throwable e) {
                 warning("Failed to create log file at " + path);
                 warning(Strings.getStackTrace(e));
             }
         });
 
         debug("Logging started");
-        info("*** " + TITLE + " ***");
-        debug("Launching mode: " + mode);
-        debug("OS: " + SYSTEM_NAME + " " + SYSTEM_VERSION);
-        debug("Architecture: " + SYSTEM_ARCH);
-        debug("Java Version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
-        debug("JVM Version: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
-        debug("Java Home: " + System.getProperty("java.home"));
-        debug("Memory: " + (Runtime.getRuntime().maxMemory() >>> 20) + "MB");
+        info("*** %s ***".formatted(TITLE));
+        debug("Launching mode: " + (mode == LoggingMode.CONSOLE ? "Console" : "GUI"));
+        debug("OS: %s %s".formatted(OS_NAME, OS_VERSION));
+        debug("Architecture: " + OS_ARCH);
+        debug("Java Version: " + JAVA_VERSION);
+        debug("JVM Version: " + JVM_VERSION);
+        debug("Java Home: " + JAVA_HOME);
+        debug("VM Memory: %dMB".formatted(Runtime.getRuntime().maxMemory() >>> 20));
         info("Data directory: " + DATA_DIR);
     }
 
@@ -231,7 +222,7 @@ public class Logging {
             logger.removeHandler(h);
             h.close();
         }
-        initialized = false;
+        closed = true;
     }
 
     /**
@@ -240,30 +231,14 @@ public class Logging {
     public enum LoggingMode {
         /**
          * Console logging mode, sets console logging level
-         * to {@link LoggingLevels#USER_INFO}
+         * to {@link LoggingLevels#INFO}
          */
-        CONSOLE(false),
+        CONSOLE(),
         /**
          * GUI logging mode, sets console logging level
          * to {@link LoggingLevels#INFO}
          */
-        GUI(true);
-        private final boolean upperCase;
-
-        LoggingMode(boolean upperCase) {
-            this.upperCase = upperCase;
-        }
-
-        @Override
-        public String toString() {
-            if (upperCase) {
-                return name().toUpperCase();
-            } else {
-                final char[] str = name().toLowerCase().toCharArray();
-                str[0] = Character.toUpperCase(str[0]);
-                return new String(str);
-            }
-        }
+        GUI()
     }
 
 }
