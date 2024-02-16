@@ -22,7 +22,6 @@ import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.ui.stage.CrashReporterDialog;
 import com.edp2021c1.randomseatgenerator.ui.stage.MessageDialog;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
-import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 
 import java.util.Objects;
 
@@ -87,6 +86,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             if (e instanceof ApplicationAlreadyRunningException) {
                 Logging.error("Another instance of the application is already running");
                 MessageDialog.showMessage("", "已有另一个实例在运行");
+                System.exit(1);
                 return;
             }
 

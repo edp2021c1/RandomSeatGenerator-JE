@@ -19,7 +19,6 @@
 package com.edp2021c1.randomseatgenerator.util;
 
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 
 import java.util.HashMap;
 import java.util.Optional;

@@ -1,8 +1,8 @@
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
+import com.edp2021c1.randomseatgenerator.ui.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.Utils;
-import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

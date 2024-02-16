@@ -25,6 +25,11 @@ import java.nio.file.Path;
  * Thrown if a file is already locked by another process when it is tried to be locked.
  */
 public class FileAlreadyLockedException extends IOException {
+    /**
+     * Default constructor.
+     *
+     * @param filePath path of the file locked
+     */
     public FileAlreadyLockedException(final Path filePath) {
         super(filePath.toAbsolutePath().toString());
     }

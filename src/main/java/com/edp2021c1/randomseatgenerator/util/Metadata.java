@@ -102,8 +102,17 @@ public class Metadata {
      * Application name.
      */
     public static final String NAME = "Random Seat Generator";
+    /**
+     * Java home.
+     */
     public static final String JAVA_HOME;
+    /**
+     * Java version.
+     */
     public static final String JAVA_VERSION;
+    /**
+     * Java Virtual Machine version.
+     */
     public static final String JVM_VERSION;
     /**
      * Operating system name.

@@ -25,9 +25,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.getMax;
-import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
+import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
 
 /**
  * Stage to show a simple message.
@@ -46,10 +44,7 @@ public class MessageDialog extends Stage {
         } else {
             final TextArea t = new TextArea(msg);
             t.setEditable(false);
-            t.setPrefColumnCount(Math.min(
-                    75,
-                    getMax(buildList(t.getParagraphs(), charSequence -> charSequence.length() / 2))
-            ));
+            t.setPrefColumnCount(75);
             txt = t;
         }
 

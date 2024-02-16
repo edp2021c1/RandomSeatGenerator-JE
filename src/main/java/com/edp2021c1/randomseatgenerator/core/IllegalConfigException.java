@@ -23,7 +23,7 @@ import lombok.Getter;
 import java.util.List;
 
 /**
- * Thrown if {@code RawSeatConfig} has an illegal format.
+ * Thrown if config has an illegal format.
  *
  * @author Calboot
  * @since 1.2.6

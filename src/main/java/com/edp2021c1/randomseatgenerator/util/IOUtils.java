@@ -18,13 +18,12 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
-
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Objects;
 
 /**
  * IO utils.
@@ -99,14 +98,28 @@ public class IOUtils {
     }
 
     /**
-     * Replaces the file/directory on the given path (if exists) with a newly created file.
-     *
-     * @param path to replace
+     * @param channel file channel
+     * @return string read from the channel
      * @throws IOException if an I/O error occurs
      */
-    public static void replaceWithNewFile(final Path path) throws IOException {
-        deleteIfExists(path);
-        Files.createFile(path);
+    public static String readString(final FileChannel channel) throws IOException {
+        final ByteBuffer buffer = ByteBuffer.allocate((int) channel.size());
+        channel.read(buffer, 0);
+        return new String(buffer.array());
+    }
+
+    /**
+     * Overwrites the given channel with the string.
+     *
+     * @param channel file channel
+     * @param str     string to write
+     * @throws IOException if an I/O error occurs
+     */
+    public static void overwriteString(final FileChannel channel, final String str) throws IOException {
+        final byte[] bytes = Objects.requireNonNull(str, "Cannot write null string").getBytes();
+        if (channel.truncate(0).write(ByteBuffer.wrap(bytes)) != bytes.length) {
+            throw new IOException();
+        }
     }
 
 }

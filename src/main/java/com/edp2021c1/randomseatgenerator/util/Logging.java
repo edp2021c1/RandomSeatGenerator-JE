@@ -16,11 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.util.logging;
-
-import com.edp2021c1.randomseatgenerator.util.IOUtils;
-import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
-import com.edp2021c1.randomseatgenerator.util.Strings;
+package com.edp2021c1.randomseatgenerator.util;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,7 +28,6 @@ import java.util.Objects;
 import java.util.logging.*;
 
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
-import static com.edp2021c1.randomseatgenerator.util.logging.LoggingLevels.*;
 
 /**
  * Logging related util.
@@ -87,7 +82,7 @@ public class Logging {
      */
     public static void info(final String msg) {
         checkStage();
-        logger.log(INFO, msg);
+        logger.log(LoggingLevels.INFO, msg);
     }
 
     /**
@@ -97,7 +92,7 @@ public class Logging {
      */
     public static void warning(final String msg) {
         checkStage();
-        logger.log(WARNING, msg);
+        logger.log(LoggingLevels.WARNING, msg);
     }
 
     /**
@@ -107,7 +102,7 @@ public class Logging {
      */
     public static void error(final String msg) {
         checkStage();
-        logger.log(ERROR, msg);
+        logger.log(LoggingLevels.ERROR, msg);
     }
 
     /**
@@ -117,7 +112,7 @@ public class Logging {
      */
     public static void debug(final String msg) {
         checkStage();
-        logger.log(DEBUG, msg);
+        logger.log(LoggingLevels.DEBUG, msg);
     }
 
     /**
@@ -133,7 +128,7 @@ public class Logging {
 
         closed = false;
 
-        logger.setLevel(ALL);
+        logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);
         logger.setFilter(record -> {
             format(record);
@@ -143,7 +138,7 @@ public class Logging {
         final ConsoleHandler consoleHandler = new ConsoleHandler() {
             @Override
             public void close() {
-                final LogRecord record = new LogRecord(DEBUG, "Closing console log handler");
+                final LogRecord record = new LogRecord(LoggingLevels.DEBUG, "Closing console log handler");
                 format(record);
                 for (final Handler h : logger.getHandlers()) {
                     h.publish(record);
@@ -153,7 +148,7 @@ public class Logging {
             }
         };
         consoleHandler.setFormatter(DEFAULT_FORMATTER);
-        consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? INFO : DEBUG);
+        consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? LoggingLevels.INFO : LoggingLevels.DEBUG);
         logger.addHandler(consoleHandler);
 
         try {
@@ -170,7 +165,7 @@ public class Logging {
                 final FileHandler fileHandler = new FileHandler(path.toString()) {
                     @Override
                     public void close() throws SecurityException {
-                        final LogRecord record = new LogRecord(DEBUG, "Closing log file " + path);
+                        final LogRecord record = new LogRecord(LoggingLevels.DEBUG, "Closing log file " + path);
                         format(record);
                         for (final Handler h : logger.getHandlers()) {
                             h.publish(record);
@@ -179,7 +174,7 @@ public class Logging {
                         super.close();
                     }
                 };
-                fileHandler.setLevel(DEBUG);
+                fileHandler.setLevel(LoggingLevels.DEBUG);
                 fileHandler.setFormatter(DEFAULT_FORMATTER);
                 fileHandler.setEncoding("UTF-8");
                 logger.addHandler(fileHandler);
@@ -239,6 +234,29 @@ public class Logging {
          * to {@link LoggingLevels#INFO}
          */
         GUI()
+    }
+
+    /**
+     * Logging levels.
+     */
+    private static class LoggingLevels extends Level {
+
+        /**
+         * Indicates debug messages.
+         */
+        public static final Level DEBUG = new LoggingLevels("DEBUG", 200);
+
+        /**
+         * Same as {@link Level#SEVERE} but have different names.
+         *
+         * @see Level#SEVERE
+         */
+        public static final Level ERROR = new LoggingLevels("ERROR", 1000);
+
+        LoggingLevels(final String name, final int value) {
+            super(name, value, null);
+        }
+
     }
 
 }

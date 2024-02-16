@@ -19,11 +19,11 @@
 package com.edp2021c1.randomseatgenerator.util.config;
 
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
+import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
-import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import lombok.Getter;
 
 import java.io.BufferedReader;
@@ -80,8 +80,7 @@ public class ConfigHolder {
     @Getter
     private final Path configPath;
     private final RawAppConfig content;
-    private final FileChannel lockChannel;
-    private final FileLock lock;
+    private final FileChannel channel;
     private FileTime configLastModifiedTime;
     private boolean closed;
 
@@ -91,7 +90,7 @@ public class ConfigHolder {
      * @param configPath path of config
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
-    private ConfigHolder(Path configPath) throws IOException {
+    private ConfigHolder(final Path configPath) throws IOException {
         this.content = new RawAppConfig();
         this.configLastModifiedTime = null;
         this.configPath = configPath;
@@ -102,24 +101,26 @@ public class ConfigHolder {
             throw new IOException("Does not has enough permission to read/write config");
         }
 
-        if (Files.notExists(configPath)) {
-            set(BUILT_IN);
+        boolean needsInit = false;
+        if (!Files.exists(configPath) || !Files.isRegularFile(configPath)) {
+            IOUtils.deleteIfExists(configPath);
+            Files.createFile(configPath);
+            needsInit = true;
+        } else if (Files.readString(configPath).isEmpty()) {
+            needsInit = true;
         }
         if (IOUtils.notFullyPermitted(configPath)) {
             throw new IOException("Does not has enough permission to read/write config");
         }
-        if (!Files.isRegularFile(configPath)) {
-            Utils.delete(configPath);
+
+        this.channel = FileChannel.open(configPath, StandardOpenOption.READ, StandardOpenOption.WRITE);
+        final FileLock lock = this.channel.tryLock();
+        if (lock == null) {
+            throw new FileAlreadyLockedException(configPath);
+        }
+        if (needsInit) {
             set(BUILT_IN);
         }
-
-        final Path lockerPath = Path.of(configPath + ".lck");
-        if (Files.exists(lockerPath) && Files.isRegularFile(lockerPath)) {
-            throw new FileAlreadyLockedException(lockerPath);
-        }
-        IOUtils.replaceWithNewFile(lockerPath);
-        this.lockChannel = FileChannel.open(lockerPath, StandardOpenOption.DELETE_ON_CLOSE, StandardOpenOption.WRITE);
-        this.lock = this.lockChannel.lock();
 
         closed = false;
     }
@@ -149,7 +150,7 @@ public class ConfigHolder {
      * @return the holder created
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
-    public static ConfigHolder createHolder(Path configPath) throws IOException {
+    public static ConfigHolder createHolder(final Path configPath) throws IOException {
         final ConfigHolder h = new ConfigHolder(configPath);
         holders.add(h);
         return h;
@@ -161,8 +162,7 @@ public class ConfigHolder {
     private void close() {
         if (closed) return;
         try {
-            lock.release();
-            lockChannel.close();
+            channel.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
@@ -185,8 +185,9 @@ public class ConfigHolder {
     public void set(RawAppConfig config) {
         checkState();
         content.set(config);
+        content.checkFormat();
         try {
-            Files.writeString(configPath, content.toJson());
+            IOUtils.overwriteString(channel, content.toJson());
             configLastModifiedTime = Files.getLastModifiedTime(configPath);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -210,17 +211,10 @@ public class ConfigHolder {
 
     private void flush() throws IOException {
         checkState();
-        if (Files.notExists(configPath) || !Files.isRegularFile(configPath)) {
-            Logging.warning("Config file not found or directory found on the path, will use default value");
-            Utils.delete(configPath);
-            Files.createFile(configPath);
-            set(BUILT_IN);
-            return;
-        }
         if (Objects.equals(Files.getLastModifiedTime(configPath), configLastModifiedTime)) {
             return;
         }
-        content.set(RawAppConfig.fromJson(configPath));
+        content.set(RawAppConfig.fromJson(IOUtils.readString(channel)));
         try {
             content.checkFormat();
         } catch (final RuntimeException e) {

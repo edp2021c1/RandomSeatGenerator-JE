@@ -18,9 +18,9 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
+import com.edp2021c1.randomseatgenerator.ui.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
-import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;

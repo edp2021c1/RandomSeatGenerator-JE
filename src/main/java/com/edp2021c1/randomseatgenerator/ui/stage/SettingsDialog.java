@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
+import com.edp2021c1.randomseatgenerator.ui.UIFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
@@ -26,7 +27,6 @@ import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
-import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
@@ -44,8 +44,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
-import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
 
 /**
  * Settings dialog of the application.

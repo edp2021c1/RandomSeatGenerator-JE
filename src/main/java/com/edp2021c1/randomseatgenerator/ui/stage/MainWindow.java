@@ -25,7 +25,6 @@ import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
-import com.edp2021c1.randomseatgenerator.util.logging.Logging;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
@@ -47,7 +46,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.util.ui.UIFactory.*;
+import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
 
 /**
  * Main window of the application.

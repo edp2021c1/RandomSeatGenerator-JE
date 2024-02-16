@@ -18,18 +18,14 @@
 
 package com.edp2021c1.randomseatgenerator.launcher;
 
+import com.edp2021c1.randomseatgenerator.ui.UIFactory;
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
-import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
-import com.edp2021c1.randomseatgenerator.util.logging.Logging;
-import com.edp2021c1.randomseatgenerator.util.ui.UIFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * JavaFX application intro.
@@ -57,8 +53,7 @@ public class GUILauncher extends Application {
     public void init() {
         try {
             Logging.start(Logging.LoggingMode.GUI);
-
-            if (!Files.isReadable(Metadata.DATA_DIR)) {
+            if (IOUtils.notFullyPermitted(Metadata.DATA_DIR)) {
                 throw new IOException("Does not have read/write permission of the data directory");
             }
         } catch (final Throwable e) {
@@ -69,8 +64,7 @@ public class GUILauncher extends Application {
     @Override
     public void start(final Stage primaryStage) {
         try {
-            RawAppConfig config = ConfigHolder.globalHolder().get();
-            UIFactory.setGlobalDarkMode(config.dark_mode);
+            UIFactory.setGlobalDarkMode(Utils.elseIfNull(ConfigHolder.globalHolder().get().dark_mode, true));
             MainWindow.getMainWindow().show();
         } catch (final Throwable e) {
             if (e instanceof ExceptionInInitializerError) {

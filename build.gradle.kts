@@ -54,6 +54,9 @@ dependencies {
     // EasyExcel，用于导出座位表
     implementation("com.alibaba:easyexcel:3.3.3")
 
+    // 手动提高安全性
+    implementation("org.apache.commons:commons-compress:1.21")
+
     // EasyExcel不加这个就会报错。。。
     implementation("org.slf4j:slf4j-nop:2.0.11")
 
