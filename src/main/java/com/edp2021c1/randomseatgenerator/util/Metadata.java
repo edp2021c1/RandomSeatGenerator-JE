@@ -59,10 +59,10 @@ public class Metadata {
             Libraries that have been used in RandomSeatGenerator are listed below :
             Name\t\tVersion\tOwner\t\t\tLicense\t\tGithub Repository
             JavaFX\t\t21.0.1\tOracle\t\t\tGPLv2\t\thttps://github.com/openjdk/jfx
-            Gson\t\t2.10.1\tGoogle\t\t\tApache 2.0\thttps://github.com/google/gson
             EasyExcel\t3.3.3\tAlibaba\t\t\tApache 2.0\thttps://github.com/alibaba/easyexcel
             SLF4J-NOP\t2.0.11\tQOS.ch\t\t\tMIT\t\t\thttps://github.com/qos-ch/slf4j
             Lombok\t\t1.18.30\tProjectLombok\tunknown\t\thttps://github.com/projectlombok/lombok
+            FastJson2\t2.0.46\tAlibaba\t\t\tApache 2.0\thttps://github.com/alibaba/fastjson2
                 
             Contributors:
             Calboot <calboot39@outlook.com>""";
@@ -77,7 +77,7 @@ public class Metadata {
     /**
      * User home.
      */
-    public static final String USER_HOME;
+    public static final String USER_HOME = getProperty("user.home");
     /**
      * URI of the git repository.
      */
@@ -105,55 +105,41 @@ public class Metadata {
     /**
      * Java home.
      */
-    public static final String JAVA_HOME;
+    public static final String JAVA_HOME = getProperty("java.home");
     /**
      * Java version.
      */
-    public static final String JAVA_VERSION;
+    public static final String JAVA_VERSION = "%s, %s".formatted(getProperty("java.version"), getProperty("java.vendor"));
     /**
      * Java Virtual Machine version.
      */
-    public static final String JVM_VERSION;
+    public static final String JVM_VERSION = "%s (%s), %s".formatted(getProperty("java.vm.name"), getProperty("java.vm.info"), getProperty("java.vm.vendor"));
     /**
      * Operating system name.
      */
-    public static final String OS_NAME;
+    public static final String OS_NAME = getProperty("os.name");
     /**
      * Operating system version.
      */
-    public static final String OS_VERSION;
+    public static final String OS_VERSION = getProperty("os.version");
     /**
      * Current architecture.
      */
-    public static final String OS_ARCH;
-    /**
-     * Application title.
-     */
-    public static final String TITLE;
-    /**
-     * Version of the app.
-     */
-    public static final String VERSION;
+    public static final String OS_ARCH = getProperty("os.arch");
     /**
      * Version ID.
      */
-    private static final String VERSION_ID;
+    private static final String VERSION_ID = Metadata.class.getPackage().getImplementationVersion();
+    /**
+     * Version of the app.
+     */
+    public static final String VERSION = (VERSION_ID == null) ? "dev" : ("v" + VERSION_ID);
+    /**
+     * Application title.
+     */
+    public static final String TITLE = NAME + " - " + VERSION;
 
     static {
-        OS_ARCH = getProperty("os.arch");
-        OS_VERSION = getProperty("os.version");
-        OS_NAME = getProperty("os.name");
-
-        JAVA_HOME = getProperty("java.home");
-        JAVA_VERSION = "%s, %s".formatted(getProperty("java.version"), getProperty("java.vendor"));
-        JVM_VERSION = "%s (%s), %s".formatted(getProperty("java.vm.name"), getProperty("java.vm.info"), getProperty("java.vm.vendor"));
-
-        USER_HOME = getProperty("user.home");
-
-        VERSION_ID = Metadata.class.getPackage().getImplementationVersion();
-        VERSION = VERSION_ID == null ? "dev" : "v" + VERSION_ID;
-        TITLE = NAME + " - " + VERSION;
-
         try {
             GIT_REPOSITORY_URI = new URI("https://github.com/edp2021c1/RandomSeatGenerator-JE");
             LICENSE_URI = new URI("https://www.gnu.org/licenses/gpl-3.0.txt");
