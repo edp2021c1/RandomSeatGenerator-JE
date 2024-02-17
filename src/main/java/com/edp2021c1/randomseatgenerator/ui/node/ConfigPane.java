@@ -122,39 +122,39 @@ public class ConfigPane extends VBox {
             return;
         }
         rowCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.row_count = newValue.intValue();
+            current.rowCount = newValue.intValue();
             applyBtnDisabledProperty.set(checkEquals());
         });
         columnCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.column_count = newValue.intValue();
+            current.columnCount = newValue.intValue();
             applyBtnDisabledProperty.set(checkEquals());
         });
         rbrInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.random_between_rows = newValue.intValue();
+            current.randomBetweenRows = newValue.intValue();
             applyBtnDisabledProperty.set(checkEquals());
         });
         disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.last_row_pos_cannot_be_chosen = newValue;
+            current.disabledLastRowPos = newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
         nameListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.person_sort_by_height = newValue;
+            current.names = newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
         groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.group_leader_list = newValue;
+            current.groupLeaders = newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
         separateListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.separate_list = newValue;
+            current.separatedPairs = newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
         luckyOptionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            current.lucky_option = newValue;
+            current.lucky = newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
         exportWritableCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            current.export_writable = newValue;
+            current.exportWritable = newValue;
             applyBtnDisabledProperty.set(checkEquals());
         });
         darkModeCheck.selectedProperty().bindBidirectional(UIFactory.globalDarkModeProperty());
@@ -171,15 +171,15 @@ public class ConfigPane extends VBox {
 
     private boolean checkEquals() {
         final RawAppConfig cf = getConfigFromSource();
-        return Objects.equals(current.row_count, cf.row_count)
-                && Objects.equals(current.column_count, cf.column_count)
-                && Objects.equals(current.random_between_rows, cf.random_between_rows)
-                && Objects.equals(current.last_row_pos_cannot_be_chosen, cf.last_row_pos_cannot_be_chosen)
-                && Objects.equals(current.person_sort_by_height, cf.person_sort_by_height)
-                && Objects.equals(current.group_leader_list, cf.group_leader_list)
-                && Objects.equals(current.separate_list, cf.separate_list)
-                && Objects.equals(current.lucky_option, cf.lucky_option)
-                && Objects.equals(current.export_writable, cf.export_writable);
+        return Objects.equals(current.rowCount, cf.rowCount)
+                && Objects.equals(current.columnCount, cf.columnCount)
+                && Objects.equals(current.randomBetweenRows, cf.randomBetweenRows)
+                && Objects.equals(current.disabledLastRowPos, cf.disabledLastRowPos)
+                && Objects.equals(current.names, cf.names)
+                && Objects.equals(current.groupLeaders, cf.groupLeaders)
+                && Objects.equals(current.separatedPairs, cf.separatedPairs)
+                && Objects.equals(current.lucky, cf.lucky)
+                && Objects.equals(current.exportWritable, cf.exportWritable);
     }
 
     /**
@@ -200,16 +200,16 @@ public class ConfigPane extends VBox {
         if (config == null) {
             return;
         }
-        rowCountInput.setValue(config.row_count);
-        columnCountInput.setValue(config.column_count);
-        rbrInput.setValue(config.random_between_rows);
-        disabledLastRowPosInput.setText(config.last_row_pos_cannot_be_chosen);
-        nameListInput.setText(config.person_sort_by_height);
-        groupLeaderListInput.setText(config.group_leader_list);
-        separateListInput.setText(config.separate_list);
-        luckyOptionCheck.setSelected(config.lucky_option);
-        exportWritableCheck.setSelected(config.export_writable);
-        darkModeCheck.setSelected(config.dark_mode);
+        rowCountInput.setValue(config.rowCount);
+        columnCountInput.setValue(config.columnCount);
+        rbrInput.setValue(config.randomBetweenRows);
+        disabledLastRowPosInput.setText(config.disabledLastRowPos);
+        nameListInput.setText(config.names);
+        groupLeaderListInput.setText(config.groupLeaders);
+        separateListInput.setText(config.separatedPairs);
+        luckyOptionCheck.setSelected(config.lucky);
+        exportWritableCheck.setSelected(config.exportWritable);
+        darkModeCheck.setSelected(config.darkMode);
     }
 
 }

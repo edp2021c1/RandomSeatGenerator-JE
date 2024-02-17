@@ -106,7 +106,7 @@ public class ConsoleLauncher {
         Logging.info("\n" + seatTable);
 
         // 导出
-        seatTable.exportToExcelDocument(outputPath, config.export_writable);
+        seatTable.exportToExcelDocument(outputPath, config.exportWritable);
         Logging.info("Seat table successfully exported to " + outputPath);
 
         System.exit(0);

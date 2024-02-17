@@ -64,7 +64,7 @@ public class GUILauncher extends Application {
     @Override
     public void start(final Stage primaryStage) {
         try {
-            UIFactory.setGlobalDarkMode(Utils.elseIfNull(ConfigHolder.globalHolder().get().dark_mode, true));
+            UIFactory.setGlobalDarkMode(Utils.elseIfNull(ConfigHolder.globalHolder().get().darkMode, true));
             MainWindow.getMainWindow().show();
         } catch (final Throwable e) {
             if (e instanceof ExceptionInInitializerError) {

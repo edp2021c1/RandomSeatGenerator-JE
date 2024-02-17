@@ -71,9 +71,9 @@ public class Utils {
     /**
      * Returns {@code elseObj} if {@code obj} is null, and {@code obj} if not.
      *
-     * @param obj object
+     * @param obj     object
      * @param elseObj the other object
-     * @param <T> type of the object
+     * @param <T>     type of the object
      * @return {@code elseObj} if {@code obj} is null, and {@code obj} if not
      */
     public static <T> T elseIfNull(final T obj, final T elseObj) {

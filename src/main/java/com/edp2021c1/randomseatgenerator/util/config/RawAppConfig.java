@@ -18,14 +18,15 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter.Feature;
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.Utils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -45,62 +46,72 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableL
  * @see SeatConfig
  * @since 1.4.8
  */
-public class RawAppConfig implements Cloneable {
-
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+public class RawAppConfig implements Cloneable, SeatConfig {
     private static final List<Field> fields = Arrays.asList(RawAppConfig.class.getFields());
     /**
      * Row count (int).
      */
-    public Integer row_count;
+    @JSONField(name = "row_count")
+    public Integer rowCount;
     /**
      * Column count (int).
      * Cannot be larger than {@link SeatTable#MAX_COLUMN_COUNT}.
      *
      * @see SeatTable#MAX_COLUMN_COUNT
      */
-    public Integer column_count;
+    @JSONField(name = "column_count")
+    public Integer columnCount;
     /**
      * Count of the rows rotated randomly together as group (int).
      */
-    public Integer random_between_rows;
+    @JSONField(name = "random_between_rows")
+    public Integer randomBetweenRows;
     /**
      * Positions in the last row that cannot be chosen, in case something blocks
      * the last row ({@code space} between two numbers).
      */
-    public String last_row_pos_cannot_be_chosen;
+    @JSONField(name = "last_row_pos_cannot_be_chosen")
+    public String disabledLastRowPos;
     /**
      * Name list sorted by height ({@code space} between two people).
      */
-    public String person_sort_by_height;
+    @JSONField(name = "person_sort_by_height")
+    public String names;
     /**
      * A list of people who can be a leader of a column ({@code space} between two people).
      */
-    public String group_leader_list;
+    @JSONField(name = "group_leader_list")
+    public String groupLeaders;
     /**
      * A list of people pairs separated (a pair of names each line, and {@code space} between two names of a pair).
      */
-    public String separate_list;
+    @JSONField(name = "separate_list")
+    public String separatedPairs;
     /**
      * Whether there will be a lucky person specially chosen from the last rows.
      */
-    public Boolean lucky_option;
+    @JSONField(name = "lucky_option")
+    public Boolean lucky;
     /**
      * If seat table is exported writable.
      */
-    public Boolean export_writable;
+    @JSONField(name = "export_writable")
+    public Boolean exportWritable;
     /**
      * The previous directory seat table is exported to.
      */
-    public String last_export_dir;
+    @JSONField(name = "previous_export_dir")
+    public String previousExportDir;
     /**
      * The previous directory config is loaded from.
      */
-    public String last_import_dir;
+    @JSONField(name = "previous_import_dir")
+    public String previousImportDir;
     /**
      * Determines whether the app is shown in the dark mode.
      */
-    public Boolean dark_mode;
+    @JSONField(name = "dark_mode")
+    public Boolean darkMode;
 
     /**
      * Constructs an instance.
@@ -115,7 +126,7 @@ public class RawAppConfig implements Cloneable {
      * @return element parsed from json
      */
     public static RawAppConfig fromJson(final String json) {
-        return GSON.fromJson(json, RawAppConfig.class);
+        return JSON.parseObject(json, RawAppConfig.class);
     }
 
     /**
@@ -130,99 +141,75 @@ public class RawAppConfig implements Cloneable {
     }
 
     /**
-     * Returns {@link #row_count}.
+     * Returns {@link #rowCount}.
      *
      * @return {@code  row_count}
      * @throws IllegalConfigException if {@code row_count} is null or not larger than 0
-     * @see #row_count
+     * @see #rowCount
      */
     public int getRowCount() throws IllegalConfigException {
-        return row_count;
-    }
-
-    private void checkRowCount() throws IllegalConfigException {
-        if (row_count == null || row_count <= 0) {
-            throw new IllegalConfigException("Row count cannot be equal to or less than 0");
-        }
+        return rowCount;
     }
 
     /**
-     * Returns {@link #column_count} as an integer.
+     * Returns {@link #columnCount} as an integer.
      *
      * @return {@code  column_count} as an integer.
      * @throws IllegalConfigException if {@code column_count} is null or not larger than 0,
      *                                or larger than {@link SeatTable#MAX_COLUMN_COUNT}
-     * @see #column_count
+     * @see #columnCount
      * @see SeatTable#MAX_COLUMN_COUNT
      */
     public int getColumnCount() throws IllegalConfigException {
         checkColumnCount();
-        return column_count;
-    }
-
-    private void checkColumnCount() throws IllegalConfigException {
-        if (column_count == null || column_count <= 0) {
-            throw new IllegalConfigException("Column count cannot be null or equal to/less than 0");
-        }
-        if (column_count > SeatTable.MAX_COLUMN_COUNT) {
-            throw new IllegalConfigException("Column count cannot be larger than " + SeatTable.MAX_COLUMN_COUNT);
-        }
+        return columnCount;
     }
 
     /**
-     * Returns {@link #random_between_rows}, {@link #column_count} if is null or not larger than 0.
+     * Returns {@link #randomBetweenRows}, {@link #columnCount} if is null or not larger than 0.
      *
      * @return {@code  random_between_rows}
      * @throws IllegalConfigException if {@code column_count} is null, or not larger than zero,
      *                                or larger than {@link SeatTable#MAX_COLUMN_COUNT}
-     * @see #random_between_rows
+     * @see #randomBetweenRows
      */
     public int getRandomBetweenRows() throws IllegalConfigException {
-        if (random_between_rows == null || random_between_rows <= 0) {
+        if (randomBetweenRows == null || randomBetweenRows <= 0) {
             return getRowCount();
         }
 
-        return random_between_rows;
+        return randomBetweenRows;
     }
 
     /**
-     * Returns {@link #last_row_pos_cannot_be_chosen} as a list of {@link Integer}.
+     * Returns {@link #disabledLastRowPos} as a list of {@link Integer}.
      *
      * @return {@code  last_row_pos_cannot_be_chosen} as a list of {@link Integer}.
      * @throws IllegalConfigException if failed to parse {@code last_row_pos_cannot_be_chosen}.
-     * @see #last_row_pos_cannot_be_chosen
+     * @see #disabledLastRowPos
      */
     public List<Integer> getDisabledLastRowPos() throws IllegalConfigException {
-        if (last_row_pos_cannot_be_chosen == null || last_row_pos_cannot_be_chosen.isBlank()) {
+        if (disabledLastRowPos == null || disabledLastRowPos.isBlank()) {
             return new ArrayList<>();
         }
         checkDisabledLastRowPos();
         return buildList(
-                Arrays.asList(last_row_pos_cannot_be_chosen.split(" ")),
+                Arrays.asList(disabledLastRowPos.split(" ")),
                 Integer::parseUnsignedInt
         );
     }
 
-    private void checkDisabledLastRowPos() throws IllegalConfigException {
-        if (last_row_pos_cannot_be_chosen == null) {
-            throw new IllegalConfigException("Disabled last row positions cannot be null");
-        }
-        if (!Strings.integerListPattern.matcher(last_row_pos_cannot_be_chosen).matches()) {
-            throw new IllegalConfigException("Invalid disabled last row positions: " + last_row_pos_cannot_be_chosen);
-        }
-    }
-
     /**
-     * Returns {@link #person_sort_by_height} as a list of {@code String}.
+     * Returns {@link #names} as a list of {@code String}.
      *
      * @return {@code  person_sort_by_height} as a list of {@code String}.
-     * @see #person_sort_by_height
+     * @see #names
      */
-    public List<String> getNameList() throws IllegalConfigException {
-        if (person_sort_by_height == null) {
+    public List<String> getNames() throws IllegalConfigException {
+        if (names == null) {
             throw new IllegalConfigException("Name list cannot be null");
         }
-        final List<String> l = modifiableListOf(person_sort_by_height.split(" "));
+        final List<String> l = modifiableListOf(names.split(" "));
         if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
                     "Name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.EMPTY_SEAT_PLACEHOLDER)
@@ -240,16 +227,16 @@ public class RawAppConfig implements Cloneable {
     }
 
     /**
-     * Returns {@link #group_leader_list} as a list of {@code String}.
+     * Returns {@link #groupLeaders} as a list of {@code String}.
      *
      * @return {@code  group_leader_list} as a list of {@code String}.
-     * @see #group_leader_list
+     * @see #groupLeaders
      */
-    public List<String> getGroupLeaderList() throws IllegalConfigException {
-        if (group_leader_list == null) {
+    public List<String> getGroupLeaders() throws IllegalConfigException {
+        if (groupLeaders == null) {
             throw new IllegalConfigException("Group leader list cannot be null");
         }
-        final List<String> l = modifiableListOf(group_leader_list.split(" "));
+        final List<String> l = modifiableListOf(groupLeaders.split(" "));
         if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
                     "Group leader list must not contain empty seat place holder \"%s\"".formatted(SeatTable.EMPTY_SEAT_PLACEHOLDER)
@@ -259,18 +246,18 @@ public class RawAppConfig implements Cloneable {
     }
 
     /**
-     * Returns {@link #separate_list} as a list of {@code SeparatedPair}.
+     * Returns {@link #separatedPairs} as a list of {@code SeparatedPair}.
      *
      * @return {@code  separate_list} as a list of {@code SeparatedPair}.
      * @throws IllegalConfigException if {@code separate_list} contains one or more invalid pairs.
-     * @see #separate_list
+     * @see #separatedPairs
      */
-    public List<SeparatedPair> getSeparatedList() throws IllegalConfigException {
-        if (separate_list == null) {
+    public List<SeparatedPair> getSeparatedPairs() throws IllegalConfigException {
+        if (separatedPairs == null) {
             throw new IllegalConfigException("Separated list cannot be null");
         }
 
-        final List<String> t = Arrays.asList(separate_list.split("\n"));
+        final List<String> t = Arrays.asList(separatedPairs.split("\n"));
         final List<SeparatedPair> s = new ArrayList<>(t.size());
 
         t.forEach(m -> {
@@ -282,13 +269,41 @@ public class RawAppConfig implements Cloneable {
         return s;
     }
 
+    public Boolean isLucky() {
+        return Utils.elseIfNull(lucky, false);
+    }
+
+    private void checkRowCount() throws IllegalConfigException {
+        if (rowCount == null || rowCount <= 0) {
+            throw new IllegalConfigException("Row count cannot be equal to or less than 0");
+        }
+    }
+
+    private void checkColumnCount() throws IllegalConfigException {
+        if (columnCount == null || columnCount <= 0) {
+            throw new IllegalConfigException("Column count cannot be null or equal to/less than 0");
+        }
+        if (columnCount > SeatTable.MAX_COLUMN_COUNT) {
+            throw new IllegalConfigException("Column count cannot be larger than " + SeatTable.MAX_COLUMN_COUNT);
+        }
+    }
+
+    private void checkDisabledLastRowPos() throws IllegalConfigException {
+        if (disabledLastRowPos == null) {
+            throw new IllegalConfigException("Disabled last row positions cannot be null");
+        }
+        if (!Strings.integerListPattern.matcher(disabledLastRowPos).matches()) {
+            throw new IllegalConfigException("Invalid disabled last row positions: " + disabledLastRowPos);
+        }
+    }
+
     /**
      * Returns JSON string of this.
      *
      * @return parsed json string
      */
     public String toJson() {
-        return GSON.toJson(this);
+        return JSON.toJSONString(this, Feature.PrettyFormat, Feature.FieldBased);
     }
 
     /**
@@ -314,24 +329,24 @@ public class RawAppConfig implements Cloneable {
             causes.add(e);
         }
         try {
-            getNameList();
+            getNames();
         } catch (IllegalConfigException e) {
             causes.add(e);
         }
         try {
-            getGroupLeaderList();
+            getGroupLeaders();
         } catch (IllegalConfigException e) {
             causes.add(e);
         }
         try {
-            getSeparatedList();
+            getSeparatedPairs();
         } catch (IllegalConfigException e) {
             causes.add(e);
         }
-        if (lucky_option == null) {
+        if (lucky == null) {
             causes.add(new IllegalConfigException("Lucky option cannot be null"));
         }
-        if (export_writable == null) {
+        if (exportWritable == null) {
             causes.add(new IllegalConfigException("Export writable cannot be null"));
         }
         if (!causes.isEmpty()) {
@@ -384,16 +399,6 @@ public class RawAppConfig implements Cloneable {
     public SeatConfig getContent() {
         checkFormat();
 
-        final SeatConfig config = new SeatConfig();
-        config.setRowCount(getRowCount());
-        config.setColumnCount(getColumnCount());
-        config.setRandomBetweenRows(getRandomBetweenRows());
-        config.setDisabledLastRowPos(getDisabledLastRowPos());
-        config.setNames(getNameList());
-        config.setGroupLeaders(getGroupLeaderList());
-        config.setSeparatedPairs(getSeparatedList());
-        config.setLucky(lucky_option);
-
-        return config;
+        return this;
     }
 }

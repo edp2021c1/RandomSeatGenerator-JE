@@ -1,32 +1,27 @@
 package com.edp2021c1.randomseatgenerator.core;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.List;
 
 /**
  * Stores config used to generate seat table.
  *
  * @author Calboot
- * @since 1.4.8
+ * @since 1.5.0
  */
-@Getter
-@Setter
-public class SeatConfig {
+public interface SeatConfig {
+    int getRowCount();
 
-    private int rowCount;
-    private int columnCount;
-    private int randomBetweenRows;
-    private List<Integer> disabledLastRowPos;
-    private List<String> names;
-    private List<String> groupLeaders;
-    private List<SeparatedPair> separatedPairs;
-    private boolean lucky;
+    int getColumnCount();
 
-    /**
-     * Constructs an instance.
-     */
-    public SeatConfig() {
-    }
+    int getRandomBetweenRows();
+
+    List<Integer> getDisabledLastRowPos();
+
+    List<String> getNames();
+
+    List<String> getGroupLeaders();
+
+    List<SeparatedPair> getSeparatedPairs();
+
+    Boolean isLucky();
 }

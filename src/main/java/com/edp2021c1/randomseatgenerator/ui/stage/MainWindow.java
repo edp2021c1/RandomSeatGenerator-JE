@@ -143,7 +143,7 @@ public class MainWindow extends Stage {
                 throw new RuntimeException(e);
             }
         });
-        exportDir.set(t.last_export_dir == null ? SeatTable.DEFAULT_EXPORTING_DIR.toFile() : new File(t.last_export_dir));
+        exportDir.set(t.previousExportDir == null ? SeatTable.DEFAULT_EXPORTING_DIR.toFile() : new File(t.previousExportDir));
 
         /* *************************************************************************
          *                                                                         *
@@ -187,13 +187,13 @@ public class MainWindow extends Stage {
                 if (exportFile == null) {
                     return;
                 }
-                seatTable.exportToExcelDocument(exportFile.toPath(), cfHolder.get().export_writable);
+                seatTable.exportToExcelDocument(exportFile.toPath(), cfHolder.get().exportWritable);
 
                 Logging.info("Successfully exported seat table to " + exportFile);
 
                 exportDir.set(exportFile.getParentFile());
                 t = new RawAppConfig();
-                t.last_export_dir = exportDir.get().toString();
+                t.previousExportDir = exportDir.get().toString();
                 cfHolder.set(t);
             } catch (final Throwable e) {
                 CrashReporter.report(e);

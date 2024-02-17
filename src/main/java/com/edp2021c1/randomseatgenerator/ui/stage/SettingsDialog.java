@@ -199,7 +199,7 @@ public class SettingsDialog extends Stage {
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
 
         importDir = fc.initialDirectoryProperty();
-        importDir.set(t.last_import_dir == null ? cfHolder.getConfigPath().getParent().toFile() : new File(t.last_import_dir));
+        importDir.set(t.previousImportDir == null ? cfHolder.getConfigPath().getParent().toFile() : new File(t.previousImportDir));
 
         /* *************************************************************************
          *                                                                         *
@@ -222,7 +222,7 @@ public class SettingsDialog extends Stage {
 
                 importDir.set(importFile.getParentFile());
                 t = new RawAppConfig();
-                t.last_import_dir = importDir.toString();
+                t.previousImportDir = importDir.toString();
                 cfHolder.set(t);
             } catch (final Throwable e) {
                 CrashReporter.report(e);

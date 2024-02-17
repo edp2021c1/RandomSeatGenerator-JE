@@ -61,7 +61,7 @@ public class UIFactory {
 
         @Override
         protected void invalidated() {
-            config.dark_mode = get();
+            config.darkMode = get();
             ConfigHolder.globalHolder().set(config);
         }
     };

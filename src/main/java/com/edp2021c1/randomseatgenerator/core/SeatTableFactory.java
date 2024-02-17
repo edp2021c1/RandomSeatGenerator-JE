@@ -20,12 +20,16 @@ package com.edp2021c1.randomseatgenerator.core;
 
 import com.edp2021c1.randomseatgenerator.util.Strings;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.*;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.groupLeaderFormat;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.*;
+import static java.util.Collections.*;
 
 /**
  * Manages the generation of seat tables.
@@ -75,10 +79,9 @@ public class SeatTableFactory {
         // 获取配置
         final int rowCount;
         final int columnCount = config.getColumnCount();
-        final int randomRowCount;
-        final List<Integer> notAllowedLastRowPos = modifiableListOf(config.getDisabledLastRowPos());
-        final List<String> nameList = modifiableListOf(config.getNames());
-        final List<String> groupLeaderList = modifiableListOf(config.getGroupLeaders());
+        final int randomBetweenRows;
+        final List<String> nameList = unmodifiableList(config.getNames());
+        final List<String> groupLeaderList = unmodifiableList(config.getGroupLeaders());
         final boolean lucky = config.isLucky();
 
         // 防止lucky为true时数组越界
@@ -89,21 +92,24 @@ public class SeatTableFactory {
 
         // 防止行数过多引发无限递归
         rowCount = (int) Math.min(config.getRowCount(), Math.ceil((double) (peopleNum - minus) / columnCount));
-        randomRowCount = Math.min(config.getRandomBetweenRows(), rowCount);
+        randomBetweenRows = Math.min(config.getRandomBetweenRows(), rowCount);
 
         // 临时变量，提前声明以减少内存和计算操作
         int t;
         final int seatNum = rowCount * columnCount;
-        final int randomPeopleCount = columnCount * randomRowCount;
-        final int peopleLeft = peopleNum % randomPeopleCount;
+        final int randomPeopleCount = columnCount * randomBetweenRows;
 
-        final int forTimes = (peopleLeft > columnCount ? seatNum / randomPeopleCount + 1 : seatNum / randomPeopleCount) - 1;
+        final int forTimes = (peopleNum % randomPeopleCount > columnCount ? seatNum / randomPeopleCount + 1 : seatNum / randomPeopleCount) - 1;
 
         final List<String> emptyRow = Arrays.asList(new String[columnCount]);
-        Collections.fill(emptyRow, EMPTY_SEAT_PLACEHOLDER);
+        fill(emptyRow, EMPTY_SEAT_PLACEHOLDER);
 
-        final List<Integer> availableLastRowPos = range(1, columnCount + 1);
-        availableLastRowPos.removeAll(notAllowedLastRowPos);
+        final List<Integer> availableLastRowPos;
+        {
+            final List<Integer> tmp = range(1, columnCount - 1);
+            tmp.removeAll(config.getDisabledLastRowPos());
+            availableLastRowPos = unmodifiableList(tmp);
+        }
 
         // 座位表数据
         final List<String> seatTable = new ArrayList<>(seatNum);
@@ -123,9 +129,9 @@ public class SeatTableFactory {
             }
 
             for (int i = 0; i < forTimes; i++) {
-                Collections.shuffle(tNameList.subList(i * randomPeopleCount, (i + 1) * randomPeopleCount), rd);
+                shuffle(tNameList.subList(i * randomPeopleCount, (i + 1) * randomPeopleCount), rd);
             }
-            Collections.shuffle(tNameList.subList(forTimes * randomPeopleCount, tPeopleNum), rd);
+            shuffle(tNameList.subList(forTimes * randomPeopleCount, tPeopleNum), rd);
 
             t = tPeopleNum > seatNum ? 0 : tPeopleNum % columnCount;
             if (t == 0) {
@@ -194,7 +200,7 @@ public class SeatTableFactory {
      */
     public static SeatTable generateEmpty(final SeatConfig config) {
         List<String> seat = Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]);
-        Collections.fill(seat, EMPTY_SEAT_PLACEHOLDER);
+        fill(seat, EMPTY_SEAT_PLACEHOLDER);
         return new SeatTable(seat, config, "-", "-");
     }
 
