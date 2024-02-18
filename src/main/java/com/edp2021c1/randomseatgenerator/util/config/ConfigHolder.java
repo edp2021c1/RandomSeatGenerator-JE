@@ -26,7 +26,6 @@ import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedExcepti
 import lombok.Getter;
 
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
@@ -47,7 +46,7 @@ import static com.edp2021c1.randomseatgenerator.util.IOUtils.*;
  * @see JSONAppConfig
  * @since 1.4.9
  */
-public class ConfigHolder implements Closeable {
+public class ConfigHolder {
 
     /**
      * Default config handler.
@@ -160,7 +159,7 @@ public class ConfigHolder implements Closeable {
     /**
      * Closes this.
      */
-    public void close() {
+    private void close() {
         if (closed) return;
         try {
             channel.close();
