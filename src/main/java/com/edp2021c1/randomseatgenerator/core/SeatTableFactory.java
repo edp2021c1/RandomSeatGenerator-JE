@@ -19,6 +19,7 @@
 package com.edp2021c1.randomseatgenerator.core;
 
 import com.edp2021c1.randomseatgenerator.util.Strings;
+import lombok.Cleanup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -171,9 +172,9 @@ public class SeatTableFactory {
      *                                costs too much time to generate the seat table.
      */
     public static SeatTable generate(final SeatConfig config, final String seed) {
+        @Cleanup
         final ExecutorService exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
         final Future<SeatTable> future = exe.submit(() -> generate0(config, seed));
-        exe.close();
 
         try {
             return future.get(3, TimeUnit.SECONDS);

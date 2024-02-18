@@ -18,12 +18,16 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
+import com.edp2021c1.randomseatgenerator.util.Utils;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
 
@@ -34,19 +38,12 @@ import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
  * @since 1.5.0
  */
 public class MessageDialog extends Stage {
+    private static String messageToBeShown;
 
-    private MessageDialog(final String title, final String msg) {
+    private MessageDialog(final String msg) {
         super();
 
-        final Control txt;
-        if (msg == null || msg.lines().toList().size() < 2) {
-            txt = new Label(msg);
-        } else {
-            final TextArea t = new TextArea(msg);
-            t.setEditable(false);
-            t.setPrefColumnCount(75);
-            txt = t;
-        }
+        final Label txt = new Label(Utils.elseIfNull(msg,""));
 
         final Button button = createButton("确定", 80, 26);
         button.setDefaultButton(true);
@@ -61,21 +58,34 @@ public class MessageDialog extends Stage {
         setInsets(new Insets(5), txt, buttonBar);
 
         setScene(new Scene(mainBox));
-        setTitle(title);
+        setTitle("消息");
+        setMaxWidth(1280);
+        setMaxHeight(720);
         decorate(this, StageType.DIALOG);
     }
 
     /**
      * Shows a message dialog.
      *
-     * @param title title of the dialog
-     * @param msg   message to be shown
+     * @param msg message to be shown
      */
-    public static void showMessage(final String title, final String msg) {
+    public static void showMessage(final String msg) {
         try {
-            new MessageDialog(title, msg).showAndWait();
+            new MessageDialog(msg).showAndWait();
         } catch (final IllegalStateException e) {
-            Application.launch(MessageDialogApp.class, title, msg);
+            messageToBeShown = msg;
+            Application.launch(MessageDialogApp.class);
+        }
+    }
+
+    public static void showMessage(final Window owner, final String msg) {
+        try {
+            final MessageDialog dialog = new MessageDialog(msg);
+            dialog.initOwner(owner);
+            dialog.showAndWait();
+        } catch (final IllegalStateException e) {
+            messageToBeShown = msg;
+            Application.launch(MessageDialogApp.class);
         }
     }
 
@@ -92,10 +102,7 @@ public class MessageDialog extends Stage {
 
         @Override
         public void start(Stage primaryStage) {
-            new MessageDialog(
-                    getParameters().getRaw().getFirst(),
-                    getParameters().getRaw().getLast()
-            ).showAndWait();
+            new MessageDialog(messageToBeShown).showAndWait();
         }
     }
 }

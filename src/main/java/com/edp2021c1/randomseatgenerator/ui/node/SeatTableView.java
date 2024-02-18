@@ -21,7 +21,9 @@ package com.edp2021c1.randomseatgenerator.ui.node;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
@@ -36,24 +38,9 @@ import javafx.scene.layout.VBox;
  */
 public class SeatTableView extends VBox {
     private static final String DEFAULT_STYLE_CLASS = "seat-table-view";
-    private int rowCount;
-    private int columnCount;
-    private final ObjectProperty<SeatTable> seatTable = new SimpleObjectProperty<>(this, "seatTable") {
-        @Override
-        protected void invalidated() {
-            if (get() == null) return;
-
-            rowCount = get().getConfig().getRowCount();
-            columnCount = get().getConfig().getColumnCount();
-
-            getChildren().clear();
-            get().toRowData().forEach(s -> {
-                final SeatTableRow row = new SeatTableRow(s, columnCount);
-                row.prefHeightProperty().bind(heightProperty().divide(rowCount));
-                getChildren().add(row);
-            });
-        }
-    };
+    private final IntegerProperty rowCount = new SimpleIntegerProperty(this, "rowCount");
+    private final IntegerProperty columnCount = new SimpleIntegerProperty(this, "columnCount");
+    private final ObjectProperty<SeatTable> seatTable = new SimpleObjectProperty<>(this, "seatTable");
 
     /**
      * Creates a view showing an empty {@code SeatTable}.
@@ -74,17 +61,36 @@ public class SeatTableView extends VBox {
                 }
             }
         });
+
+        seatTable.addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+
+            rowCount.set(newValue.getConfig().getRowCount());
+            columnCount.set(newValue.getConfig().getColumnCount());
+
+            getChildren().clear();
+            newValue.toRowData().forEach(s -> {
+                final SeatTableRow row = new SeatTableRow(s, columnCount.get());
+                row.prefHeightProperty().bind(heightProperty().divide(rowCount));
+                getChildren().add(row);
+            });
+        });
+
+        minHeightProperty().bind(rowCount.multiply(60));
+        minWidthProperty().bind(columnCount.multiply(120));
+
         setEmptySeatTable(config);
     }
 
     /**
-     * Sets the value of {@code seatTable} and refreshes the
-     * view to display the table.
+     * Returns the property of the table shown.
      *
-     * @param seatTable to be displayed
+     * @return {@link #seatTable}
      */
-    public void setSeatTable(final SeatTable seatTable) {
-        this.seatTable.set(seatTable);
+    public ObjectProperty<SeatTable> seatTableProperty() {
+        return seatTable;
     }
 
     /**
@@ -94,7 +100,7 @@ public class SeatTableView extends VBox {
      * @param config used to generate the empty seat table
      */
     public void setEmptySeatTable(final SeatConfig config) {
-        this.seatTable.set(SeatTableFactory.generateEmpty(config));
+        seatTable.set(SeatTableFactory.generateEmpty(config));
     }
 
 }

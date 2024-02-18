@@ -20,7 +20,7 @@ package com.edp2021c1.randomseatgenerator.ui;
 
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
@@ -57,7 +57,7 @@ public class UIFactory {
     private static final String[] STYLESHEETS_LIGHT = {"/assets/css/base.css", "/assets/css/light.css"};
 
     private static final BooleanProperty globalDarkMode = new SimpleBooleanProperty(null, "globalDarkMode") {
-        private final RawAppConfig config = new RawAppConfig();
+        private final JSONAppConfig config = new JSONAppConfig();
 
         @Override
         protected void invalidated() {
@@ -191,7 +191,7 @@ public class UIFactory {
      * @param promptText of the field
      * @return the field created
      */
-    public static TextField createTextField(final String promptText) {
+    public static TextField createEmptyTextField(final String promptText) {
         final TextField t = new TextField();
         t.setPromptText(promptText);
         return t;

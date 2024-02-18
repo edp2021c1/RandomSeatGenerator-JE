@@ -18,7 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
-import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Utils;
@@ -27,10 +26,10 @@ import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedExcepti
 import lombok.Getter;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -39,20 +38,22 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.edp2021c1.randomseatgenerator.util.IOUtils.*;
+
 /**
- * Handles {@link RawAppConfig}.
+ * Handles {@link JSONAppConfig}.
  *
  * @author Calboot
- * @see RawAppConfig
+ * @see JSONAppConfig
  * @since 1.4.9
  */
-public class ConfigHolder {
+public class ConfigHolder implements Closeable {
 
     /**
      * Default config handler.
      */
     private static final ConfigHolder global;
-    private static final RawAppConfig BUILT_IN;
+    private static final JSONAppConfig BUILT_IN;
     private static final Path GLOBAL_CONFIG_PATH = Utils.join(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
     private static final Set<ConfigHolder> holders = new HashSet<>();
 
@@ -66,7 +67,7 @@ public class ConfigHolder {
         for (final Object s : reader.lines().toArray()) {
             str.append(s);
         }
-        BUILT_IN = RawAppConfig.fromJson(str.toString());
+        BUILT_IN = JSONAppConfig.fromJson(str.toString());
 
         try {
             global = createHolder(GLOBAL_CONFIG_PATH);
@@ -79,7 +80,7 @@ public class ConfigHolder {
 
     @Getter
     private final Path configPath;
-    private final RawAppConfig content;
+    private final JSONAppConfig content;
     private final FileChannel channel;
     private FileTime configLastModifiedTime;
     private boolean closed;
@@ -91,32 +92,32 @@ public class ConfigHolder {
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
     private ConfigHolder(final Path configPath) throws IOException {
-        this.content = new RawAppConfig();
+        this.content = new JSONAppConfig();
         this.configLastModifiedTime = null;
         this.configPath = configPath;
 
         final Path configDir = configPath.getParent();
-        IOUtils.replaceWithDirectory(configDir);
-        if (IOUtils.notFullyPermitted(configDir)) {
+        replaceWithDirectory(configDir);
+        if (notFullyPermitted(configDir)) {
             throw new IOException("Does not has enough permission to read/write config");
         }
 
         boolean needsInit = false;
         if (!Files.exists(configPath) || !Files.isRegularFile(configPath)) {
-            IOUtils.deleteIfExists(configPath);
+            deleteIfExists(configPath);
             Files.createFile(configPath);
             needsInit = true;
-        } else if (Files.readString(configPath).isEmpty()) {
-            needsInit = true;
         }
-        if (IOUtils.notFullyPermitted(configPath)) {
+        if (notFullyPermitted(configPath)) {
             throw new IOException("Does not has enough permission to read/write config");
         }
 
         this.channel = FileChannel.open(configPath, StandardOpenOption.READ, StandardOpenOption.WRITE);
-        final FileLock lock = this.channel.tryLock();
-        if (lock == null) {
+        if (this.channel.tryLock() == null) {
             throw new FileAlreadyLockedException(configPath);
+        }
+        if (readString(channel).isEmpty()) {
+            needsInit = true;
         }
         if (needsInit) {
             set(BUILT_IN);
@@ -159,7 +160,7 @@ public class ConfigHolder {
     /**
      * Closes this.
      */
-    private void close() {
+    public void close() {
         if (closed) return;
         try {
             channel.close();
@@ -182,12 +183,12 @@ public class ConfigHolder {
      * @param config to set
      * @throws RuntimeException if an I/O error occurs
      */
-    public void set(RawAppConfig config) {
+    public void set(final JSONAppConfig config) {
         checkState();
         content.set(config);
-        content.checkFormat();
+        content.check();
         try {
-            IOUtils.overwriteString(channel, content.toJson());
+            overwriteString(channel, content.toJson());
             configLastModifiedTime = Files.getLastModifiedTime(configPath);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -200,7 +201,7 @@ public class ConfigHolder {
      * @return the config
      * @throws RuntimeException if an I/O error occurs
      */
-    public RawAppConfig get() {
+    public JSONAppConfig get() {
         try {
             flush();
         } catch (IOException e) {
@@ -214,9 +215,9 @@ public class ConfigHolder {
         if (Objects.equals(Files.getLastModifiedTime(configPath), configLastModifiedTime)) {
             return;
         }
-        content.set(RawAppConfig.fromJson(IOUtils.readString(channel)));
+        content.set(JSONAppConfig.fromJson(readString(channel)));
         try {
-            content.checkFormat();
+            content.check();
         } catch (final RuntimeException e) {
             Logging.warning("Invalid config loaded");
             Logging.warning(e.getLocalizedMessage());

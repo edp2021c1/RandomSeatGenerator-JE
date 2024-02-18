@@ -76,16 +76,19 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
                 Logging.error(
                         (ex.isSingle() ? "IllegalConfigException: " : "IllegalConfigException:") + ex.getLocalizedMessage()
                 );
-                MessageDialog.showMessage(
-                        "配置格式错误",
-                        (ex.isSingle() ? "配置格式错误\n" : "配置格式错误") + ex.getLocalizedMessage()
-                );
+                if (withGUI) {
+                    MessageDialog.showMessage(
+                            (ex.isSingle() ? "配置格式错误\n" : "配置格式错误") + ex.getLocalizedMessage()
+                    );
+                }
                 return;
             }
 
             if (e instanceof ApplicationAlreadyRunningException) {
                 Logging.error("Another instance of the application is already running");
-                MessageDialog.showMessage("", "已有另一个实例在运行");
+                if (withGUI) {
+                    MessageDialog.showMessage("已有另一个实例在运行");
+                }
                 System.exit(1);
                 return;
             }

@@ -20,7 +20,7 @@ package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.ui.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
@@ -60,7 +60,7 @@ public class ConfigPane extends VBox {
 
     private final ConfigHolder source;
 
-    private final RawAppConfig current;
+    private final JSONAppConfig current;
 
     /**
      * Constructs an instance.
@@ -165,21 +165,12 @@ public class ConfigPane extends VBox {
      *
      * @return a copy of {@link #current}
      */
-    public RawAppConfig getCurrent() {
+    public JSONAppConfig getCurrent() {
         return current.clone();
     }
 
     private boolean checkEquals() {
-        final RawAppConfig cf = getConfigFromSource();
-        return Objects.equals(current.rowCount, cf.rowCount)
-                && Objects.equals(current.columnCount, cf.columnCount)
-                && Objects.equals(current.randomBetweenRows, cf.randomBetweenRows)
-                && Objects.equals(current.disabledLastRowPos, cf.disabledLastRowPos)
-                && Objects.equals(current.names, cf.names)
-                && Objects.equals(current.groupLeaders, cf.groupLeaders)
-                && Objects.equals(current.separatedPairs, cf.separatedPairs)
-                && Objects.equals(current.lucky, cf.lucky)
-                && Objects.equals(current.exportWritable, cf.exportWritable);
+        return Objects.equals(current, getConfigFromSource());
     }
 
     /**
@@ -187,7 +178,7 @@ public class ConfigPane extends VBox {
      *
      * @return config loaded from source.
      */
-    protected RawAppConfig getConfigFromSource() {
+    protected JSONAppConfig getConfigFromSource() {
         return source.get();
     }
 
@@ -196,7 +187,7 @@ public class ConfigPane extends VBox {
      *
      * @param config to set to the pane.
      */
-    public void reset(final RawAppConfig config) {
+    public void reset(final JSONAppConfig config) {
         if (config == null) {
             return;
         }

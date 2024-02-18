@@ -24,7 +24,7 @@ import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
@@ -41,7 +41,6 @@ import javafx.stage.Stage;
 import lombok.Getter;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -65,11 +64,9 @@ public class MainWindow extends Stage {
     private final SeatTableView seatTableView;
     private final ConfigHolder cfHolder;
     private final StringProperty seed;
-    private final ObjectProperty<File> exportDir;
-    private File exportFile;
-    private SeatTable seatTable = null;
-    private RawAppConfig t;
+    private final ObjectProperty<SeatTable> seatTable;
     private String previousSeed = null;
+    private boolean generated;
 
     /**
      * Creates an instance.
@@ -79,7 +76,7 @@ public class MainWindow extends Stage {
 
         cfHolder = ConfigHolder.globalHolder();
 
-        t = cfHolder.get();
+        final JSONAppConfig config = cfHolder.get();
 
         /* *************************************************************************
          *                                                                         *
@@ -94,32 +91,32 @@ public class MainWindow extends Stage {
         final VBox leftBox = createVBox(settingsBtn, generateBtn, exportBtn);
         leftBox.getStyleClass().add("left");
 
-        final Separator separator = new Separator(Orientation.VERTICAL);
-
         // 右上种子输入栏
-        final TextField seedInput = createTextField("种子");
+        final TextField seedInput = createEmptyTextField("种子");
         final Button randomSeedBtn = createButton("随机种子", 80, 26);
         final Button dateAsSeedBtn = createButton("填入日期", 80, 26);
-        final HBox topRightBox = createHBox(seedInput, randomSeedBtn, dateAsSeedBtn);
 
         seed = seedInput.textProperty();
 
         // 座位表
         try {
-            seatTableView = new SeatTableView(t.getContent());
+            config.check();
         } catch (final IllegalConfigException e) {
             throw new IllegalConfigException(List.of(
                     new IllegalConfigException("Illegal config loaded from " + cfHolder.getConfigPath()),
                     e
             ));
         }
+        seatTableView = new SeatTableView(config);
+
+        seatTable = seatTableView.seatTableProperty();
 
         // 右侧主体
-        final VBox rightBox = createVBox(topRightBox, seatTableView);
+        final VBox rightBox = createVBox(createHBox(seedInput, randomSeedBtn, dateAsSeedBtn), seatTableView);
         rightBox.getStyleClass().add("right");
 
         // 整体
-        final HBox mainBox = createHBox(leftBox, separator, rightBox);
+        final HBox mainBox = createHBox(leftBox, new Separator(Orientation.VERTICAL), rightBox);
         mainBox.getStyleClass().add("main");
 
         setInsets(new Insets(5), settingsBtn, generateBtn, exportBtn, seedInput, randomSeedBtn, dateAsSeedBtn);
@@ -134,16 +131,12 @@ public class MainWindow extends Stage {
         final FileChooser fc = new FileChooser();
         fc.setTitle("导出座位表");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
-
-        exportDir = fc.initialDirectoryProperty();
-        exportDir.addListener((observable, oldValue, newValue) -> {
-            try {
-                IOUtils.replaceWithDirectory(newValue.toPath());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        exportDir.set(t.previousExportDir == null ? SeatTable.DEFAULT_EXPORTING_DIR.toFile() : new File(t.previousExportDir));
+        fc.setInitialDirectory(new File(
+                Utils.elseIfNull(
+                        config.previousExportDir,
+                        SeatTable.DEFAULT_EXPORTING_DIR.toString()
+                )
+        ));
 
         /* *************************************************************************
          *                                                                         *
@@ -159,16 +152,15 @@ public class MainWindow extends Stage {
                     randomSeedBtn.fire();
                 }
 
-                t = cfHolder.get();
+                final JSONAppConfig t = cfHolder.get();
                 if (t == null) {
                     throw new IllegalConfigException("Null config");
                 }
-                t.checkFormat();
 
-                seatTable = SeatTableFactory.generate(t.getContent(), seed.get());
+                seatTable.set(SeatTableFactory.generate(t.checkAndReturn(), seed.get()));
                 Logging.info("\n" + seatTable);
-                seatTableView.setSeatTable(seatTable);
                 previousSeed = seed.get();
+                generated = true;
             } catch (final Throwable e) {
                 CrashReporter.report(e);
             }
@@ -177,23 +169,25 @@ public class MainWindow extends Stage {
 
         exportBtn.setOnAction(event -> {
             try {
-                if (seatTable == null) {
+                if (!generated) {
                     generateBtn.fire();
                 }
 
                 fc.setInitialFileName("%tF".formatted(new Date()));
 
-                exportFile = fc.showSaveDialog(MainWindow.this);
+                final File exportFile = fc.showSaveDialog(this);
                 if (exportFile == null) {
                     return;
                 }
-                seatTable.exportToExcelDocument(exportFile.toPath(), cfHolder.get().exportWritable);
+                seatTable.get().exportToExcelDocument(exportFile.toPath(), cfHolder.get().exportWritable);
 
                 Logging.info("Successfully exported seat table to " + exportFile);
+                MessageDialog.showMessage(this, "成功导出座位表到\n" + exportFile);
 
-                exportDir.set(exportFile.getParentFile());
-                t = new RawAppConfig();
-                t.previousExportDir = exportDir.get().toString();
+                fc.setInitialDirectory(exportFile.getParentFile());
+
+                final JSONAppConfig t = new JSONAppConfig();
+                t.previousExportDir = exportFile.getParentFile().toString();
                 cfHolder.set(t);
             } catch (final Throwable e) {
                 CrashReporter.report(e);
@@ -232,18 +226,14 @@ public class MainWindow extends Stage {
                 }
             });
         }
-
-        setOnShown(event -> {
-            setMinHeight(getHeight());
-            setMinWidth(getWidth());
-        });
     }
 
     /**
      * Action to do if config is changed.
      */
     public void onConfigChanged() {
-        seatTableView.setEmptySeatTable(cfHolder.get().getContent());
+        seatTableView.setEmptySeatTable(cfHolder.get());
+        generated = false;
         previousSeed = null;
         Logging.debug("Seat table view reset");
     }

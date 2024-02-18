@@ -20,6 +20,9 @@ import javafx.stage.Stage;
  */
 public class CrashReporterDialog extends Stage {
 
+    private static String titleToBeShown;
+    private static String messageToBeShown;
+
     private CrashReporterDialog(final String title, final String msg) {
         super();
 
@@ -79,7 +82,7 @@ public class CrashReporterDialog extends Stage {
                 if (!event.isControlDown()) {
                     return;
                 }
-                if (KeyCode.C.equals(event.getCode())) {
+                if (KeyCode.C == event.getCode()) {
                     DesktopUtils.copyPlainText(mainText.getText());
                 }
             });
@@ -96,7 +99,9 @@ public class CrashReporterDialog extends Stage {
         try {
             new CrashReporterDialog(title, msg).showAndWait();
         } catch (final IllegalStateException exception) {
-            Application.launch(CrashReporterApp.class, title, msg);
+            titleToBeShown = title;
+            messageToBeShown = msg;
+            Application.launch(CrashReporterApp.class);
         }
     }
 
@@ -113,7 +118,7 @@ public class CrashReporterDialog extends Stage {
 
         @Override
         public void start(final Stage primaryStage) {
-            new CrashReporterDialog(getParameters().getRaw().getFirst(), getParameters().getRaw().getLast()).showAndWait();
+            new CrashReporterDialog(titleToBeShown, messageToBeShown).showAndWait();
         }
     }
 

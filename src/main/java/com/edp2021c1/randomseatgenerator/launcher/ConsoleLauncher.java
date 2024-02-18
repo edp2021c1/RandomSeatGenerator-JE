@@ -24,7 +24,7 @@ import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -90,18 +90,18 @@ public class ConsoleLauncher {
         }
 
         // 处理座位表生成配置
-        RawAppConfig config;
+        JSONAppConfig config;
         try {
             config = ConfigHolder.createHolder(configPath).get();
         } catch (IOException e) {
             throw new RuntimeException("Failed to load config from specific file", e);
         }
 
-        config.checkFormat();
+        config.check();
         Logging.debug("Config path: " + configPath);
 
         // 生成座位表
-        final SeatTable seatTable = SeatTableFactory.generate(config.getContent(), seed);
+        final SeatTable seatTable = SeatTableFactory.generate(config, seed);
 
         Logging.info("\n" + seatTable);
 

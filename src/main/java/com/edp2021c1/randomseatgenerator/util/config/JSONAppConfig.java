@@ -27,6 +27,7 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.Utils;
+import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.edp2021c1.randomseatgenerator.core.SeatTable.*;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableListOf;
 
@@ -46,8 +48,10 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableL
  * @see SeatConfig
  * @since 1.4.8
  */
-public class RawAppConfig implements Cloneable, SeatConfig {
-    private static final List<Field> fields = Arrays.asList(RawAppConfig.class.getFields());
+@EqualsAndHashCode(doNotUseGetters = true)
+public class JSONAppConfig implements Cloneable, SeatConfig {
+    private static final Field[] fields = JSONAppConfig.class.getFields();
+
     /**
      * Row count (int).
      */
@@ -116,7 +120,7 @@ public class RawAppConfig implements Cloneable, SeatConfig {
     /**
      * Constructs an instance.
      */
-    public RawAppConfig() {
+    public JSONAppConfig() {
     }
 
     /**
@@ -125,8 +129,8 @@ public class RawAppConfig implements Cloneable, SeatConfig {
      * @param json JSON string parsed
      * @return element parsed from json
      */
-    public static RawAppConfig fromJson(final String json) {
-        return JSON.parseObject(json, RawAppConfig.class);
+    public static JSONAppConfig fromJson(final String json) {
+        return JSON.parseObject(json, JSONAppConfig.class);
     }
 
     /**
@@ -136,43 +140,23 @@ public class RawAppConfig implements Cloneable, SeatConfig {
      * @return instance loaded from path
      * @throws IOException if an I/O error occurs
      */
-    public static RawAppConfig fromJson(final Path path) throws IOException {
+    public static JSONAppConfig fromJson(final Path path) throws IOException {
         return fromJson(Files.readString(path));
     }
 
-    /**
-     * Returns {@link #rowCount}.
-     *
-     * @return {@code  row_count}
-     * @throws IllegalConfigException if {@code row_count} is null or not larger than 0
-     * @see #rowCount
-     */
+    @Override
     public int getRowCount() throws IllegalConfigException {
+        checkRowCount();
         return rowCount;
     }
 
-    /**
-     * Returns {@link #columnCount} as an integer.
-     *
-     * @return {@code  column_count} as an integer.
-     * @throws IllegalConfigException if {@code column_count} is null or not larger than 0,
-     *                                or larger than {@link SeatTable#MAX_COLUMN_COUNT}
-     * @see #columnCount
-     * @see SeatTable#MAX_COLUMN_COUNT
-     */
+    @Override
     public int getColumnCount() throws IllegalConfigException {
         checkColumnCount();
         return columnCount;
     }
 
-    /**
-     * Returns {@link #randomBetweenRows}, {@link #columnCount} if is null or not larger than 0.
-     *
-     * @return {@code  random_between_rows}
-     * @throws IllegalConfigException if {@code column_count} is null, or not larger than zero,
-     *                                or larger than {@link SeatTable#MAX_COLUMN_COUNT}
-     * @see #randomBetweenRows
-     */
+    @Override
     public int getRandomBetweenRows() throws IllegalConfigException {
         if (randomBetweenRows == null || randomBetweenRows <= 0) {
             return getRowCount();
@@ -181,13 +165,7 @@ public class RawAppConfig implements Cloneable, SeatConfig {
         return randomBetweenRows;
     }
 
-    /**
-     * Returns {@link #disabledLastRowPos} as a list of {@link Integer}.
-     *
-     * @return {@code  last_row_pos_cannot_be_chosen} as a list of {@link Integer}.
-     * @throws IllegalConfigException if failed to parse {@code last_row_pos_cannot_be_chosen}.
-     * @see #disabledLastRowPos
-     */
+    @Override
     public List<Integer> getDisabledLastRowPos() throws IllegalConfigException {
         if (disabledLastRowPos == null || disabledLastRowPos.isBlank()) {
             return new ArrayList<>();
@@ -199,25 +177,20 @@ public class RawAppConfig implements Cloneable, SeatConfig {
         );
     }
 
-    /**
-     * Returns {@link #names} as a list of {@code String}.
-     *
-     * @return {@code  person_sort_by_height} as a list of {@code String}.
-     * @see #names
-     */
+    @Override
     public List<String> getNames() throws IllegalConfigException {
         if (names == null) {
             throw new IllegalConfigException("Name list cannot be null");
         }
         final List<String> l = modifiableListOf(names.split(" "));
-        if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
+        if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
-                    "Name list must not contain empty seat place holder \"%s\"".formatted(SeatTable.EMPTY_SEAT_PLACEHOLDER)
+                    "Name list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
             );
         }
         l.removeAll(List.of(""));
         for (final String s : l) {
-            if (SeatTable.groupLeaderRegex.matcher(s).matches()) {
+            if (groupLeaderRegex.matcher(s).matches()) {
                 throw new IllegalConfigException(
                         "Name list must not contain names matching the format of a group leader"
                 );
@@ -226,42 +199,31 @@ public class RawAppConfig implements Cloneable, SeatConfig {
         return l;
     }
 
-    /**
-     * Returns {@link #groupLeaders} as a list of {@code String}.
-     *
-     * @return {@code  group_leader_list} as a list of {@code String}.
-     * @see #groupLeaders
-     */
+    @Override
     public List<String> getGroupLeaders() throws IllegalConfigException {
         if (groupLeaders == null) {
             throw new IllegalConfigException("Group leader list cannot be null");
         }
         final List<String> l = modifiableListOf(groupLeaders.split(" "));
-        if (l.contains(SeatTable.EMPTY_SEAT_PLACEHOLDER)) {
+        if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
-                    "Group leader list must not contain empty seat place holder \"%s\"".formatted(SeatTable.EMPTY_SEAT_PLACEHOLDER)
+                    "Group leader list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
             );
         }
         return l;
     }
 
-    /**
-     * Returns {@link #separatedPairs} as a list of {@code SeparatedPair}.
-     *
-     * @return {@code  separate_list} as a list of {@code SeparatedPair}.
-     * @throws IllegalConfigException if {@code separate_list} contains one or more invalid pairs.
-     * @see #separatedPairs
-     */
+    @Override
     public List<SeparatedPair> getSeparatedPairs() throws IllegalConfigException {
         if (separatedPairs == null) {
             throw new IllegalConfigException("Separated list cannot be null");
         }
 
-        final List<String> t = Arrays.asList(separatedPairs.split("\n"));
+        final List<String> t = separatedPairs.lines().toList();
         final List<SeparatedPair> s = new ArrayList<>(t.size());
 
         t.forEach(m -> {
-            if (!m.isBlank()) {
+            if (m != null && !m.isBlank()) {
                 s.add(new SeparatedPair(m));
             }
         });
@@ -269,6 +231,7 @@ public class RawAppConfig implements Cloneable, SeatConfig {
         return s;
     }
 
+    @Override
     public Boolean isLucky() {
         return Utils.elseIfNull(lucky, false);
     }
@@ -283,8 +246,8 @@ public class RawAppConfig implements Cloneable, SeatConfig {
         if (columnCount == null || columnCount <= 0) {
             throw new IllegalConfigException("Column count cannot be null or equal to/less than 0");
         }
-        if (columnCount > SeatTable.MAX_COLUMN_COUNT) {
-            throw new IllegalConfigException("Column count cannot be larger than " + SeatTable.MAX_COLUMN_COUNT);
+        if (columnCount > MAX_COLUMN_COUNT) {
+            throw new IllegalConfigException("Column count cannot be larger than " + MAX_COLUMN_COUNT);
         }
     }
 
@@ -309,9 +272,9 @@ public class RawAppConfig implements Cloneable, SeatConfig {
     /**
      * Checks the format of this instance.
      *
-     * @throws IllegalConfigException if this instance has an illegal format.
+     * @throws IllegalConfigException if this instance has an illegal format
      */
-    public void checkFormat() {
+    public void check() {
         final List<IllegalConfigException> causes = new ArrayList<>();
         try {
             checkRowCount();
@@ -360,7 +323,7 @@ public class RawAppConfig implements Cloneable, SeatConfig {
      *
      * @param value to set to {@code this}
      */
-    public void set(final RawAppConfig value) {
+    public void set(final JSONAppConfig value) {
         if (value == null) {
             return;
         }
@@ -370,7 +333,7 @@ public class RawAppConfig implements Cloneable, SeatConfig {
                 field.set(this, Utils.elseIfNull(field.get(value), field.get(this)));
             }
         } catch (final IllegalAccessException ignored) {
-            // Impossible
+            // Impossible situation
         }
     }
 
@@ -383,22 +346,23 @@ public class RawAppConfig implements Cloneable, SeatConfig {
      * @see Object#clone()
      */
     @Override
-    public RawAppConfig clone() {
+    public JSONAppConfig clone() {
         try {
-            return (RawAppConfig) super.clone();
+            return (JSONAppConfig) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("This is impossible, since we are Cloneable");
         }
     }
 
     /**
-     * Returns the {@link SeatConfig} stored.
+     * Checks format and returns {@code this}.
      *
-     * @return the config stored
+     * @return this
+     * @throws IllegalConfigException if this instance has an illegal format
+     * @see #check()
      */
-    public SeatConfig getContent() {
-        checkFormat();
-
+    public SeatConfig checkAndReturn() throws IllegalConfigException {
+        check();
         return this;
     }
 }

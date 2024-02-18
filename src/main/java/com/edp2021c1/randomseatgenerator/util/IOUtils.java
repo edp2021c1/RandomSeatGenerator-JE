@@ -98,6 +98,9 @@ public class IOUtils {
     }
 
     /**
+     * Reads all the content from the channel to a string.
+     * <p>Will not modify the position of the channel.
+     *
      * @param channel file channel
      * @return string read from the channel
      * @throws IOException if an I/O error occurs

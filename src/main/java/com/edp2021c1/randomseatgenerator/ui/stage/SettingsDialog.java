@@ -26,7 +26,7 @@ import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.RawAppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
@@ -59,7 +59,7 @@ public class SettingsDialog extends Stage {
     private final ObjectProperty<File> importDir;
     private final ConfigHolder cfHolder;
     private File importFile;
-    private RawAppConfig t;
+    private JSONAppConfig t;
 
     /**
      * Creates an instance.
@@ -82,7 +82,7 @@ public class SettingsDialog extends Stage {
 
         final IntegerField rbrInput = new IntegerField(true, "随机轮换的行数");
 
-        final TextField disabledLastRowPosInput = createTextField("最后一排不可选位置");
+        final TextField disabledLastRowPosInput = createEmptyTextField("最后一排不可选位置");
         disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
             if (Objects.equals(oldValue, newValue)) {
                 return;
@@ -92,9 +92,9 @@ public class SettingsDialog extends Stage {
             }
         });
 
-        final TextField nameListInput = createTextField("名单 (按身高排序)");
+        final TextField nameListInput = createEmptyTextField("名单 (按身高排序)");
 
-        final TextField groupLeaderListInput = createTextField("组长列表");
+        final TextField groupLeaderListInput = createEmptyTextField("组长列表");
 
         final TextArea separateListInput = createTextArea("拆分列表", 165, 56);
 
@@ -215,13 +215,13 @@ public class SettingsDialog extends Stage {
                 }
 
                 try {
-                    configPane.reset(RawAppConfig.fromJson(importFile.toPath()));
+                    configPane.reset(JSONAppConfig.fromJson(importFile.toPath()));
                 } catch (final IOException e) {
                     throw new RuntimeException("Failed to load config from file", e);
                 }
 
                 importDir.set(importFile.getParentFile());
-                t = new RawAppConfig();
+                t = new JSONAppConfig();
                 t.previousImportDir = importDir.toString();
                 cfHolder.set(t);
             } catch (final Throwable e) {
@@ -232,7 +232,7 @@ public class SettingsDialog extends Stage {
         applyBtn.setOnAction(event -> {
             try {
                 t = configPane.getCurrent();
-                t.checkFormat();
+                t.check();
                 cfHolder.set(t);
 
                 MainWindow.getMainWindow().onConfigChanged();
