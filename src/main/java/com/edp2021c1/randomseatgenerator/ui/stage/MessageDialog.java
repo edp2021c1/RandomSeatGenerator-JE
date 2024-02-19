@@ -78,6 +78,12 @@ public class MessageDialog extends Stage {
         }
     }
 
+    /**
+     * Shows a message dialog.
+     *
+     * @param owner the owner of the dialog, possibly null
+     * @param msg message to be shown
+     */
     public static void showMessage(final Window owner, final String msg) {
         try {
             final MessageDialog dialog = new MessageDialog(msg);
