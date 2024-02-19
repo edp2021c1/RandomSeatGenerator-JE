@@ -4,11 +4,11 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.
 If not, see <https://www.gnu.org/licenses/>.
-                
-Libraries that have been used in RandomSeatGenerator are listed below (Sorted by date added):
-JavaFX v20.0.1 (GPLv2)
-Gson v2.10.1 (Apache 2.0)
-EasyExcel v3.3.2 (Apache 2.0)
 
-Contributors:
-Calboot <calboot39@outlook.com>
+Libraries that have been used in RandomSeatGenerator are listed below :
+Name		Version	Owner			License		Github Repository
+JavaFX		21.0.1	Oracle			GPLv2		https://github.com/openjdk/jfx
+EasyExcel	3.3.3	Alibaba			Apache 2.0	https://github.com/alibaba/easyexcel
+SLF4J-NOP	2.0.11	QOS.ch			MIT			https://github.com/qos-ch/slf4j
+Lombok		1.18.30	ProjectLombok	unknown		https://github.com/projectlombok/lombok
+FastJson2	2.0.46	Alibaba			Apache 2.0	https://github.com/alibaba/fastjson2

@@ -71,10 +71,6 @@ public class Metadata {
      */
     public static final String ICON_URL = "/assets/img/icon.png";
     /**
-     * URL of the icon shown when an error occurs.
-     */
-    public static final String ERROR_ICON_URL = "/assets/img/error_icon.png";
-    /**
      * User home.
      */
     public static final String USER_HOME = getProperty("user.home");

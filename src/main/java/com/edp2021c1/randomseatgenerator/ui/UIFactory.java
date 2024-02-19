@@ -67,7 +67,6 @@ public class UIFactory {
     };
     @Getter
     private static final Image icon = new Image(Metadata.ICON_URL);
-    private static final Image errorIcon = new Image(Metadata.ERROR_ICON_URL);
     @Setter
     private static Window mainWindow = null;
 
@@ -113,7 +112,7 @@ public class UIFactory {
             }
             case ERROR -> {
                 stage.initOwner(mainWindow);
-                stage.getIcons().add(errorIcon);
+                stage.getIcons().add(icon);
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.setResizable(false);
             }
