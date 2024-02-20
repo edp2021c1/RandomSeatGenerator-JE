@@ -102,7 +102,8 @@ fun getPackingArguments(jarName: String, projectPath: String): Array<String> {
     val args = mutableListOf(
             "@" + Path.of(projectPath, "package_resources", "static_arguments", "all.txt"),
             "-i", Path.of(projectPath, "build", "libs").toString(),
-            "--license-file", Path.of(projectPath, "package_resources", "LICENSE").toString(),
+            "--license-file", Path.of(projectPath, "package_resources", "license.txt").toString(),
+            "--app-content", Path.of(projectPath, "package_resources", "GPLv3.txt").toString(),
             "--app-version", version.toString(),
             "--main-jar", jarName,
             "-d", Path.of(projectPath, "packages").toString(),
