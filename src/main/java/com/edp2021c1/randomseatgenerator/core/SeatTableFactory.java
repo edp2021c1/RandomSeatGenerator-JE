@@ -96,62 +96,72 @@ public class SeatTableFactory {
         randomBetweenRows = Math.min(config.getRandomBetweenRows(), rowCount);
 
         // 临时变量，提前声明以减少内存和计算操作
-        int t;
         final int seatNum = rowCount * columnCount;
         final int randomPeopleCount = columnCount * randomBetweenRows;
+        final int tPeopleNum = peopleNum - minus;
+        final int peopleLeft = tPeopleNum > seatNum ? 0 : tPeopleNum % columnCount;
 
-        final int forTimes = (peopleNum % randomPeopleCount > columnCount ? seatNum / randomPeopleCount + 1 : seatNum / randomPeopleCount) - 1;
+        final int forTimesMinusOne = (
+                peopleNum % randomPeopleCount > columnCount
+                        ? seatNum / randomPeopleCount + 1
+                        : seatNum / randomPeopleCount
+        ) - 1;
 
         final List<String> emptyRow = Arrays.asList(new String[columnCount]);
         fill(emptyRow, EMPTY_SEAT_PLACEHOLDER);
 
         final List<Integer> availableLastRowPos;
         {
-            final List<Integer> tmp = range(1, columnCount - 1);
+            final List<Integer> tmp = range(1, columnCount);
             tmp.removeAll(config.getDisabledLastRowPos());
+            if (tmp.size() < peopleLeft) {
+                throw new IllegalConfigException("Available last row seat not enough");
+            }
             availableLastRowPos = unmodifiableList(tmp);
         }
+
+        final List<String> tNameList = new ArrayList<>(tPeopleNum);
+        final List<Integer> tAvailableLastRowPos = new ArrayList<>(availableLastRowPos.size());
+
+        String tGroupLeader;
 
         // 座位表数据
         final List<String> seatTable = new ArrayList<>(seatNum);
         String luckyPerson = null;
 
-        final int tPeopleNum = peopleNum - minus;
-        List<String> tNameList;
-        List<Integer> tLastRowPosChosenList;
-        String tGroupLeader;
-
         do {
             seatTable.clear();
-            tNameList = modifiableListOf(nameList);
+            tNameList.clear();
+            tNameList.addAll(nameList);
+            tAvailableLastRowPos.clear();
+            tAvailableLastRowPos.addAll(availableLastRowPos);
 
             if (lucky) {
-                luckyPerson = pickRandomlyAndRemove(tNameList.subList(peopleNum - randomPeopleCount, peopleNum), rd);
+                luckyPerson = pickRandomlyAndRemove(tNameList.subList(
+                        peopleNum - randomPeopleCount - peopleLeft, peopleNum
+                ), rd);
             }
 
-            for (int i = 0; i < forTimes; i++) {
+            for (int i = 0; i < forTimesMinusOne; i++) {
                 shuffle(tNameList.subList(i * randomPeopleCount, (i + 1) * randomPeopleCount), rd);
             }
-            shuffle(tNameList.subList(forTimes * randomPeopleCount, tPeopleNum), rd);
+            shuffle(tNameList.subList(forTimesMinusOne * randomPeopleCount, tPeopleNum), rd);
 
-            t = tPeopleNum > seatNum ? 0 : tPeopleNum % columnCount;
-            if (t == 0) {
+            if (peopleLeft == 0) {
                 seatTable.addAll(tNameList.subList(0, seatNum));
             } else {
-                tLastRowPosChosenList = new ArrayList<>(t);
                 seatTable.addAll(tNameList.subList(0, seatNum - columnCount));
                 seatTable.addAll(emptyRow);
                 for (int i = seatNum - columnCount; i < tPeopleNum; i++) {
-                    do {
-                        t = pickRandomly(availableLastRowPos, rd);
-                    } while (tLastRowPosChosenList.contains(t));
+                    Integer t = pickRandomly(tAvailableLastRowPos, rd);
                     seatTable.set(t + seatNum - columnCount - 1, tNameList.get(i));
-                    tLastRowPosChosenList.add(t);
+                    tAvailableLastRowPos.remove(t);
                 }
             }
         } while (!checkSeatTableFormat(seatTable, config));
 
         for (int i = 0; i < columnCount; i++) {
+            int t;
             do {
                 t = rd.nextInt(rowCount) * columnCount + i;
             } while (!groupLeaderList.contains((tGroupLeader = seatTable.get(t))));
@@ -172,18 +182,18 @@ public class SeatTableFactory {
      *                                costs too much time to generate the seat table.
      */
     public static SeatTable generate(final SeatConfig config, final String seed) {
-        @Cleanup
-        final ExecutorService exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
-        final Future<SeatTable> future = exe.submit(() -> generate0(config, seed));
-
+        @Cleanup final ExecutorService exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
         try {
-            return future.get(3, TimeUnit.SECONDS);
+            return exe.submit(() -> generate0(config, seed)).get(3, TimeUnit.SECONDS);
         } catch (ExecutionException e) {
             final Throwable ex = e.getCause();
-            if (ex instanceof IllegalConfigException) {
-                throw (IllegalConfigException) ex;
+            if (ex instanceof final IllegalConfigException exx) {
+                throw exx;
             }
-            throw (RuntimeException) ex;
+            if (ex instanceof final RuntimeException exx) {
+                throw exx;
+            }
+            throw new RuntimeException(ex);
         } catch (final TimeoutException e) {
             throw new IllegalConfigException(
                     "Seat table generating timeout, please check your config or use another seed"
@@ -200,16 +210,15 @@ public class SeatTableFactory {
      * @return an empty seat table
      */
     public static SeatTable generateEmpty(final SeatConfig config) {
-        List<String> seat = Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]);
+        final List<String> seat = Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]);
         fill(seat, EMPTY_SEAT_PLACEHOLDER);
         return new SeatTable(seat, config, "-", "-");
     }
 
-    private static boolean checkSeatTableFormat(List<String> seatTable, SeatConfig config) throws IllegalConfigException {
-        final List<String> gl = modifiableListOf(config.getGroupLeaders());
-        final List<SeparatedPair> sp = modifiableListOf(config.getSeparatedPairs());
+    private static boolean checkSeatTableFormat(final List<String> seatTable, final SeatConfig config) throws IllegalConfigException {
+        final List<String> gl = unmodifiableList(config.getGroupLeaders());
+        final List<SeparatedPair> sp = unmodifiableList(config.getSeparatedPairs());
         boolean hasLeader = false;
-        int i, j;
         final int spNum = sp.size();
         final int rowCount;
         final int columnCount = config.getColumnCount();
@@ -220,8 +229,8 @@ public class SeatTableFactory {
         );
 
         // 检查每列是否都有组长
-        for (i = 0; i < columnCount; i++) {
-            for (j = 0; j < rowCount; j++) {
+        for (int i = 0; i < columnCount; i++) {
+            for (int j = 0; j < rowCount; j++) {
                 hasLeader = gl.contains(seatTable.get(j * columnCount + i));
                 if (hasLeader) {
                     break;
@@ -233,7 +242,7 @@ public class SeatTableFactory {
             hasLeader = false;
         }
         // 检查是否分开
-        for (i = 0; i < spNum; i++) {
+        for (int i = 0; i < spNum; i++) {
             if (!sp.get(i).check(seatTable, columnCount)) {
                 return false;
             }

@@ -43,7 +43,7 @@ public class MessageDialog extends Stage {
     private MessageDialog(final String msg) {
         super();
 
-        final Label txt = new Label(Utils.elseIfNull(msg,""));
+        final Label txt = new Label(Utils.elseIfNull(msg, ""));
 
         final Button button = createButton("确定", 80, 26);
         button.setDefaultButton(true);
@@ -82,7 +82,7 @@ public class MessageDialog extends Stage {
      * Shows a message dialog.
      *
      * @param owner the owner of the dialog, possibly null
-     * @param msg message to be shown
+     * @param msg   message to be shown
      */
     public static void showMessage(final Window owner, final String msg) {
         try {

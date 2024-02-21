@@ -158,7 +158,7 @@ public class MainWindow extends Stage {
                 }
 
                 seatTable.set(SeatTableFactory.generate(t.checkAndReturn(), seed.get()));
-                Logging.info("\n" + seatTable);
+                Logging.info("\n" + seatTable.get());
                 previousSeed = seed.get();
                 generated = true;
             } catch (final Throwable e) {

@@ -39,7 +39,7 @@ import java.util.List;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.*;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableListOf;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableList;
 
 /**
  * Stores the raw config of the application.
@@ -182,7 +182,7 @@ public class JSONAppConfig implements Cloneable, SeatConfig {
         if (names == null) {
             throw new IllegalConfigException("Name list cannot be null");
         }
-        final List<String> l = modifiableListOf(names.split(" "));
+        final List<String> l = modifiableList(names.split(" "));
         if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
                     "Name list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
@@ -204,7 +204,7 @@ public class JSONAppConfig implements Cloneable, SeatConfig {
         if (groupLeaders == null) {
             throw new IllegalConfigException("Group leader list cannot be null");
         }
-        final List<String> l = modifiableListOf(groupLeaders.split(" "));
+        final List<String> l = modifiableList(groupLeaders.split(" "));
         if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
                     "Group leader list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)

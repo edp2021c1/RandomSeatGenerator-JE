@@ -86,10 +86,10 @@ public class SeatTable {
      * @param luckyPerson {@link #luckyPerson}
      */
     SeatTable(final List<String> table, final SeatConfig config, final String seed, final String luckyPerson) {
-        this.table = table;
+        this.table = CollectionUtils.modifiableList(table);
         this.config = config;
         this.seed = seed;
-        this.luckyPerson = luckyPerson;
+        this.luckyPerson = config.isLucky() ? luckyPerson : null;
     }
 
     /**
