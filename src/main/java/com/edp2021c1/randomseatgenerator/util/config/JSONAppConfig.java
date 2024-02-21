@@ -144,6 +144,24 @@ public class JSONAppConfig implements Cloneable, SeatConfig {
         return fromJson(Files.readString(path));
     }
 
+    /**
+     * Returns {@link #darkMode}, true if null
+     *
+     * @return {@link #darkMode}
+     */
+    public boolean isDarkMode() {
+        return Utils.elseIfNull(darkMode, true);
+    }
+
+    /**
+     * Returns {@link #exportWritable}, false if null
+     *
+     * @return {@link #exportWritable}
+     */
+    public boolean isExportWritable() {
+        return Utils.elseIfNull(exportWritable, false);
+    }
+
     @Override
     public int getRowCount() throws IllegalConfigException {
         checkRowCount();
@@ -232,8 +250,52 @@ public class JSONAppConfig implements Cloneable, SeatConfig {
     }
 
     @Override
-    public Boolean isLucky() {
-        return Utils.elseIfNull(lucky, false);
+    public boolean isLucky() {
+        return Utils.elseIfNull(lucky, true);
+    }
+
+    @Override
+    public void check() {
+        final List<IllegalConfigException> causes = new ArrayList<>();
+        try {
+            checkRowCount();
+        } catch (final IllegalConfigException e) {
+            causes.add(e);
+        }
+        try {
+            checkColumnCount();
+        } catch (final IllegalConfigException e) {
+            causes.add(e);
+        }
+        try {
+            checkDisabledLastRowPos();
+        } catch (final IllegalConfigException e) {
+            causes.add(e);
+        }
+        try {
+            getNames();
+        } catch (final IllegalConfigException e) {
+            causes.add(e);
+        }
+        try {
+            getGroupLeaders();
+        } catch (final IllegalConfigException e) {
+            causes.add(e);
+        }
+        try {
+            getSeparatedPairs();
+        } catch (final IllegalConfigException e) {
+            causes.add(e);
+        }
+        if (!causes.isEmpty()) {
+            throw new IllegalConfigException(causes);
+        }
+    }
+
+    @Override
+    public JSONAppConfig checkAndReturn() throws IllegalConfigException {
+        check();
+        return this;
     }
 
     private void checkRowCount() throws IllegalConfigException {
@@ -270,62 +332,14 @@ public class JSONAppConfig implements Cloneable, SeatConfig {
     }
 
     /**
-     * Checks the format of this instance.
-     *
-     * @throws IllegalConfigException if this instance has an illegal format
-     */
-    public void check() {
-        final List<IllegalConfigException> causes = new ArrayList<>();
-        try {
-            checkRowCount();
-        } catch (IllegalConfigException e) {
-            causes.add(e);
-        }
-        try {
-            checkColumnCount();
-        } catch (IllegalConfigException e) {
-            causes.add(e);
-        }
-        try {
-            checkDisabledLastRowPos();
-        } catch (IllegalConfigException e) {
-            causes.add(e);
-        }
-        try {
-            getNames();
-        } catch (IllegalConfigException e) {
-            causes.add(e);
-        }
-        try {
-            getGroupLeaders();
-        } catch (IllegalConfigException e) {
-            causes.add(e);
-        }
-        try {
-            getSeparatedPairs();
-        } catch (IllegalConfigException e) {
-            causes.add(e);
-        }
-        if (lucky == null) {
-            causes.add(new IllegalConfigException("Lucky option cannot be null"));
-        }
-        if (exportWritable == null) {
-            causes.add(new IllegalConfigException("Export writable cannot be null"));
-        }
-        if (!causes.isEmpty()) {
-            throw new IllegalConfigException(causes);
-        }
-    }
-
-    /**
      * Pulls {@code this} and {@code value} together.
      * Fields of {@code value} that are not null will override the field in {@code this}.
      *
      * @param value to set to {@code this}
      */
-    public void set(final JSONAppConfig value) {
+    public JSONAppConfig set(final JSONAppConfig value) {
         if (value == null) {
-            return;
+            return this;
         }
 
         try {
@@ -335,6 +349,7 @@ public class JSONAppConfig implements Cloneable, SeatConfig {
         } catch (final IllegalAccessException ignored) {
             // Impossible situation
         }
+        return this;
     }
 
     /**
@@ -349,20 +364,8 @@ public class JSONAppConfig implements Cloneable, SeatConfig {
     public JSONAppConfig clone() {
         try {
             return (JSONAppConfig) super.clone();
-        } catch (CloneNotSupportedException e) {
+        } catch (final CloneNotSupportedException e) {
             throw new RuntimeException("This is impossible, since we are Cloneable");
         }
-    }
-
-    /**
-     * Checks format and returns {@code this}.
-     *
-     * @return this
-     * @throws IllegalConfigException if this instance has an illegal format
-     * @see #check()
-     */
-    public SeatConfig checkAndReturn() throws IllegalConfigException {
-        check();
-        return this;
     }
 }

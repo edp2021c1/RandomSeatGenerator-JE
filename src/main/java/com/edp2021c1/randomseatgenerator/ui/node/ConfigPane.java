@@ -179,7 +179,7 @@ public class ConfigPane extends VBox {
      * @return config loaded from source.
      */
     protected JSONAppConfig getConfigFromSource() {
-        return source.get();
+        return source.getClone();
     }
 
     /**

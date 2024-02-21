@@ -76,7 +76,7 @@ public class MainWindow extends Stage {
 
         cfHolder = ConfigHolder.globalHolder();
 
-        final JSONAppConfig config = cfHolder.get();
+        final JSONAppConfig config = cfHolder.getClone();
 
         /* *************************************************************************
          *                                                                         *
@@ -152,7 +152,7 @@ public class MainWindow extends Stage {
                     randomSeedBtn.fire();
                 }
 
-                final JSONAppConfig t = cfHolder.get();
+                final JSONAppConfig t = cfHolder.getClone();
                 if (t == null) {
                     throw new IllegalConfigException("Null config");
                 }
@@ -179,7 +179,7 @@ public class MainWindow extends Stage {
                 if (exportFile == null) {
                     return;
                 }
-                seatTable.get().exportToExcelDocument(exportFile.toPath(), cfHolder.get().exportWritable);
+                seatTable.get().exportToExcelDocument(exportFile.toPath(), cfHolder.getClone().isExportWritable());
 
                 Logging.info("Successfully exported seat table to " + exportFile);
                 MessageDialog.showMessage(this, "成功导出座位表到\n" + exportFile);
@@ -232,7 +232,7 @@ public class MainWindow extends Stage {
      * Action to do if config is changed.
      */
     public void onConfigChanged() {
-        seatTableView.setEmptySeatTable(cfHolder.get());
+        seatTableView.setEmptySeatTable(cfHolder.getClone());
         generated = false;
         previousSeed = null;
         Logging.debug("Seat table view reset");

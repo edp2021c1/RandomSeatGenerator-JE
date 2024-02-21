@@ -92,12 +92,11 @@ public class ConsoleLauncher {
         // 处理座位表生成配置
         JSONAppConfig config;
         try {
-            config = ConfigHolder.createHolder(configPath).get();
+            config = ConfigHolder.createHolder(configPath).getClone().checkAndReturn();
         } catch (IOException e) {
             throw new RuntimeException("Failed to load config from specific file", e);
         }
 
-        config.check();
         Logging.debug("Config path: " + configPath);
 
         // 生成座位表
@@ -106,7 +105,7 @@ public class ConsoleLauncher {
         Logging.info("\n" + seatTable);
 
         // 导出
-        seatTable.exportToExcelDocument(outputPath, config.exportWritable);
+        seatTable.exportToExcelDocument(outputPath, config.isExportWritable());
         Logging.info("Seat table successfully exported to " + outputPath);
 
         System.exit(0);

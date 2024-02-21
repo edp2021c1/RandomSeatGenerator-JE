@@ -20,7 +20,10 @@ package com.edp2021c1.randomseatgenerator.launcher;
 
 import com.edp2021c1.randomseatgenerator.ui.UIFactory;
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.CrashReporter;
+import com.edp2021c1.randomseatgenerator.util.IOUtils;
+import com.edp2021c1.randomseatgenerator.util.Logging;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -64,7 +67,7 @@ public class GUILauncher extends Application {
     @Override
     public void start(final Stage primaryStage) {
         try {
-            UIFactory.setGlobalDarkMode(Utils.elseIfNull(ConfigHolder.globalHolder().get().darkMode, true));
+            UIFactory.setGlobalDarkMode(ConfigHolder.globalHolder().getClone().isDarkMode());
             MainWindow.getMainWindow().show();
         } catch (final Throwable e) {
             if (e instanceof ExceptionInInitializerError) {

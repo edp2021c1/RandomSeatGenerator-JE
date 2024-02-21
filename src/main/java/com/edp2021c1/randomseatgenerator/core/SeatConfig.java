@@ -89,9 +89,28 @@ public interface SeatConfig {
     List<SeparatedPair> getSeparatedPairs() throws IllegalConfigException;
 
     /**
-     * Returns whether lucky option is on false if lucky is null.
+     * Returns whether lucky option is on, false if lucky is null.
      *
      * @return whether lucky option is on
      */
-    Boolean isLucky();
+    boolean isLucky();
+
+    /**
+     * Checks the format of this instance.
+     *
+     * @throws IllegalConfigException if this instance has an illegal format
+     */
+    void check() throws IllegalConfigException;
+
+    /**
+     * Checks format and returns {@code this}.
+     *
+     * @return this
+     * @throws IllegalConfigException if this instance has an illegal format
+     * @see #check()
+     */
+    default SeatConfig checkAndReturn() throws IllegalConfigException {
+        check();
+        return this;
+    }
 }

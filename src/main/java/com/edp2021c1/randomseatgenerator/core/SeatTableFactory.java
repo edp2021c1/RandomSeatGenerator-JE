@@ -184,7 +184,7 @@ public class SeatTableFactory {
     public static SeatTable generate(final SeatConfig config, final String seed) {
         @Cleanup final ExecutorService exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
         try {
-            return exe.submit(() -> generate0(config, seed)).get(3, TimeUnit.SECONDS);
+            return exe.submit(() -> generate0(config.checkAndReturn(), seed)).get(3, TimeUnit.SECONDS);
         } catch (ExecutionException e) {
             final Throwable ex = e.getCause();
             if (ex instanceof final IllegalConfigException exx) {

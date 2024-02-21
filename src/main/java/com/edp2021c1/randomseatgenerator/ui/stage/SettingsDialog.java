@@ -68,7 +68,7 @@ public class SettingsDialog extends Stage {
         super();
 
         cfHolder = ConfigHolder.globalHolder();
-        t = cfHolder.get();
+        t = cfHolder.getClone();
 
         /* *************************************************************************
          *                                                                         *
@@ -231,9 +231,7 @@ public class SettingsDialog extends Stage {
 
         applyBtn.setOnAction(event -> {
             try {
-                t = configPane.getCurrent();
-                t.check();
-                cfHolder.set(t);
+                cfHolder.set(configPane.getCurrent().checkAndReturn());
 
                 MainWindow.getMainWindow().onConfigChanged();
                 applyBtn.setDisable(true);
@@ -280,6 +278,6 @@ public class SettingsDialog extends Stage {
             });
         }
 
-        setOnShown(event -> configPane.reset(cfHolder.get()));
+        setOnShown(event -> configPane.reset(cfHolder.getClone()));
     }
 }

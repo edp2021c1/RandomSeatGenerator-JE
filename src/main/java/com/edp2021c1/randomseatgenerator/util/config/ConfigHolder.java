@@ -32,7 +32,6 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.FileTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -81,7 +80,6 @@ public class ConfigHolder {
     private final Path configPath;
     private final JSONAppConfig content;
     private final FileChannel channel;
-    private FileTime configLastModifiedTime;
     private boolean closed;
 
     /**
@@ -92,7 +90,6 @@ public class ConfigHolder {
      */
     private ConfigHolder(final Path configPath) throws IOException {
         this.content = new JSONAppConfig();
-        this.configLastModifiedTime = null;
         this.configPath = configPath;
 
         final Path configDir = configPath.getParent();
@@ -120,9 +117,17 @@ public class ConfigHolder {
         }
         if (needsInit) {
             set(BUILT_IN);
+            content.set(BUILT_IN);
+            return;
         }
 
-        closed = false;
+        // Load config
+        try {
+            content.set(JSONAppConfig.fromJson(readString(channel))).check();
+        } catch (final RuntimeException e) {
+            Logging.warning("Invalid config loaded");
+            Logging.warning(e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -184,11 +189,8 @@ public class ConfigHolder {
      */
     public void set(final JSONAppConfig config) {
         checkState();
-        content.set(config);
-        content.check();
         try {
-            overwriteString(channel, content.toJson());
-            configLastModifiedTime = Files.getLastModifiedTime(configPath);
+            overwriteString(channel, content.set(config).checkAndReturn().toJson());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -200,26 +202,8 @@ public class ConfigHolder {
      * @return the config
      * @throws RuntimeException if an I/O error occurs
      */
-    public JSONAppConfig get() {
-        try {
-            flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public JSONAppConfig getClone() {
         return content.clone();
     }
 
-    private void flush() throws IOException {
-        checkState();
-        if (Objects.equals(Files.getLastModifiedTime(configPath), configLastModifiedTime)) {
-            return;
-        }
-        content.set(JSONAppConfig.fromJson(readString(channel)));
-        try {
-            content.check();
-        } catch (final RuntimeException e) {
-            Logging.warning("Invalid config loaded");
-            Logging.warning(e.getLocalizedMessage());
-        }
-    }
 }
