@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.util.config;
 
 import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
@@ -89,7 +90,7 @@ public class ConfigHolder {
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
     private ConfigHolder(final Path configPath) throws IOException {
-        this.content = new JSONAppConfig();
+        content = new JSONAppConfig();
         this.configPath = configPath;
 
         final Path configDir = configPath.getParent();
@@ -108,8 +109,8 @@ public class ConfigHolder {
             throw new IOException("Does not has enough permission to read/write config");
         }
 
-        this.channel = FileChannel.open(configPath, StandardOpenOption.READ, StandardOpenOption.WRITE);
-        if (this.channel.tryLock() == null) {
+        channel = FileChannel.open(configPath, StandardOpenOption.READ, StandardOpenOption.WRITE);
+        if (channel.tryLock() == null) {
             throw new FileAlreadyLockedException(configPath);
         }
         if (readString(channel).isEmpty()) {
@@ -126,7 +127,7 @@ public class ConfigHolder {
             content.set(JSONAppConfig.fromJson(readString(channel))).check();
         } catch (final RuntimeException e) {
             Logging.warning("Invalid config loaded");
-            Logging.warning(e.getLocalizedMessage());
+            Logging.warning(Strings.getStackTrace(e));
         }
     }
 
