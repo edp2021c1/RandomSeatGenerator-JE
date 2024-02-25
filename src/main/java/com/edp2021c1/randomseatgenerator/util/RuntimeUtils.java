@@ -29,7 +29,7 @@ import java.util.Optional;
  * @author Calboot
  * @since 1.4.6
  */
-public class RuntimeUtils {
+public final class RuntimeUtils {
     private static final HashMap<Long, Thread> threadIdMap = new HashMap<>();
 
     static {

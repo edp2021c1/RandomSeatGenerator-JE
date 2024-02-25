@@ -336,6 +336,7 @@ public class JSONAppConfig implements Cloneable, SeatConfig {
      * Fields of {@code value} that are not null will override the field in {@code this}.
      *
      * @param value to set to {@code this}
+     * @return {@code this}
      */
     public JSONAppConfig set(final JSONAppConfig value) {
         if (value == null) {

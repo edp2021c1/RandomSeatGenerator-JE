@@ -31,7 +31,7 @@ import java.util.random.RandomGenerator;
  * @author Calboot
  * @since 1.4.9
  */
-public class CollectionUtils {
+public final class CollectionUtils {
 
     /**
      * Don't let anyone else instantiate this class.

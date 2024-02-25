@@ -31,7 +31,7 @@ import java.util.Objects;
  * @author Calboot
  * @since 1.4.6
  */
-public class IOUtils {
+public final class IOUtils {
     private static final FileVisitor<Path> deleteAllUnder = new SimpleFileVisitor<>() {
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)

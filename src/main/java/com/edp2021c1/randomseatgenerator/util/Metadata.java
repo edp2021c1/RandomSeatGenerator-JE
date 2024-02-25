@@ -30,7 +30,7 @@ import static java.lang.System.getProperty;
  * @author Calboot
  * @since 1.2.9
  */
-public class Metadata {
+public final class Metadata {
     /**
      * Helping information.
      */

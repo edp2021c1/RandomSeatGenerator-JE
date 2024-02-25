@@ -27,7 +27,7 @@ import java.nio.file.Path;
  * @author Calboot
  * @since 1.5.0
  */
-public class Utils {
+public final class Utils {
 
     /**
      * Don't let anyone else instantiate this class.

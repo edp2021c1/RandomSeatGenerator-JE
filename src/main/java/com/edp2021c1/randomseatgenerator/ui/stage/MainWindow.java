@@ -175,6 +175,14 @@ public class MainWindow extends Stage {
 
                 fc.setInitialFileName("%tF".formatted(new Date()));
 
+                File tmp = fc.getInitialDirectory();
+                if (tmp != null) {
+                    while (!tmp.isDirectory()) {
+                        tmp = tmp.getParentFile();
+                    }
+                    fc.setInitialDirectory(tmp);
+                }
+
                 final File exportFile = fc.showSaveDialog(this);
                 if (exportFile == null) {
                     return;

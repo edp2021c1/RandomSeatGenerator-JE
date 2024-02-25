@@ -35,7 +35,7 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
  * @author Calboot
  * @since 1.4.4
  */
-public class Logging {
+public final class Logging {
 
     /**
      * Logger.

@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * @author Calboot
  * @since 1.4.5
  */
-public class Strings {
+public final class Strings {
 
     /**
      * Pattern of integer.

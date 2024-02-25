@@ -31,7 +31,7 @@ import java.net.URI;
  * @author Calboot
  * @since 1.4.7
  */
-public class DesktopUtils {
+public final class DesktopUtils {
     private static final boolean desktopSupported = Desktop.isDesktopSupported();
     private static final Desktop desktopTk = desktopSupported ? Desktop.getDesktop() : null;
     private static final Clipboard clipboard = Clipboard.getSystemClipboard();

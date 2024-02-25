@@ -209,7 +209,15 @@ public class SettingsDialog extends Stage {
 
         loadConfigBtn.setOnAction(event -> {
             try {
-                importFile = fc.showOpenDialog(SettingsDialog.this);
+                File tmp = fc.getInitialDirectory();
+                if (tmp != null) {
+                    while (!tmp.isDirectory()) {
+                        tmp = tmp.getParentFile();
+                    }
+                    fc.setInitialDirectory(tmp);
+                }
+
+                importFile = fc.showOpenDialog(this);
                 if (importFile == null) {
                     return;
                 }
