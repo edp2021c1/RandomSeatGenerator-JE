@@ -19,8 +19,8 @@
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
+import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
-import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
@@ -157,7 +157,9 @@ public class MainWindow extends Stage {
                     throw new IllegalConfigException("Null config");
                 }
 
-                seatTable.set(SeatTableFactory.generate(t.checkAndReturn(), seed.get()));
+                final SeatConfig config1 = t.checkAndReturn();
+                final String seed1 = seed.get();
+                seatTable.set(SeatTable.generate(config1, seed1));
                 Logging.info("\n" + seatTable.get());
                 previousSeed = seed.get();
                 generated = true;

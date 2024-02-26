@@ -22,14 +22,19 @@ import com.alibaba.excel.EasyExcel;
 import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Utils;
+import lombok.Cleanup;
 import lombok.Getter;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.regex.Pattern;
+
+import static java.util.Collections.fill;
 
 /**
  * Used to pack some useful data related to a seat table.
@@ -60,6 +65,16 @@ public class SeatTable {
      * Format of a group leader.
      */
     public static final String groupLeaderFormat = "*%s*";
+
+    /**
+     * Empty generator.
+     */
+    private static final SeatTableGenerator EMPTY_GENERATOR = (config, seed) -> {
+        final List<String> seat = Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]);
+        fill(seat, EMPTY_SEAT_PLACEHOLDER);
+        return new SeatTable(seat, config, EMPTY_SEAT_PLACEHOLDER, EMPTY_SEAT_PLACEHOLDER);
+    };
+
     /**
      * The seat table stored as a {@code  List}.
      */
@@ -93,9 +108,66 @@ public class SeatTable {
     }
 
     /**
+     * Generate a seat table using the specified config and the seed.
+     *
+     * @param config    used to generate the seat table
+     * @param seed      used to generate the seat table
+     * @param generator used to generate the seat table
+     * @return an instance of {@code SeatTable}
+     * @throws NullPointerException   if the config is null.
+     * @throws IllegalConfigException if the config has an illegal format, or if it
+     *                                costs too much time to generate the seat table
+     */
+    public static SeatTable generate(final SeatConfig config, final String seed, final SeatTableGenerator generator) {
+        @Cleanup final ExecutorService exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
+        try {
+            return exe.submit(() -> generator.generate(config.checkAndReturn(), seed)).get(3, TimeUnit.SECONDS);
+        } catch (final ExecutionException e) {
+            final Throwable ex = e.getCause();
+            if (ex instanceof final IllegalConfigException exx) {
+                throw exx;
+            }
+            if (ex instanceof final RuntimeException exx) {
+                throw exx;
+            }
+            throw new RuntimeException(ex);
+        } catch (final TimeoutException e) {
+            throw new IllegalConfigException(
+                    "Seat table generating timeout, please check your config or use another seed"
+            );
+        } catch (final InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Generate a seat table using the specified config and the seed.
+     *
+     * @param config used to generate the seat table
+     * @param seed   used to generate the seat table
+     * @return an instance of {@code SeatTable}
+     * @throws NullPointerException   if the config is null
+     * @throws IllegalConfigException if the config has an illegal format, or if it
+     *                                costs too much time to generate the seat table
+     */
+    public static SeatTable generate(final SeatConfig config, final String seed) {
+        return generate(config, seed, SeatTableGenerator.getDefault());
+    }
+
+    /**
+     * Generates an empty seat table.
+     *
+     * @param config used to generate the empty seat table
+     * @return an empty seat table
+     */
+    public static SeatTable generateEmpty(final SeatConfig config) {
+        return generate(config, null, EMPTY_GENERATOR);
+    }
+
+    /**
      * Returns a list of {@code SeatRowData} containing data of this.
      *
-     * @return a {@code List} storing {@code SeatRowData} transferred from this.
+     * @return a {@code List} storing {@code SeatRowData} transferred from this
      */
     public List<SeatRowData> toRowData() {
         final int columnCount = config.getColumnCount();

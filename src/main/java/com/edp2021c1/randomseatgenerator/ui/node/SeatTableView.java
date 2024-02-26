@@ -20,7 +20,6 @@ package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
-import com.edp2021c1.randomseatgenerator.core.SeatTableFactory;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -100,7 +99,7 @@ public class SeatTableView extends VBox {
      * @param config used to generate the empty seat table
      */
     public void setEmptySeatTable(final SeatConfig config) {
-        seatTable.set(SeatTableFactory.generateEmpty(config));
+        seatTable.set(SeatTable.generateEmpty(config));
     }
 
 }
