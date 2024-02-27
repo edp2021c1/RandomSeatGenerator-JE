@@ -33,7 +33,7 @@
 }
 
 .root {
-    -fx-font-family: "微软雅黑";
+    -fx-font-family: "Microsoft Yahei UI";
     -fx-font-size: 12;
 }
 
@@ -131,7 +131,7 @@
 }
 
 .app-name-label {
-    -fx-font-family: "得意黑";
+    -fx-font-family: "Smiley Sans";
     -fx-font-size: 24;
 }
 
