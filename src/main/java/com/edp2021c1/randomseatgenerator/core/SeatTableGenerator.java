@@ -43,7 +43,10 @@ public interface SeatTableGenerator {
     SeatTable generate(SeatConfig config, String seed)
             throws NullPointerException, IllegalConfigException;
 
-    class SeatTableGeneratorImpl implements SeatTableGenerator {
+    /**
+     * Default implementation class.
+     */
+    final class SeatTableGeneratorImpl implements SeatTableGenerator {
 
         private static final SeatTableGenerator instance = new SeatTableGeneratorImpl();
 
