@@ -103,7 +103,6 @@ fun getPackingArguments(jarName: String, projectPath: String): Array<String> {
             "@" + Path.of(projectPath, "package_resources", "static_arguments", "all.txt"),
             "-i", Path.of(projectPath, "build", "libs").toString(),
             "--license-file", Path.of(projectPath, "package_resources", "license.txt").toString(),
-            "--app-content", Path.of(projectPath, "LICENSE").toString() + "," + Path.of(projectPath, "README.md"),
             "--app-version", version.toString(),
             "--main-jar", jarName,
             "-d", Path.of(projectPath, "packages").toString(),
@@ -112,11 +111,13 @@ fun getPackingArguments(jarName: String, projectPath: String): Array<String> {
         listOf(
                 "@" + Path.of(projectPath, "package_resources", "static_arguments", "win.txt"),
                 "--icon", Path.of(projectPath, "package_resources", "app_icon", "win.ico").toString(),
+                "--app-content", Path.of(projectPath, "LICENSE").toString() + "," + Path.of(projectPath, "README.md")
         )
     } else {
         listOf(
                 "@" + Path.of(projectPath, "package_resources", "static_arguments", "mac.txt"),
-                "--icon", Path.of(projectPath, "package_resources", "app_icon", "mac.icns").toString()
+                "--icon", Path.of(projectPath, "package_resources", "app_icon", "mac.icns").toString(),
+                "--mac-dmg-content", Path.of(projectPath, "LICENSE").toString() + "," + Path.of(projectPath, "README.md")
         )
     })
     return args.toTypedArray()
