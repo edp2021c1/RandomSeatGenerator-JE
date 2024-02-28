@@ -24,6 +24,7 @@ import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Utils;
 import lombok.Cleanup;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -100,7 +101,7 @@ public class SeatTable {
      * @param seed        {@link #seed}
      * @param luckyPerson {@link #luckyPerson}
      */
-    SeatTable(final List<String> table, final SeatConfig config, final String seed, final String luckyPerson) {
+    SeatTable(@NonNull final List<String> table, @NonNull final SeatConfig config, final String seed, final String luckyPerson) {
         this.table = CollectionUtils.modifiableList(table);
         this.config = config;
         this.seed = seed;
@@ -118,7 +119,7 @@ public class SeatTable {
      * @throws IllegalConfigException if the config has an illegal format, or if it
      *                                costs too much time to generate the seat table
      */
-    public static SeatTable generate(final SeatConfig config, final String seed, final SeatTableGenerator generator) {
+    public static SeatTable generate(@NonNull final SeatConfig config, final String seed, @NonNull final SeatTableGenerator generator) {
         @Cleanup final ExecutorService exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
         try {
             return exe.submit(() -> generator.generate(config.checkAndReturn(), seed)).get(3, TimeUnit.SECONDS);
@@ -151,7 +152,7 @@ public class SeatTable {
      *                                costs too much time to generate the seat table
      */
     public static SeatTable generate(final SeatConfig config, final String seed) {
-        return generate(config, seed, SeatTableGenerator.getDefault());
+        return generate(config, seed, SeatTableGenerator.defaultGenerator);
     }
 
     /**

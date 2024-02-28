@@ -164,6 +164,6 @@ val pack = task("pack") {
         if (exitCode != 0) {
             throw RuntimeException("jpackage failed with exit code $exitCode")
         }
-        println("${"jpackage"} succeeded with exit code 0")
+        println("jpackage succeeded with exit code 0")
     }
 }
