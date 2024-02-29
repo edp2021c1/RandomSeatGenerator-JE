@@ -1,7 +1,5 @@
 package com.edp2021c1.randomseatgenerator.core;
 
-import lombok.NonNull;
-
 import java.util.List;
 
 /**
@@ -18,7 +16,7 @@ public interface SeatTableGeneratorAndChecker extends SeatTableGenerator {
      * @return if the seat table is valid
      * @throws IllegalConfigException if config is invalid
      */
-    default boolean check(@NonNull final List<String> seatTable, @NonNull final SeatConfig config) throws IllegalConfigException {
+    default boolean check(final List<String> seatTable, final SeatConfig config) throws IllegalConfigException {
         final List<String> gl = config.getGroupLeaders();
         final List<SeparatedPair> sp = config.getSeparatedPairs();
         boolean hasLeader = false;
