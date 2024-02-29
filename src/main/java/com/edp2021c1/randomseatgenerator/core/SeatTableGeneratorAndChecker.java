@@ -1,18 +1,26 @@
 package com.edp2021c1.randomseatgenerator.core;
 
-import java.util.List;
+import lombok.NonNull;
 
-import static java.util.Collections.unmodifiableList;
+import java.util.List;
 
 /**
  * Default checker implementation class.
  */
 @FunctionalInterface
-public interface SeatTableGeneratorAndCheckerBase extends SeatTableGenerator, SeatTableChecker {
+public interface SeatTableGeneratorAndChecker extends SeatTableGenerator {
 
-    default boolean check(final List<String> seatTable, final SeatConfig config) throws IllegalConfigException {
-        final List<String> gl = unmodifiableList(config.getGroupLeaders());
-        final List<SeparatedPair> sp = unmodifiableList(config.getSeparatedPairs());
+    /**
+     * Returns if the seat table is valid.
+     *
+     * @param seatTable to check
+     * @param config    used to check
+     * @return if the seat table is valid
+     * @throws IllegalConfigException if config is invalid
+     */
+    default boolean check(@NonNull final List<String> seatTable, @NonNull final SeatConfig config) throws IllegalConfigException {
+        final List<String> gl = config.getGroupLeaders();
+        final List<SeparatedPair> sp = config.getSeparatedPairs();
         boolean hasLeader = false;
         final int spNum = sp.size();
         final int rowCount;
@@ -26,10 +34,7 @@ public interface SeatTableGeneratorAndCheckerBase extends SeatTableGenerator, Se
         // 检查每列是否都有组长
         for (int i = 0; i < columnCount; i++) {
             for (int j = 0; j < rowCount; j++) {
-                hasLeader = gl.contains(seatTable.get(j * columnCount + i));
-                if (hasLeader) {
-                    break;
-                }
+                hasLeader = gl.contains(seatTable.get(j * columnCount + i)) || hasLeader;
             }
             if (!hasLeader) {
                 return false;

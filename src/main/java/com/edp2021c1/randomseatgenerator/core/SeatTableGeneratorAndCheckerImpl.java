@@ -9,13 +9,15 @@ import java.util.Random;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.groupLeaderFormat;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.*;
-import static java.util.Collections.*;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.pickRandomlyAndRemove;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
+import static java.util.Collections.fill;
+import static java.util.Collections.shuffle;
 
 /**
  * Default generator implementation class.
  */
-public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCheckerBase {
+public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndChecker {
 
     static final SeatTableGenerator instance = new SeatTableGeneratorAndCheckerImpl();
 
@@ -27,10 +29,6 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
 
     @Override
     public SeatTable generate(final SeatConfig config, String seed) throws NullPointerException, IllegalConfigException {
-        if (config == null) {
-            throw new IllegalConfigException("Config cannot be null");
-        }
-
         long longSeed;
         try {
             longSeed = Long.parseLong(seed);
@@ -51,8 +49,8 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         final int rowCount;
         final int columnCount = config.getColumnCount();
         final int randomBetweenRows;
-        final List<String> nameList = unmodifiableList(config.getNames());
-        final List<String> groupLeaderList = unmodifiableList(config.getGroupLeaders());
+        final List<String> nameList = config.getNames();
+        final List<String> groupLeaderList = config.getGroupLeaders();
         final boolean lucky = config.isLucky();
 
         // 防止lucky为true时数组越界
@@ -62,14 +60,19 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         final int peopleNum = nameList.size();
 
         // 防止行数过多引发无限递归
-        rowCount = (int) Math.min(config.getRowCount(), Math.ceil((double) (peopleNum - minus) / columnCount));
+        rowCount = Math.min(config.getRowCount(), (int) Math.ceil((double) (peopleNum - minus) / columnCount));
         randomBetweenRows = Math.min(config.getRandomBetweenRows(), rowCount);
 
         // 临时变量，提前声明以减少内存和计算操作
         final int seatNum = rowCount * columnCount;
-        final int randomPeopleCount = columnCount * randomBetweenRows;
+
+        if (seatNum < peopleNum) {
+            throw new IllegalConfigException("Too many people and not enough seat");
+        }
+
         final int tPeopleNum = peopleNum - minus;
-        final int peopleLeft = tPeopleNum > seatNum ? 0 : tPeopleNum % columnCount;
+        final int peopleLeft = tPeopleNum % columnCount;
+        final int randomPeopleCount = Math.min(columnCount * randomBetweenRows, tPeopleNum - peopleLeft);
 
         final int forTimesMinusOne = (
                 peopleNum % randomPeopleCount > columnCount
@@ -80,14 +83,10 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         final List<String> emptyRow = Arrays.asList(new String[columnCount]);
         fill(emptyRow, EMPTY_SEAT_PLACEHOLDER);
 
-        final List<Integer> availableLastRowPos;
-        {
-            final List<Integer> tmp = range(1, columnCount);
-            tmp.removeAll(config.getDisabledLastRowPos());
-            if (tmp.size() < peopleLeft) {
-                throw new IllegalConfigException("Available last row seat not enough");
-            }
-            availableLastRowPos = unmodifiableList(tmp);
+        final List<Integer> availableLastRowPos = range(1, columnCount);
+        availableLastRowPos.removeAll(config.getDisabledLastRowPos());
+        if (availableLastRowPos.size() < peopleLeft) {
+            throw new IllegalConfigException("Available last row seat not enough");
         }
 
         final List<String> tNameList = new ArrayList<>(tPeopleNum);
@@ -108,7 +107,8 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
 
             if (lucky) {
                 luckyPerson = pickRandomlyAndRemove(tNameList.subList(
-                        peopleNum - randomPeopleCount - peopleLeft, peopleNum
+                        peopleNum - randomPeopleCount - peopleLeft,
+                        peopleNum
                 ), rd);
             }
 
@@ -123,9 +123,7 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
                 seatTable.addAll(tNameList.subList(0, seatNum - columnCount));
                 seatTable.addAll(emptyRow);
                 for (int i = seatNum - columnCount; i < tPeopleNum; i++) {
-                    Integer t = pickRandomly(tAvailableLastRowPos, rd);
-                    seatTable.set(t + seatNum - columnCount - 1, tNameList.get(i));
-                    tAvailableLastRowPos.remove(t);
+                    seatTable.set(pickRandomlyAndRemove(tAvailableLastRowPos, rd) + seatNum - columnCount - 1, tNameList.get(i));
                 }
             }
         } while (!check(seatTable, config));

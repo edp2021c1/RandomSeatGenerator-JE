@@ -21,9 +21,9 @@ public interface SeatTableGenerator {
      * @param config used to generate the seat table
      * @param seed   used to generate the seat table
      * @return an instance of {@code SeatTable}
-     * @throws IllegalConfigException if config is null or has an illegal format
+     * @throws IllegalConfigException if config is null or is illegal
      */
-    SeatTable generate(SeatConfig config, String seed)
+    SeatTable generate(final SeatConfig config, String seed)
             throws NullPointerException, IllegalConfigException;
 
 }

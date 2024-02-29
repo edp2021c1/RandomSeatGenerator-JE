@@ -28,10 +28,7 @@ import lombok.NonNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Pattern;
 
@@ -102,7 +99,7 @@ public class SeatTable {
      * @param luckyPerson {@link #luckyPerson}
      */
     SeatTable(@NonNull final List<String> table, @NonNull final SeatConfig config, final String seed, final String luckyPerson) {
-        this.table = CollectionUtils.modifiableList(table);
+        this.table = Collections.unmodifiableList(table);
         this.config = config;
         this.seed = seed;
         this.luckyPerson = config.isLucky() ? luckyPerson : null;
