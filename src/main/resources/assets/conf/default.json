@@ -7,6 +7,5 @@
   "group_leader_list": "2 4 10 16 19 20 24 25 26 27 28 29 30 31 32 33 34 39 44",
   "separate_list": "25 30",
   "lucky_option": true,
-  "export_writable": false,
-  "dark_mode": true
+  "export.writable": false
 }

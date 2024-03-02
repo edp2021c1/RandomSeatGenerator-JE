@@ -52,8 +52,6 @@ public class JSONAppConfig extends HashtableConfig implements SeatConfig {
     public static final String KEY_GROUP_LEADERS = "group_leader_list";
     public static final String KEY_SEPARATED_PAIRS = "separate_list";
     public static final String KEY_LUCKY = "lucky_option";
-    public static final String KEY_EXPORT_WRITABLE = "export_writable";
-    public static final String KEY_DARK_MODE = "dark_mode";
 
     public JSONAppConfig() {
         super(new HashMap<>());
@@ -214,52 +212,8 @@ public class JSONAppConfig extends HashtableConfig implements SeatConfig {
         return this;
     }
 
-    public void putRowCount(final int rowCount) {
-        put(KEY_ROW_COUNT, rowCount);
-    }
-
-    public void putColumnCount(final int columnCount) {
-        put(KEY_COLUMN_COUNT, columnCount);
-    }
-
-    public void putRandomBetweenRows(final int randomBetweenRows) {
-        put(KEY_RANDOM_BETWEEN_ROWS, randomBetweenRows);
-    }
-
-    public void putDisabledLastRowPos(final String disabledLastRowPos) {
-        put(KEY_DISABLED_LAST_ROW_POS, disabledLastRowPos);
-    }
-
-    public void putNames(final String names) {
-        put(KEY_NAMES, names);
-    }
-
-    public void putGroupLeaders(final String groupLeaders) {
-        put(KEY_GROUP_LEADERS, groupLeaders);
-    }
-
-    public void putSeparatedPairs(final String separatedPairs) {
-        put(KEY_SEPARATED_PAIRS, separatedPairs);
-    }
-
-    public void putLucky(final boolean lucky) {
-        put(KEY_LUCKY, lucky);
-    }
-
-    public boolean isExportWritable() {
-        return Utils.elseIfNull(getBoolean(KEY_EXPORT_WRITABLE), false);
-    }
-
-    public void putExportWritable(final boolean exportWritable) {
-        put(KEY_EXPORT_WRITABLE, exportWritable);
-    }
-
-    public boolean isDarkMode() {
-        return Utils.elseIfNull(getBoolean(KEY_DARK_MODE), true);
-    }
-
-    public JSONAppConfig set(final Map<String, ?> other) {
-        super.putAll(other);
+    public JSONAppConfig putAllAndReturn(final Map<String, ?> other) {
+        putAll(other);
         return this;
     }
 

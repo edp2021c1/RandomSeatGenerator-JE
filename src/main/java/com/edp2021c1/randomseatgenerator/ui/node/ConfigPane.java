@@ -19,6 +19,7 @@
 package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.ui.UIFactory;
+import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import javafx.beans.property.BooleanProperty;
@@ -124,39 +125,39 @@ public class ConfigPane extends VBox {
             return;
         }
         rowCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.putRowCount(newValue.intValue());
+            current.put(KEY_ROW_COUNT, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         columnCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.putColumnCount(newValue.intValue());
+            current.put(KEY_COLUMN_COUNT, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         rbrInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.putRandomBetweenRows(newValue.intValue());
+            current.put(KEY_RANDOM_BETWEEN_ROWS, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.putDisabledLastRowPos(newValue);
+            current.put(KEY_DISABLED_LAST_ROW_POS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         nameListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.putNames(newValue);
+            current.put(KEY_NAMES, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.putGroupLeaders(newValue);
+            current.put(KEY_GROUP_LEADERS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         separateListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.putSeparatedPairs(newValue);
+            current.put(KEY_SEPARATED_PAIRS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         luckyOptionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            current.putLucky(newValue);
+            current.put(KEY_LUCKY, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         exportWritableCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            current.putExportWritable(newValue);
+            current.put("export.writable", newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         darkModeCheck.selectedProperty().bindBidirectional(UIFactory.globalDarkModeProperty());
@@ -201,8 +202,8 @@ public class ConfigPane extends VBox {
         groupLeaderListInput.setText(config.getString(KEY_GROUP_LEADERS));
         separateListInput.setText(config.getString(KEY_SEPARATED_PAIRS));
         luckyOptionCheck.setSelected(config.isLucky());
-        exportWritableCheck.setSelected(config.isExportWritable());
-        darkModeCheck.setSelected(config.isDarkMode());
+        exportWritableCheck.setSelected(Utils.elseIfNull(config.getBoolean("export.writable"), false));
+        darkModeCheck.setSelected(Utils.elseIfNull(config.getBoolean("appearance.style.dark"), true));
     }
 
 }

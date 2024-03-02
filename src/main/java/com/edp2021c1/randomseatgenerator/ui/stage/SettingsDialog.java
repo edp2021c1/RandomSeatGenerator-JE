@@ -199,7 +199,7 @@ public class SettingsDialog extends Stage {
         importDir = fc.initialDirectoryProperty();
 
         final JSONAppConfig config = cfHolder.get();
-        importDir.set(config.getString("dir.previous.import") == null ? cfHolder.getConfigPath().getParent().toFile() : new File(config.getString("dir.previous.import")));
+        importDir.set(config.getString("import.dir.previous") == null ? cfHolder.getConfigPath().getParent().toFile() : new File(config.getString("import.dir.previous")));
 
         /* *************************************************************************
          *                                                                         *
@@ -229,7 +229,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 importDir.set(importFile.getParentFile());
-                cfHolder.put("dir.previous.import", importDir.toString());
+                cfHolder.put("import.dir.previous", importDir.toString());
             } catch (final Throwable e) {
                 CrashReporter.report(e);
             }
@@ -237,7 +237,7 @@ public class SettingsDialog extends Stage {
 
         applyBtn.setOnAction(event -> {
             try {
-                cfHolder.set(configPane.getCurrent().checkAndReturn());
+                cfHolder.putAll(configPane.getCurrent().checkAndReturn());
 
                 UIFactory.getMainWindow().configChanged();
                 applyBtn.setDisable(true);

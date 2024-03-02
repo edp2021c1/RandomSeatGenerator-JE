@@ -22,6 +22,7 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Strings;
+import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 
@@ -104,7 +105,7 @@ public class ConsoleLauncher {
         Logging.info("\n" + seatTable);
 
         // 导出
-        seatTable.exportToExcelDocument(outputPath, config.isExportWritable());
+        seatTable.exportToExcelDocument(outputPath, Utils.elseIfNull(config.getBoolean("export.writable"), false));
         Logging.info("Seat table successfully exported to " + outputPath);
 
         System.exit(0);

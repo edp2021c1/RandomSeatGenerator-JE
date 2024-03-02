@@ -128,7 +128,7 @@ public class MainWindow extends Stage {
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
         fc.setInitialDirectory(new File(
                 Utils.elseIfNull(
-                        config.getString("dir.previous.export"),
+                        config.getString("export.dir.previous"),
                         SeatTable.DEFAULT_EXPORTING_DIR.toString()
                 )
         ));
@@ -178,14 +178,15 @@ public class MainWindow extends Stage {
                 if (exportFile == null) {
                     return;
                 }
-                seatTable.get().exportToExcelDocument(exportFile.toPath(), cfHolder.get().isExportWritable());
+                JSONAppConfig jsonAppConfig = cfHolder.get();
+                seatTable.get().exportToExcelDocument(exportFile.toPath(), Utils.elseIfNull(jsonAppConfig.getBoolean("export.writable"), false));
 
                 Logging.info("Successfully exported seat table to " + exportFile);
                 MessageDialog.showMessage(this, "成功导出座位表到\n" + exportFile);
 
                 fc.setInitialDirectory(exportFile.getParentFile());
 
-                cfHolder.put("dir.previous.export", exportFile.getParentFile().toString());
+                cfHolder.put("export.dir.previous", exportFile.getParentFile().toString());
             } catch (final Throwable e) {
                 CrashReporter.report(e);
             }
@@ -198,8 +199,8 @@ public class MainWindow extends Stage {
         dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
 
         if (Utils.isMac()) {
-            setOnShown(event -> setFullScreen(Utils.elseIfNull(cfHolder.get().getBoolean("window.main.maximized"), false)));
-            fullScreenProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("window.main.maximized", newValue));
+            setOnShown(event -> setFullScreen(Utils.elseIfNull(cfHolder.get().getBoolean("appearance.window.main.maximized"), false)));
+            fullScreenProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
             setFullScreenExitHint("");
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
@@ -216,8 +217,8 @@ public class MainWindow extends Stage {
                 }
             });
         } else {
-            setOnShown(event -> setMaximized(Utils.elseIfNull(cfHolder.get().getBoolean("window.main.maximized"), false)));
-            maximizedProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("window.main.maximized", newValue));
+            setOnShown(event -> setMaximized(Utils.elseIfNull(cfHolder.get().getBoolean("appearance.window.main.maximized"), false)));
+            maximizedProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isControlDown()) {
                     return;
@@ -229,23 +230,23 @@ public class MainWindow extends Stage {
             });
         }
 
-        Double d = cfHolder.get().getDouble("window.main.height");
+        Double d = cfHolder.get().getDouble("appearance.window.main.height");
         if (d != null) {
             setHeight(d);
         }
-        d = cfHolder.get().getDouble("window.main.width");
+        d = cfHolder.get().getDouble("appearance.window.main.width");
         if (d != null) {
             setWidth(d);
         }
 
         heightProperty().addListener((observable, oldValue, newValue) -> {
             if (!isFullScreen()) {
-                cfHolder.put("window.main.height", newValue.doubleValue());
+                cfHolder.put("appearance.window.main.height", newValue.doubleValue());
             }
         });
         widthProperty().addListener((observable, oldValue, newValue) -> {
             if (!isFullScreen()) {
-                cfHolder.put("window.main.width", newValue.doubleValue());
+                cfHolder.put("appearance.window.main.width", newValue.doubleValue());
             }
         });
 

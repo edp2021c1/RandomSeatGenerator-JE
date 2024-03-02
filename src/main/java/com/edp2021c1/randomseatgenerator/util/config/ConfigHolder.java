@@ -115,14 +115,14 @@ public class ConfigHolder {
             needsInit = true;
         }
         if (needsInit) {
-            set(BUILT_IN);
-            content.set(BUILT_IN);
+            putAll(BUILT_IN);
+            content.putAllAndReturn(BUILT_IN);
             return;
         }
 
         // Load config
         try {
-            content.set(JSONAppConfig.fromJson(readString(channel))).check();
+            content.putAllAndReturn(JSONAppConfig.fromJson(readString(channel))).check();
         } catch (final RuntimeException e) {
             Logging.warning("Invalid config loaded");
             Logging.warning(Strings.getStackTrace(e));
@@ -183,19 +183,19 @@ public class ConfigHolder {
     public void put(final String key, final Object value) {
         final HashMap<String, Object> t = new HashMap<>();
         t.put(key, value);
-        set(t);
+        putAll(t);
     }
 
     /**
      * Sets the value of config
      *
-     * @param config to set
+     * @param map to set
      * @throws RuntimeException if an I/O error occurs
      */
-    public void set(final Map<String, ?> config) {
+    public void putAll(final Map<String, ?> map) {
         checkState();
         try {
-            overwriteString(channel, content.set(config).checkAndReturn().toJson());
+            overwriteString(channel, content.putAllAndReturn(map).checkAndReturn().toJson());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
