@@ -276,7 +276,6 @@ public class MainWindow extends Stage {
 
     @Override
     public void close() {
-        super.close();
         try {
             app.stop();
         } catch (final Exception ignored) {

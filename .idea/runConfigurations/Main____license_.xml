@@ -5,7 +5,7 @@
     <option name="PROGRAM_PARAMETERS" value="--license" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.edp2021c1.randomseatgenerator.launcher.*" />
+        <option name="PATTERN" value="com.edp2021c1.randomseatgenerator.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

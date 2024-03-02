@@ -18,8 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator;
 
-import com.edp2021c1.randomseatgenerator.launcher.ConsoleLauncher;
-import com.edp2021c1.randomseatgenerator.launcher.GUILauncher;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 
@@ -27,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Application intro, loads seat config.
+ * Application intro.
  */
 public class RandomSeatGenerator {
 

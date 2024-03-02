@@ -60,7 +60,7 @@ dependencies {
     // FastJson，用于读取配置文件
     implementation("com.alibaba.fastjson2:fastjson2:2.0.46")
 
-    // Lombok，主要为了 @Getter 注解，反正不占空间
+    // Lombok
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
 }
