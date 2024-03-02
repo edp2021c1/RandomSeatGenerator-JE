@@ -253,6 +253,12 @@ public class MainWindow extends Stage {
         setOnCloseRequest(event -> close());
     }
 
+    /**
+     * Creates an instance for the app.
+     *
+     * @param app owner JavaFX application of the stage
+     * @return the main windows of the app
+     */
     public static MainWindow getMainWindow(final Application app) {
         final MainWindow mainWindow = new MainWindow(app);
         setMainWindow(mainWindow);

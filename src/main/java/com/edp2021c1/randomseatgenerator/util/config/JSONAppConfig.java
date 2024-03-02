@@ -44,27 +44,96 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableL
  */
 public class JSONAppConfig extends HashtableConfig implements SeatConfig {
 
+    /**
+     * Key of {@code rowCount}.
+     *
+     * @see SeatConfig#getRowCount()
+     */
     public static final String KEY_ROW_COUNT = "row_count";
+
+    /**
+     * Key of {@code columnCount}.
+     *
+     * @see SeatConfig#getColumnCount()
+     */
     public static final String KEY_COLUMN_COUNT = "column_count";
+
+    /**
+     * Key of {@code randomBetweenRows}.
+     *
+     * @see SeatConfig#getRandomBetweenRows()
+     */
     public static final String KEY_RANDOM_BETWEEN_ROWS = "random_between_rows";
+
+    /**
+     * Key of {@code disabledLastRowPos}.
+     *
+     * @see SeatConfig#getDisabledLastRowPos()
+     */
     public static final String KEY_DISABLED_LAST_ROW_POS = "last_row_pos_cannot_be_chosen";
+
+    /**
+     * Key of {@code names}.
+     *
+     * @see SeatConfig#getNames()
+     */
     public static final String KEY_NAMES = "person_sort_by_height";
+
+    /**
+     * Key of {@code groupLeaders}.
+     *
+     * @see SeatConfig#getGroupLeaders()
+     */
     public static final String KEY_GROUP_LEADERS = "group_leader_list";
+
+    /**
+     * Key of {@code separatedPairs}.
+     *
+     * @see SeatConfig#getSeparatedPairs()
+     */
     public static final String KEY_SEPARATED_PAIRS = "separate_list";
+
+    /**
+     * Key of {@code lucky}.
+     *
+     * @see SeatConfig#isLucky()
+     */
     public static final String KEY_LUCKY = "lucky_option";
 
+    /**
+     * Constructs an empty instance.
+     */
     public JSONAppConfig() {
         super(new HashMap<>());
     }
 
+    /**
+     * Constructs an instance.
+     *
+     * @param map whose mappings are to be placed in this map
+     * @see HashtableConfig#HashtableConfig(Map)  HashtableConfig
+     */
     public JSONAppConfig(Map<String, ?> map) {
         super(map);
     }
 
-    public static JSONAppConfig fromJson(final String jsonString) {
-        return new JSONAppConfig(JSON.parseObject(jsonString));
+    /**
+     * Loads an instance from the given json string.
+     *
+     * @param json to translate the instance from
+     * @return the instance loaded from the json string
+     */
+    public static JSONAppConfig fromJson(final String json) {
+        return new JSONAppConfig(JSON.parseObject(json));
     }
 
+    /**
+     * Loads an instance from a given json file.
+     *
+     * @param filePath to load json from
+     * @return instance loaded from json
+     * @throws IOException if an I/O error occurs
+     */
     public static JSONAppConfig fromJson(final Path filePath) throws IOException {
         return fromJson(Files.readString(filePath));
     }
@@ -158,9 +227,7 @@ public class JSONAppConfig extends HashtableConfig implements SeatConfig {
         if (separatedPairs == null) {
             throw new IllegalConfigException("Separated list cannot be null");
         }
-        final List<SeparatedPair> l = new ArrayList<>();
-        separatedPairs.lines().filter(s -> s != null && !s.isBlank()).forEach(s -> l.add(new SeparatedPair(s)));
-        return l;
+        return buildList(separatedPairs.lines().filter(s -> s != null && !s.isBlank()).toList(), SeparatedPair::new);
     }
 
     @Override
@@ -212,6 +279,12 @@ public class JSONAppConfig extends HashtableConfig implements SeatConfig {
         return this;
     }
 
+    /**
+     * Copies all the mappings from the specified map to this instance, and returns {@code this}.
+     *
+     * @param other mappings to be stored in this map
+     * @return {@code this}
+     */
     public JSONAppConfig putAllAndReturn(final Map<String, ?> other) {
         putAll(other);
         return this;
@@ -222,6 +295,11 @@ public class JSONAppConfig extends HashtableConfig implements SeatConfig {
         return (JSONAppConfig) super.clone();
     }
 
+    /**
+     * Transfers {@code this} into a json string.
+     *
+     * @return json string
+     */
     public String toJson() {
         return JSON.toJSONString(this, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.FieldBased, JSONWriter.Feature.MapSortField);
     }

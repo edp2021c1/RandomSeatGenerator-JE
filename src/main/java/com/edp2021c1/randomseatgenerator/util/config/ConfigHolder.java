@@ -180,6 +180,13 @@ public class ConfigHolder {
         }
     }
 
+    /**
+     * Associates the specified value with the specified key in the config.
+     *
+     * @param key   with which the specified value is to be associated
+     * @param value to be associated with the specified key
+     * @throws RuntimeException if an I/O error occurs
+     */
     public void put(final String key, final Object value) {
         final HashMap<String, Object> t = new HashMap<>();
         t.put(key, value);
@@ -201,15 +208,19 @@ public class ConfigHolder {
         }
     }
 
+    /**
+     * Returns the config.
+     *
+     * @return the config
+     */
     public JSONAppConfig get() {
         return content;
     }
 
     /**
-     * Returns the config.
+     * Returns the clone of the config.
      *
-     * @return the config
-     * @throws RuntimeException if an I/O error occurs
+     * @return the clone of the config
      */
     public JSONAppConfig getClone() {
         return content.clone();
