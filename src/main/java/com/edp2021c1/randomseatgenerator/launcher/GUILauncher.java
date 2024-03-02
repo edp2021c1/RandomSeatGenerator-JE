@@ -57,7 +57,7 @@ public class GUILauncher extends Application {
         try {
             Logging.start(Logging.LoggingMode.GUI);
             if (IOUtils.notFullyPermitted(Metadata.DATA_DIR)) {
-                throw new IOException("Does not have read/write permission of the data directory");
+                CrashReporter.report(new IOException("Does not have read/write permission of the data directory"));
             }
         } catch (final Throwable e) {
             CrashReporter.report(e);
@@ -67,8 +67,9 @@ public class GUILauncher extends Application {
     @Override
     public void start(final Stage primaryStage) {
         try {
-            UIFactory.setGlobalDarkMode(ConfigHolder.globalHolder().getClone().isDarkMode());
-            MainWindow.getMainWindow().show();
+            UIFactory.setGlobalDarkMode(ConfigHolder.globalHolder().get().isDarkMode());
+            UIFactory.setMainWindow(MainWindow.getMainWindow(this));
+            UIFactory.getMainWindow().show();
         } catch (final Throwable e) {
             if (e instanceof ExceptionInInitializerError) {
                 CrashReporter.report(e.getCause());

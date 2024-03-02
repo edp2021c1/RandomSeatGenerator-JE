@@ -89,9 +89,9 @@ public class ConsoleLauncher {
         }
 
         // 处理座位表生成配置
-        JSONAppConfig config;
+        final JSONAppConfig config;
         try {
-            config = ConfigHolder.createHolder(configPath).getClone().checkAndReturn();
+            config = ConfigHolder.createHolder(configPath).get().checkAndReturn();
         } catch (IOException e) {
             throw new RuntimeException("Failed to load config from specific file", e);
         }

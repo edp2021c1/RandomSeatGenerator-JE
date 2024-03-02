@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui;
 
+import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
@@ -35,7 +36,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -57,18 +57,16 @@ public class UIFactory {
     private static final String[] STYLESHEETS_LIGHT = {"/assets/css/base.css", "/assets/css/light.css"};
 
     private static final BooleanProperty globalDarkMode = new SimpleBooleanProperty(null, "globalDarkMode") {
-        private final JSONAppConfig config = new JSONAppConfig();
-
         @Override
         protected void invalidated() {
-            config.darkMode = get();
-            ConfigHolder.globalHolder().set(config);
+            ConfigHolder.globalHolder().put(JSONAppConfig.KEY_DARK_MODE, get());
         }
     };
     @Getter
     private static final Image icon = new Image(Metadata.ICON_URL);
+    @Getter
     @Setter
-    private static Window mainWindow = null;
+    private static MainWindow mainWindow = null;
 
     /**
      * Don't let anyone else instantiate this class.

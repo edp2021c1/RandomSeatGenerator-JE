@@ -18,6 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.core;
 
+import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
+
 import java.util.List;
 
 /**

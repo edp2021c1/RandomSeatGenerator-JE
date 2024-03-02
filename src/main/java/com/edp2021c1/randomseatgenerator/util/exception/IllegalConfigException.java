@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.core;
+package com.edp2021c1.randomseatgenerator.util.exception;
 
 import lombok.Getter;
 

@@ -59,7 +59,6 @@ public class SettingsDialog extends Stage {
     private final ObjectProperty<File> importDir;
     private final ConfigHolder cfHolder;
     private File importFile;
-    private JSONAppConfig t;
 
     /**
      * Creates an instance.
@@ -68,7 +67,6 @@ public class SettingsDialog extends Stage {
         super();
 
         cfHolder = ConfigHolder.globalHolder();
-        t = cfHolder.getClone();
 
         /* *************************************************************************
          *                                                                         *
@@ -191,15 +189,17 @@ public class SettingsDialog extends Stage {
 
         setScene(new Scene(mainBox));
         setTitle(NAME + " - 设置");
-        initOwner(MainWindow.getMainWindow());
-        UIFactory.decorate(this, StageType.DIALOG);
+        initOwner(getMainWindow());
+        decorate(this, StageType.DIALOG);
 
         final FileChooser fc = new FileChooser();
         fc.setTitle("加载配置文件");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
 
         importDir = fc.initialDirectoryProperty();
-        importDir.set(t.previousImportDir == null ? cfHolder.getConfigPath().getParent().toFile() : new File(t.previousImportDir));
+
+        final JSONAppConfig config = cfHolder.get();
+        importDir.set(config.getString("dir.previous.import") == null ? cfHolder.getConfigPath().getParent().toFile() : new File(config.getString("dir.previous.import")));
 
         /* *************************************************************************
          *                                                                         *
@@ -229,9 +229,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 importDir.set(importFile.getParentFile());
-                t = new JSONAppConfig();
-                t.previousImportDir = importDir.toString();
-                cfHolder.set(t);
+                cfHolder.put("dir.previous.import", importDir.toString());
             } catch (final Throwable e) {
                 CrashReporter.report(e);
             }
@@ -241,7 +239,7 @@ public class SettingsDialog extends Stage {
             try {
                 cfHolder.set(configPane.getCurrent().checkAndReturn());
 
-                MainWindow.getMainWindow().onConfigChanged();
+                UIFactory.getMainWindow().configChanged();
                 applyBtn.setDisable(true);
             } catch (final Throwable e) {
                 CrashReporter.report(e);
@@ -286,6 +284,6 @@ public class SettingsDialog extends Stage {
             });
         }
 
-        setOnShown(event -> configPane.reset(cfHolder.getClone()));
+        setOnShown(event -> configPane.reset(cfHolder.get()));
     }
 }

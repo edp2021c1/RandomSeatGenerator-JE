@@ -33,9 +33,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static com.edp2021c1.randomseatgenerator.util.IOUtils.*;
 
@@ -182,19 +180,29 @@ public class ConfigHolder {
         }
     }
 
+    public void put(final String key, final Object value) {
+        final HashMap<String, Object> t = new HashMap<>();
+        t.put(key, value);
+        set(t);
+    }
+
     /**
      * Sets the value of config
      *
      * @param config to set
      * @throws RuntimeException if an I/O error occurs
      */
-    public void set(final JSONAppConfig config) {
+    public void set(final Map<String, ?> config) {
         checkState();
         try {
             overwriteString(channel, content.set(config).checkAndReturn().toJson());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public JSONAppConfig get() {
+        return content;
     }
 
     /**

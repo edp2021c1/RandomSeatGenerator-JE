@@ -19,7 +19,6 @@
 package com.edp2021c1.randomseatgenerator.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -94,19 +93,6 @@ public final class CollectionUtils {
      */
     public static <T> List<T> modifiableList(final Collection<? extends T> src) {
         return new ArrayList<>(src);
-    }
-
-    /**
-     * Returns a list containing elements in the source array that is free to modify.
-     * That means any change of the returned list will not affect the source collection.
-     *
-     * @param arr source array
-     * @param <T> type of the
-     * @return a modify-free list
-     */
-    @SafeVarargs
-    public static <T> List<T> modifiableList(final T... arr) {
-        return modifiableList(Arrays.asList(arr));
     }
 
     /**

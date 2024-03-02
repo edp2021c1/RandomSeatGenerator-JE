@@ -22,6 +22,7 @@ import com.alibaba.excel.EasyExcel;
 import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Utils;
+import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Cleanup;
 import lombok.Getter;
 

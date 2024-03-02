@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.core;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Getter;
 
 import java.lang.reflect.Field;

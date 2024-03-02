@@ -31,6 +31,8 @@ import javafx.scene.layout.VBox;
 
 import java.util.Objects;
 
+import static com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig.*;
+
 /**
  * Config pane.
  *
@@ -122,39 +124,39 @@ public class ConfigPane extends VBox {
             return;
         }
         rowCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.rowCount = newValue.intValue();
+            current.putRowCount(newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         columnCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.columnCount = newValue.intValue();
+            current.putColumnCount(newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         rbrInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.randomBetweenRows = newValue.intValue();
+            current.putRandomBetweenRows(newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.disabledLastRowPos = newValue;
+            current.putDisabledLastRowPos(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         nameListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.names = newValue;
+            current.putNames(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.groupLeaders = newValue;
+            current.putGroupLeaders(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         separateListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.separatedPairs = newValue;
+            current.putSeparatedPairs(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         luckyOptionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            current.lucky = newValue;
+            current.putLucky(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         exportWritableCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            current.exportWritable = newValue;
+            current.putExportWritable(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         darkModeCheck.selectedProperty().bindBidirectional(UIFactory.globalDarkModeProperty());
@@ -191,16 +193,16 @@ public class ConfigPane extends VBox {
         if (config == null) {
             return;
         }
-        rowCountInput.setValue(config.rowCount);
-        columnCountInput.setValue(config.columnCount);
-        rbrInput.setValue(config.randomBetweenRows);
-        disabledLastRowPosInput.setText(config.disabledLastRowPos);
-        nameListInput.setText(config.names);
-        groupLeaderListInput.setText(config.groupLeaders);
-        separateListInput.setText(config.separatedPairs);
-        luckyOptionCheck.setSelected(config.lucky);
-        exportWritableCheck.setSelected(config.exportWritable);
-        darkModeCheck.setSelected(config.darkMode);
+        rowCountInput.setValue(config.getRowCount());
+        columnCountInput.setValue(config.getColumnCount());
+        rbrInput.setValue(config.getRandomBetweenRows());
+        disabledLastRowPosInput.setText(config.getString(KEY_DISABLED_LAST_ROW_POS));
+        nameListInput.setText(config.getString(KEY_NAMES));
+        groupLeaderListInput.setText(config.getString(KEY_GROUP_LEADERS));
+        separateListInput.setText(config.getString(KEY_SEPARATED_PAIRS));
+        luckyOptionCheck.setSelected(config.isLucky());
+        exportWritableCheck.setSelected(config.isExportWritable());
+        darkModeCheck.setSelected(config.isDarkMode());
     }
 
 }

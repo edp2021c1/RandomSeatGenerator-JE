@@ -18,13 +18,13 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
-import com.edp2021c1.randomseatgenerator.core.IllegalConfigException;
-import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
+import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
+import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
@@ -38,7 +38,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import lombok.Getter;
 
 import java.io.File;
 import java.util.Date;
@@ -54,29 +53,26 @@ import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
  * @since 1.3.3
  */
 public class MainWindow extends Stage {
-    @Getter
-    private static final MainWindow mainWindow = new MainWindow();
-
-    static {
-        setMainWindow(mainWindow);
-    }
 
     private final SeatTableView seatTableView;
     private final ConfigHolder cfHolder;
     private final StringProperty seed;
     private final ObjectProperty<SeatTable> seatTable;
+    private final Application app;
     private String previousSeed = null;
     private boolean generated;
 
     /**
      * Creates an instance.
      */
-    private MainWindow() {
+    private MainWindow(final Application app) {
         super();
+
+        this.app = app;
 
         cfHolder = ConfigHolder.globalHolder();
 
-        final JSONAppConfig config = cfHolder.getClone();
+        final JSONAppConfig config = cfHolder.get();
 
         /* *************************************************************************
          *                                                                         *
@@ -126,14 +122,13 @@ public class MainWindow extends Stage {
         setScene(new Scene(mainBox));
         setTitle(Metadata.TITLE);
         decorate(this, StageType.MAIN);
-        setOnCloseRequest(event -> close());
 
         final FileChooser fc = new FileChooser();
         fc.setTitle("导出座位表");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
         fc.setInitialDirectory(new File(
                 Utils.elseIfNull(
-                        config.previousExportDir,
+                        config.getString("dir.previous.export"),
                         SeatTable.DEFAULT_EXPORTING_DIR.toString()
                 )
         ));
@@ -152,16 +147,10 @@ public class MainWindow extends Stage {
                     randomSeedBtn.fire();
                 }
 
-                final JSONAppConfig t = cfHolder.getClone();
-                if (t == null) {
-                    throw new IllegalConfigException("Null config");
-                }
-
-                final SeatConfig config1 = t.checkAndReturn();
                 final String seed1 = seed.get();
-                seatTable.set(SeatTable.generate(config1, seed1));
+                seatTable.set(SeatTable.generate(cfHolder.get().checkAndReturn(), seed1));
                 Logging.info("\n" + seatTable.get());
-                previousSeed = seed.get();
+                previousSeed = seed1;
                 generated = true;
             } catch (final Throwable e) {
                 CrashReporter.report(e);
@@ -189,16 +178,14 @@ public class MainWindow extends Stage {
                 if (exportFile == null) {
                     return;
                 }
-                seatTable.get().exportToExcelDocument(exportFile.toPath(), cfHolder.getClone().isExportWritable());
+                seatTable.get().exportToExcelDocument(exportFile.toPath(), cfHolder.get().isExportWritable());
 
                 Logging.info("Successfully exported seat table to " + exportFile);
                 MessageDialog.showMessage(this, "成功导出座位表到\n" + exportFile);
 
                 fc.setInitialDirectory(exportFile.getParentFile());
 
-                final JSONAppConfig t = new JSONAppConfig();
-                t.previousExportDir = exportFile.getParentFile().toString();
-                cfHolder.set(t);
+                cfHolder.put("dir.previous.export", exportFile.getParentFile().toString());
             } catch (final Throwable e) {
                 CrashReporter.report(e);
             }
@@ -211,12 +198,15 @@ public class MainWindow extends Stage {
         dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
 
         if (Utils.isMac()) {
-            setFullScreenExitHint("按 Esc / Cmd+Shift+F 退出全屏");
+            setOnShown(event -> setFullScreen(Utils.elseIfNull(cfHolder.get().getBoolean("window.main.maximized"), false)));
+            fullScreenProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("window.main.maximized", newValue));
+            setFullScreenExitHint("");
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;
                 }
                 switch (event.getCode()) {
+                    case Q -> System.exit(0);
                     case W -> close();
                     case F -> setFullScreen(event.isControlDown() != isFullScreen());
                     case COMMA -> settingsBtn.fire();
@@ -226,6 +216,8 @@ public class MainWindow extends Stage {
                 }
             });
         } else {
+            setOnShown(event -> setMaximized(Utils.elseIfNull(cfHolder.get().getBoolean("window.main.maximized"), false)));
+            maximizedProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("window.main.maximized", newValue));
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isControlDown()) {
                     return;
@@ -236,22 +228,52 @@ public class MainWindow extends Stage {
                 }
             });
         }
+
+        Double d = cfHolder.get().getDouble("window.main.height");
+        if (d != null) {
+            setHeight(d);
+        }
+        d = cfHolder.get().getDouble("window.main.width");
+        if (d != null) {
+            setWidth(d);
+        }
+
+        heightProperty().addListener((observable, oldValue, newValue) -> {
+            if (!isFullScreen()) {
+                cfHolder.put("window.main.height", newValue.doubleValue());
+            }
+        });
+        widthProperty().addListener((observable, oldValue, newValue) -> {
+            if (!isFullScreen()) {
+                cfHolder.put("window.main.width", newValue.doubleValue());
+            }
+        });
+
+        setOnCloseRequest(event -> close());
+    }
+
+    public static MainWindow getMainWindow(final Application app) {
+        final MainWindow mainWindow = new MainWindow(app);
+        setMainWindow(mainWindow);
+        return mainWindow;
     }
 
     /**
      * Action to do if config is changed.
      */
-    public void onConfigChanged() {
-        seatTableView.setEmptySeatTable(cfHolder.getClone());
+    public void configChanged() {
+        seatTableView.setEmptySeatTable(cfHolder.get());
         generated = false;
         previousSeed = null;
-        Logging.debug("Seat table view reset");
     }
 
     @Override
     public void close() {
         super.close();
-        System.exit(0);
+        try {
+            app.stop();
+        } catch (final Exception ignored) {
+        }
     }
 
 }
