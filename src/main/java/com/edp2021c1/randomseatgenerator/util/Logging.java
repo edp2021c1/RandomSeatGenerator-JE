@@ -18,6 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import com.edp2021c1.randomseatgenerator.RandomSeatGenerator;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -117,16 +119,16 @@ public final class Logging {
 
     /**
      * Starts logging.
-     *
-     * @param mode logging mode
      */
-    public static void start(final LoggingMode mode) {
+    public static void start() {
         if (!closed) {
             debug("Logging already started, there's no need to start it twice");
             return;
         }
 
         closed = false;
+
+        final boolean withGUI = Boolean.TRUE.equals(RandomSeatGenerator.getRuntimeConfig().getBoolean("launching.gui"));
 
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);
@@ -148,7 +150,7 @@ public final class Logging {
             }
         };
         consoleHandler.setFormatter(DEFAULT_FORMATTER);
-        consoleHandler.setLevel(mode == LoggingMode.CONSOLE ? LoggingLevels.INFO : LoggingLevels.DEBUG);
+        consoleHandler.setLevel(withGUI ? LoggingLevels.INFO : LoggingLevels.DEBUG);
         logger.addHandler(consoleHandler);
 
         try {
@@ -186,7 +188,7 @@ public final class Logging {
 
         debug("Logging started");
         info("*** %s ***".formatted(TITLE));
-        debug("Launching mode: " + (mode == LoggingMode.CONSOLE ? "Console" : "GUI"));
+        debug("Launching mode: " + (withGUI ? "Console" : "GUI"));
         debug("OS: %s %s".formatted(OS_NAME, OS_VERSION));
         debug("Architecture: " + OS_ARCH);
         debug("Java Version: " + JAVA_VERSION);
@@ -218,22 +220,6 @@ public final class Logging {
             h.close();
         }
         closed = true;
-    }
-
-    /**
-     * Logging modes.
-     */
-    public enum LoggingMode {
-        /**
-         * Console logging mode, sets console logging level
-         * to {@link LoggingLevels#INFO}
-         */
-        CONSOLE(),
-        /**
-         * GUI logging mode, sets console logging level
-         * to {@link LoggingLevels#INFO}
-         */
-        GUI()
     }
 
     /**

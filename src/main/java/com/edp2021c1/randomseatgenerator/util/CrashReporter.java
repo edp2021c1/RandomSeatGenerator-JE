@@ -18,12 +18,11 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import com.edp2021c1.randomseatgenerator.RandomSeatGenerator;
 import com.edp2021c1.randomseatgenerator.ui.stage.CrashReporterDialog;
 import com.edp2021c1.randomseatgenerator.ui.stage.MessageDialog;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
-
-import java.util.Objects;
 
 /**
  * Reports uncaught exceptions.
@@ -34,31 +33,23 @@ import java.util.Objects;
 public class CrashReporter implements Thread.UncaughtExceptionHandler {
 
     /**
-     * Full crash reporter, with a window shown on call of {@link #uncaughtException(Thread, Throwable)}
+     * Instance.
      */
-    public static final CrashReporter fullCrashReporter = new CrashReporter(true);
-    /**
-     * Crash reporter will log only.
-     */
-    public static final CrashReporter logOnlyCrashReporter = new CrashReporter(false);
-    private final boolean withGUI;
+    public static final CrashReporter instance = new CrashReporter();
 
     /**
      * Creates an instance.
-     *
-     * @param withGUI if the error message will be shown in a JavaFX stage.
      */
-    private CrashReporter(final boolean withGUI) {
-        this.withGUI = withGUI;
+    private CrashReporter() {
     }
 
     /**
-     * Reports an exception with {@link #fullCrashReporter}
+     * Reports an exception with {@link #instance}
      *
      * @param e exception to report
      */
     public static void report(final Throwable e) {
-        fullCrashReporter.uncaughtException(Thread.currentThread(), e);
+        instance.uncaughtException(null, e);
     }
 
     /**
@@ -69,8 +60,15 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(final Thread t, final Throwable e) {
-        if (e == null) return;
-        Objects.requireNonNull(t);
+        if (e == null) {
+            return;
+        }
+        if (e instanceof ExceptionInInitializerError) {
+            uncaughtException(t, e.getCause());
+        }
+
+        final boolean withGUI = Boolean.TRUE.equals(RandomSeatGenerator.getRuntimeConfig().getBoolean("launching.gui"));
+
         try {
             if (e instanceof final IllegalConfigException ex) {
                 Logging.error(
@@ -93,7 +91,9 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
                 return;
             }
 
-            final String str = Strings.getStackTrace(e);
+            final String str = t == null ?
+                    Strings.getStackTrace(e) :
+                    "Throwable thrown from thread \"%s\":\n".formatted(t.getName()) + Strings.getStackTrace(e);
             Logging.error(str);
             if (withGUI) {
                 CrashReporterDialog.showCrashReporter(e.getClass().getName(), str);

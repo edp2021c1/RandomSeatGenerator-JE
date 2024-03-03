@@ -23,7 +23,6 @@ import com.alibaba.fastjson2.JSONWriter;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
 import com.edp2021c1.randomseatgenerator.util.Strings;
-import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 
 import java.io.IOException;
@@ -232,7 +231,7 @@ public class JSONAppConfig extends HashtableConfig implements SeatConfig {
 
     @Override
     public boolean isLucky() {
-        return Utils.elseIfNull(getBoolean(KEY_LUCKY), true);
+        return !Boolean.FALSE.equals(getBoolean(KEY_LUCKY));
     }
 
     @Override

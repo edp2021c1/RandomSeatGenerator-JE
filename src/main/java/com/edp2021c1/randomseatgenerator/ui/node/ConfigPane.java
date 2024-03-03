@@ -19,7 +19,6 @@
 package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.ui.UIFactory;
-import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import javafx.beans.property.BooleanProperty;
@@ -202,8 +201,8 @@ public class ConfigPane extends VBox {
         groupLeaderListInput.setText(config.getString(KEY_GROUP_LEADERS));
         separateListInput.setText(config.getString(KEY_SEPARATED_PAIRS));
         luckyOptionCheck.setSelected(config.isLucky());
-        exportWritableCheck.setSelected(Utils.elseIfNull(config.getBoolean("export.writable"), false));
-        darkModeCheck.setSelected(Utils.elseIfNull(config.getBoolean("appearance.style.dark"), true));
+        exportWritableCheck.setSelected(Boolean.TRUE.equals(config.getBoolean("export.writable")));
+        darkModeCheck.setSelected(!Boolean.FALSE.equals(config.getBoolean("appearance.style.dark")));
     }
 
 }

@@ -126,11 +126,9 @@ public class MainWindow extends Stage {
         final FileChooser fc = new FileChooser();
         fc.setTitle("导出座位表");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
+        final String obj = config.getString("export.dir.previous");
         fc.setInitialDirectory(new File(
-                Utils.elseIfNull(
-                        config.getString("export.dir.previous"),
-                        SeatTable.DEFAULT_EXPORTING_DIR.toString()
-                )
+                obj == null ? SeatTable.DEFAULT_EXPORTING_DIR.toString() : obj
         ));
 
         /* *************************************************************************
@@ -179,7 +177,7 @@ public class MainWindow extends Stage {
                     return;
                 }
                 JSONAppConfig jsonAppConfig = cfHolder.get();
-                seatTable.get().exportToExcelDocument(exportFile.toPath(), Utils.elseIfNull(jsonAppConfig.getBoolean("export.writable"), false));
+                seatTable.get().exportToExcelDocument(exportFile.toPath(), Boolean.TRUE.equals(jsonAppConfig.getBoolean("export.writable")));
 
                 Logging.info("Successfully exported seat table to " + exportFile);
                 MessageDialog.showMessage(this, "成功导出座位表到\n" + exportFile);
@@ -198,8 +196,8 @@ public class MainWindow extends Stage {
 
         dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
 
-        if (Utils.isMac()) {
-            setOnShown(event -> setFullScreen(Utils.elseIfNull(cfHolder.get().getBoolean("appearance.window.main.maximized"), false)));
+        if (OperatingSystem.getCurrent().isMac()) {
+            setOnShown(event -> setFullScreen(Boolean.TRUE.equals(cfHolder.get().getBoolean("appearance.window.main.maximized"))));
             fullScreenProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
             setFullScreenExitHint("");
             mainBox.setOnKeyPressed(event -> {
@@ -217,7 +215,7 @@ public class MainWindow extends Stage {
                 }
             });
         } else {
-            setOnShown(event -> setMaximized(Utils.elseIfNull(cfHolder.get().getBoolean("appearance.window.main.maximized"), false)));
+            setOnShown(event -> setMaximized(Boolean.TRUE.equals(cfHolder.get().getBoolean("appearance.window.main.maximized"))));
             maximizedProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isControlDown()) {

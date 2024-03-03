@@ -18,7 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
-import com.edp2021c1.randomseatgenerator.util.Utils;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -43,7 +42,7 @@ public class MessageDialog extends Stage {
     private MessageDialog(final String msg) {
         super();
 
-        final Label txt = new Label(Utils.elseIfNull(msg, ""));
+        final Label txt = new Label(msg);
 
         final Button button = createButton("确定", 80, 26);
         button.setDefaultButton(true);
@@ -72,7 +71,7 @@ public class MessageDialog extends Stage {
     public static void showMessage(final String msg) {
         try {
             new MessageDialog(msg).showAndWait();
-        } catch (final IllegalStateException e) {
+        } catch (final Throwable e) {
             messageToBeShown = msg;
             Application.launch(MessageDialogApp.class);
         }

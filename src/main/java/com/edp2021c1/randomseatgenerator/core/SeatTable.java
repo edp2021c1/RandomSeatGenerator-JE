@@ -20,8 +20,8 @@ package com.edp2021c1.randomseatgenerator.core;
 
 import com.alibaba.excel.EasyExcel;
 import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
+import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -217,7 +217,7 @@ public class SeatTable {
      */
     public void exportToExcelDocument(final Path filePath, final boolean writable) {
         try {
-            Utils.delete(filePath);
+            IOUtils.deleteIfExists(filePath);
             EasyExcel.write(filePath.toFile(), SeatRowData.class)
                     .sheet("座位表-%tF".formatted(new Date()))
                     .excludeColumnIndexes(CollectionUtils.range(Math.max(config.getColumnCount(), 2), MAX_COLUMN_COUNT))

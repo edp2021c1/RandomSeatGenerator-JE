@@ -20,7 +20,10 @@ package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.ui.UIFactory;
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.CrashReporter;
+import com.edp2021c1.randomseatgenerator.util.IOUtils;
+import com.edp2021c1.randomseatgenerator.util.Logging;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -46,13 +49,10 @@ public class GUILauncher extends Application {
      * Launches the JavaFX application.
      */
     public static void launch() {
+        RandomSeatGenerator.getRuntimeConfig().put("launching.gui", true);
         Application.launch(GUILauncher.class);
-    }
-
-    @Override
-    public void init() {
         try {
-            Logging.start(Logging.LoggingMode.GUI);
+            Logging.start();
             if (IOUtils.notFullyPermitted(Metadata.DATA_DIR)) {
                 CrashReporter.report(new IOException("Does not have read/write permission of the data directory"));
             }
@@ -64,15 +64,10 @@ public class GUILauncher extends Application {
     @Override
     public void start(final Stage primaryStage) {
         try {
-            UIFactory.setGlobalDarkMode(Utils.elseIfNull(ConfigHolder.globalHolder().get().getBoolean("appearance.style.dark"), true));
-            UIFactory.setMainWindow(MainWindow.getMainWindow(this));
-            UIFactory.getMainWindow().show();
+            UIFactory.setGlobalDarkMode(!Boolean.FALSE.equals(ConfigHolder.globalHolder().get().getBoolean("appearance.style.dark")));
+            MainWindow.getMainWindow(this).show();
         } catch (final Throwable e) {
-            if (e instanceof ExceptionInInitializerError) {
-                CrashReporter.report(e.getCause());
-            } else {
-                CrashReporter.report(e);
-            }
+            CrashReporter.report(e);
         }
     }
 

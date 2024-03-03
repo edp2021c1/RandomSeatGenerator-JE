@@ -2,7 +2,7 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.ui.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
-import com.edp2021c1.randomseatgenerator.util.Utils;
+import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -67,7 +67,7 @@ public class CrashReporterDialog extends Stage {
             close();
         });
 
-        if (Utils.isMac()) {
+        if (OperatingSystem.getCurrent().isMac()) {
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;
@@ -98,7 +98,7 @@ public class CrashReporterDialog extends Stage {
     public static void showCrashReporter(final String title, final String msg) {
         try {
             new CrashReporterDialog(title, msg).showAndWait();
-        } catch (final IllegalStateException exception) {
+        } catch (final Throwable exception) {
             titleToBeShown = title;
             messageToBeShown = msg;
             Application.launch(CrashReporterApp.class);

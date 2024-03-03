@@ -22,7 +22,6 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Strings;
-import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 
@@ -52,7 +51,8 @@ public class ConsoleLauncher {
      * @param args arguments used to launch the application.
      */
     public static void launch(final List<String> args) {
-        Logging.start(Logging.LoggingMode.CONSOLE);
+        RandomSeatGenerator.getRuntimeConfig().put("launching.gui", false);
+        Logging.start();
 
         if (!Files.isReadable(Metadata.DATA_DIR)) {
             throw new RuntimeException(new IOException("Does not have read permission of the data directory"));
@@ -105,7 +105,7 @@ public class ConsoleLauncher {
         Logging.info("\n" + seatTable);
 
         // 导出
-        seatTable.exportToExcelDocument(outputPath, Utils.elseIfNull(config.getBoolean("export.writable"), false));
+        seatTable.exportToExcelDocument(outputPath, Boolean.TRUE.equals(config.getBoolean("export.writable")));
         Logging.info("Seat table successfully exported to " + outputPath);
 
         System.exit(0);

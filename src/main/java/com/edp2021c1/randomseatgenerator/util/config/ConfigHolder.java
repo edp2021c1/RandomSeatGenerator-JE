@@ -21,7 +21,6 @@ package com.edp2021c1.randomseatgenerator.util.config;
 import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Strings;
-import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
 import lombok.Getter;
@@ -51,7 +50,7 @@ public class ConfigHolder {
      */
     private static final ConfigHolder global;
     private static final JSONAppConfig BUILT_IN;
-    private static final Path GLOBAL_CONFIG_PATH = Utils.join(Metadata.DATA_DIR, "config", "randomseatgenerator.json");
+    private static final Path GLOBAL_CONFIG_PATH = Path.of(Metadata.DATA_DIR.toString(), "config", "randomseatgenerator.json");
     private static final Set<ConfigHolder> holders = new HashSet<>();
 
     static {

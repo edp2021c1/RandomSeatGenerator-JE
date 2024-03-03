@@ -20,14 +20,20 @@ package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.config.HashtableConfig;
+import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Application intro.
  */
 public class RandomSeatGenerator {
+
+    @Getter
+    private static final HashtableConfig runtimeConfig = new HashtableConfig(new HashMap<>());
 
     /**
      * Don't let anyone else instantiate this class.
@@ -56,7 +62,7 @@ public class RandomSeatGenerator {
             System.exit(0);
         }
 
-        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.logOnlyCrashReporter);
+        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.instance);
         Thread.currentThread().setName("Main Thread");
 
         // 如果是命令行模式则启动命令行程序

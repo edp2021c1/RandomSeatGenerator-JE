@@ -23,8 +23,8 @@ import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
+import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import com.edp2021c1.randomseatgenerator.util.Strings;
-import com.edp2021c1.randomseatgenerator.util.Utils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import javafx.beans.property.BooleanProperty;
@@ -261,7 +261,7 @@ public class SettingsDialog extends Stage {
         cancelBtn.setOnAction(event -> close());
         cancelBtn.setCancelButton(true);
 
-        if (Utils.isMac()) {
+        if (OperatingSystem.getCurrent().isMac()) {
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;
