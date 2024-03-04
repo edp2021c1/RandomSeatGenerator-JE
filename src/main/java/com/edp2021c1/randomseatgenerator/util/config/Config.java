@@ -18,8 +18,12 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
+import com.alibaba.fastjson2.JSON;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -31,7 +35,16 @@ import java.util.Map;
  * @see java.util.Hashtable
  * @since 1.5.1
  */
-public class HashtableConfig extends Hashtable<String, Object> {
+public class Config extends Hashtable<String, Object> {
+
+    /**
+     * Constructs an empty instance.
+     *
+     * @see Hashtable#Hashtable(Map)  Hashtable
+     */
+    public Config() {
+        super();
+    }
 
     /**
      * Constructs an instance.
@@ -39,8 +52,30 @@ public class HashtableConfig extends Hashtable<String, Object> {
      * @param map whose mappings are to be placed in this map
      * @see Hashtable#Hashtable(Map)  Hashtable
      */
-    public HashtableConfig(final Map<String, ?> map) {
+    public Config(final Map<String, ?> map) {
         super(map);
+    }
+
+
+    /**
+     * Loads an instance from the given json string.
+     *
+     * @param jsonString to translate the instance from
+     * @return the instance loaded from the json string
+     */
+    public static Config fromJson(final String jsonString) {
+        return new Config(JSON.parseObject(jsonString));
+    }
+
+    /**
+     * Loads an instance from a given json file.
+     *
+     * @param jsonFilePath to load json from
+     * @return instance loaded from json
+     * @throws IOException if an I/O error occurs
+     */
+    public static Config fromJson(final Path jsonFilePath) throws IOException {
+        return fromJson(Files.readString(jsonFilePath));
     }
 
     /**

@@ -18,8 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.RandomSeatGenerator;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,9 +69,9 @@ public final class Logging {
     private Logging() {
     }
 
-    private static void checkStage() {
+    private static void checkState() {
         if (closed) {
-            throw new IllegalStateException("Logger not initialized");
+            throw new IllegalStateException("Logger closed or uninitialized");
         }
     }
 
@@ -83,7 +81,7 @@ public final class Logging {
      * @param msg logged message
      */
     public static void info(final String msg) {
-        checkStage();
+        checkState();
         logger.log(LoggingLevels.INFO, msg);
     }
 
@@ -93,7 +91,7 @@ public final class Logging {
      * @param msg logged message
      */
     public static void warning(final String msg) {
-        checkStage();
+        checkState();
         logger.log(LoggingLevels.WARNING, msg);
     }
 
@@ -103,7 +101,7 @@ public final class Logging {
      * @param msg logged message
      */
     public static void error(final String msg) {
-        checkStage();
+        checkState();
         logger.log(LoggingLevels.ERROR, msg);
     }
 
@@ -113,7 +111,7 @@ public final class Logging {
      * @param msg logged message
      */
     public static void debug(final String msg) {
-        checkStage();
+        checkState();
         logger.log(LoggingLevels.DEBUG, msg);
     }
 
@@ -128,7 +126,7 @@ public final class Logging {
 
         closed = false;
 
-        final boolean withGUI = Boolean.TRUE.equals(RandomSeatGenerator.getRuntimeConfig().getBoolean("launching.gui"));
+        final boolean withGUI = Boolean.TRUE.equals(RuntimeUtils.runtimeConfig.getBoolean("launching.gui"));
 
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);
@@ -150,7 +148,7 @@ public final class Logging {
             }
         };
         consoleHandler.setFormatter(DEFAULT_FORMATTER);
-        consoleHandler.setLevel(withGUI ? LoggingLevels.INFO : LoggingLevels.DEBUG);
+        consoleHandler.setLevel(withGUI ? LoggingLevels.DEBUG : LoggingLevels.INFO);
         logger.addHandler(consoleHandler);
 
         try {
@@ -188,7 +186,7 @@ public final class Logging {
 
         debug("Logging started");
         info("*** %s ***".formatted(TITLE));
-        debug("Launching mode: " + (withGUI ? "Console" : "GUI"));
+        debug("Launching mode: " + (withGUI ? "GUI" : "Console"));
         debug("OS: %s %s".formatted(OS_NAME, OS_VERSION));
         debug("Architecture: " + OS_ARCH);
         debug("Java Version: " + JAVA_VERSION);
@@ -239,7 +237,7 @@ public final class Logging {
          */
         public static final Level ERROR = new LoggingLevels("ERROR", 1000);
 
-        LoggingLevels(final String name, final int value) {
+        private LoggingLevels(final String name, final int value) {
             super(name, value, null);
         }
 

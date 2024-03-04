@@ -20,20 +20,14 @@ package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.config.HashtableConfig;
-import lombok.Getter;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Application intro.
  */
 public class RandomSeatGenerator {
-
-    @Getter
-    private static final HashtableConfig runtimeConfig = new HashtableConfig(new HashMap<>());
 
     /**
      * Don't let anyone else instantiate this class.
@@ -48,6 +42,7 @@ public class RandomSeatGenerator {
      */
     public static void main(final String... args) {
         final List<String> arguments = Arrays.asList(args);
+
         // 如果有“--help”参数则打印帮助信息然后退出
         if (arguments.contains("--help")) {
             System.out.println(Metadata.HELP_INFO);

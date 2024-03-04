@@ -37,10 +37,10 @@ import java.util.*;
 import static com.edp2021c1.randomseatgenerator.util.IOUtils.*;
 
 /**
- * Handles {@link JSONAppConfig}.
+ * Handles {@link SeatConfigImpl}.
  *
  * @author Calboot
- * @see JSONAppConfig
+ * @see SeatConfigImpl
  * @since 1.4.9
  */
 public class ConfigHolder {
@@ -49,7 +49,7 @@ public class ConfigHolder {
      * Default config handler.
      */
     private static final ConfigHolder global;
-    private static final JSONAppConfig BUILT_IN;
+    private static final SeatConfigImpl BUILT_IN;
     private static final Path GLOBAL_CONFIG_PATH = Path.of(Metadata.DATA_DIR.toString(), "config", "randomseatgenerator.json");
     private static final Set<ConfigHolder> holders = new HashSet<>();
 
@@ -63,7 +63,7 @@ public class ConfigHolder {
         for (final Object s : reader.lines().toArray()) {
             str.append(s);
         }
-        BUILT_IN = JSONAppConfig.fromJson(str.toString());
+        BUILT_IN = SeatConfigImpl.fromJsonString(str.toString());
 
         try {
             global = createHolder(GLOBAL_CONFIG_PATH);
@@ -76,7 +76,7 @@ public class ConfigHolder {
 
     @Getter
     private final Path configPath;
-    private final JSONAppConfig content;
+    private final SeatConfigImpl content;
     private final FileChannel channel;
     private boolean closed;
 
@@ -87,7 +87,7 @@ public class ConfigHolder {
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
     private ConfigHolder(final Path configPath) throws IOException {
-        content = new JSONAppConfig();
+        content = new SeatConfigImpl();
         this.configPath = configPath;
 
         final Path configDir = configPath.getParent();
@@ -121,7 +121,7 @@ public class ConfigHolder {
 
         // Load config
         try {
-            content.putAllAndReturn(JSONAppConfig.fromJson(readString(channel))).check();
+            content.putAllAndReturn(SeatConfigImpl.fromJsonString(readString(channel))).check();
         } catch (final RuntimeException e) {
             Logging.warning("Invalid config loaded");
             Logging.warning(Strings.getStackTrace(e));
@@ -201,19 +201,10 @@ public class ConfigHolder {
     public void putAll(final Map<String, ?> map) {
         checkState();
         try {
-            overwriteString(channel, content.putAllAndReturn(map).checkAndReturn().toJson());
+            overwriteString(channel, content.putAllAndReturn(map).checkAndReturn().toJsonString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Returns the config.
-     *
-     * @return the config
-     */
-    public JSONAppConfig get() {
-        return content;
     }
 
     /**
@@ -221,7 +212,7 @@ public class ConfigHolder {
      *
      * @return the clone of the config
      */
-    public JSONAppConfig getClone() {
+    public SeatConfigImpl getClone() {
         return content.clone();
     }
 

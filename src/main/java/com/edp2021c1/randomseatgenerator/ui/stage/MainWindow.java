@@ -22,7 +22,7 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.SeatConfigImpl;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
@@ -72,7 +72,7 @@ public class MainWindow extends Stage {
 
         cfHolder = ConfigHolder.globalHolder();
 
-        final JSONAppConfig config = cfHolder.get();
+        final SeatConfigImpl config = cfHolder.getClone();
 
         /* *************************************************************************
          *                                                                         *
@@ -146,7 +146,7 @@ public class MainWindow extends Stage {
                 }
 
                 final String seed1 = seed.get();
-                seatTable.set(SeatTable.generate(cfHolder.get().checkAndReturn(), seed1));
+                seatTable.set(SeatTable.generate(cfHolder.getClone().checkAndReturn(), seed1));
                 Logging.info("\n" + seatTable.get());
                 previousSeed = seed1;
                 generated = true;
@@ -176,8 +176,8 @@ public class MainWindow extends Stage {
                 if (exportFile == null) {
                     return;
                 }
-                JSONAppConfig jsonAppConfig = cfHolder.get();
-                seatTable.get().exportToExcelDocument(exportFile.toPath(), Boolean.TRUE.equals(jsonAppConfig.getBoolean("export.writable")));
+                SeatConfigImpl seatConfig = cfHolder.getClone();
+                seatTable.get().exportToExcelDocument(exportFile.toPath(), Boolean.TRUE.equals(seatConfig.getBoolean("export.writable")));
 
                 Logging.info("Successfully exported seat table to " + exportFile);
                 MessageDialog.showMessage(this, "成功导出座位表到\n" + exportFile);
@@ -197,7 +197,7 @@ public class MainWindow extends Stage {
         dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
 
         if (OperatingSystem.getCurrent().isMac()) {
-            setOnShown(event -> setFullScreen(Boolean.TRUE.equals(cfHolder.get().getBoolean("appearance.window.main.maximized"))));
+            setOnShown(event -> setFullScreen(Boolean.TRUE.equals(cfHolder.getClone().getBoolean("appearance.window.main.maximized"))));
             fullScreenProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
             setFullScreenExitHint("");
             mainBox.setOnKeyPressed(event -> {
@@ -215,7 +215,7 @@ public class MainWindow extends Stage {
                 }
             });
         } else {
-            setOnShown(event -> setMaximized(Boolean.TRUE.equals(cfHolder.get().getBoolean("appearance.window.main.maximized"))));
+            setOnShown(event -> setMaximized(Boolean.TRUE.equals(cfHolder.getClone().getBoolean("appearance.window.main.maximized"))));
             maximizedProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isControlDown()) {
@@ -228,11 +228,11 @@ public class MainWindow extends Stage {
             });
         }
 
-        Double d = cfHolder.get().getDouble("appearance.window.main.height");
+        Double d = cfHolder.getClone().getDouble("appearance.window.main.height");
         if (d != null) {
             setHeight(d);
         }
-        d = cfHolder.get().getDouble("appearance.window.main.width");
+        d = cfHolder.getClone().getDouble("appearance.window.main.width");
         if (d != null) {
             setWidth(d);
         }
@@ -267,7 +267,7 @@ public class MainWindow extends Stage {
      * Action to do if config is changed.
      */
     public void configChanged() {
-        seatTableView.setEmptySeatTable(cfHolder.get());
+        seatTableView.setEmptySeatTable(cfHolder.getClone());
         generated = false;
         previousSeed = null;
     }

@@ -26,7 +26,7 @@ import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.SeatConfigImpl;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
@@ -198,7 +198,7 @@ public class SettingsDialog extends Stage {
 
         importDir = fc.initialDirectoryProperty();
 
-        final JSONAppConfig config = cfHolder.get();
+        final SeatConfigImpl config = cfHolder.getClone();
         importDir.set(config.getString("import.dir.previous") == null ? cfHolder.getConfigPath().getParent().toFile() : new File(config.getString("import.dir.previous")));
 
         /* *************************************************************************
@@ -223,7 +223,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 try {
-                    configPane.reset(JSONAppConfig.fromJson(importFile.toPath()));
+                    configPane.reset(SeatConfigImpl.fromJsonFile(importFile.toPath()));
                 } catch (final IOException e) {
                     throw new RuntimeException("Failed to load config from file", e);
                 }
@@ -284,6 +284,6 @@ public class SettingsDialog extends Stage {
             });
         }
 
-        setOnShown(event -> configPane.reset(cfHolder.get()));
+        setOnShown(event -> configPane.reset(cfHolder.getClone()));
     }
 }

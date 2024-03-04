@@ -18,9 +18,10 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import com.edp2021c1.randomseatgenerator.util.config.Config;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Optional;
 
 /**
@@ -30,7 +31,10 @@ import java.util.Optional;
  * @since 1.4.6
  */
 public final class RuntimeUtils {
-    private static final HashMap<Long, Thread> threadIdMap = new HashMap<>();
+
+    public static final Config runtimeConfig = new Config();
+
+    private static final Hashtable<Long, Thread> threadIdHashtable = new Hashtable<>();
 
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(RuntimeUtils::exit, "Exit Hook"));
@@ -49,19 +53,19 @@ public final class RuntimeUtils {
      * @param id of the thread
      * @return thread identified by {@code id}
      */
-    public static Thread getThreadById(final long id) {
-        if (threadIdMap.containsKey(id)) {
-            return threadIdMap.get(id);
+    public synchronized static Thread getThreadById(final long id) {
+        if (threadIdHashtable.containsKey(id)) {
+            return threadIdHashtable.get(id);
         }
         final Optional<Thread> op = Thread.getAllStackTraces().keySet().stream().filter(t -> t.threadId() == id).findFirst();
-        op.ifPresent(t -> threadIdMap.put(id, t));
+        op.ifPresent(t -> threadIdHashtable.put(id, t));
         return op.orElse(null);
     }
 
     /**
      * Terminates the application.
      */
-    private static void exit() {
+    private synchronized static void exit() {
         Logging.debug("Exiting");
         ConfigHolder.closeAll();
         Logging.close();

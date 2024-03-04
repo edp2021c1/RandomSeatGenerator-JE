@@ -20,7 +20,7 @@ package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.ui.UIFactory;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.SeatConfigImpl;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
@@ -31,7 +31,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig.*;
+import static com.edp2021c1.randomseatgenerator.util.config.SeatConfigImpl.*;
 
 /**
  * Config pane.
@@ -62,7 +62,7 @@ public class ConfigPane extends VBox {
 
     private final ConfigHolder source;
 
-    private final JSONAppConfig current;
+    private final SeatConfigImpl current;
 
     /**
      * Constructs an instance.
@@ -167,7 +167,7 @@ public class ConfigPane extends VBox {
      *
      * @return a copy of {@link #current}
      */
-    public JSONAppConfig getCurrent() {
+    public SeatConfigImpl getCurrent() {
         return current.clone();
     }
 
@@ -180,7 +180,7 @@ public class ConfigPane extends VBox {
      *
      * @return config loaded from source.
      */
-    protected JSONAppConfig getConfigFromSource() {
+    protected SeatConfigImpl getConfigFromSource() {
         return source.getClone();
     }
 
@@ -189,7 +189,7 @@ public class ConfigPane extends VBox {
      *
      * @param config to set to the pane.
      */
-    public void reset(final JSONAppConfig config) {
+    public void reset(final SeatConfigImpl config) {
         if (config == null) {
             return;
         }

@@ -18,7 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.RandomSeatGenerator;
 import com.edp2021c1.randomseatgenerator.ui.stage.CrashReporterDialog;
 import com.edp2021c1.randomseatgenerator.ui.stage.MessageDialog;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
@@ -67,7 +66,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             uncaughtException(t, e.getCause());
         }
 
-        final boolean withGUI = Boolean.TRUE.equals(RandomSeatGenerator.getRuntimeConfig().getBoolean("launching.gui"));
+        final boolean withGUI = Boolean.TRUE.equals(RuntimeUtils.runtimeConfig.getBoolean("launching.gui"));
 
         try {
             if (e instanceof final IllegalConfigException ex) {
