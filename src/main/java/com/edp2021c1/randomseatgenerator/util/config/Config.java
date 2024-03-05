@@ -20,23 +20,23 @@ package com.edp2021c1.randomseatgenerator.util.config;
 
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class stores the config in a hash table, which maps keys to values.
- * Only non-null strings can be keys, and only non-null objects can be values.
+ * This class stores the config in a hash map, which maps keys to values.
+ * A {@code null} cannot be used as a key.
  *
  * @author Calboot
- * @see java.util.Hashtable
+ * @see java.util.HashMap
  * @since 1.5.1
  */
-public class Config extends Hashtable<String, Object> {
+public class Config extends HashMap<String, Object> {
 
     /**
      * Constructs an empty instance.
      *
-     * @see Hashtable#Hashtable(Map)  Hashtable
+     * @see HashMap#HashMap()  HashMap
      */
     public Config() {
         super();
@@ -45,11 +45,11 @@ public class Config extends Hashtable<String, Object> {
     /**
      * Constructs an instance.
      *
-     * @param map whose mappings are to be placed in this map
-     * @see Hashtable#Hashtable(Map)  Hashtable
+     * @param initialCapacity the initial capacity of the config
+     * @see HashMap#HashMap(int)  HashMap
      */
-    public Config(final Map<String, ?> map) {
-        super(map);
+    public Config(final int initialCapacity) {
+        super(initialCapacity);
     }
 
     /**
@@ -122,6 +122,19 @@ public class Config extends Hashtable<String, Object> {
             return n.doubleValue();
         }
         throw new IllegalConfigException("Invalid class type");
+    }
+
+    @Override
+    public Object put(final String key, final Object value) {
+        if (key == null) {
+            throw new UnsupportedOperationException("Null cannot be used as a key in a config");
+        }
+        return super.put(key, value);
+    }
+
+    @Override
+    public void putAll(final Map<? extends String, ?> map) {
+        map.forEach(this::put);
     }
 
 }

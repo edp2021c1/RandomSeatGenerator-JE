@@ -76,11 +76,11 @@ public final class Strings {
      * @param str owner of the hash code
      * @return hash code of {@code str}
      */
-    public static long longHashOf(final String str) {
+    public static long longHashCode(final String str) {
         final byte[] val = str.getBytes();
         long h = 0;
         for (final byte v : val) {
-            h = (v & 0xffff) - h + (h << 5);
+            h = (v & 0xffff) + (h << 5) - h;
         }
         return h;
     }

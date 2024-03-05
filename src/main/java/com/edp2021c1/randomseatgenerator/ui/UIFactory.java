@@ -58,7 +58,7 @@ public class UIFactory {
     private static final BooleanProperty globalDarkMode = new SimpleBooleanProperty(null, "globalDarkMode") {
         @Override
         protected void invalidated() {
-            ConfigHolder.globalHolder().put("appearance.style.dark", get());
+            ConfigHolder.global().put("appearance.style.dark", get());
         }
     };
     @Getter

@@ -19,12 +19,9 @@
 package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
-import com.edp2021c1.randomseatgenerator.util.Logging;
-import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
-import com.edp2021c1.randomseatgenerator.util.Strings;
+import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.SeatConfigImpl;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,16 +58,6 @@ public class ConsoleLauncher {
 
         int i;
 
-        // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
-        final Path configPath;
-        // 获取配置文件路径
-        if ((i = args.lastIndexOf("--config-path")) != -1 && i < args.size() - 1) {
-            configPath = Path.of(args.get(i + 1)).toAbsolutePath();
-            Logging.info("Config path set to " + configPath);
-        } else {
-            configPath = ConfigHolder.globalHolder().getConfigPath();
-        }
-
         // 种子，默认为随机字符串
         final String seed;
         // 获取种子
@@ -86,24 +73,42 @@ public class ConsoleLauncher {
         // 获取导出路径
         if ((i = args.lastIndexOf("--output-path")) != -1 && i < args.size() - 1) {
             outputPath = Path.of(args.get(i + 1)).toAbsolutePath();
-            if (!outputPath.endsWith(".xlsx") || (Files.exists(outputPath))) {
+            if (!outputPath.endsWith(".xlsx")) {
                 Logging.error("Invalid output path: " + outputPath);
+                System.exit(1);
             }
             Logging.info("Output path set to " + outputPath);
+            if (Files.exists(outputPath)) {
+                Logging.warning("Something's already on the output path, will try to overwrite");
+                try {
+                    IOUtils.deleteIfExists(outputPath);
+                } catch (final IOException e) {
+                    Logging.warning("Failed to clear the output path");
+                }
+            }
         } else {
             outputPath = SeatTable.DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date()));
         }
 
         // 处理座位表生成配置
-        final ConfigHolder holder;
-        try {
-            holder = ConfigHolder.createHolder(configPath);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load config from specific file", e);
+        final AppConfig config;
+        // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
+        final Path configPath;
+        // 获取配置文件路径
+        if ((i = args.lastIndexOf("--config-path")) != -1 && i < args.size() - 1) {
+            configPath = Path.of(args.get(i + 1)).toAbsolutePath();
+            Logging.info("Config path set to " + configPath);
+            try {
+                final ConfigHolder holder = ConfigHolder.createHolder(configPath);
+                config = holder.getClone().checkAndReturn();
+                holder.close();
+            } catch (final IOException e) {
+                throw new RuntimeException("Failed to load config from specific file", e);
+            }
+        } else {
+            configPath = ConfigHolder.global().getConfigPath();
+            config = ConfigHolder.global().getClone().checkAndReturn();
         }
-
-        final SeatConfigImpl config = holder.getClone().checkAndReturn();
-
         Logging.debug("Config path: " + configPath);
 
         // 生成座位表

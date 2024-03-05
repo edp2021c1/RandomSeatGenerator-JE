@@ -60,7 +60,7 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
                 longSeed = 0;
                 seed = "empty_string";
             } else {
-                longSeed = Strings.longHashOf(seed);
+                longSeed = Strings.longHashCode(seed);
                 seed += " (string)";
             }
         }

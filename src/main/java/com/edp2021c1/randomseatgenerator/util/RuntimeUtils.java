@@ -67,7 +67,7 @@ public final class RuntimeUtils {
      */
     private synchronized static void exit() {
         Logging.debug("Exiting");
-        ConfigHolder.closeAll();
+        ConfigHolder.global().close();
         Logging.close();
     }
 }

@@ -28,10 +28,7 @@ import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.*;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
@@ -44,7 +41,7 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableL
  * @see SeatConfig
  * @since 1.5.1
  */
-public class SeatConfigImpl extends Config implements SeatConfig {
+public class AppConfig extends Config implements SeatConfig {
 
     /**
      * Key of {@code rowCount}.
@@ -52,71 +49,66 @@ public class SeatConfigImpl extends Config implements SeatConfig {
      * @see SeatConfig#getRowCount()
      */
     public static final String KEY_ROW_COUNT = "row_count";
-
     /**
      * Key of {@code columnCount}.
      *
      * @see SeatConfig#getColumnCount()
      */
     public static final String KEY_COLUMN_COUNT = "column_count";
-
     /**
      * Key of {@code randomBetweenRows}.
      *
      * @see SeatConfig#getRandomBetweenRows()
      */
     public static final String KEY_RANDOM_BETWEEN_ROWS = "random_between_rows";
-
     /**
      * Key of {@code disabledLastRowPos}.
      *
      * @see SeatConfig#getDisabledLastRowPos()
      */
     public static final String KEY_DISABLED_LAST_ROW_POS = "last_row_pos_cannot_be_chosen";
-
     /**
      * Key of {@code names}.
      *
      * @see SeatConfig#getNames()
      */
     public static final String KEY_NAMES = "person_sort_by_height";
-
     /**
      * Key of {@code groupLeaders}.
      *
      * @see SeatConfig#getGroupLeaders()
      */
     public static final String KEY_GROUP_LEADERS = "group_leader_list";
-
     /**
      * Key of {@code separatedPairs}.
      *
      * @see SeatConfig#getSeparatedPairs()
      */
     public static final String KEY_SEPARATED_PAIRS = "separate_list";
-
     /**
      * Key of {@code lucky}.
      *
      * @see SeatConfig#isLucky()
      */
     public static final String KEY_LUCKY = "lucky_option";
+    private static final int DEFAULT_INITIAL_CAPACITY = 14;
 
     /**
      * Constructs an empty instance.
      */
-    public SeatConfigImpl() {
-        super();
+    public AppConfig() {
+        super(DEFAULT_INITIAL_CAPACITY);
     }
 
     /**
      * Constructs an instance.
      *
      * @param map whose mappings are to be placed in this map
-     * @see Config#Config(Map)  HashtableConfig
+     * @see Hashtable#Hashtable(Map)  Hashtable
      */
-    public SeatConfigImpl(final Map<String, ?> map) {
-        super(map);
+    public AppConfig(final Map<String, ?> map) {
+        super(Math.max(DEFAULT_INITIAL_CAPACITY, map.size()));
+        putAll(map);
     }
 
     /**
@@ -125,8 +117,8 @@ public class SeatConfigImpl extends Config implements SeatConfig {
      * @param jsonString to translate the instance from
      * @return the instance loaded from the json string
      */
-    public static SeatConfigImpl fromJsonString(final String jsonString) {
-        return new SeatConfigImpl(JSON.parseObject(jsonString));
+    public static AppConfig fromJsonString(final String jsonString) {
+        return new AppConfig(JSON.parseObject(jsonString));
     }
 
     /**
@@ -136,7 +128,7 @@ public class SeatConfigImpl extends Config implements SeatConfig {
      * @return instance loaded from json
      * @throws IOException if an I/O error occurs
      */
-    public static SeatConfigImpl fromJsonFile(final Path filePath) throws IOException {
+    public static AppConfig fromJsonFile(final Path filePath) throws IOException {
         return fromJsonString(Files.readString(filePath));
     }
 
@@ -276,7 +268,7 @@ public class SeatConfigImpl extends Config implements SeatConfig {
     }
 
     @Override
-    public SeatConfigImpl checkAndReturn() throws IllegalConfigException {
+    public AppConfig checkAndReturn() throws IllegalConfigException {
         check();
         return this;
     }
@@ -287,14 +279,14 @@ public class SeatConfigImpl extends Config implements SeatConfig {
      * @param other mappings to be stored in this map
      * @return {@code this}
      */
-    public SeatConfigImpl putAllAndReturn(final Map<String, ?> other) {
+    public AppConfig putAllAndReturn(final Map<String, ?> other) {
         putAll(other);
         return this;
     }
 
     @Override
-    public SeatConfigImpl clone() {
-        return (SeatConfigImpl) super.clone();
+    public AppConfig clone() {
+        return (AppConfig) super.clone();
     }
 
     /**

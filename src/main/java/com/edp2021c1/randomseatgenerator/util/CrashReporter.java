@@ -64,6 +64,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
         }
         if (e instanceof ExceptionInInitializerError) {
             uncaughtException(t, e.getCause());
+            return;
         }
 
         final boolean withGUI = Boolean.TRUE.equals(RuntimeUtils.runtimeConfig.getBoolean("launching.gui"));

@@ -18,6 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONWriter;
 import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Strings;
@@ -32,26 +34,26 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
 
 import static com.edp2021c1.randomseatgenerator.util.IOUtils.*;
 
 /**
- * Handles {@link SeatConfigImpl}.
+ * Handles {@link AppConfig}.
  *
  * @author Calboot
- * @see SeatConfigImpl
+ * @see AppConfig
  * @since 1.4.9
  */
-public class ConfigHolder {
+public class ConfigHolder implements AutoCloseable {
 
     /**
      * Default config handler.
      */
     private static final ConfigHolder global;
-    private static final SeatConfigImpl BUILT_IN;
+    private static final AppConfig BUILT_IN;
     private static final Path GLOBAL_CONFIG_PATH = Path.of(Metadata.DATA_DIR.toString(), "config", "randomseatgenerator.json");
-    private static final Set<ConfigHolder> holders = new HashSet<>();
 
     static {
         final BufferedReader reader = new BufferedReader(
@@ -63,20 +65,20 @@ public class ConfigHolder {
         for (final Object s : reader.lines().toArray()) {
             str.append(s);
         }
-        BUILT_IN = SeatConfigImpl.fromJsonString(str.toString());
+        BUILT_IN = AppConfig.fromJsonString(str.toString());
 
         try {
             global = createHolder(GLOBAL_CONFIG_PATH);
-        } catch (FileAlreadyLockedException e) {
+        } catch (final FileAlreadyLockedException e) {
             throw new ApplicationAlreadyRunningException();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Getter
     private final Path configPath;
-    private final SeatConfigImpl content;
+    private final AppConfig content;
     private final FileChannel channel;
     private boolean closed;
 
@@ -87,7 +89,7 @@ public class ConfigHolder {
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
     private ConfigHolder(final Path configPath) throws IOException {
-        content = new SeatConfigImpl();
+        content = new AppConfig();
         this.configPath = configPath;
 
         final Path configDir = configPath.getParent();
@@ -119,22 +121,7 @@ public class ConfigHolder {
             return;
         }
 
-        // Load config
-        try {
-            content.putAllAndReturn(SeatConfigImpl.fromJsonString(readString(channel))).check();
-        } catch (final RuntimeException e) {
-            Logging.warning("Invalid config loaded");
-            Logging.warning(Strings.getStackTrace(e));
-        }
-    }
-
-    /**
-     * Closes all opened holders.
-     */
-    public static void closeAll() {
-        Logging.debug("Closing all config handlers");
-        holders.forEach(ConfigHolder::close);
-        holders.clear();
+        loadConfig();
     }
 
     /**
@@ -142,7 +129,7 @@ public class ConfigHolder {
      *
      * @return the global config holder
      */
-    public static ConfigHolder globalHolder() {
+    public static ConfigHolder global() {
         return global;
     }
 
@@ -154,19 +141,28 @@ public class ConfigHolder {
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
     public static ConfigHolder createHolder(final Path configPath) throws IOException {
-        final ConfigHolder h = new ConfigHolder(configPath);
-        holders.add(h);
-        return h;
+        return new ConfigHolder(configPath);
+    }
+
+    private synchronized void loadConfig() {
+        try {
+            content.putAllAndReturn(AppConfig.fromJsonString(readString(channel))).check();
+        } catch (final RuntimeException | IOException e) {
+            Logging.warning("Invalid config loaded");
+            Logging.warning(Strings.getStackTrace(e));
+        }
     }
 
     /**
      * Closes this.
      */
-    private void close() {
-        if (closed) return;
+    public synchronized void close() {
+        if (closed) {
+            return;
+        }
         try {
             channel.close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         } finally {
             closed = true;
@@ -174,7 +170,7 @@ public class ConfigHolder {
     }
 
     private void checkState() {
-        if (closed) {
+        if (closed || !channel.isOpen()) {
             throw new IllegalStateException("Closed ConfigHolder");
         }
     }
@@ -187,7 +183,7 @@ public class ConfigHolder {
      * @throws RuntimeException if an I/O error occurs
      */
     public void put(final String key, final Object value) {
-        final HashMap<String, Object> t = new HashMap<>();
+        final Config t = new Config(1);
         t.put(key, value);
         putAll(t);
     }
@@ -198,7 +194,7 @@ public class ConfigHolder {
      * @param map to set
      * @throws RuntimeException if an I/O error occurs
      */
-    public void putAll(final Map<String, ?> map) {
+    public synchronized void putAll(final Map<String, ?> map) {
         checkState();
         try {
             overwriteString(channel, content.putAllAndReturn(map).checkAndReturn().toJsonString());
@@ -212,8 +208,26 @@ public class ConfigHolder {
      *
      * @return the clone of the config
      */
-    public SeatConfigImpl getClone() {
+    public AppConfig getClone() {
+        checkState();
         return content.clone();
+    }
+
+    @Override
+    public int hashCode() {
+        long h = 0;
+        for (final Object obj : JSONObject.from(this, JSONWriter.Feature.FieldBased).values()) {
+            h = obj.hashCode() + (h << 5) - h;
+        }
+        return (int) h;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof final ConfigHolder another)) {
+            return false;
+        }
+        return super.equals(obj) || another.configPath.equals(configPath) && another.closed == this.closed;
     }
 
 }

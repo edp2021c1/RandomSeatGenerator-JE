@@ -64,14 +64,11 @@ public final class IOUtils {
      * @throws IOException if an I/O error occurs
      */
     public static void deleteIfExists(final Path path) throws IOException {
-        if (Files.notExists(path)) {
+        if (Files.isDirectory(path)) {
+            Files.walkFileTree(path, deleteAllUnder);
             return;
         }
-        if (!Files.isDirectory(path)) {
-            Files.delete(path);
-            return;
-        }
-        Files.walkFileTree(path, deleteAllUnder);
+        Files.deleteIfExists(path);
     }
 
     /**
@@ -105,7 +102,7 @@ public final class IOUtils {
      * @return string read from the channel
      * @throws IOException if an I/O error occurs
      */
-    public static String readString(final FileChannel channel) throws IOException {
+    public synchronized static String readString(final FileChannel channel) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate((int) channel.size());
         channel.read(buffer, 0);
         return new String(buffer.array());
@@ -118,7 +115,7 @@ public final class IOUtils {
      * @param str     string to write
      * @throws IOException if an I/O error occurs
      */
-    public static void overwriteString(final FileChannel channel, final String str) throws IOException {
+    public synchronized static void overwriteString(final FileChannel channel, final String str) throws IOException {
         final byte[] bytes = Objects.requireNonNull(str, "Cannot write null string").getBytes();
         if (channel.truncate(0).write(ByteBuffer.wrap(bytes)) != bytes.length) {
             throw new IOException();
