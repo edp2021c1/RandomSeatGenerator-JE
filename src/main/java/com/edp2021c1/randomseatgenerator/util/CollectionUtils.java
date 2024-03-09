@@ -49,6 +49,17 @@ public final class CollectionUtils {
     }
 
     /**
+     * Returns a modifiable range of integers from origin (inclusive) to bound (exclusive).
+     *
+     * @param origin the least value that can be returned
+     * @param bound  the upper bound (exclusive)
+     * @return a modifiable range of integer from origin (inclusive) to bound (exclusive)
+     */
+    public static List<Integer> modifiableRange(final int origin, final int bound) {
+        return modifiableList(range(origin, bound));
+    }
+
+    /**
      * Returns a randomly picked element of the source collection.
      *
      * @param src source collection
@@ -115,6 +126,18 @@ public final class CollectionUtils {
             return new RandomAccessIndexFilterList<>(list, indexPredicate);
         }
         return new IndexFilterList<>(list, indexPredicate);
+    }
+
+    /**
+     * Returns a modify-free index filter list.
+     *
+     * @param list           input list
+     * @param indexPredicate filter of the index of elements
+     * @param <T>            type of elements in the list
+     * @return a modify-free index filter list
+     */
+    public static <T> List<T> modifiableIndexFilter(final List<T> list, final IntPredicate indexPredicate) {
+        return modifiableList(indexFilter(list, indexPredicate));
     }
 
     /**

@@ -22,8 +22,7 @@ import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 
 import java.util.List;
 
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.indexFilter;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableList;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableIndexFilter;
 
 /**
  * Default checker implementation class.
@@ -51,7 +50,7 @@ public interface SeatTableGeneratorAndChecker extends SeatTableGenerator {
         // 检查每列是否都有组长
         for (int i = 0; i < columnCount; i++) {
             final int iCopy = i;
-            final List<String> list = modifiableList(indexFilter(seatTable, index -> index % columnCount == iCopy));
+            final List<String> list = modifiableIndexFilter(seatTable, index -> index % columnCount == iCopy);
             list.retainAll(gl);
             if (list.isEmpty()) {
                 return false;
