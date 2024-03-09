@@ -18,10 +18,14 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
+import com.edp2021c1.randomseatgenerator.util.exception.InvalidClassTypeException;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import static com.alibaba.fastjson2.JSONWriter.Feature.MapSortField;
+import static com.alibaba.fastjson2.JSONWriter.Feature.PrettyFormat;
 
 /**
  * This class stores the config in a hash map, which maps keys to values.
@@ -31,14 +35,14 @@ import java.util.Map;
  * @see java.util.HashMap
  * @since 1.5.1
  */
-public class Config extends HashMap<String, Object> {
+public class JSONConfig extends JSONObject {
 
     /**
      * Constructs an empty instance.
      *
-     * @see HashMap#HashMap()  HashMap
+     * @see JSONObject#JSONObject()  JSONObject
      */
-    public Config() {
+    public JSONConfig() {
         super();
     }
 
@@ -46,9 +50,9 @@ public class Config extends HashMap<String, Object> {
      * Constructs an instance.
      *
      * @param initialCapacity the initial capacity of the config
-     * @see HashMap#HashMap(int)  HashMap
+     * @see JSONObject#JSONObject(int)  JSONObject
      */
-    public Config(final int initialCapacity) {
+    public JSONConfig(final int initialCapacity) {
         super(initialCapacity);
     }
 
@@ -67,43 +71,7 @@ public class Config extends HashMap<String, Object> {
         if (o instanceof final String s) {
             return s;
         }
-        throw new IllegalConfigException("Invalid class type");
-    }
-
-    /**
-     * Returns the {@code Integer} value to which the specified key is mapped, or null if this map contains no mapping for the key.
-     *
-     * @param key whose associated {@code Integer} value is to be returned
-     * @return the {@code Integer} value to which the specified key is mapped, or null if this map contains no mapping for the key
-     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Number}
-     */
-    public Integer getInteger(final String key) {
-        final Object o = get(key);
-        if (o == null) {
-            return null;
-        }
-        if (o instanceof final Number n) {
-            return n.intValue();
-        }
-        throw new IllegalConfigException("Invalid class type");
-    }
-
-    /**
-     * Returns the {@code Boolean} value to which the specified key is mapped, or null if this map contains no mapping for the key.
-     *
-     * @param key whose associated {@code Boolean} value is to be returned
-     * @return the {@code Boolean} value to which the specified key is mapped, or null if this map contains no mapping for the key
-     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Boolean}
-     */
-    public Boolean getBoolean(final String key) {
-        final Object o = get(key);
-        if (o == null) {
-            return null;
-        }
-        if (o instanceof final Boolean b) {
-            return b;
-        }
-        throw new IllegalConfigException("Invalid class type");
+        throw new InvalidClassTypeException(String.class, o.getClass());
     }
 
     /**
@@ -121,13 +89,62 @@ public class Config extends HashMap<String, Object> {
         if (o instanceof final Number n) {
             return n.doubleValue();
         }
-        throw new IllegalConfigException("Invalid class type");
+        throw new InvalidClassTypeException(Double.class, o.getClass());
+    }
+
+    /**
+     * Returns the {@code Integer} value to which the specified key is mapped, or null if this map contains no mapping for the key.
+     *
+     * @param key whose associated {@code Integer} value is to be returned
+     * @return the {@code Integer} value to which the specified key is mapped, or null if this map contains no mapping for the key
+     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Number}
+     */
+    public Integer getInteger(final String key) {
+        final Object o = get(key);
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof final Number n) {
+            return n.intValue();
+        }
+        throw new InvalidClassTypeException(Integer.class, o.getClass());
+    }
+
+    /**
+     * Returns the {@code Boolean} value to which the specified key is mapped, or null if this map contains no mapping for the key.
+     *
+     * @param key whose associated {@code Boolean} value is to be returned
+     * @return the {@code Boolean} value to which the specified key is mapped, or null if this map contains no mapping for the key
+     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Boolean}
+     */
+    public Boolean getBoolean(final String key) {
+        final Object o = get(key);
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof final Boolean b) {
+            return b;
+        }
+        throw new InvalidClassTypeException(Boolean.class, o.getClass());
+    }
+
+    /**
+     * Transfers {@code this} into a json string.
+     *
+     * @return json string
+     */
+    @Override
+    public String toString() {
+        return toString(PrettyFormat, MapSortField);
     }
 
     @Override
     public Object put(final String key, final Object value) {
         if (key == null) {
             throw new UnsupportedOperationException("Null cannot be used as a key in a config");
+        }
+        if (value == null) {
+            return remove(key);
         }
         return super.put(key, value);
     }
@@ -144,9 +161,30 @@ public class Config extends HashMap<String, Object> {
      * @param value to put
      * @return {@code this}
      */
-    public Config putAndReturn(final String key, final Object value) {
+    public JSONConfig putAndReturn(final String key, final Object value) {
         put(key, value);
         return this;
+    }
+
+    /**
+     * Copies all the mappings from the specified map to this instance, and returns {@code this}.
+     *
+     * @param map mappings to be stored in this map
+     * @return {@code this}
+     */
+    public JSONConfig putAllAndReturn(final Map<? extends String, ?> map) {
+        putAll(map);
+        return this;
+    }
+
+    /**
+     * Parses and puts the {@link JSONObject} from the string.
+     *
+     * @param jsonString to parse and put
+     * @return {@code this}
+     */
+    public JSONConfig putJsonAndReturn(final String jsonString) {
+        return putAllAndReturn(parseObject(jsonString));
     }
 
 }

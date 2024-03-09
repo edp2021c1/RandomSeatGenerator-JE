@@ -21,8 +21,8 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
-import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
@@ -72,7 +72,7 @@ public class MainWindow extends Stage {
 
         cfHolder = ConfigHolder.global();
 
-        final AppConfig config = cfHolder.get();
+        final JSONAppConfig config = cfHolder.get();
 
         /* *************************************************************************
          *                                                                         *
@@ -176,7 +176,7 @@ public class MainWindow extends Stage {
                 if (exportFile == null) {
                     return;
                 }
-                AppConfig seatConfig = cfHolder.get();
+                JSONAppConfig seatConfig = cfHolder.get();
                 seatTable.get().exportToExcelDocument(exportFile.toPath(), Boolean.TRUE.equals(seatConfig.getBoolean("export.writable")));
 
                 Logging.info("Successfully exported seat table to " + exportFile);

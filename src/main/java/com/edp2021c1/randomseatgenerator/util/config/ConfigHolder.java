@@ -25,23 +25,21 @@ import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunnin
 import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
 import lombok.Getter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.edp2021c1.randomseatgenerator.util.IOUtils.*;
 
 /**
- * Handles {@link AppConfig}.
+ * Handles {@link JSONAppConfig}.
  *
  * @author Calboot
- * @see AppConfig
+ * @see JSONAppConfig
  * @since 1.4.9
  */
 public class ConfigHolder implements AutoCloseable {
@@ -50,21 +48,9 @@ public class ConfigHolder implements AutoCloseable {
      * Default config handler.
      */
     private static final ConfigHolder global;
-    private static final AppConfig BUILT_IN;
     private static final Path GLOBAL_CONFIG_PATH = Path.of(Metadata.DATA_DIR.toString(), "config", "randomseatgenerator.json");
 
     static {
-        final BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        Objects.requireNonNull(ConfigHolder.class.getResourceAsStream("/assets/conf/default.json"))
-                )
-        );
-        final StringBuilder str = new StringBuilder();
-        for (final Object s : reader.lines().toArray()) {
-            str.append(s);
-        }
-        BUILT_IN = AppConfig.fromJsonString(str.toString());
-
         try {
             replaceWithDirectory(GLOBAL_CONFIG_PATH.getParent());
 
@@ -78,8 +64,15 @@ public class ConfigHolder implements AutoCloseable {
                 needsInit = true;
             }
             global = createHolder(GLOBAL_CONFIG_PATH);
+
             if (needsInit) {
-                global.putAll(BUILT_IN);
+                final InputStream builtInConfigStream = ConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
+                if (builtInConfigStream != null) {
+                    global.putJson(new String(
+                            builtInConfigStream.readAllBytes()
+                    ));
+                    builtInConfigStream.close();
+                }
             }
         } catch (final FileAlreadyLockedException e) {
             throw new ApplicationAlreadyRunningException();
@@ -90,7 +83,7 @@ public class ConfigHolder implements AutoCloseable {
 
     @Getter
     private final Path configPath;
-    private final AppConfig content;
+    private final JSONAppConfig content;
     private FileChannel channel;
     private boolean closed;
     private boolean loaded;
@@ -102,7 +95,7 @@ public class ConfigHolder implements AutoCloseable {
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
     private ConfigHolder(final Path configPath) throws IOException {
-        content = new AppConfig();
+        content = new JSONAppConfig();
         this.configPath = configPath;
 
         if (notFullyPermitted(replaceWithDirectory(configPath.getParent()))) {
@@ -148,7 +141,7 @@ public class ConfigHolder implements AutoCloseable {
             return;
         }
         try {
-            content.putAllAndReturn(AppConfig.fromJsonString(readString(channel))).check();
+            content.putJsonAndReturn(readString(channel)).check();
         } catch (final RuntimeException e) {
             Logging.warning("Invalid config loaded");
             Logging.warning(Strings.getStackTrace(e));
@@ -198,19 +191,35 @@ public class ConfigHolder implements AutoCloseable {
      * @throws RuntimeException if an I/O error occurs
      */
     public synchronized void put(final String key, final Object value) {
-        putAll(new Config(1).putAndReturn(key, value));
+        putAll(new JSONConfig(1).putAndReturn(key, value));
     }
 
     /**
-     * Sets the value of config
+     * Puts a map.
      *
-     * @param map to set
+     * @param map to put
      * @throws RuntimeException if an I/O error occurs
      */
     public synchronized void putAll(final Map<? extends String, ?> map) {
         checkState();
         try {
-            overwriteString(channel, content.putAllAndReturn(map).checkAndReturn().toJsonString());
+            overwriteString(channel, content.putAllAndReturn(map).checkAndReturn().toString());
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Parses and puts the JSONObject from the string.
+     *
+     * @param jsonString that contains the map to parse and put
+     * @throws RuntimeException if an I/O error occurs
+     * @see JSONConfig#putJsonAndReturn(String)
+     */
+    public synchronized void putJson(final String jsonString) {
+        checkState();
+        try {
+            overwriteString(channel, content.putJsonAndReturn(jsonString).checkAndReturn().toString());
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
@@ -221,9 +230,9 @@ public class ConfigHolder implements AutoCloseable {
      *
      * @return the clone of the config
      */
-    public synchronized AppConfig get() {
+    public synchronized JSONAppConfig get() {
         checkState();
-        return content.clone();
+        return content.cloneThis();
     }
 
 }

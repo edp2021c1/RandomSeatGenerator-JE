@@ -18,17 +18,15 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONWriter;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.*;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
@@ -41,7 +39,7 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableL
  * @see SeatConfig
  * @since 1.5.1
  */
-public class AppConfig extends Config implements SeatConfig {
+public class JSONAppConfig extends JSONConfig implements SeatConfig {
 
     /**
      * Key of {@code rowCount}.
@@ -96,7 +94,7 @@ public class AppConfig extends Config implements SeatConfig {
     /**
      * Constructs an empty instance.
      */
-    public AppConfig() {
+    public JSONAppConfig() {
         super(DEFAULT_INITIAL_CAPACITY);
     }
 
@@ -104,32 +102,10 @@ public class AppConfig extends Config implements SeatConfig {
      * Constructs an instance.
      *
      * @param map whose mappings are to be placed in this map
-     * @see Hashtable#Hashtable(Map)  Hashtable
      */
-    public AppConfig(final Map<String, ?> map) {
+    public JSONAppConfig(final Map<String, ?> map) {
         super(Math.max(DEFAULT_INITIAL_CAPACITY, map.size()));
         putAll(map);
-    }
-
-    /**
-     * Loads an instance from the given json string.
-     *
-     * @param jsonString to translate the instance from
-     * @return the instance loaded from the json string
-     */
-    public static AppConfig fromJsonString(final String jsonString) {
-        return new AppConfig(JSON.parseObject(jsonString));
-    }
-
-    /**
-     * Loads an instance from a given json file.
-     *
-     * @param filePath to load json from
-     * @return instance loaded from json
-     * @throws IOException if an I/O error occurs
-     */
-    public static AppConfig fromJsonFile(final Path filePath) throws IOException {
-        return fromJsonString(Files.readString(filePath));
     }
 
     @Override
@@ -268,7 +244,7 @@ public class AppConfig extends Config implements SeatConfig {
     }
 
     @Override
-    public AppConfig checkAndReturn() throws IllegalConfigException {
+    public JSONAppConfig checkAndReturn() throws IllegalConfigException {
         check();
         return this;
     }
@@ -276,26 +252,28 @@ public class AppConfig extends Config implements SeatConfig {
     /**
      * Copies all the mappings from the specified map to this instance, and returns {@code this}.
      *
-     * @param other mappings to be stored in this map
+     * @param map mappings to be stored in this map
      * @return {@code this}
      */
-    public AppConfig putAllAndReturn(final Map<? extends String, ?> other) {
-        putAll(other);
+    @Override
+    public JSONAppConfig putAllAndReturn(final Map<? extends String, ?> map) {
+        super.putAllAndReturn(map);
         return this;
     }
 
     @Override
-    public AppConfig clone() {
-        return (AppConfig) super.clone();
+    public JSONAppConfig putJsonAndReturn(final String jsonString) {
+        super.putJsonAndReturn(jsonString);
+        return this;
     }
 
     /**
-     * Transfers {@code this} into a json string.
+     * Returns a copy of {@code this}.
      *
-     * @return json string
+     * @return a copy of {@code this}
      */
-    public String toJsonString() {
-        return JSON.toJSONString(this, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.FieldBased, JSONWriter.Feature.MapSortField);
+    public JSONAppConfig cloneThis() {
+        return new JSONAppConfig(this);
     }
 
 }

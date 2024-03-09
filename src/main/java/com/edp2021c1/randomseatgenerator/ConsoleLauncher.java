@@ -20,8 +20,8 @@ package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.util.*;
-import com.edp2021c1.randomseatgenerator.util.config.AppConfig;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -91,7 +91,7 @@ public class ConsoleLauncher {
         }
 
         // 处理座位表生成配置
-        final AppConfig config;
+        final JSONAppConfig config;
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
         final Path configPath;
         // 获取配置文件路径

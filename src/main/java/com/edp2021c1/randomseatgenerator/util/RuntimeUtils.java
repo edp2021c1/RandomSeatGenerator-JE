@@ -18,8 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.util.config.Config;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.config.JSONConfig;
 
 import java.util.Hashtable;
 import java.util.Optional;
@@ -35,7 +35,7 @@ public final class RuntimeUtils {
     /**
      * Runtime config.
      */
-    public static final Config runtimeConfig = new Config();
+    public static final JSONConfig runtimeConfig = new JSONConfig();
 
     private static final Hashtable<Long, Thread> threadIdHashtable = new Hashtable<>();
 
