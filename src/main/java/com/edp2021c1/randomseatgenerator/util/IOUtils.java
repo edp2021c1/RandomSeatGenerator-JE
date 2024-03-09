@@ -85,6 +85,7 @@ public final class IOUtils {
      * Replaces the file on the given path (if exists) with an empty directory.
      *
      * @param path to replace
+     * @return the path
      * @throws IOException if an I/O error occurs
      */
     public static Path replaceWithDirectory(final Path path) throws IOException {

@@ -28,8 +28,7 @@ import java.util.Random;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.groupLeaderFormat;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.pickRandomlyAndRemove;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.*;
 import static java.util.Collections.fill;
 import static java.util.Collections.shuffle;
 
@@ -105,7 +104,7 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         final List<String> emptyRow = Arrays.asList(new String[columnCount]);
         fill(emptyRow, EMPTY_SEAT_PLACEHOLDER);
 
-        final List<Integer> availableLastRowPos = range(1, columnCount);
+        final List<Integer> availableLastRowPos = modifiableList(range(1, columnCount));
         availableLastRowPos.removeAll(config.getDisabledLastRowPos());
         if (availableLastRowPos.size() < peopleLeft) {
             throw new IllegalConfigException("Available last row seat not enough");

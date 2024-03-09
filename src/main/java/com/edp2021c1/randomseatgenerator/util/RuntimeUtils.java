@@ -32,6 +32,9 @@ import java.util.Optional;
  */
 public final class RuntimeUtils {
 
+    /**
+     * Runtime config.
+     */
     public static final Config runtimeConfig = new Config();
 
     private static final Hashtable<Long, Thread> threadIdHashtable = new Hashtable<>();

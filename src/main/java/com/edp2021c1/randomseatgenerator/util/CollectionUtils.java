@@ -45,14 +45,7 @@ public final class CollectionUtils {
      * @return a range of integer from origin (inclusive) to bound (exclusive)
      */
     public static List<Integer> range(final int origin, final int bound) {
-        if (origin > bound) {
-            throw new IllegalArgumentException("Origin %d larger than bound %d".formatted(origin, bound));
-        }
-        final List<Integer> res = new ArrayList<>(Math.abs(bound - origin));
-        for (int i = origin; i < bound; i++) {
-            res.add(i);
-        }
-        return res;
+        return new Range(origin, bound);
     }
 
     /**
@@ -110,16 +103,132 @@ public final class CollectionUtils {
     }
 
     /**
+     * Returns a {@link IndexFilterList}.
+     *
      * @param list           input list
      * @param indexPredicate filter of the index of elements
      * @param <T>            type of elements in the list
-     * @return list
+     * @return a {@link IndexFilterList}
      */
     public static <T> List<T> indexFilter(final List<T> list, final IntPredicate indexPredicate) {
         if (list instanceof RandomAccess) {
             return new RandomAccessIndexFilterList<>(list, indexPredicate);
         }
         return new IndexFilterList<>(list, indexPredicate);
+    }
+
+    /**
+     * Fast implementation of integer range.
+     */
+    private static class Range extends AbstractList<Integer> implements RandomAccess {
+
+        private final int origin;
+        private final int bound;
+        private final int size;
+
+        public Range(final int origin, final int bound) {
+            if (origin > bound) {
+                throw new IllegalArgumentException("Origin %d larger than bound %d".formatted(origin, bound));
+            }
+
+            this.origin = origin;
+            this.bound = bound;
+            this.size = bound - origin;
+        }
+
+        @Override
+        public Integer get(final int index) {
+            return origin + Objects.checkIndex(index, size);
+        }
+
+        @Override
+        public int indexOf(final Object o) {
+            if (!(o instanceof final Integer i) || !(origin <= i && i < bound)) {
+                return -1;
+            }
+            return i - origin;
+        }
+
+        @Override
+        public int lastIndexOf(final Object o) {
+            return indexOf(o);
+        }
+
+        @Override
+        public int size() {
+            return size;
+        }
+
+        @Override
+        public boolean contains(final Object o) {
+            if (!(o instanceof final Integer i)) {
+                return false;
+            }
+            return origin <= i && i < bound;
+        }
+    }
+
+    private static class IndexFilterList<T> extends AbstractList<T> {
+        private final Integer[] indexes;
+        private final List<T> root;
+        private final int size;
+        private final int rootSize;
+
+        public IndexFilterList(final List<T> root, final IntPredicate indexPredicate) {
+            this.root = root;
+            this.rootSize = root.size();
+
+            final List<Integer> indexes = new ArrayList<>();
+            for (int i = 0, len = root.size(); i < len; i++) {
+                if (indexPredicate.test(i)) {
+                    indexes.add(i);
+                }
+            }
+            this.indexes = indexes.toArray(new Integer[0]);
+            this.size = this.indexes.length;
+        }
+
+        @Override
+        public T get(final int index) {
+            checkRootSize();
+            return root.get(indexes[Objects.checkIndex(index, size)]);
+        }
+
+        @Override
+        public T set(final int index, final T obj) {
+            checkRootSize();
+            return root.set(indexes[index], obj);
+        }
+
+        @Override
+        public int indexOf(final Object o) {
+            checkRootSize();
+            return super.indexOf(o);
+        }
+
+        @Override
+        public int lastIndexOf(final Object o) {
+            checkRootSize();
+            return super.lastIndexOf(o);
+        }
+
+        @Override
+        public int size() {
+            checkRootSize();
+            return size;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            checkRootSize();
+            return super.contains(o);
+        }
+
+        protected void checkRootSize() {
+            if (rootSize != root.size()) {
+                throw new ConcurrentModificationException();
+            }
+        }
     }
 
     private static class RandomAccessIndexFilterList<T> extends IndexFilterList<T> implements RandomAccess {
@@ -167,66 +276,6 @@ public final class CollectionUtils {
             return false;
         }
 
-    }
-
-    private static class IndexFilterList<T> extends AbstractList<T> implements List<T> {
-        private final List<Integer> indexes;
-        private final List<T> root;
-        private final int size;
-
-        public IndexFilterList(final List<T> root, final IntPredicate indexPredicate) {
-            this.root = root;
-
-            this.indexes = new ArrayList<>();
-            for (int i = 0, len = root.size(); i < len; i++) {
-                if (indexPredicate.test(i)) {
-                    indexes.add(i);
-                }
-            }
-            this.size = this.indexes.size();
-        }
-
-        @Override
-        public T get(final int index) {
-            checkRootSize();
-            return root.get(indexes.get(Objects.checkIndex(index, size)));
-        }
-
-        @Override
-        public T set(final int index, final T obj) {
-            checkRootSize();
-            return root.set(indexes.get(index), obj);
-        }
-
-        @Override
-        public int indexOf(final Object o) {
-            checkRootSize();
-            return super.indexOf(o);
-        }
-
-        @Override
-        public int lastIndexOf(final Object o) {
-            checkRootSize();
-            return super.lastIndexOf(o);
-        }
-
-        @Override
-        public int size() {
-            checkRootSize();
-            return size;
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            checkRootSize();
-            return super.contains(o);
-        }
-
-        protected void checkRootSize() {
-            if (indexes.getLast() >= root.size()) {
-                throw new ConcurrentModificationException();
-            }
-        }
     }
 
 }

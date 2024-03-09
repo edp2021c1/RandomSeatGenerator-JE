@@ -137,6 +137,13 @@ public class Config extends HashMap<String, Object> {
         map.forEach(this::put);
     }
 
+    /**
+     * Puts the mapping of the given key and value, and then returns {@code this}.
+     *
+     * @param key   to put
+     * @param value to put
+     * @return {@code this}
+     */
     public Config putAndReturn(final String key, final Object value) {
         put(key, value);
         return this;
