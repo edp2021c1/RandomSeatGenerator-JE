@@ -198,7 +198,7 @@ public class SettingsDialog extends Stage {
 
         importDir = fc.initialDirectoryProperty();
 
-        final AppConfig config = cfHolder.getClone();
+        final AppConfig config = cfHolder.get();
         importDir.set(config.getString("import.dir.previous") == null ? cfHolder.getConfigPath().getParent().toFile() : new File(config.getString("import.dir.previous")));
 
         /* *************************************************************************
@@ -284,6 +284,6 @@ public class SettingsDialog extends Stage {
             });
         }
 
-        setOnShown(event -> configPane.reset(cfHolder.getClone()));
+        setOnShown(event -> configPane.reset(cfHolder.get()));
     }
 }

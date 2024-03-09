@@ -22,6 +22,9 @@ import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 
 import java.util.List;
 
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.indexFilter;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableList;
+
 /**
  * Default checker implementation class.
  *
@@ -42,25 +45,17 @@ public interface SeatTableGeneratorAndChecker extends SeatTableGenerator {
     default boolean check(final List<String> seatTable, final SeatConfig config) throws IllegalConfigException {
         final List<String> gl = config.getGroupLeaders();
         final List<SeparatedPair> sp = config.getSeparatedPairs();
-        boolean hasLeader = false;
         final int spNum = sp.size();
-        final int rowCount;
         final int columnCount = config.getColumnCount();
-        final int minus = config.isLucky() ? 1 : 0;
-        rowCount = (int) Math.min(
-                config.getRowCount(),
-                Math.ceil((double) (config.getNames().size() - minus) / columnCount)
-        );
 
         // 检查每列是否都有组长
         for (int i = 0; i < columnCount; i++) {
-            for (int j = 0; j < rowCount; j++) {
-                hasLeader = gl.contains(seatTable.get(j * columnCount + i)) || hasLeader;
-            }
-            if (!hasLeader) {
+            final int iCopy = i;
+            final List<String> list = modifiableList(indexFilter(seatTable, index -> index % columnCount == iCopy));
+            list.retainAll(gl);
+            if (list.isEmpty()) {
                 return false;
             }
-            hasLeader = false;
         }
         // 检查是否分开
         for (int i = 0; i < spNum; i++) {

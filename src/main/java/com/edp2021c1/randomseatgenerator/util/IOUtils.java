@@ -87,11 +87,12 @@ public final class IOUtils {
      * @param path to replace
      * @throws IOException if an I/O error occurs
      */
-    public static void replaceWithDirectory(final Path path) throws IOException {
+    public static Path replaceWithDirectory(final Path path) throws IOException {
         if (!Files.isDirectory(path)) {
             deleteIfExists(path);
             Files.createDirectories(path);
         }
+        return path;
     }
 
     /**

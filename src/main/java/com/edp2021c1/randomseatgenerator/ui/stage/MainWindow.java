@@ -72,7 +72,7 @@ public class MainWindow extends Stage {
 
         cfHolder = ConfigHolder.global();
 
-        final AppConfig config = cfHolder.getClone();
+        final AppConfig config = cfHolder.get();
 
         /* *************************************************************************
          *                                                                         *
@@ -146,7 +146,7 @@ public class MainWindow extends Stage {
                 }
 
                 final String seed1 = seed.get();
-                seatTable.set(SeatTable.generate(cfHolder.getClone().checkAndReturn(), seed1));
+                seatTable.set(SeatTable.generate(cfHolder.get().checkAndReturn(), seed1));
                 Logging.info("\n" + seatTable.get());
                 previousSeed = seed1;
                 generated = true;
@@ -176,7 +176,7 @@ public class MainWindow extends Stage {
                 if (exportFile == null) {
                     return;
                 }
-                AppConfig seatConfig = cfHolder.getClone();
+                AppConfig seatConfig = cfHolder.get();
                 seatTable.get().exportToExcelDocument(exportFile.toPath(), Boolean.TRUE.equals(seatConfig.getBoolean("export.writable")));
 
                 Logging.info("Successfully exported seat table to " + exportFile);
@@ -197,7 +197,7 @@ public class MainWindow extends Stage {
         dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
 
         if (OperatingSystem.getCurrent().isMac()) {
-            setOnShown(event -> setFullScreen(Boolean.TRUE.equals(cfHolder.getClone().getBoolean("appearance.window.main.maximized"))));
+            setOnShown(event -> setFullScreen(Boolean.TRUE.equals(cfHolder.get().getBoolean("appearance.window.main.maximized"))));
             fullScreenProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
             setFullScreenExitHint("");
             mainBox.setOnKeyPressed(event -> {
@@ -215,7 +215,7 @@ public class MainWindow extends Stage {
                 }
             });
         } else {
-            setOnShown(event -> setMaximized(Boolean.TRUE.equals(cfHolder.getClone().getBoolean("appearance.window.main.maximized"))));
+            setOnShown(event -> setMaximized(Boolean.TRUE.equals(cfHolder.get().getBoolean("appearance.window.main.maximized"))));
             maximizedProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isControlDown()) {
@@ -228,11 +228,11 @@ public class MainWindow extends Stage {
             });
         }
 
-        Double d = cfHolder.getClone().getDouble("appearance.window.main.height");
+        Double d = cfHolder.get().getDouble("appearance.window.main.height");
         if (d != null) {
             setHeight(d);
         }
-        d = cfHolder.getClone().getDouble("appearance.window.main.width");
+        d = cfHolder.get().getDouble("appearance.window.main.width");
         if (d != null) {
             setWidth(d);
         }
@@ -267,7 +267,7 @@ public class MainWindow extends Stage {
      * Action to do if config is changed.
      */
     public void configChanged() {
-        seatTableView.setEmptySeatTable(cfHolder.getClone());
+        seatTableView.setEmptySeatTable(cfHolder.get());
         generated = false;
         previousSeed = null;
     }

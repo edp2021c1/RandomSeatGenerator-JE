@@ -279,7 +279,7 @@ public class AppConfig extends Config implements SeatConfig {
      * @param other mappings to be stored in this map
      * @return {@code this}
      */
-    public AppConfig putAllAndReturn(final Map<String, ?> other) {
+    public AppConfig putAllAndReturn(final Map<? extends String, ?> other) {
         putAll(other);
         return this;
     }

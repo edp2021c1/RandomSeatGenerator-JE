@@ -107,7 +107,7 @@ public class ConfigPane extends VBox {
         this.darkModeCheck = darkModeCheck;
 
         this.source = configSource;
-        this.current = getConfigFromSource();
+        this.current = source.get();
 
         final HBox box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
         box1.setPrefHeight(60);
@@ -172,16 +172,7 @@ public class ConfigPane extends VBox {
     }
 
     private boolean checkEquals() {
-        return Objects.equals(current, getConfigFromSource());
-    }
-
-    /**
-     * Returns the config loaded from source.
-     *
-     * @return config loaded from source.
-     */
-    protected AppConfig getConfigFromSource() {
-        return source.getClone();
+        return Objects.equals(current, source.get());
     }
 
     /**

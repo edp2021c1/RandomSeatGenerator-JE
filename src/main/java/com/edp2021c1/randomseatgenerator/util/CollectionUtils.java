@@ -18,10 +18,9 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
 import java.util.random.RandomGenerator;
 
 /**
@@ -108,6 +107,126 @@ public final class CollectionUtils {
         final List<R> res = new ArrayList<>(input.size());
         input.forEach(t -> res.add(builder.apply(t)));
         return res;
+    }
+
+    /**
+     * @param list           input list
+     * @param indexPredicate filter of the index of elements
+     * @param <T>            type of elements in the list
+     * @return list
+     */
+    public static <T> List<T> indexFilter(final List<T> list, final IntPredicate indexPredicate) {
+        if (list instanceof RandomAccess) {
+            return new RandomAccessIndexFilterList<>(list, indexPredicate);
+        }
+        return new IndexFilterList<>(list, indexPredicate);
+    }
+
+    private static class RandomAccessIndexFilterList<T> extends IndexFilterList<T> implements RandomAccess {
+
+        public RandomAccessIndexFilterList(final List<T> root, final IntPredicate indexPredicate) {
+            super(root, indexPredicate);
+
+            if (!(root instanceof RandomAccess)) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        @Override
+        public int indexOf(final Object o) {
+            checkRootSize();
+            int index = -1;
+            for (int i = 0; i < size(); i++) {
+                if (Objects.equals(get(i), o)) {
+                    index = i;
+                }
+            }
+            return index;
+        }
+
+        @Override
+        public int lastIndexOf(final Object o) {
+            checkRootSize();
+            int lastIndex = -1;
+            for (int i = size() - 1; i > -1; i--) {
+                if (Objects.equals(get(i), o)) {
+                    lastIndex = i;
+                }
+            }
+            return lastIndex;
+        }
+
+        @Override
+        public boolean contains(final Object o) {
+            checkRootSize();
+            for (final T t : this) {
+                if (Objects.equals(t, o)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    }
+
+    private static class IndexFilterList<T> extends AbstractList<T> implements List<T> {
+        private final List<Integer> indexes;
+        private final List<T> root;
+        private final int size;
+
+        public IndexFilterList(final List<T> root, final IntPredicate indexPredicate) {
+            this.root = root;
+
+            this.indexes = new ArrayList<>();
+            for (int i = 0, len = root.size(); i < len; i++) {
+                if (indexPredicate.test(i)) {
+                    indexes.add(i);
+                }
+            }
+            this.size = this.indexes.size();
+        }
+
+        @Override
+        public T get(final int index) {
+            checkRootSize();
+            return root.get(indexes.get(Objects.checkIndex(index, size)));
+        }
+
+        @Override
+        public T set(final int index, final T obj) {
+            checkRootSize();
+            return root.set(indexes.get(index), obj);
+        }
+
+        @Override
+        public int indexOf(final Object o) {
+            checkRootSize();
+            return super.indexOf(o);
+        }
+
+        @Override
+        public int lastIndexOf(final Object o) {
+            checkRootSize();
+            return super.lastIndexOf(o);
+        }
+
+        @Override
+        public int size() {
+            checkRootSize();
+            return size;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            checkRootSize();
+            return super.contains(o);
+        }
+
+        protected void checkRootSize() {
+            if (indexes.getLast() >= root.size()) {
+                throw new ConcurrentModificationException();
+            }
+        }
     }
 
 }

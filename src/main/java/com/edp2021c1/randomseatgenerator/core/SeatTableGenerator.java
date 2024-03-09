@@ -20,6 +20,12 @@ package com.edp2021c1.randomseatgenerator.core;
 
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
+import static java.util.Collections.fill;
+
 /**
  * Seat table generator class.
  *
@@ -33,6 +39,15 @@ public interface SeatTableGenerator {
      * The default implementation of this class.
      */
     SeatTableGenerator defaultGenerator = SeatTableGeneratorAndCheckerImpl.instance;
+
+    /**
+     * Empty generator.
+     */
+    SeatTableGenerator emptyGenerator = (config, seed) -> {
+        final List<String> seat = Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]);
+        fill(seat, EMPTY_SEAT_PLACEHOLDER);
+        return new SeatTable(seat, config, EMPTY_SEAT_PLACEHOLDER, EMPTY_SEAT_PLACEHOLDER);
+    };
 
 
     /**

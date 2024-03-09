@@ -100,14 +100,14 @@ public class ConsoleLauncher {
             Logging.info("Config path set to " + configPath);
             try {
                 final ConfigHolder holder = ConfigHolder.createHolder(configPath);
-                config = holder.getClone().checkAndReturn();
+                config = holder.get().checkAndReturn();
                 holder.close();
             } catch (final IOException e) {
                 throw new RuntimeException("Failed to load config from specific file", e);
             }
         } else {
             configPath = ConfigHolder.global().getConfigPath();
-            config = ConfigHolder.global().getClone().checkAndReturn();
+            config = ConfigHolder.global().get().checkAndReturn();
         }
         Logging.debug("Config path: " + configPath);
 

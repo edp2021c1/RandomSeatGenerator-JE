@@ -18,8 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
-import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.JSONWriter;
 import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Strings;
@@ -68,7 +66,21 @@ public class ConfigHolder implements AutoCloseable {
         BUILT_IN = AppConfig.fromJsonString(str.toString());
 
         try {
+            replaceWithDirectory(GLOBAL_CONFIG_PATH.getParent());
+
+            boolean needsInit = false;
+
+            if (!Files.isRegularFile(GLOBAL_CONFIG_PATH)) {
+                deleteIfExists(GLOBAL_CONFIG_PATH);
+                Files.createFile(GLOBAL_CONFIG_PATH);
+                needsInit = true;
+            } else if (Files.readString(GLOBAL_CONFIG_PATH).isBlank()) {
+                needsInit = true;
+            }
             global = createHolder(GLOBAL_CONFIG_PATH);
+            if (needsInit) {
+                global.putAll(BUILT_IN);
+            }
         } catch (final FileAlreadyLockedException e) {
             throw new ApplicationAlreadyRunningException();
         } catch (final IOException e) {
@@ -79,8 +91,9 @@ public class ConfigHolder implements AutoCloseable {
     @Getter
     private final Path configPath;
     private final AppConfig content;
-    private final FileChannel channel;
+    private FileChannel channel;
     private boolean closed;
+    private boolean loaded;
 
     /**
      * Creates an instance with the given config path.
@@ -92,33 +105,8 @@ public class ConfigHolder implements AutoCloseable {
         content = new AppConfig();
         this.configPath = configPath;
 
-        final Path configDir = configPath.getParent();
-        replaceWithDirectory(configDir);
-        if (notFullyPermitted(configDir)) {
+        if (notFullyPermitted(replaceWithDirectory(configPath.getParent()))) {
             throw new IOException("Does not has enough permission to read/write config");
-        }
-
-        boolean needsInit = false;
-        if (!Files.exists(configPath) || !Files.isRegularFile(configPath)) {
-            deleteIfExists(configPath);
-            Files.createFile(configPath);
-            needsInit = true;
-        }
-        if (notFullyPermitted(configPath)) {
-            throw new IOException("Does not has enough permission to read/write config");
-        }
-
-        channel = FileChannel.open(configPath, StandardOpenOption.READ, StandardOpenOption.WRITE);
-        if (channel.tryLock() == null) {
-            throw new FileAlreadyLockedException(configPath);
-        }
-        if (readString(channel).isEmpty()) {
-            needsInit = true;
-        }
-        if (needsInit) {
-            putAll(BUILT_IN);
-            content.putAllAndReturn(BUILT_IN);
-            return;
         }
 
         loadConfig();
@@ -144,13 +132,32 @@ public class ConfigHolder implements AutoCloseable {
         return new ConfigHolder(configPath);
     }
 
-    private synchronized void loadConfig() {
+    private synchronized void loadConfig0() throws IOException {
+        if (!Files.exists(configPath) || !Files.isRegularFile(configPath)) {
+            deleteIfExists(configPath);
+            Files.createFile(configPath);
+        }
+        if (notFullyPermitted(configPath)) {
+            throw new IOException("Does not has enough permission to read/write config");
+        }
+        channel = FileChannel.open(configPath, StandardOpenOption.READ, StandardOpenOption.WRITE);
+        if (channel.tryLock() == null) {
+            throw new FileAlreadyLockedException(configPath);
+        }
+        if (readString(channel).isEmpty()) {
+            return;
+        }
         try {
             content.putAllAndReturn(AppConfig.fromJsonString(readString(channel))).check();
-        } catch (final RuntimeException | IOException e) {
+        } catch (final RuntimeException e) {
             Logging.warning("Invalid config loaded");
             Logging.warning(Strings.getStackTrace(e));
         }
+    }
+
+    private synchronized void loadConfig() throws IOException {
+        loadConfig0();
+        loaded = true;
     }
 
     /**
@@ -169,9 +176,17 @@ public class ConfigHolder implements AutoCloseable {
         }
     }
 
-    private void checkState() {
-        if (closed || !channel.isOpen()) {
+    private synchronized void checkState() {
+        if (closed) {
             throw new IllegalStateException("Closed ConfigHolder");
+        }
+        if (!loaded) {
+            try {
+                loadConfig();
+            } catch (final IOException e) {
+                Logging.warning("Failed to load config from " + configPath);
+                Logging.warning(Strings.getStackTrace(e));
+            }
         }
     }
 
@@ -182,10 +197,8 @@ public class ConfigHolder implements AutoCloseable {
      * @param value to be associated with the specified key
      * @throws RuntimeException if an I/O error occurs
      */
-    public void put(final String key, final Object value) {
-        final Config t = new Config(1);
-        t.put(key, value);
-        putAll(t);
+    public synchronized void put(final String key, final Object value) {
+        putAll(new Config(1).putAndReturn(key, value));
     }
 
     /**
@@ -194,11 +207,11 @@ public class ConfigHolder implements AutoCloseable {
      * @param map to set
      * @throws RuntimeException if an I/O error occurs
      */
-    public synchronized void putAll(final Map<String, ?> map) {
+    public synchronized void putAll(final Map<? extends String, ?> map) {
         checkState();
         try {
             overwriteString(channel, content.putAllAndReturn(map).checkAndReturn().toJsonString());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -208,26 +221,9 @@ public class ConfigHolder implements AutoCloseable {
      *
      * @return the clone of the config
      */
-    public AppConfig getClone() {
+    public synchronized AppConfig get() {
         checkState();
         return content.clone();
-    }
-
-    @Override
-    public int hashCode() {
-        long h = 0;
-        for (final Object obj : JSONObject.from(this, JSONWriter.Feature.FieldBased).values()) {
-            h = obj.hashCode() + (h << 5) - h;
-        }
-        return (int) h;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof final ConfigHolder another)) {
-            return false;
-        }
-        return super.equals(obj) || another.configPath.equals(configPath) && another.closed == this.closed;
     }
 
 }

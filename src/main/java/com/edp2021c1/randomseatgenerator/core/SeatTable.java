@@ -28,11 +28,12 @@ import lombok.Getter;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.regex.Pattern;
-
-import static java.util.Collections.fill;
 
 /**
  * Used to pack some useful data related to a seat table.
@@ -63,15 +64,6 @@ public class SeatTable {
      * Format of a group leader.
      */
     public static final String groupLeaderFormat = "*%s*";
-
-    /**
-     * Empty generator.
-     */
-    private static final SeatTableGenerator EMPTY_GENERATOR = (config, seed) -> {
-        final List<String> seat = Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]);
-        fill(seat, EMPTY_SEAT_PLACEHOLDER);
-        return new SeatTable(seat, config, EMPTY_SEAT_PLACEHOLDER, EMPTY_SEAT_PLACEHOLDER);
-    };
 
     /**
      * The seat table stored as a {@code  List}.
@@ -159,7 +151,7 @@ public class SeatTable {
      * @return an empty seat table
      */
     public static SeatTable generateEmpty(final SeatConfig config) {
-        return generate(config, null, EMPTY_GENERATOR);
+        return generate(config, null, SeatTableGenerator.emptyGenerator);
     }
 
     /**
