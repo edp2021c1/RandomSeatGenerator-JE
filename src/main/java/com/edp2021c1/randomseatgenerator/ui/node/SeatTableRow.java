@@ -25,6 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import lombok.val;
 
 /**
  * Row of {@code SeatTableView}.
@@ -47,7 +48,7 @@ public class SeatTableRow extends HBox {
 
         getChildren().addListener((ListChangeListener<Node>) c -> {
             while (c.next()) {
-                for (final Node n : c.getAddedSubList()) {
+                for (val n : c.getAddedSubList()) {
                     if (!(n instanceof SeatTableCell)) {
                         throw new UnsupportedOperationException("Cannot add a non-cell child");
                     }
@@ -55,10 +56,10 @@ public class SeatTableRow extends HBox {
             }
         });
 
-        final int cellCount = Math.max(2, columnCount);
-        final SeatTableCell[] cells = new SeatTableCell[cellCount];
-        for (int i = 0; i < cellCount; i++) {
-            final SeatTableCell cell = new SeatTableCell(rowData.getName(i));
+        val cellCount = Math.max(2, columnCount);
+        val cells = new SeatTableCell[cellCount];
+        for (var i = 0; i < cellCount; i++) {
+            val cell = new SeatTableCell(rowData.getName(i));
             cell.prefHeightProperty().bind(heightProperty());
             cell.prefWidthProperty().bind(widthProperty().divide(columnCount));
             cells[i] = cell;

@@ -20,9 +20,9 @@ package com.edp2021c1.randomseatgenerator.util;
 
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.JSONConfig;
+import lombok.val;
 
 import java.util.Hashtable;
-import java.util.Optional;
 
 /**
  * Runtime utils.
@@ -38,15 +38,23 @@ public final class RuntimeUtils {
     public static final JSONConfig runtimeConfig = new JSONConfig();
 
     private static final Hashtable<Long, Thread> threadIdHashtable = new Hashtable<>();
-
-    static {
-        Runtime.getRuntime().addShutdownHook(new Thread(RuntimeUtils::exit, "Exit Hook"));
-    }
+    private static boolean staticInitialized;
 
     /**
      * Don't let anyone else instantiate this class.
      */
     private RuntimeUtils() {
+    }
+
+    /**
+     * Called on application start up.
+     */
+    public static void initStatic(final boolean gui) {
+        if (!staticInitialized) {
+            Runtime.getRuntime().addShutdownHook(new Thread(RuntimeUtils::exit, "Exit Hook"));
+            RuntimeUtils.runtimeConfig.put("launching.gui", gui);
+            staticInitialized = true;
+        }
     }
 
     /**
@@ -60,7 +68,7 @@ public final class RuntimeUtils {
         if (threadIdHashtable.containsKey(id)) {
             return threadIdHashtable.get(id);
         }
-        final Optional<Thread> op = Thread.getAllStackTraces().keySet().stream().filter(t -> t.threadId() == id).findFirst();
+        val op = Thread.getAllStackTraces().keySet().stream().filter(t -> t.threadId() == id).findFirst();
         op.ifPresent(t -> threadIdHashtable.put(id, t));
         return op.orElse(null);
     }

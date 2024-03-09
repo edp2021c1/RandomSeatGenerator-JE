@@ -1,16 +1,20 @@
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
-import com.edp2021c1.randomseatgenerator.ui.UIFactory;
+import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import lombok.val;
 
 /**
  * Stage of FX crash reporter.
@@ -26,39 +30,39 @@ public class CrashReporterDialog extends Stage {
     private CrashReporterDialog(final String title, final String msg) {
         super();
 
-        final Label preLabelBeforeLink = new Label("Something's wrong... Click");
-        final Hyperlink here = new Hyperlink("here");
-        final Label preLabelAfterLink = new Label("to copy the error message");
+        val preLabelBeforeLink = new Label("Something's wrong... Click");
+        val here = new Hyperlink("here");
+        val preLabelAfterLink = new Label("to copy the error message");
         preLabelBeforeLink.getStyleClass().add("err-pre-label");
         here.getStyleClass().add("err-pre-label");
         preLabelAfterLink.getStyleClass().add("err-pre-label");
 
-        final HBox preBox = new HBox(preLabelBeforeLink, here, preLabelAfterLink);
+        val preBox = new HBox(preLabelBeforeLink, here, preLabelAfterLink);
         preBox.setAlignment(Pos.CENTER_LEFT);
 
-        final TextArea mainText = new TextArea(msg);
+        val mainText = new TextArea(msg);
         mainText.setEditable(false);
         mainText.getStyleClass().add("err-main-text");
 
-        final Button confirmBtn = UIFactory.createButton("关闭", 80, 26);
+        val confirmBtn = UIUtils.createButton("关闭", 80, 26);
         confirmBtn.setOnAction(event -> close());
         confirmBtn.setDefaultButton(true);
 
-        final Button copyBtn = UIFactory.createButton("复制并关闭", 80, 26);
+        val copyBtn = UIUtils.createButton("复制并关闭", 80, 26);
 
-        final ButtonBar buttonBar = new ButtonBar();
+        val buttonBar = new ButtonBar();
         buttonBar.getButtons().addAll(copyBtn, confirmBtn);
         buttonBar.setPrefHeight(66);
         buttonBar.getStyleClass().add("bottom");
 
-        final VBox mainBox = new VBox(preBox, mainText, buttonBar);
+        val mainBox = new VBox(preBox, mainText, buttonBar);
         mainBox.getStyleClass().add("main");
 
         setScene(new Scene(mainBox));
         setMaxWidth(1440);
         setMaxHeight(810);
         setTitle(title);
-        UIFactory.decorate(this, UIFactory.StageType.ERROR);
+        UIUtils.decorate(this, UIUtils.StageType.ERROR);
 
         here.setOnAction(event -> DesktopUtils.copyPlainText(mainText.getText()));
 

@@ -22,29 +22,27 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
-import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lombok.Getter;
+import lombok.val;
 
 import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
+import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
 
 /**
  * Main window of the application.
@@ -54,25 +52,24 @@ import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
  */
 public class MainWindow extends Stage {
 
+    @Getter
+    private static final MainWindow mainWindow = new MainWindow();
     private final SeatTableView seatTableView;
     private final ConfigHolder cfHolder;
     private final StringProperty seed;
     private final ObjectProperty<SeatTable> seatTable;
-    private final Application app;
     private String previousSeed = null;
     private boolean generated;
 
     /**
      * Creates an instance.
      */
-    private MainWindow(final Application app) {
+    private MainWindow() {
         super();
-
-        this.app = app;
 
         cfHolder = ConfigHolder.global();
 
-        final JSONAppConfig config = cfHolder.get();
+        val config = cfHolder.get();
 
         /* *************************************************************************
          *                                                                         *
@@ -81,16 +78,16 @@ public class MainWindow extends Stage {
          **************************************************************************/
 
         // 左侧按钮栏
-        final Button settingsBtn = createButton("设置", 80, 26);
-        final Button generateBtn = createButton("生成", 80, 26);
-        final Button exportBtn = createButton("导出", 80, 26);
-        final VBox leftBox = createVBox(settingsBtn, generateBtn, exportBtn);
+        val settingsBtn = createButton("设置", 80, 26);
+        val generateBtn = createButton("生成", 80, 26);
+        val exportBtn = createButton("导出", 80, 26);
+        val leftBox = createVBox(settingsBtn, generateBtn, exportBtn);
         leftBox.getStyleClass().add("left");
 
         // 右上种子输入栏
-        final TextField seedInput = createEmptyTextField("种子");
-        final Button randomSeedBtn = createButton("随机种子", 80, 26);
-        final Button dateAsSeedBtn = createButton("填入日期", 80, 26);
+        val seedInput = createEmptyTextField("种子");
+        val randomSeedBtn = createButton("随机种子", 80, 26);
+        val dateAsSeedBtn = createButton("填入日期", 80, 26);
 
         seed = seedInput.textProperty();
 
@@ -108,11 +105,11 @@ public class MainWindow extends Stage {
         seatTable = seatTableView.seatTableProperty();
 
         // 右侧主体
-        final VBox rightBox = createVBox(createHBox(seedInput, randomSeedBtn, dateAsSeedBtn), seatTableView);
+        val rightBox = createVBox(createHBox(seedInput, randomSeedBtn, dateAsSeedBtn), seatTableView);
         rightBox.getStyleClass().add("right");
 
         // 整体
-        final HBox mainBox = createHBox(leftBox, new Separator(Orientation.VERTICAL), rightBox);
+        val mainBox = createHBox(leftBox, new Separator(Orientation.VERTICAL), rightBox);
         mainBox.getStyleClass().add("main");
 
         setInsets(new Insets(5), settingsBtn, generateBtn, exportBtn, seedInput, randomSeedBtn, dateAsSeedBtn);
@@ -123,10 +120,11 @@ public class MainWindow extends Stage {
         setTitle(Metadata.TITLE);
         decorate(this, StageType.MAIN);
 
-        final FileChooser fc = new FileChooser();
+        val fc = new FileChooser();
         fc.setTitle("导出座位表");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
-        final String obj = config.getString("export.dir.previous");
+
+        val obj = config.getString("export.dir.previous");
         fc.setInitialDirectory(new File(
                 obj == null ? SeatTable.DEFAULT_EXPORTING_DIR.toString() : obj
         ));
@@ -145,7 +143,7 @@ public class MainWindow extends Stage {
                     randomSeedBtn.fire();
                 }
 
-                final String seed1 = seed.get();
+                val seed1 = seed.get();
                 seatTable.set(SeatTable.generate(cfHolder.get().checkAndReturn(), seed1));
                 Logging.info("\n" + seatTable.get());
                 previousSeed = seed1;
@@ -164,7 +162,7 @@ public class MainWindow extends Stage {
 
                 fc.setInitialFileName("%tF".formatted(new Date()));
 
-                File tmp = fc.getInitialDirectory();
+                var tmp = fc.getInitialDirectory();
                 if (tmp != null) {
                     while (!tmp.isDirectory()) {
                         tmp = tmp.getParentFile();
@@ -172,12 +170,11 @@ public class MainWindow extends Stage {
                     fc.setInitialDirectory(tmp);
                 }
 
-                final File exportFile = fc.showSaveDialog(this);
+                val exportFile = fc.showSaveDialog(this);
                 if (exportFile == null) {
                     return;
                 }
-                JSONAppConfig seatConfig = cfHolder.get();
-                seatTable.get().exportToExcelDocument(exportFile.toPath(), Boolean.TRUE.equals(seatConfig.getBoolean("export.writable")));
+                seatTable.get().exportToExcelDocument(exportFile.toPath(), Boolean.TRUE.equals(cfHolder.get().getBoolean("export.writable")));
 
                 Logging.info("Successfully exported seat table to " + exportFile);
                 MessageDialog.showMessage(this, "成功导出座位表到\n" + exportFile);
@@ -252,18 +249,6 @@ public class MainWindow extends Stage {
     }
 
     /**
-     * Creates an instance for the app.
-     *
-     * @param app owner JavaFX application of the stage
-     * @return the main windows of the app
-     */
-    public static MainWindow getMainWindow(final Application app) {
-        final MainWindow mainWindow = new MainWindow(app);
-        setMainWindow(mainWindow);
-        return mainWindow;
-    }
-
-    /**
      * Action to do if config is changed.
      */
     public void configChanged() {
@@ -274,10 +259,7 @@ public class MainWindow extends Stage {
 
     @Override
     public void close() {
-        try {
-            app.stop();
-        } catch (final Exception ignored) {
-        }
+        super.close();
     }
 
 }

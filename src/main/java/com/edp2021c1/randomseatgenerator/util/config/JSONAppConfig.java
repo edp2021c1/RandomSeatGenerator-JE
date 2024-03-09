@@ -22,6 +22,7 @@ import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,7 +111,7 @@ public class JSONAppConfig extends JSONConfig implements SeatConfig {
 
     @Override
     public int getRowCount() throws IllegalConfigException {
-        final Integer rowCount = getInteger(KEY_ROW_COUNT);
+        val rowCount = getInteger(KEY_ROW_COUNT);
         if (rowCount == null || rowCount == 0) {
             throw new IllegalConfigException("Row count cannot be equal to or less than 0");
         }
@@ -119,7 +120,7 @@ public class JSONAppConfig extends JSONConfig implements SeatConfig {
 
     @Override
     public int getColumnCount() throws IllegalConfigException {
-        final Integer columnCount = getInteger(KEY_COLUMN_COUNT);
+        val columnCount = getInteger(KEY_COLUMN_COUNT);
         if (columnCount == null || columnCount == 0) {
             throw new IllegalConfigException("Column count cannot be equal to or less than 0");
         }
@@ -131,7 +132,7 @@ public class JSONAppConfig extends JSONConfig implements SeatConfig {
 
     @Override
     public int getRandomBetweenRows() throws IllegalConfigException {
-        final Integer randomBetweenRows = getInteger(KEY_RANDOM_BETWEEN_ROWS);
+        val randomBetweenRows = getInteger(KEY_RANDOM_BETWEEN_ROWS);
         if (randomBetweenRows == null || randomBetweenRows <= 0) {
             return getRowCount();
         }
@@ -140,7 +141,7 @@ public class JSONAppConfig extends JSONConfig implements SeatConfig {
 
     @Override
     public List<Integer> getDisabledLastRowPos() throws IllegalConfigException {
-        final String disabledLastRowPos = getString(KEY_DISABLED_LAST_ROW_POS);
+        val disabledLastRowPos = getString(KEY_DISABLED_LAST_ROW_POS);
         if (disabledLastRowPos == null || disabledLastRowPos.isBlank()) {
             return new ArrayList<>();
         }
@@ -155,18 +156,18 @@ public class JSONAppConfig extends JSONConfig implements SeatConfig {
 
     @Override
     public List<String> getNames() throws IllegalConfigException {
-        final String names = getString(KEY_NAMES);
+        val names = getString(KEY_NAMES);
         if (names == null) {
             throw new IllegalConfigException("Name list cannot be null");
         }
-        final List<String> l = Arrays.asList(names.split(" "));
+        val l = Arrays.asList(names.split(" "));
         if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
                     "Name list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
             );
         }
         l.removeAll(List.of(""));
-        for (final String s : l) {
+        for (val s : l) {
             if (groupLeaderRegex.matcher(s).matches()) {
                 throw new IllegalConfigException(
                         "Name list must not contain names matching the format of a group leader"
@@ -178,11 +179,11 @@ public class JSONAppConfig extends JSONConfig implements SeatConfig {
 
     @Override
     public List<String> getGroupLeaders() throws IllegalConfigException {
-        final String groupLeaders = getString(KEY_GROUP_LEADERS);
+        val groupLeaders = getString(KEY_GROUP_LEADERS);
         if (groupLeaders == null) {
             throw new IllegalConfigException("Group leader list cannot be null");
         }
-        final List<String> l = Arrays.asList(groupLeaders.split(" "));
+        val l = Arrays.asList(groupLeaders.split(" "));
         if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
                     "Group leader list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
@@ -193,7 +194,7 @@ public class JSONAppConfig extends JSONConfig implements SeatConfig {
 
     @Override
     public List<SeparatedPair> getSeparatedPairs() throws IllegalConfigException {
-        final String separatedPairs = getString(KEY_SEPARATED_PAIRS);
+        val separatedPairs = getString(KEY_SEPARATED_PAIRS);
         if (separatedPairs == null) {
             throw new IllegalConfigException("Separated list cannot be null");
         }
@@ -207,7 +208,7 @@ public class JSONAppConfig extends JSONConfig implements SeatConfig {
 
     @Override
     public void check() throws IllegalConfigException {
-        final List<IllegalConfigException> causes = new ArrayList<>();
+        val causes = new ArrayList<IllegalConfigException>();
         try {
             getRowCount();
         } catch (final IllegalConfigException e) {

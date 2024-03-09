@@ -18,6 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import lombok.val;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -78,7 +80,7 @@ public final class IOUtils {
      * @return if this app does not have read and write permission of the target path
      */
     public static boolean notFullyPermitted(final Path path) {
-        return !(Files.isReadable(path) || Files.isWritable(path));
+        return !(Files.isReadable(path) && Files.isWritable(path));
     }
 
     /**
@@ -105,7 +107,7 @@ public final class IOUtils {
      * @throws IOException if an I/O error occurs
      */
     public synchronized static String readString(final FileChannel channel) throws IOException {
-        final ByteBuffer buffer = ByteBuffer.allocate((int) channel.size());
+        val buffer = ByteBuffer.allocate((int) channel.size());
         channel.read(buffer, 0);
         return new String(buffer.array());
     }
@@ -118,7 +120,7 @@ public final class IOUtils {
      * @throws IOException if an I/O error occurs
      */
     public synchronized static void overwriteString(final FileChannel channel, final String str) throws IOException {
-        final byte[] bytes = Objects.requireNonNull(str, "Cannot write null string").getBytes();
+        val bytes = Objects.requireNonNull(str, "Cannot write null string").getBytes();
         if (channel.truncate(0).write(ByteBuffer.wrap(bytes)) != bytes.length) {
             throw new IOException();
         }

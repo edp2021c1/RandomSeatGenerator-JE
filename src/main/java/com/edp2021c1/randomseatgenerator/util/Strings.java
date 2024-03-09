@@ -18,6 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import lombok.val;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -77,9 +79,9 @@ public final class Strings {
      * @return hash code of {@code str}
      */
     public static long longHashCode(final String str) {
-        final byte[] val = str.getBytes();
-        long h = 0;
-        for (final byte v : val) {
+        val bytes = str.getBytes();
+        var h = 0;
+        for (val v : bytes) {
             h = (v & 0xffff) + (h << 5) - h;
         }
         return h;
@@ -92,8 +94,8 @@ public final class Strings {
      * @return stack trace of {@code e}
      */
     public static String getStackTrace(final Throwable e) {
-        final StringWriter writer = new StringWriter(1024);
-        try (final PrintWriter printWriter = new PrintWriter(writer)) {
+        val writer = new StringWriter(1024);
+        try (val printWriter = new PrintWriter(writer)) {
             e.printStackTrace(printWriter);
         }
         return writer.toString();
@@ -107,8 +109,8 @@ public final class Strings {
      * @return a randomly generated string
      */
     public static String randomString(final int len) {
-        final char[] chars = new char[len];
-        for (int i = 0; i < len; i++) {
+        val chars = new char[len];
+        for (var i = 0; i < len; i++) {
             chars[i] = CollectionUtils.pickRandomly(CHARACTERS_AND_DIGITS, new Random());
         }
         return new String(chars);

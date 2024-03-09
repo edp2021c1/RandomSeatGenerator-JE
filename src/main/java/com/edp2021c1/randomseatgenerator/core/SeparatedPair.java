@@ -19,6 +19,7 @@
 package com.edp2021c1.randomseatgenerator.core;
 
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
+import lombok.val;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,7 +49,7 @@ public class SeparatedPair {
      * @throws IllegalConfigException if the {@code String} contains only one name
      */
     public SeparatedPair(final String s) throws IllegalConfigException {
-        final List<String> t = Arrays.asList(s.split(" ", 2));
+        val t = Arrays.asList(s.split(" ", 2));
         if (t.size() < 2) {
             throw new IllegalConfigException("Invalid separate pair: \"%s\"".formatted(s));
         }

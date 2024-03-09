@@ -22,6 +22,7 @@ import com.edp2021c1.randomseatgenerator.ui.stage.CrashReporterDialog;
 import com.edp2021c1.randomseatgenerator.ui.stage.MessageDialog;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
+import lombok.val;
 
 /**
  * Reports uncaught exceptions.
@@ -67,7 +68,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
             return;
         }
 
-        final boolean withGUI = Boolean.TRUE.equals(RuntimeUtils.runtimeConfig.getBoolean("launching.gui"));
+        val withGUI = Boolean.TRUE.equals(RuntimeUtils.runtimeConfig.getBoolean("launching.gui"));
 
         try {
             if (e instanceof final IllegalConfigException ex) {
@@ -91,7 +92,7 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
                 return;
             }
 
-            final String str = t == null ?
+            val str = t == null ?
                     Strings.getStackTrace(e) :
                     "Throwable thrown from thread \"%s\":\n".formatted(t.getName()) + Strings.getStackTrace(e);
             Logging.error(str);

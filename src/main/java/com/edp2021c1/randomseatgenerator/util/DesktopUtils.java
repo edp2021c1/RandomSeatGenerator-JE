@@ -19,11 +19,12 @@
 package com.edp2021c1.randomseatgenerator.util;
 
 import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import lombok.val;
 
 import java.awt.*;
-import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 
 /**
  * Desktop utils.
@@ -35,12 +36,17 @@ public final class DesktopUtils {
     private static final boolean desktopSupported = Desktop.isDesktopSupported();
     private static final Desktop desktopTk = desktopSupported ? Desktop.getDesktop() : null;
     private static final Clipboard clipboard = Clipboard.getSystemClipboard();
-    private static final ClipboardContent content = new ClipboardContent();
 
     /**
      * Don't let anyone else instantiate this class.
      */
     private DesktopUtils() {
+    }
+
+    /**
+     * Called on JavaFX application start up.
+     */
+    public static void initStatic() {
     }
 
     /**
@@ -51,27 +57,15 @@ public final class DesktopUtils {
      * is determined from the protocol and path of the {@code URI}, as
      * defined by the {@code URI} class.
      *
-     * @param uri the URI to be displayed in the user default browser
-     * @throws NullPointerException          if {@code uri} is {@code null}
-     * @throws UnsupportedOperationException if the current platform
-     *                                       does not support the {@link Desktop.Action#BROWSE} action
-     * @throws RuntimeException              if the user default browser is not found,
-     *                                       or it fails to be launched, or the default handler application
-     *                                       failed to be launched
-     * @throws SecurityException             if a security manager exists, and it
-     *                                       denies the
-     *                                       {@code AWTPermission("showWindowWithoutWarningBanner")}
-     *                                       permission, or the calling thread is not allowed to create a
-     *                                       subprocess
      * @see java.net.URI
      * @see java.awt.AWTPermission
      * @see java.awt.Desktop#browse(URI)
      */
-    public static void browseIfSupported(URI uri) {
+    public static void browseIfSupported(final URI uri) {
         if (desktopSupported) {
             try {
                 desktopTk.browse(uri);
-            } catch (IOException ignored) {
+            } catch (final Throwable ignored) {
             }
         }
     }
@@ -82,7 +76,8 @@ public final class DesktopUtils {
      * @param text to copy.
      */
     public static void copyPlainText(String text) {
-        content.putString(text);
-        clipboard.setContent(content);
+        val t = new HashMap<DataFormat, Object>();
+        t.put(DataFormat.PLAIN_TEXT, text);
+        clipboard.setContent(t);
     }
 }

@@ -25,6 +25,7 @@ import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Cleanup;
 import lombok.Getter;
+import lombok.val;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -32,7 +33,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
 /**
@@ -109,14 +113,11 @@ public class SeatTable {
      *                                costs too much time to generate the seat table
      */
     public static SeatTable generate(final SeatConfig config, final String seed, final SeatTableGenerator generator) {
-        @Cleanup final ExecutorService exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
+        @Cleanup val exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
         try {
             return exe.submit(() -> generator.generate(config.checkAndReturn(), seed)).get(3, TimeUnit.SECONDS);
         } catch (final ExecutionException e) {
-            final Throwable ex = e.getCause();
-            if (ex instanceof final IllegalConfigException exx) {
-                throw exx;
-            }
+            val ex = e.getCause();
             if (ex instanceof final RuntimeException exx) {
                 throw exx;
             }
@@ -160,11 +161,11 @@ public class SeatTable {
      * @return a {@code List} storing {@code SeatRowData} transferred from this
      */
     public List<SeatRowData> toRowData() {
-        final int columnCount = config.getColumnCount();
-        final List<SeatRowData> seatRowData = new ArrayList<>(config.getRowCount());
-        final String[] tmp = new String[columnCount];
+        val columnCount = config.getColumnCount();
+        val seatRowData = new ArrayList<SeatRowData>(config.getRowCount());
+        val tmp = new String[columnCount];
 
-        final int size = table.size();
+        val size = table.size();
         for (int i = 0, j = 0; i < size; i++, j = i % columnCount) {
             tmp[j] = table.get(i);
             if (j == columnCount - 1) {

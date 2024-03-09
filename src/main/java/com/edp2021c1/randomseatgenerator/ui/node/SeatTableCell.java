@@ -25,6 +25,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import lombok.val;
 
 import java.util.Objects;
 
@@ -49,7 +50,7 @@ public class SeatTableCell extends Label {
         HBox.setHgrow(this, Priority.ALWAYS);
         setMinSize(120, 60);
 
-        final String s = Objects.toString(o, "");
+        val s = Objects.toString(o, "");
         setText(s);
 
         new SimpleBooleanProperty(this, "leader") {

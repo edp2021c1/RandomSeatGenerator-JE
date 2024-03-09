@@ -37,6 +37,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 
 /**
  * Contains several useful methods for creating or initializing JavaFX controls.
@@ -44,7 +45,7 @@ import lombok.Setter;
  * @author Calboot
  * @since 1.3.3
  */
-public class UIFactory {
+public class UIUtils {
 
     /**
      * Dark stylesheets of the windows of the app.
@@ -70,7 +71,7 @@ public class UIFactory {
     /**
      * Don't let anyone else instantiate this class.
      */
-    private UIFactory() {
+    private UIUtils() {
     }
 
     /**
@@ -137,7 +138,7 @@ public class UIFactory {
      * @param elements where margin will be set to
      */
     public static void setInsets(final Insets margin, final Node... elements) {
-        for (final Node n : elements) {
+        for (val n : elements) {
             HBox.setMargin(n, margin);
             VBox.setMargin(n, margin);
         }
@@ -152,7 +153,7 @@ public class UIFactory {
      * @return the button created
      */
     public static Button createButton(final String text, final double width, final double height) {
-        final Button btn = new Button(text);
+        val btn = new Button(text);
         btn.setPrefSize(width, height);
         return btn;
     }
@@ -164,7 +165,7 @@ public class UIFactory {
      * @return the box created
      */
     public static VBox createVBox(final Node... children) {
-        final VBox vBox = new VBox(children);
+        val vBox = new VBox(children);
         vBox.setAlignment(Pos.CENTER);
         return vBox;
     }
@@ -176,7 +177,7 @@ public class UIFactory {
      * @return the box created
      */
     public static HBox createHBox(final Node... children) {
-        final HBox hBox = new HBox(children);
+        val hBox = new HBox(children);
         hBox.setAlignment(Pos.CENTER);
         return hBox;
     }
@@ -188,7 +189,7 @@ public class UIFactory {
      * @return the field created
      */
     public static TextField createEmptyTextField(final String promptText) {
-        final TextField t = new TextField();
+        val t = new TextField();
         t.setPromptText(promptText);
         return t;
     }
@@ -202,7 +203,7 @@ public class UIFactory {
      * @return the area created
      */
     public static TextArea createTextArea(final String promptText, final double width, final double height) {
-        final TextArea t = new TextArea();
+        val t = new TextArea();
         t.setPromptText(promptText);
         t.setPrefSize(width, height);
         return t;

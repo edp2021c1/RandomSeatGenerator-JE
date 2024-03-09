@@ -19,6 +19,7 @@
 package com.edp2021c1.randomseatgenerator.util.exception;
 
 import lombok.Getter;
+import lombok.val;
 
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class IllegalConfigException extends RuntimeException {
             return;
         }
         single = false;
-        final StringBuilder str = new StringBuilder();
+        val str = new StringBuilder();
         causes.forEach(e -> {
             if (e.isSingle()) {
                 str.append("\n");

@@ -21,6 +21,7 @@ package com.edp2021c1.randomseatgenerator.util.config;
 import com.alibaba.fastjson2.JSONObject;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.util.exception.InvalidClassTypeException;
+import lombok.val;
 
 import java.util.Map;
 
@@ -64,7 +65,7 @@ public class JSONConfig extends JSONObject {
      * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code String}
      */
     public String getString(final String key) {
-        final Object o = get(key);
+        val o = get(key);
         if (o == null) {
             return null;
         }
@@ -82,7 +83,7 @@ public class JSONConfig extends JSONObject {
      * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Number}
      */
     public Double getDouble(final String key) {
-        final Object o = get(key);
+        val o = get(key);
         if (o == null) {
             return null;
         }
@@ -100,7 +101,7 @@ public class JSONConfig extends JSONObject {
      * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Number}
      */
     public Integer getInteger(final String key) {
-        final Object o = get(key);
+        val o = get(key);
         if (o == null) {
             return null;
         }
@@ -118,7 +119,7 @@ public class JSONConfig extends JSONObject {
      * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Boolean}
      */
     public Boolean getBoolean(final String key) {
-        final Object o = get(key);
+        val o = get(key);
         if (o == null) {
             return null;
         }

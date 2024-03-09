@@ -18,6 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import lombok.val;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,8 +50,8 @@ public final class Logging {
     private static boolean closed = true;
 
     static {
-        final String str = "%tF-%%d.log".formatted(new Date());
-        int t = 1;
+        val str = "%tF-%%d.log".formatted(new Date());
+        var t = 1;
         while (Files.exists(logDir.resolve(str.formatted(t)))) {
             t++;
         }
@@ -126,7 +128,7 @@ public final class Logging {
 
         closed = false;
 
-        final boolean withGUI = Boolean.TRUE.equals(RuntimeUtils.runtimeConfig.getBoolean("launching.gui"));
+        val withGUI = Boolean.TRUE.equals(RuntimeUtils.runtimeConfig.getBoolean("launching.gui"));
 
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);
@@ -138,9 +140,9 @@ public final class Logging {
         final ConsoleHandler consoleHandler = new ConsoleHandler() {
             @Override
             public void close() {
-                final LogRecord record = new LogRecord(LoggingLevels.DEBUG, "Closing console log handler");
+                val record = new LogRecord(LoggingLevels.DEBUG, "Closing console log handler");
                 format(record);
-                for (final Handler h : logger.getHandlers()) {
+                for (val h : logger.getHandlers()) {
                     h.publish(record);
                 }
                 publish(record);
@@ -153,7 +155,7 @@ public final class Logging {
 
         try {
             IOUtils.replaceWithDirectory(logDir);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             warning("Unable to create log dir, log may not be saved");
             warning(Strings.getStackTrace(e));
         }
@@ -162,12 +164,12 @@ public final class Logging {
         }
         logPaths.forEach(path -> {
             try {
-                final FileHandler fileHandler = new FileHandler(path.toString()) {
+                val fileHandler = new FileHandler(path.toString()) {
                     @Override
                     public void close() throws SecurityException {
-                        final LogRecord record = new LogRecord(LoggingLevels.DEBUG, "Closing log file " + path);
+                        val record = new LogRecord(LoggingLevels.DEBUG, "Closing log file " + path);
                         format(record);
-                        for (final Handler h : logger.getHandlers()) {
+                        for (val h : logger.getHandlers()) {
                             h.publish(record);
                         }
                         publish(record);
@@ -197,7 +199,7 @@ public final class Logging {
     }
 
     private static void format(LogRecord record) {
-        final StringBuffer buffer = new StringBuffer(1024);
+        val buffer = new StringBuffer(1024);
 
         messageFormat.format(new Object[]{
                 new Date(record.getMillis()),
@@ -213,7 +215,7 @@ public final class Logging {
      * Ends logging
      */
     public static void close() {
-        for (final Handler h : logger.getHandlers()) {
+        for (val h : logger.getHandlers()) {
             logger.removeHandler(h);
             h.close();
         }

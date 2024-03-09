@@ -19,6 +19,7 @@
 package com.edp2021c1.randomseatgenerator.util;
 
 import lombok.Getter;
+import lombok.val;
 
 import static com.edp2021c1.randomseatgenerator.util.Metadata.OS_NAME;
 
@@ -55,7 +56,7 @@ public enum OperatingSystem {
 
     static {
         if (OS_NAME != null) {
-            final String osName = OS_NAME.toLowerCase();
+            val osName = OS_NAME.toLowerCase();
             if (osName.startsWith("windows")) {
                 current = WINDOWS;
             } else if (osName.startsWith("mac")) {
@@ -82,7 +83,7 @@ public enum OperatingSystem {
     @Getter
     private final boolean unknown;
 
-    OperatingSystem(String osName) {
+    OperatingSystem(final String osName) {
         switch (osName) {
             case "windows" -> {
                 windows = true;

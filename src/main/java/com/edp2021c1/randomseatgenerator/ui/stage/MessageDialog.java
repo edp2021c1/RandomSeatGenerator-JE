@@ -21,14 +21,13 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import lombok.val;
 
-import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
+import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
 
 /**
  * Stage to show a simple message.
@@ -42,16 +41,16 @@ public class MessageDialog extends Stage {
     private MessageDialog(final String msg) {
         super();
 
-        final Label txt = new Label(msg);
+        val txt = new Label(msg);
 
-        final Button button = createButton("确定", 80, 26);
+        val button = createButton("确定", 80, 26);
         button.setDefaultButton(true);
         button.setOnAction(event -> close());
 
-        final ButtonBar buttonBar = new ButtonBar();
+        val buttonBar = new ButtonBar();
         buttonBar.getButtons().add(button);
 
-        final VBox mainBox = createVBox(txt, buttonBar);
+        val mainBox = createVBox(txt, buttonBar);
         mainBox.getStyleClass().add("main");
 
         setInsets(new Insets(5), txt, buttonBar);
@@ -85,7 +84,7 @@ public class MessageDialog extends Stage {
      */
     public static void showMessage(final Window owner, final String msg) {
         try {
-            final MessageDialog dialog = new MessageDialog(msg);
+            val dialog = new MessageDialog(msg);
             dialog.initOwner(owner);
             dialog.showAndWait();
         } catch (final IllegalStateException e) {

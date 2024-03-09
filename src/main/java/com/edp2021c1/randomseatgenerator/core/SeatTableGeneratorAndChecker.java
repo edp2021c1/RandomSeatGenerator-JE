@@ -19,6 +19,7 @@
 package com.edp2021c1.randomseatgenerator.core;
 
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
+import lombok.val;
 
 import java.util.List;
 
@@ -42,22 +43,22 @@ public interface SeatTableGeneratorAndChecker extends SeatTableGenerator {
      * @throws IllegalConfigException if config is invalid
      */
     default boolean check(final List<String> seatTable, final SeatConfig config) throws IllegalConfigException {
-        final List<String> gl = config.getGroupLeaders();
-        final List<SeparatedPair> sp = config.getSeparatedPairs();
-        final int spNum = sp.size();
-        final int columnCount = config.getColumnCount();
+        val gl = config.getGroupLeaders();
+        val sp = config.getSeparatedPairs();
+        val spNum = sp.size();
+        val columnCount = config.getColumnCount();
 
         // 检查每列是否都有组长
-        for (int i = 0; i < columnCount; i++) {
-            final int iCopy = i;
-            final List<String> list = modifiableIndexFilter(seatTable, index -> index % columnCount == iCopy);
+        for (var i = 0; i < columnCount; i++) {
+            val iCopy = i;
+            val list = modifiableIndexFilter(seatTable, index -> index % columnCount == iCopy);
             list.retainAll(gl);
             if (list.isEmpty()) {
                 return false;
             }
         }
         // 检查是否分开
-        for (int i = 0; i < spNum; i++) {
+        for (var i = 0; i < spNum; i++) {
             if (!sp.get(i).check(seatTable, columnCount)) {
                 return false;
             }

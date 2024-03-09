@@ -20,9 +20,9 @@ package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
+import lombok.val;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Application intro.
@@ -41,7 +41,7 @@ public class RandomSeatGenerator {
      * @param args used to start the application.
      */
     public static void main(final String... args) {
-        final List<String> arguments = Arrays.asList(args);
+        val arguments = Arrays.asList(args);
 
         // 如果有“--help”参数则打印帮助信息然后退出
         if (arguments.contains("--help")) {

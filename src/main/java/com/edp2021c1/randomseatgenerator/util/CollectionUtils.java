@@ -18,6 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import lombok.val;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
@@ -81,7 +83,7 @@ public final class CollectionUtils {
      * @return a randomly picked and removed element of the source collection
      */
     public static <T> T pickRandomlyAndRemove(final Collection<? extends T> src, final RandomGenerator rd) {
-        final T res = pickRandomly(src, rd);
+        val res = pickRandomly(src, rd);
         src.remove(res);
         return res;
     }
@@ -108,7 +110,7 @@ public final class CollectionUtils {
      * @return list generated
      */
     public static <T, R> List<R> buildList(final List<? extends T> input, final Function<T, R> builder) {
-        final List<R> res = new ArrayList<>(input.size());
+        val res = new ArrayList<R>(input.size());
         input.forEach(t -> res.add(builder.apply(t)));
         return res;
     }
@@ -201,7 +203,7 @@ public final class CollectionUtils {
             this.root = root;
             this.rootSize = root.size();
 
-            final List<Integer> indexes = new ArrayList<>();
+            val indexes = new ArrayList<Integer>();
             for (int i = 0, len = root.size(); i < len; i++) {
                 if (indexPredicate.test(i)) {
                     indexes.add(i);
@@ -267,8 +269,8 @@ public final class CollectionUtils {
         @Override
         public int indexOf(final Object o) {
             checkRootSize();
-            int index = -1;
-            for (int i = 0; i < size(); i++) {
+            var index = -1;
+            for (var i = 0; i < size(); i++) {
                 if (Objects.equals(get(i), o)) {
                     index = i;
                 }
@@ -279,8 +281,8 @@ public final class CollectionUtils {
         @Override
         public int lastIndexOf(final Object o) {
             checkRootSize();
-            int lastIndex = -1;
-            for (int i = size() - 1; i > -1; i--) {
+            var lastIndex = -1;
+            for (var i = size() - 1; i > -1; i--) {
                 if (Objects.equals(get(i), o)) {
                     lastIndex = i;
                 }
@@ -291,7 +293,7 @@ public final class CollectionUtils {
         @Override
         public boolean contains(final Object o) {
             checkRootSize();
-            for (final T t : this) {
+            for (val t : this) {
                 if (Objects.equals(t, o)) {
                     return true;
                 }

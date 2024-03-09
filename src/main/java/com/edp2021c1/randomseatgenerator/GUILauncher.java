@@ -18,7 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator;
 
-import com.edp2021c1.randomseatgenerator.ui.UIFactory;
+import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
@@ -47,11 +47,6 @@ public class GUILauncher extends Application {
      */
     public static void launch() {
         try {
-            RuntimeUtils.runtimeConfig.put("launching.gui", true);
-            Logging.start();
-            if (IOUtils.notFullyPermitted(Metadata.DATA_DIR)) {
-                CrashReporter.report(new IOException("Does not have read/write permission of the data directory"));
-            }
             Application.launch(GUILauncher.class);
         } catch (final Throwable e) {
             CrashReporter.report(e);
@@ -59,17 +54,22 @@ public class GUILauncher extends Application {
     }
 
     @Override
-    public void start(final Stage primaryStage) {
-        try {
-            UIFactory.setGlobalDarkMode(!Boolean.FALSE.equals(ConfigHolder.global().get().getBoolean("appearance.style.dark")));
-            MainWindow.getMainWindow(this).show();
-        } catch (final Throwable e) {
-            CrashReporter.report(e);
+    public void init() {
+        RuntimeUtils.initStatic(true);
+        Logging.start();
+        if (IOUtils.notFullyPermitted(Metadata.DATA_DIR)) {
+            CrashReporter.report(new IOException("Does not have read/write permission of the data directory"));
         }
+        UIUtils.setGlobalDarkMode(!Boolean.FALSE.equals(ConfigHolder.global().get().getBoolean("appearance.style.dark")));
     }
 
     @Override
-    public void stop() {
-        System.exit(0);
+    public void start(final Stage primaryStage) {
+        try {
+            DesktopUtils.initStatic();
+            MainWindow.getMainWindow().show();
+        } catch (final Throwable e) {
+            CrashReporter.report(e);
+        }
     }
 }

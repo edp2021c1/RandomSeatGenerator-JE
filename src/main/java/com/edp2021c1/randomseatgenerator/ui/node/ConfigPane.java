@@ -18,7 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
-import com.edp2021c1.randomseatgenerator.ui.UIFactory;
+import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import javafx.beans.property.BooleanProperty;
@@ -28,6 +28,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import lombok.val;
 
 import java.util.Objects;
 
@@ -109,13 +110,13 @@ public class ConfigPane extends VBox {
         this.source = configSource;
         this.current = source.get();
 
-        final HBox box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
+        val box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
         box1.setPrefHeight(60);
         box1.setAlignment(Pos.CENTER);
-        final HBox box2 = new HBox(nameListInput, groupLeaderListInput, separateListInput, luckyOptionCheck);
+        val box2 = new HBox(nameListInput, groupLeaderListInput, separateListInput, luckyOptionCheck);
         box2.setPrefHeight(60);
         box2.setAlignment(Pos.CENTER);
-        final HBox box3 = new HBox(exportWritableCheck, darkModeCheck);
+        val box3 = new HBox(exportWritableCheck, darkModeCheck);
         box3.setPrefHeight(60);
         box3.setAlignment(Pos.CENTER);
         getChildren().addAll(box1, box2, box3);
@@ -159,7 +160,7 @@ public class ConfigPane extends VBox {
             current.put("export.writable", newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        darkModeCheck.selectedProperty().bindBidirectional(UIFactory.globalDarkModeProperty());
+        darkModeCheck.selectedProperty().bindBidirectional(UIUtils.globalDarkModeProperty());
     }
 
     /**

@@ -18,7 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
-import com.edp2021c1.randomseatgenerator.ui.UIFactory;
+import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
@@ -26,7 +26,6 @@ import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
@@ -40,12 +39,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.Cleanup;
 import lombok.Getter;
+import lombok.val;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.ui.UIFactory.*;
+import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
 
 /**
@@ -75,13 +75,13 @@ public class SettingsDialog extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        final IntegerField rowCountInput = new IntegerField(true, "行数");
+        val rowCountInput = new IntegerField(true, "行数");
 
-        final IntegerField columnCountInput = new IntegerField(true, "列数");
+        val columnCountInput = new IntegerField(true, "列数");
 
-        final IntegerField rbrInput = new IntegerField(true, "随机轮换的行数");
+        val rbrInput = new IntegerField(true, "随机轮换的行数");
 
-        final TextField disabledLastRowPosInput = createEmptyTextField("最后一排不可选位置");
+        val disabledLastRowPosInput = createEmptyTextField("最后一排不可选位置");
         disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
             if (Objects.equals(oldValue, newValue)) {
                 return;
@@ -91,25 +91,25 @@ public class SettingsDialog extends Stage {
             }
         });
 
-        final TextField nameListInput = createEmptyTextField("名单 (按身高排序)");
+        val nameListInput = createEmptyTextField("名单 (按身高排序)");
 
-        final TextField groupLeaderListInput = createEmptyTextField("组长列表");
+        val groupLeaderListInput = createEmptyTextField("组长列表");
 
-        final TextArea separateListInput = createTextArea("拆分列表", 165, 56);
+        val separateListInput = createTextArea("拆分列表", 165, 56);
 
-        final CheckBox luckyOptionCheck = new CheckBox("随机挑选一名幸运儿");
+        val luckyOptionCheck = new CheckBox("随机挑选一名幸运儿");
 
-        final CheckBox exportWritableCheck = new CheckBox("导出为可写");
+        val exportWritableCheck = new CheckBox("导出为可写");
 
-        final CheckBox darkModeCheck = new CheckBox("深色模式");
+        val darkModeCheck = new CheckBox("深色模式");
 
-        final Button loadConfigBtn = createButton("从文件加载", 90, 26);
+        val loadConfigBtn = createButton("从文件加载", 90, 26);
 
-        final Button applyBtn = createButton("应用", 80, 26);
+        val applyBtn = createButton("应用", 80, 26);
         applyBtn.setDisable(true);
         BooleanProperty applyBtnDisabledProperty = applyBtn.disableProperty();
 
-        final ConfigPane configPane = new ConfigPane(
+        val configPane = new ConfigPane(
                 rowCountInput,
                 columnCountInput,
                 rbrInput,
@@ -124,54 +124,54 @@ public class SettingsDialog extends Stage {
                 cfHolder
         );
 
-        final HBox loadConfigBtnBox = new HBox(loadConfigBtn);
+        val loadConfigBtnBox = new HBox(loadConfigBtn);
         loadConfigBtnBox.setPrefHeight(45);
         loadConfigBtnBox.setAlignment(Pos.CENTER);
 
-        final VBox appConfigBox = new VBox(configPane, loadConfigBtnBox);
+        val appConfigBox = new VBox(configPane, loadConfigBtnBox);
 
-        final ImageView iconView = new ImageView(getIcon());
+        val iconView = new ImageView(getIcon());
         iconView.setFitWidth(275);
         iconView.setFitHeight(275);
 
-        final Label randomSeatGeneratorLabel = new Label(NAME);
+        val randomSeatGeneratorLabel = new Label(NAME);
         randomSeatGeneratorLabel.setPrefHeight(32);
         randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
 
-        final Hyperlink versionLink = new Hyperlink("版本:        " + VERSION);
+        val versionLink = new Hyperlink("版本:        " + VERSION);
 
-        final Hyperlink gitRepositoryLink = new Hyperlink("Git仓库:   " + GIT_REPOSITORY_URI);
+        val gitRepositoryLink = new Hyperlink("Git仓库:   " + GIT_REPOSITORY_URI);
 
-        final Hyperlink licenseLink = new Hyperlink("许可证:    %s(%s)".formatted(LICENSE_NAME, LICENSE_URI));
+        val licenseLink = new Hyperlink("许可证:    %s(%s)".formatted(LICENSE_NAME, LICENSE_URI));
 
-        final TextArea licenseText = createTextArea(null, 650, 288);
+        val licenseText = createTextArea(null, 650, 288);
         licenseText.setText(LICENSE_INFO);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");
 
-        final VBox bottomRightBox = new VBox(randomSeatGeneratorLabel, versionLink, gitRepositoryLink, licenseLink, licenseText);
+        val bottomRightBox = new VBox(randomSeatGeneratorLabel, versionLink, gitRepositoryLink, licenseLink, licenseText);
         bottomRightBox.setAlignment(Pos.CENTER_LEFT);
 
-        final HBox aboutInfoBox = new HBox(iconView, bottomRightBox);
+        val aboutInfoBox = new HBox(iconView, bottomRightBox);
 
-        final Button confirmBtn = createButton("确定", 80, 26);
+        val confirmBtn = createButton("确定", 80, 26);
 
-        final Button cancelBtn = createButton("取消", 80, 26);
+        val cancelBtn = createButton("取消", 80, 26);
 
-        final ButtonBar confirm_apply_cancelBar = new ButtonBar();
+        val confirm_apply_cancelBar = new ButtonBar();
         confirm_apply_cancelBar.getButtons().addAll(confirmBtn, applyBtn, cancelBtn);
         confirm_apply_cancelBar.setPrefHeight(66);
         confirm_apply_cancelBar.getStyleClass().add("bottom");
 
-        final Tab appConfigTab = new Tab("常规", appConfigBox);
+        val appConfigTab = new Tab("常规", appConfigBox);
         appConfigTab.setClosable(false);
 
-        final Tab aboutInfoTab = new Tab("关于", aboutInfoBox);
+        val aboutInfoTab = new Tab("关于", aboutInfoBox);
         aboutInfoTab.setClosable(false);
 
-        final TabPane topPane = new TabPane(appConfigTab, aboutInfoTab);
+        val topPane = new TabPane(appConfigTab, aboutInfoTab);
 
-        final VBox mainBox = new VBox(topPane, confirm_apply_cancelBar);
+        val mainBox = new VBox(topPane, confirm_apply_cancelBar);
         mainBox.getStyleClass().add("main");
 
         setInsets(new Insets(5),
@@ -193,13 +193,13 @@ public class SettingsDialog extends Stage {
         initOwner(getMainWindow());
         decorate(this, StageType.DIALOG);
 
-        final FileChooser fc = new FileChooser();
+        val fc = new FileChooser();
         fc.setTitle("加载配置文件");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
 
         importDir = fc.initialDirectoryProperty();
 
-        final JSONAppConfig config = cfHolder.get();
+        val config = cfHolder.get();
         importDir.set(config.getString("import.dir.previous") == null ? cfHolder.getConfigPath().getParent().toFile() : new File(config.getString("import.dir.previous")));
 
         /* *************************************************************************
@@ -210,7 +210,7 @@ public class SettingsDialog extends Stage {
 
         loadConfigBtn.setOnAction(event -> {
             try {
-                File tmp = fc.getInitialDirectory();
+                var tmp = fc.getInitialDirectory();
                 if (tmp != null) {
                     while (!tmp.isDirectory()) {
                         tmp = tmp.getParentFile();
@@ -224,7 +224,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 try {
-                    @Cleanup final ConfigHolder temp = ConfigHolder.createHolder(importFile.toPath());
+                    @Cleanup val temp = ConfigHolder.createHolder(importFile.toPath());
                     configPane.reset(temp.get());
                 } catch (final IOException e) {
                     throw new RuntimeException("Failed to load config from file", e);
@@ -240,8 +240,7 @@ public class SettingsDialog extends Stage {
         applyBtn.setOnAction(event -> {
             try {
                 cfHolder.putAll(configPane.getCurrent().checkAndReturn());
-
-                UIFactory.getMainWindow().configChanged();
+                UIUtils.getMainWindow().configChanged();
                 applyBtn.setDisable(true);
             } catch (final Throwable e) {
                 CrashReporter.report(e);

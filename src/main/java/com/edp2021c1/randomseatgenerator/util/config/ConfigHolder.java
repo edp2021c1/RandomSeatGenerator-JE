@@ -24,9 +24,9 @@ import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
 import lombok.Getter;
+import lombok.val;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,7 +54,7 @@ public class ConfigHolder implements AutoCloseable {
         try {
             replaceWithDirectory(GLOBAL_CONFIG_PATH.getParent());
 
-            boolean needsInit = false;
+            var needsInit = false;
 
             if (!Files.isRegularFile(GLOBAL_CONFIG_PATH)) {
                 deleteIfExists(GLOBAL_CONFIG_PATH);
@@ -66,7 +66,7 @@ public class ConfigHolder implements AutoCloseable {
             global = createHolder(GLOBAL_CONFIG_PATH);
 
             if (needsInit) {
-                final InputStream builtInConfigStream = ConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
+                val builtInConfigStream = ConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
                 if (builtInConfigStream != null) {
                     global.putJson(new String(
                             builtInConfigStream.readAllBytes()
@@ -95,7 +95,7 @@ public class ConfigHolder implements AutoCloseable {
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
     private ConfigHolder(final Path configPath) throws IOException {
-        content = new JSONAppConfig();
+        this.content = new JSONAppConfig();
         this.configPath = configPath;
 
         if (notFullyPermitted(replaceWithDirectory(configPath.getParent()))) {

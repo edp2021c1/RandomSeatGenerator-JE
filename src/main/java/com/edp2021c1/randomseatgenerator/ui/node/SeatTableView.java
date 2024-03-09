@@ -28,6 +28,7 @@ import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
+import lombok.val;
 
 /**
  * View of seat table.
@@ -53,7 +54,7 @@ public class SeatTableView extends VBox {
 
         getChildren().addListener((ListChangeListener<Node>) c -> {
             while (c.next()) {
-                for (final Node n : c.getAddedSubList()) {
+                for (val n : c.getAddedSubList()) {
                     if (!(n instanceof SeatTableRow)) {
                         throw new UnsupportedOperationException("Cannot add a non-row child");
                     }
@@ -71,7 +72,7 @@ public class SeatTableView extends VBox {
 
             getChildren().clear();
             newValue.toRowData().forEach(s -> {
-                final SeatTableRow row = new SeatTableRow(s, columnCount.get());
+                val row = new SeatTableRow(s, columnCount.get());
                 row.prefHeightProperty().bind(heightProperty().divide(rowCount));
                 getChildren().add(row);
             });

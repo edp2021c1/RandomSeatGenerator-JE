@@ -22,6 +22,7 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Getter;
+import lombok.val;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -43,7 +44,7 @@ public class SeatRowData {
     private static final List<Field> fields;
 
     static {
-        final Class<SeatRowData> clazz = SeatRowData.class;
+        val clazz = SeatRowData.class;
         fields = buildList(range(1, SeatTable.MAX_COLUMN_COUNT + 1), i -> {
             final Field field;
             try {
@@ -105,14 +106,14 @@ public class SeatRowData {
      * @param names name data
      */
     SeatRowData(final String... names) {
-        final int len = names.length;
+        val len = names.length;
         if (len > SeatTable.MAX_COLUMN_COUNT) {
             throw new IllegalConfigException(
                     "Count of people in a row cannot be larger than " + SeatTable.MAX_COLUMN_COUNT
             );
         }
         try {
-            for (int i = 0; i < len; i++) {
+            for (var i = 0; i < len; i++) {
                 fields.get(i).set(this, names[i]);
             }
         } catch (final IllegalAccessException e) {

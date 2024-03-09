@@ -19,9 +19,9 @@
 package com.edp2021c1.randomseatgenerator.core;
 
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
+import lombok.val;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
 import static java.util.Collections.fill;
@@ -44,7 +44,7 @@ public interface SeatTableGenerator {
      * Empty generator.
      */
     SeatTableGenerator emptyGenerator = (config, seed) -> {
-        final List<String> seat = Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]);
+        val seat = Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]);
         fill(seat, EMPTY_SEAT_PLACEHOLDER);
         return new SeatTable(seat, config, EMPTY_SEAT_PLACEHOLDER, EMPTY_SEAT_PLACEHOLDER);
     };
@@ -58,7 +58,7 @@ public interface SeatTableGenerator {
      * @return an instance of {@code SeatTable}
      * @throws IllegalConfigException if config is null or is illegal
      */
-    SeatTable generate(final SeatConfig config, String seed)
+    SeatTable generate(SeatConfig config, String seed)
             throws NullPointerException, IllegalConfigException;
 
 }

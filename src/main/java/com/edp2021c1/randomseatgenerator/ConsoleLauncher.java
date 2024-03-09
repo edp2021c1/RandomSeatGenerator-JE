@@ -21,7 +21,7 @@ package com.edp2021c1.randomseatgenerator;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
+import lombok.val;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -49,7 +49,7 @@ public class ConsoleLauncher {
      * @param args arguments used to launch the application.
      */
     public static void launch(final List<String> args) {
-        RuntimeUtils.runtimeConfig.put("launching.gui", false);
+        RuntimeUtils.initStatic(false);
         Logging.start();
 
         if (!Files.isReadable(Metadata.DATA_DIR)) {
@@ -59,17 +59,15 @@ public class ConsoleLauncher {
         int i;
 
         // 种子，默认为随机字符串
-        final String seed;
+        var seed = Strings.randomString(30);
         // 获取种子
         if ((i = args.lastIndexOf("--seed")) != -1 && i < args.size() - 1) {
             seed = args.get(i + 1);
             Logging.info("Seed set to " + seed);
-        } else {
-            seed = Strings.randomString(30);
         }
 
         // 导出路径
-        final Path outputPath;
+        var outputPath = SeatTable.DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date()));
         // 获取导出路径
         if ((i = args.lastIndexOf("--output-path")) != -1 && i < args.size() - 1) {
             outputPath = Path.of(args.get(i + 1)).toAbsolutePath();
@@ -86,33 +84,28 @@ public class ConsoleLauncher {
                     Logging.warning("Failed to clear the output path");
                 }
             }
-        } else {
-            outputPath = SeatTable.DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date()));
         }
 
         // 处理座位表生成配置
-        final JSONAppConfig config;
+        var config = ConfigHolder.global().get().checkAndReturn();
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
-        final Path configPath;
+        var configPath = ConfigHolder.global().getConfigPath();
         // 获取配置文件路径
         if ((i = args.lastIndexOf("--config-path")) != -1 && i < args.size() - 1) {
             configPath = Path.of(args.get(i + 1)).toAbsolutePath();
             Logging.info("Config path set to " + configPath);
             try {
-                final ConfigHolder holder = ConfigHolder.createHolder(configPath);
+                val holder = ConfigHolder.createHolder(configPath);
                 config = holder.get().checkAndReturn();
                 holder.close();
             } catch (final IOException e) {
                 throw new RuntimeException("Failed to load config from specific file", e);
             }
-        } else {
-            configPath = ConfigHolder.global().getConfigPath();
-            config = ConfigHolder.global().get().checkAndReturn();
         }
         Logging.debug("Config path: " + configPath);
 
         // 生成座位表
-        final SeatTable seatTable = SeatTable.generate(config, seed);
+        val seatTable = SeatTable.generate(config, seed);
 
         Logging.info("\n" + seatTable);
 
