@@ -23,7 +23,8 @@ import lombok.val;
 
 import java.util.List;
 
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableIndexFilter;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.elementFilter;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.indexFilter;
 
 /**
  * Default checker implementation class.
@@ -51,9 +52,7 @@ public interface SeatTableGeneratorAndChecker extends SeatTableGenerator {
         // 检查每列是否都有组长
         for (var i = 0; i < columnCount; i++) {
             val iCopy = i;
-            val list = modifiableIndexFilter(seatTable, index -> index % columnCount == iCopy);
-            list.retainAll(gl);
-            if (list.isEmpty()) {
+            if (elementFilter(indexFilter(seatTable, index -> index % columnCount == iCopy), gl::contains).isEmpty()) {
                 return false;
             }
         }

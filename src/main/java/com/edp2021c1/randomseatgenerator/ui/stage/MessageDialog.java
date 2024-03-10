@@ -69,10 +69,10 @@ public class MessageDialog extends Stage {
      */
     public static void showMessage(final String msg) {
         try {
-            new MessageDialog(msg).showAndWait();
-        } catch (final Throwable e) {
             messageToBeShown = msg;
             Application.launch(MessageDialogApp.class);
+        } catch (final IllegalStateException e) {
+            new MessageDialog(msg).showAndWait();
         }
     }
 
@@ -84,12 +84,12 @@ public class MessageDialog extends Stage {
      */
     public static void showMessage(final Window owner, final String msg) {
         try {
+            messageToBeShown = msg;
+            Application.launch(MessageDialogApp.class);
+        } catch (final IllegalStateException e) {
             val dialog = new MessageDialog(msg);
             dialog.initOwner(owner);
             dialog.showAndWait();
-        } catch (final IllegalStateException e) {
-            messageToBeShown = msg;
-            Application.launch(MessageDialogApp.class);
         }
     }
 
@@ -99,13 +99,14 @@ public class MessageDialog extends Stage {
     public static class MessageDialogApp extends Application {
 
         /**
-         * Don't let anyone else instantiate this class.
+         * Default constructor.
          */
-        private MessageDialogApp() {
+        public MessageDialogApp() {
+            super();
         }
 
         @Override
-        public void start(Stage primaryStage) {
+        public void start(final Stage primaryStage) {
             new MessageDialog(messageToBeShown).showAndWait();
         }
     }

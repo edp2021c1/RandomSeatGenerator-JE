@@ -120,15 +120,13 @@ public final class Logging {
     /**
      * Starts logging.
      */
-    public static void start() {
+    public static void start(final boolean withGUI) {
         if (!closed) {
             debug("Logging already started, there's no need to start it twice");
             return;
         }
 
         closed = false;
-
-        val withGUI = Boolean.TRUE.equals(RuntimeUtils.runtimeConfig.getBoolean("launching.gui"));
 
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);

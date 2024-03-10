@@ -34,7 +34,7 @@ public interface SeatConfig {
      * Returns row count.
      *
      * @return {@code  row_count}
-     * @throws IllegalConfigException if row count is null or not larger than 0
+     * @throws IllegalConfigException if row count is null or not positive
      */
     int getRowCount() throws IllegalConfigException;
 
@@ -42,17 +42,17 @@ public interface SeatConfig {
      * Returns column count.
      *
      * @return column count
-     * @throws IllegalConfigException if column count is null or not larger than 0,
+     * @throws IllegalConfigException if column count is null or not positive,
      *                                or larger than {@link SeatTable#MAX_COLUMN_COUNT}
      * @see SeatTable#MAX_COLUMN_COUNT
      */
     int getColumnCount() throws IllegalConfigException;
 
     /**
-     * Returns random between rows, row count if is null or not larger than 0.
+     * Returns random between rows, row count if is null or not positive.
      *
      * @return {@code  random_between_rows}
-     * @throws IllegalConfigException if row count is null, or not larger than zero
+     * @throws IllegalConfigException if row count is null, or not positive
      */
     int getRandomBetweenRows() throws IllegalConfigException;
 

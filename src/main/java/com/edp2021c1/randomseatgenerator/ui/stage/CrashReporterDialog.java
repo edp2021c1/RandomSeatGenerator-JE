@@ -101,11 +101,11 @@ public class CrashReporterDialog extends Stage {
      */
     public static void showCrashReporter(final String title, final String msg) {
         try {
-            new CrashReporterDialog(title, msg).showAndWait();
-        } catch (final Throwable exception) {
             titleToBeShown = title;
             messageToBeShown = msg;
             Application.launch(CrashReporterApp.class);
+        } catch (final IllegalStateException e) {
+            new CrashReporterDialog(title, msg).showAndWait();
         }
     }
 
@@ -115,9 +115,9 @@ public class CrashReporterDialog extends Stage {
     public static class CrashReporterApp extends Application {
 
         /**
-         * Don't let anyone else instantiate this class.
+         * Default constructor.
          */
-        private CrashReporterApp() {
+        public CrashReporterApp() {
         }
 
         @Override

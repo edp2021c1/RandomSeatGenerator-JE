@@ -97,7 +97,7 @@ public class SeatTable {
     SeatTable(final List<String> table, final SeatConfig config, final String seed, final String luckyPerson) {
         this.table = Collections.unmodifiableList(table);
         this.config = config;
-        this.seed = seed;
+        this.seed = seed == null ? "null" : seed.isEmpty() ? "empty_string" : seed;
         this.luckyPerson = config.isLucky() ? luckyPerson : null;
     }
 
@@ -183,11 +183,11 @@ public class SeatTable {
 
     @Override
     public String toString() {
-        final int columnCount = config.getColumnCount();
+        val columnCount = config.getColumnCount();
 
-        final StringBuilder str = new StringBuilder("Seat Table:\n");
+        val str = new StringBuilder("Seat Table:\n");
 
-        for (int i = 0; i < table.size(); i++) {
+        for (var i = 0; i < table.size(); i++) {
             if (i % columnCount == 0) {
                 str.append("\n");
             }
@@ -209,14 +209,19 @@ public class SeatTable {
      * @throws RuntimeException if an I/O error occurs
      */
     public void exportToExcelDocument(final Path filePath, final boolean writable) {
+        if (filePath == null) {
+            exportToExcelDocument(DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date())), writable);
+            return;
+        }
         try {
+            IOUtils.replaceWithDirectory(filePath.getParent());
             IOUtils.deleteIfExists(filePath);
             EasyExcel.write(filePath.toFile(), SeatRowData.class)
                     .sheet("座位表-%tF".formatted(new Date()))
                     .excludeColumnIndexes(CollectionUtils.range(Math.max(config.getColumnCount(), 2), MAX_COLUMN_COUNT))
                     .doWrite(toRowData());
             if (!(writable || filePath.toFile().setReadOnly())) {
-                throw new RuntimeException("Failed to save seat table to " + filePath);
+                throw new IOException();
             }
         } catch (final IOException e) {
             throw new RuntimeException("Failed to save seat table to " + filePath, e);

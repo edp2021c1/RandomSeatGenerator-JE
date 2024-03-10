@@ -19,10 +19,13 @@
 package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
+import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import lombok.val;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Application intro.
@@ -60,12 +63,16 @@ public class RandomSeatGenerator {
         Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.instance);
         Thread.currentThread().setName("Main Thread");
 
-        // 如果是命令行模式则启动命令行程序
-        if (arguments.contains("--nogui")) {
-            ConsoleLauncher.launch(arguments);
-        }
+        launch(!arguments.contains("--nogui"), arguments);
+    }
 
-        // 如果不是命令行模式则启动JavaFX程序
-        GUILauncher.launch();
+    private static void launch(final boolean useGUI, final List<String> args) {
+        RuntimeUtils.initStatic(useGUI);
+        Logging.start(useGUI);
+        if (useGUI) {
+            GUILauncher.launch();
+        } else {
+            ConsoleLauncher.launch(args);
+        }
     }
 }

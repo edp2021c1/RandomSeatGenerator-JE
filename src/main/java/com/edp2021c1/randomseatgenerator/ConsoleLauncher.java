@@ -19,7 +19,10 @@
 package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.IOUtils;
+import com.edp2021c1.randomseatgenerator.util.Logging;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import lombok.val;
 
@@ -49,9 +52,6 @@ public class ConsoleLauncher {
      * @param args arguments used to launch the application.
      */
     public static void launch(final List<String> args) {
-        RuntimeUtils.initStatic(false);
-        Logging.start();
-
         if (!Files.isReadable(Metadata.DATA_DIR)) {
             throw new RuntimeException(new IOException("Does not have read permission of the data directory"));
         }

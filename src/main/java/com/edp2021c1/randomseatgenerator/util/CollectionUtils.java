@@ -23,6 +23,7 @@ import lombok.val;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
+import java.util.function.Predicate;
 import java.util.random.RandomGenerator;
 
 /**
@@ -48,17 +49,6 @@ public final class CollectionUtils {
      */
     public static List<Integer> range(final int origin, final int bound) {
         return new Range(origin, bound);
-    }
-
-    /**
-     * Returns a modifiable range of integers from origin (inclusive) to bound (exclusive).
-     *
-     * @param origin the least value that can be returned
-     * @param bound  the upper bound (exclusive)
-     * @return a modifiable range of integer from origin (inclusive) to bound (exclusive)
-     */
-    public static List<Integer> modifiableRange(final int origin, final int bound) {
-        return modifiableList(range(origin, bound));
     }
 
     /**
@@ -116,12 +106,12 @@ public final class CollectionUtils {
     }
 
     /**
-     * Returns a {@link IndexFilterList}.
+     * Returns a list containing the elements whose index matches the predicate.
      *
      * @param list           input list
      * @param indexPredicate filter of the index of elements
      * @param <T>            type of elements in the list
-     * @return a {@link IndexFilterList}
+     * @return a list containing the elements whose index matches the predicate
      */
     public static <T> List<T> indexFilter(final List<T> list, final IntPredicate indexPredicate) {
         if (list instanceof RandomAccess) {
@@ -130,16 +120,8 @@ public final class CollectionUtils {
         return new IndexFilterList<>(list, indexPredicate);
     }
 
-    /**
-     * Returns a modify-free index filter list.
-     *
-     * @param list           input list
-     * @param indexPredicate filter of the index of elements
-     * @param <T>            type of elements in the list
-     * @return a modify-free index filter list
-     */
-    public static <T> List<T> modifiableIndexFilter(final List<T> list, final IntPredicate indexPredicate) {
-        return modifiableList(indexFilter(list, indexPredicate));
+    public static <T> List<T> elementFilter(final List<T> list, final Predicate<T> elementPredicate) {
+        return list.stream().filter(elementPredicate).toList();
     }
 
     /**
@@ -194,7 +176,7 @@ public final class CollectionUtils {
     }
 
     private static class IndexFilterList<T> extends AbstractList<T> {
-        private final Integer[] indexes;
+        private final List<Integer> indexes;
         private final List<T> root;
         private final int size;
         private final int rootSize;
@@ -203,26 +185,25 @@ public final class CollectionUtils {
             this.root = root;
             this.rootSize = root.size();
 
-            val indexes = new ArrayList<Integer>();
+            this.indexes = new ArrayList<>();
             for (int i = 0, len = root.size(); i < len; i++) {
                 if (indexPredicate.test(i)) {
                     indexes.add(i);
                 }
             }
-            this.indexes = indexes.toArray(new Integer[0]);
-            this.size = this.indexes.length;
+            this.size = this.indexes.size();
         }
 
         @Override
         public T get(final int index) {
             checkRootSize();
-            return root.get(indexes[Objects.checkIndex(index, size)]);
+            return root.get(indexes.get(Objects.checkIndex(index, size)));
         }
 
         @Override
         public T set(final int index, final T obj) {
             checkRootSize();
-            return root.set(indexes[index], obj);
+            return root.set(indexes.get(index), obj);
         }
 
         @Override
@@ -244,7 +225,7 @@ public final class CollectionUtils {
         }
 
         @Override
-        public boolean contains(Object o) {
+        public boolean contains(final Object o) {
             checkRootSize();
             return super.contains(o);
         }
