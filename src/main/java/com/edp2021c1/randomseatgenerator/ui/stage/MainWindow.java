@@ -66,6 +66,7 @@ public class MainWindow extends Stage {
      */
     private MainWindow() {
         super();
+        setMainWindow(this);
 
         cfHolder = ConfigHolder.global();
 
@@ -225,7 +226,7 @@ public class MainWindow extends Stage {
             });
         }
 
-        Double d = cfHolder.get().getDouble("appearance.window.main.height");
+        var d = cfHolder.get().getDouble("appearance.window.main.height");
         if (d != null) {
             setHeight(d);
         }
