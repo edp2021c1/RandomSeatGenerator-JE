@@ -21,11 +21,8 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
-import com.edp2021c1.randomseatgenerator.util.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
-import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
-import com.edp2021c1.randomseatgenerator.util.Strings;
-import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
@@ -37,7 +34,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import lombok.Cleanup;
 import lombok.Getter;
 import lombok.val;
 
@@ -58,8 +54,7 @@ public class SettingsDialog extends Stage {
     @Getter
     private static final SettingsDialog settingsDialog = new SettingsDialog();
     private final ObjectProperty<File> importDir;
-    private final ConfigHolder cfHolder;
-    private File importFile;
+    private final JSONAppConfigHolder cfHolder;
 
     /**
      * Creates an instance.
@@ -67,7 +62,7 @@ public class SettingsDialog extends Stage {
     private SettingsDialog() {
         super();
 
-        cfHolder = ConfigHolder.global();
+        cfHolder = JSONAppConfigHolder.global();
 
         /* *************************************************************************
          *                                                                         *
@@ -97,7 +92,7 @@ public class SettingsDialog extends Stage {
 
         val separateListInput = createTextArea("拆分列表", 165, 56);
 
-        val luckyOptionCheck = new CheckBox("随机挑选一名幸运儿");
+        val luckyOptionCheck = new CheckBox("随机挑选左护法");
 
         val exportWritableCheck = new CheckBox("导出为可写");
 
@@ -210,28 +205,31 @@ public class SettingsDialog extends Stage {
 
         loadConfigBtn.setOnAction(event -> {
             try {
-                var tmp = fc.getInitialDirectory();
+                var tmp = importDir.get();
                 if (tmp != null) {
                     while (!tmp.isDirectory()) {
                         tmp = tmp.getParentFile();
                     }
-                    fc.setInitialDirectory(tmp);
+                    importDir.set(tmp);
                 }
 
-                importFile = fc.showOpenDialog(this);
+                val importFile = fc.showOpenDialog(this);
                 if (importFile == null) {
                     return;
                 }
 
                 try {
-                    @Cleanup val temp = ConfigHolder.createHolder(importFile.toPath());
-                    configPane.reset(temp.get());
+                    val temp = JSONAppConfigHolder.createHolder(importFile.toPath(), false);
+                    configPane.setContent(temp.get());
+                    temp.close();
                 } catch (final IOException e) {
-                    throw new RuntimeException("Failed to load config from file", e);
+                    Logging.warning("Failed to import config");
+                    Logging.warning(Strings.getStackTrace(e));
+                    MessageDialog.showMessage(this, "导入设置失败");
                 }
 
                 importDir.set(importFile.getParentFile());
-                cfHolder.put("import.dir.previous", importDir.toString());
+                cfHolder.put("import.dir.previous", importDir.get().toString());
             } catch (final Throwable e) {
                 CrashReporter.report(e);
             }
@@ -239,7 +237,7 @@ public class SettingsDialog extends Stage {
 
         applyBtn.setOnAction(event -> {
             try {
-                cfHolder.putAll(configPane.getCurrent().checkAndReturn());
+                cfHolder.putAll(configPane.getContent().checkAndReturn());
                 UIUtils.getMainWindow().configChanged();
                 applyBtn.setDisable(true);
             } catch (final Throwable e) {
@@ -285,6 +283,6 @@ public class SettingsDialog extends Stage {
             });
         }
 
-        setOnShown(event -> configPane.reset(cfHolder.get()));
+        setOnShown(event -> configPane.setContent(cfHolder.get()));
     }
 }

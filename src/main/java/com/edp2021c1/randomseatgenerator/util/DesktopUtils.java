@@ -44,12 +44,6 @@ public final class DesktopUtils {
     }
 
     /**
-     * Called on JavaFX application start up.
-     */
-    public static void initStatic() {
-    }
-
-    /**
      * Launches the default browser to display a {@code URI} if supported.
      * If the default browser is unable to handle the specified
      * {@code URI}, the application registered for handling

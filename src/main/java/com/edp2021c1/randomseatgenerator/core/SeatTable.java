@@ -113,7 +113,7 @@ public class SeatTable {
      *                                costs too much time to generate the seat table
      */
     public static SeatTable generate(final SeatConfig config, final String seed, final SeatTableGenerator generator) {
-        @Cleanup val exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
+        @Cleanup("shutdownNow") val exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
         try {
             return exe.submit(() -> generator.generate(config.checkAndReturn(), seed)).get(3, TimeUnit.SECONDS);
         } catch (final ExecutionException e) {

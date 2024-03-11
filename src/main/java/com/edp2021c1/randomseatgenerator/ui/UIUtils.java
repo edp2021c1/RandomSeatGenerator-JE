@@ -20,7 +20,7 @@ package com.edp2021c1.randomseatgenerator.ui;
 
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
@@ -59,7 +59,7 @@ public class UIUtils {
     private static final BooleanProperty globalDarkMode = new SimpleBooleanProperty(null, "globalDarkMode") {
         @Override
         protected void invalidated() {
-            ConfigHolder.global().put("appearance.style.dark", get());
+            JSONAppConfigHolder.global().put("appearance.style.dark", get());
         }
     };
     @Getter

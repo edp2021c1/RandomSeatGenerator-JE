@@ -21,7 +21,7 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
-import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -55,7 +55,7 @@ public class MainWindow extends Stage {
     @Getter
     private static final MainWindow mainWindow = new MainWindow();
     private final SeatTableView seatTableView;
-    private final ConfigHolder cfHolder;
+    private final JSONAppConfigHolder cfHolder;
     private final StringProperty seed;
     private final ObjectProperty<SeatTable> seatTable;
     private String previousSeed = null;
@@ -68,7 +68,7 @@ public class MainWindow extends Stage {
         super();
         setMainWindow(this);
 
-        cfHolder = ConfigHolder.global();
+        cfHolder = JSONAppConfigHolder.global();
 
         val config = cfHolder.get();
 
@@ -256,11 +256,6 @@ public class MainWindow extends Stage {
         seatTableView.setEmptySeatTable(cfHolder.get());
         generated = false;
         previousSeed = null;
-    }
-
-    @Override
-    public void close() {
-        super.close();
     }
 
 }

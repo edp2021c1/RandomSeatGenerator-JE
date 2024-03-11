@@ -18,11 +18,14 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.JSONConfig;
-import lombok.val;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+
+import static java.lang.Runtime.getRuntime;
 
 /**
  * Runtime utils.
@@ -35,9 +38,9 @@ public final class RuntimeUtils {
     /**
      * Runtime config.
      */
-    public static final JSONConfig runtimeConfig = new JSONConfig();
-
+    public static final JSONAppConfig runtimeConfig = new JSONAppConfig();
     private static final Hashtable<Long, Thread> threadIdHashtable = new Hashtable<>();
+    private static final List<Runnable> runOnExit = new ArrayList<>(3);
     private static boolean staticInitialized;
 
     /**
@@ -51,10 +54,28 @@ public final class RuntimeUtils {
      */
     public static void initStatic(final boolean gui) {
         if (!staticInitialized) {
-            Runtime.getRuntime().addShutdownHook(new Thread(RuntimeUtils::exit, "Exit Hook"));
-            RuntimeUtils.runtimeConfig.put("launching.gui", gui);
+            getRuntime().addShutdownHook(new Thread(() -> {
+                synchronized (runOnExit) {
+                    for (int i = 0, j = runOnExit.size(); i < j; i++) {
+                        new Thread(runOnExit.get(i), "Exit Hook " + i).start();
+                    }
+                }
+            }, "Exit Hooks"));
+
+            addRunOnExit(() -> {
+                if (Logging.isStarted()) {
+                    Logging.debug("Exiting");
+                    Logging.close();
+                }
+            });
+
+            runtimeConfig.put("launching.gui", gui);
             staticInitialized = true;
         }
+    }
+
+    public static Set<Thread> getThreads() {
+        return Thread.getAllStackTraces().keySet();
     }
 
     /**
@@ -64,21 +85,20 @@ public final class RuntimeUtils {
      * @param id of the thread
      * @return thread identified by {@code id}
      */
-    public synchronized static Thread getThreadById(final long id) {
+    public static Thread getThreadById(final long id) {
         if (threadIdHashtable.containsKey(id)) {
             return threadIdHashtable.get(id);
         }
-        val op = Thread.getAllStackTraces().keySet().stream().filter(t -> t.threadId() == id).findFirst();
-        op.ifPresent(t -> threadIdHashtable.put(id, t));
-        return op.orElse(null);
+        getThreads().forEach(t -> {
+            if (!threadIdHashtable.containsValue(t)) {
+                threadIdHashtable.put(t.threadId(), t);
+            }
+        });
+        return threadIdHashtable.getOrDefault(id, null);
     }
 
-    /**
-     * Terminates the application.
-     */
-    private synchronized static void exit() {
-        Logging.debug("Exiting");
-        ConfigHolder.global().close();
-        Logging.close();
+    public static void addRunOnExit(final Runnable taskToRun) {
+        runOnExit.add(taskToRun);
     }
+
 }

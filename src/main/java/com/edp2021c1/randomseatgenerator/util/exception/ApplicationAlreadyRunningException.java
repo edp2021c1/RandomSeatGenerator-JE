@@ -20,6 +20,9 @@ package com.edp2021c1.randomseatgenerator.util.exception;
 
 /**
  * Thrown if another instance of this application is detected.
+ *
+ * @author Calboot
+ * @since 1.5.0
  */
 public class ApplicationAlreadyRunningException extends RuntimeException {
 

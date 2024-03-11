@@ -60,6 +60,9 @@ public final class CollectionUtils {
      * @return a randomly picked element of the source collection
      */
     public static <T> T pickRandomly(final Collection<? extends T> src, final RandomGenerator rd) {
+        if (src instanceof final List<? extends T> list) {
+            return list.get(rd.nextInt(list.size()));
+        }
         return CollectionUtils.<T>modifiableList(src).get(rd.nextInt(src.size()));
     }
 
@@ -73,6 +76,9 @@ public final class CollectionUtils {
      * @return a randomly picked and removed element of the source collection
      */
     public static <T> T pickRandomlyAndRemove(final Collection<? extends T> src, final RandomGenerator rd) {
+        if (src instanceof final List<? extends T> list) {
+            return list.remove(rd.nextInt(list.size()));
+        }
         val res = pickRandomly(src, rd);
         src.remove(res);
         return res;
@@ -120,12 +126,12 @@ public final class CollectionUtils {
         return new IndexFilterList<>(list, indexPredicate);
     }
 
-    public static <T> List<T> elementFilter(final List<T> list, final Predicate<T> elementPredicate) {
-        return list.stream().filter(elementPredicate).toList();
+    public static <T> List<T> elementFilter(final Collection<T> src, final Predicate<T> elementPredicate) {
+        return src.stream().filter(elementPredicate).toList();
     }
 
     /**
-     * Fast implementation of integer range.
+     * Implementation of integer range with smaller memory cost.
      */
     private static class Range extends AbstractList<Integer> implements RandomAccess {
 
@@ -162,6 +168,18 @@ public final class CollectionUtils {
         }
 
         @Override
+        @SuppressWarnings("all")
+        public Iterator<Integer> iterator() {
+            return listIterator();
+        }
+
+        @Override
+        @SuppressWarnings("all")
+        public ListIterator<Integer> listIterator() {
+            return new RangeIterator(this);
+        }
+
+        @Override
         public int size() {
             return size;
         }
@@ -172,6 +190,67 @@ public final class CollectionUtils {
                 return false;
             }
             return origin <= i && i < bound;
+        }
+
+        private static class RangeIterator implements ListIterator<Integer> {
+
+            final Range root;
+            int cursor = 0;
+
+            private RangeIterator(final Range root) {
+                this.root = root;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return cursor < root.size - 1;
+            }
+
+            @Override
+            public Integer next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return root.origin + ++cursor;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return cursor > 0;
+            }
+
+            @Override
+            public Integer previous() {
+                if (!hasPrevious()) {
+                    throw new NoSuchElementException();
+                }
+                return root.origin + --cursor;
+            }
+
+            @Override
+            public int nextIndex() {
+                return cursor + 1;
+            }
+
+            @Override
+            public int previousIndex() {
+                return cursor - 1;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void set(Integer integer) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void add(Integer integer) {
+                throw new UnsupportedOperationException();
+            }
         }
     }
 
@@ -184,13 +263,7 @@ public final class CollectionUtils {
         public IndexFilterList(final List<T> root, final IntPredicate indexPredicate) {
             this.root = root;
             this.rootSize = root.size();
-
-            this.indexes = new ArrayList<>();
-            for (int i = 0, len = root.size(); i < len; i++) {
-                if (indexPredicate.test(i)) {
-                    indexes.add(i);
-                }
-            }
+            this.indexes = elementFilter(range(0, rootSize), indexPredicate::test);
             this.size = this.indexes.size();
         }
 
@@ -241,10 +314,6 @@ public final class CollectionUtils {
 
         public RandomAccessIndexFilterList(final List<T> root, final IntPredicate indexPredicate) {
             super(root, indexPredicate);
-
-            if (!(root instanceof RandomAccess)) {
-                throw new IllegalArgumentException();
-            }
         }
 
         @Override

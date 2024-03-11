@@ -18,10 +18,12 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
+import com.edp2021c1.randomseatgenerator.util.exception.InvalidClassTypeException;
 import lombok.val;
 
 import java.util.ArrayList;
@@ -29,18 +31,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.alibaba.fastjson2.JSONWriter.Feature.MapSortField;
+import static com.alibaba.fastjson2.JSONWriter.Feature.PrettyFormat;
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.*;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableList;
 
 /**
- * Stores the raw config of the application.
+ * Stores the config of the application.
  *
  * @author Calboot
  * @see SeatConfig
+ * @see JSONObject
  * @since 1.5.1
  */
-public class JSONAppConfig extends JSONConfig implements SeatConfig {
+public class JSONAppConfig extends JSONObject implements SeatConfig {
 
     /**
      * Key of {@code rowCount}.
@@ -97,6 +102,10 @@ public class JSONAppConfig extends JSONConfig implements SeatConfig {
      */
     public JSONAppConfig() {
         super(DEFAULT_INITIAL_CAPACITY);
+    }
+
+    public JSONAppConfig(final int initialCapacity) {
+        super(initialCapacity);
     }
 
     /**
@@ -251,21 +260,134 @@ public class JSONAppConfig extends JSONConfig implements SeatConfig {
     }
 
     /**
+     * Returns the {@code String} value to which the specified key is mapped, or null if this map contains no mapping for the key.
+     *
+     * @param key whose associated {@code String} value is to be returned
+     * @return the {@code String} value to which the specified key is mapped, or null if this map contains no mapping for the key
+     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code String}
+     */
+    public String getString(final String key) {
+        val o = get(key);
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof final String s) {
+            return s;
+        }
+        throw new InvalidClassTypeException(String.class, o.getClass());
+    }
+
+    /**
+     * Returns the {@code Double} value to which the specified key is mapped, or null if this map contains no mapping for the key.
+     *
+     * @param key whose associated {@code Double} value is to be returned
+     * @return the {@code Double} value to which the specified key is mapped, or null if this map contains no mapping for the key
+     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Number}
+     */
+    public Double getDouble(final String key) {
+        val o = get(key);
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof final Number n) {
+            return n.doubleValue();
+        }
+        throw new InvalidClassTypeException(Double.class, o.getClass());
+    }
+
+    /**
+     * Returns the {@code Integer} value to which the specified key is mapped, or null if this map contains no mapping for the key.
+     *
+     * @param key whose associated {@code Integer} value is to be returned
+     * @return the {@code Integer} value to which the specified key is mapped, or null if this map contains no mapping for the key
+     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Number}
+     */
+    public Integer getInteger(final String key) {
+        val o = get(key);
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof final Number n) {
+            return n.intValue();
+        }
+        throw new InvalidClassTypeException(Integer.class, o.getClass());
+    }
+
+    /**
+     * Returns the {@code Boolean} value to which the specified key is mapped, or null if this map contains no mapping for the key.
+     *
+     * @param key whose associated {@code Boolean} value is to be returned
+     * @return the {@code Boolean} value to which the specified key is mapped, or null if this map contains no mapping for the key
+     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Boolean}
+     */
+    public Boolean getBoolean(final String key) {
+        val o = get(key);
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof final Boolean b) {
+            return b;
+        }
+        throw new InvalidClassTypeException(Boolean.class, o.getClass());
+    }
+
+    /**
+     * Transfers {@code this} into a json string.
+     *
+     * @return json string
+     */
+    @Override
+    public String toString() {
+        return toString(PrettyFormat, MapSortField);
+    }
+
+    @Override
+    public Object put(final String key, final Object value) {
+        if (key == null) {
+            throw new UnsupportedOperationException("Null cannot be used as a key in a config");
+        }
+        if (value == null) {
+            return remove(key);
+        }
+        return super.put(key, value);
+    }
+
+    @Override
+    public void putAll(final Map<? extends String, ?> map) {
+        map.forEach(this::put);
+    }
+
+    /**
+     * Puts the mapping of the given key and value, and then returns {@code this}.
+     *
+     * @param key   to put
+     * @param value to put
+     * @return {@code this}
+     */
+    public JSONAppConfig putAndReturn(final String key, final Object value) {
+        put(key, value);
+        return this;
+    }
+
+    /**
      * Copies all the mappings from the specified map to this instance, and returns {@code this}.
      *
      * @param map mappings to be stored in this map
      * @return {@code this}
      */
-    @Override
     public JSONAppConfig putAllAndReturn(final Map<? extends String, ?> map) {
-        super.putAllAndReturn(map);
+        putAll(map);
         return this;
     }
 
-    @Override
+    /**
+     * Parses and puts the {@link JSONObject} from the string.
+     *
+     * @param jsonString to parse and put
+     * @return {@code this}
+     */
     public JSONAppConfig putJsonAndReturn(final String jsonString) {
-        super.putJsonAndReturn(jsonString);
-        return this;
+        return putAllAndReturn(parseObject(jsonString));
     }
 
     /**

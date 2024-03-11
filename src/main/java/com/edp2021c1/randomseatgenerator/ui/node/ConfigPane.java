@@ -19,8 +19,8 @@
 package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.ui.UIUtils;
-import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
@@ -61,9 +61,9 @@ public class ConfigPane extends VBox {
 
     private final CheckBox darkModeCheck;
 
-    private final ConfigHolder source;
+    private final JSONAppConfigHolder source;
 
-    private final JSONAppConfig current;
+    private final JSONAppConfig content;
 
     /**
      * Constructs an instance.
@@ -93,7 +93,7 @@ public class ConfigPane extends VBox {
                       final CheckBox exportWritableCheck,
                       final CheckBox darkModeCheck,
                       final BooleanProperty applyBtnDisabledProperty,
-                      final ConfigHolder configSource) {
+                      final JSONAppConfigHolder configSource) {
         super();
 
         this.rowCountInput = rowCountInput;
@@ -108,7 +108,7 @@ public class ConfigPane extends VBox {
         this.darkModeCheck = darkModeCheck;
 
         this.source = configSource;
-        this.current = source.get();
+        this.content = source.get();
 
         val box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
         box1.setPrefHeight(60);
@@ -125,39 +125,39 @@ public class ConfigPane extends VBox {
             return;
         }
         rowCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.put(KEY_ROW_COUNT, newValue.intValue());
+            content.put(KEY_ROW_COUNT, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         columnCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.put(KEY_COLUMN_COUNT, newValue.intValue());
+            content.put(KEY_COLUMN_COUNT, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         rbrInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            current.put(KEY_RANDOM_BETWEEN_ROWS, newValue.intValue());
+            content.put(KEY_RANDOM_BETWEEN_ROWS, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.put(KEY_DISABLED_LAST_ROW_POS, newValue);
+            content.put(KEY_DISABLED_LAST_ROW_POS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         nameListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.put(KEY_NAMES, newValue);
+            content.put(KEY_NAMES, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.put(KEY_GROUP_LEADERS, newValue);
+            content.put(KEY_GROUP_LEADERS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         separateListInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            current.put(KEY_SEPARATED_PAIRS, newValue);
+            content.put(KEY_SEPARATED_PAIRS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         luckyOptionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            current.put(KEY_LUCKY, newValue);
+            content.put(KEY_LUCKY, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         exportWritableCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            current.put("export.writable", newValue);
+            content.put("export.writable", newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         darkModeCheck.selectedProperty().bindBidirectional(UIUtils.globalDarkModeProperty());
@@ -166,14 +166,10 @@ public class ConfigPane extends VBox {
     /**
      * Returns a copy of the current config
      *
-     * @return a copy of {@link #current}
+     * @return a copy of {@link #content}
      */
-    public JSONAppConfig getCurrent() {
-        return current.cloneThis();
-    }
-
-    private boolean checkEquals() {
-        return Objects.equals(current, source.get());
+    public JSONAppConfig getContent() {
+        return content.cloneThis();
     }
 
     /**
@@ -181,7 +177,7 @@ public class ConfigPane extends VBox {
      *
      * @param config to set to the pane.
      */
-    public void reset(final JSONAppConfig config) {
+    public void setContent(final JSONAppConfig config) {
         if (config == null) {
             return;
         }
@@ -195,6 +191,10 @@ public class ConfigPane extends VBox {
         luckyOptionCheck.setSelected(config.isLucky());
         exportWritableCheck.setSelected(Boolean.TRUE.equals(config.getBoolean("export.writable")));
         darkModeCheck.setSelected(!Boolean.FALSE.equals(config.getBoolean("appearance.style.dark")));
+    }
+
+    private boolean checkEquals() {
+        return Objects.equals(content, source.get());
     }
 
 }

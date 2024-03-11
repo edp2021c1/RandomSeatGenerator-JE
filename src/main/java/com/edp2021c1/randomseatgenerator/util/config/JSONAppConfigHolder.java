@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.util.config;
 
 import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
@@ -42,31 +43,25 @@ import static com.edp2021c1.randomseatgenerator.util.IOUtils.*;
  * @see JSONAppConfig
  * @since 1.4.9
  */
-public class ConfigHolder implements AutoCloseable {
+public class JSONAppConfigHolder implements AutoCloseable {
 
     /**
      * Default config handler.
      */
-    private static final ConfigHolder global;
+    private static final JSONAppConfigHolder global;
     private static final Path GLOBAL_CONFIG_PATH = Path.of(Metadata.DATA_DIR.toString(), "config", "randomseatgenerator.json");
 
     static {
         try {
             replaceWithDirectory(GLOBAL_CONFIG_PATH.getParent());
 
-            var needsInit = false;
-
             if (!Files.isRegularFile(GLOBAL_CONFIG_PATH)) {
                 deleteIfExists(GLOBAL_CONFIG_PATH);
                 Files.createFile(GLOBAL_CONFIG_PATH);
-                needsInit = true;
-            } else if (Files.readString(GLOBAL_CONFIG_PATH).isBlank()) {
-                needsInit = true;
             }
-            global = createHolder(GLOBAL_CONFIG_PATH);
-
-            if (needsInit) {
-                val builtInConfigStream = ConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
+            global = createHolder(GLOBAL_CONFIG_PATH, true);
+            if (readString(global.channel).isBlank()) {
+                val builtInConfigStream = JSONAppConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
                 if (builtInConfigStream != null) {
                     global.putJson(new String(
                             builtInConfigStream.readAllBytes()
@@ -74,6 +69,7 @@ public class ConfigHolder implements AutoCloseable {
                     builtInConfigStream.close();
                 }
             }
+
         } catch (final FileAlreadyLockedException e) {
             throw new ApplicationAlreadyRunningException();
         } catch (final IOException e) {
@@ -94,7 +90,7 @@ public class ConfigHolder implements AutoCloseable {
      * @param configPath path of config
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
-    private ConfigHolder(final Path configPath) throws IOException {
+    private JSONAppConfigHolder(final Path configPath) throws IOException {
         this.content = new JSONAppConfig();
         this.configPath = configPath;
 
@@ -110,7 +106,7 @@ public class ConfigHolder implements AutoCloseable {
      *
      * @return the global config holder
      */
-    public static ConfigHolder global() {
+    public static JSONAppConfigHolder global() {
         return global;
     }
 
@@ -121,12 +117,16 @@ public class ConfigHolder implements AutoCloseable {
      * @return the holder created
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
-    public static ConfigHolder createHolder(final Path configPath) throws IOException {
-        return new ConfigHolder(configPath);
+    public static JSONAppConfigHolder createHolder(final Path configPath, final boolean closeOnExit) throws IOException {
+        val res = new JSONAppConfigHolder(configPath);
+        if (closeOnExit) {
+            RuntimeUtils.addRunOnExit(res::close);
+        }
+        return res;
     }
 
     private synchronized void loadConfig0() throws IOException {
-        if (!Files.exists(configPath) || !Files.isRegularFile(configPath)) {
+        if (!Files.isRegularFile(configPath)) {
             deleteIfExists(configPath);
             Files.createFile(configPath);
         }
@@ -171,7 +171,7 @@ public class ConfigHolder implements AutoCloseable {
 
     private synchronized void checkState() {
         if (closed) {
-            throw new IllegalStateException("Closed ConfigHolder");
+            throw new IllegalStateException("Closed JSONAppConfigHolder");
         }
         if (!loaded) {
             try {
@@ -191,7 +191,7 @@ public class ConfigHolder implements AutoCloseable {
      * @throws RuntimeException if an I/O error occurs
      */
     public synchronized void put(final String key, final Object value) {
-        putAll(new JSONConfig(1).putAndReturn(key, value));
+        putAll(new JSONAppConfig(1).putAndReturn(key, value));
     }
 
     /**
@@ -214,7 +214,7 @@ public class ConfigHolder implements AutoCloseable {
      *
      * @param jsonString that contains the map to parse and put
      * @throws RuntimeException if an I/O error occurs
-     * @see JSONConfig#putJsonAndReturn(String)
+     * @see JSONAppConfig#putJsonAndReturn(String)
      */
     public synchronized void putJson(final String jsonString) {
         checkState();

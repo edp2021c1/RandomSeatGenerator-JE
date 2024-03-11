@@ -139,11 +139,10 @@ public final class Metadata {
         try {
             GIT_REPOSITORY_URI = new URI("https://github.com/edp2021c1/RandomSeatGenerator-JE");
             LICENSE_URI = new URI("https://www.gnu.org/licenses/gpl-3.0.txt");
-            VERSION_PAGE_URI = new URI("https://github.com/edp2021c1/RandomSeatGenerator-JE/releases" + (VERSION_ID == null ? "" : ("/tags/" + VERSION)));
+            VERSION_PAGE_URI = new URI("https://github.com/edp2021c1/RandomSeatGenerator-JE/releases/tags/" + (VERSION_ID == null ? "" : VERSION));
         } catch (final URISyntaxException e) {
             throw new RuntimeException(e);
         }
-
 
         switch (OperatingSystem.getCurrent()) {
             case WINDOWS -> DATA_DIR = Path.of(USER_HOME, "AppData", "Local", "RandomSeatGenerator");

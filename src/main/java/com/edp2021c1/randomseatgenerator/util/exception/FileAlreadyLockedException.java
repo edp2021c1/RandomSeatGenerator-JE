@@ -23,6 +23,9 @@ import java.nio.file.Path;
 
 /**
  * Thrown if a file is already locked by another process when it is tried to be locked.
+ *
+ * @author Calboot
+ * @since 1.5.0
  */
 public class FileAlreadyLockedException extends IOException {
     /**

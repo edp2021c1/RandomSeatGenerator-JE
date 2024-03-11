@@ -31,6 +31,9 @@ import java.util.regex.Pattern;
 
 /**
  * Input for integer.
+ *
+ * @author Calboot
+ * @since 1.5.0
  */
 @DefaultProperty("value")
 public class IntegerField extends TextField {

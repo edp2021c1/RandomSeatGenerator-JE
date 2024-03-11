@@ -23,7 +23,7 @@ import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.Strings;
-import com.edp2021c1.randomseatgenerator.util.config.ConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
 import lombok.val;
 
 import java.io.IOException;
@@ -87,15 +87,15 @@ public class ConsoleLauncher {
         }
 
         // 处理座位表生成配置
-        var config = ConfigHolder.global().get().checkAndReturn();
+        var config = JSONAppConfigHolder.global().get().checkAndReturn();
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
-        var configPath = ConfigHolder.global().getConfigPath();
+        var configPath = JSONAppConfigHolder.global().getConfigPath();
         // 获取配置文件路径
         if ((i = args.lastIndexOf("--config-path")) != -1 && i < args.size() - 1) {
             configPath = Path.of(args.get(i + 1)).toAbsolutePath();
             Logging.info("Config path set to " + configPath);
             try {
-                val holder = ConfigHolder.createHolder(configPath);
+                val holder = JSONAppConfigHolder.createHolder(configPath, false);
                 config = holder.get().checkAndReturn();
                 holder.close();
             } catch (final IOException e) {

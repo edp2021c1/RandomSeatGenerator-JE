@@ -29,6 +29,9 @@ import java.util.List;
 
 /**
  * Application intro.
+ *
+ * @author Calboot
+ * @since 1.0.0
  */
 public class RandomSeatGenerator {
 

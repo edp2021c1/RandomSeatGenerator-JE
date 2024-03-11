@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import lombok.Getter;
 import lombok.val;
 
 import java.io.IOException;
@@ -47,7 +48,8 @@ public final class Logging {
     private static final List<Path> logPaths;
     private static final MessageFormat messageFormat = new MessageFormat("[{0,date,yyyy-MM-dd HH:mm:ss.SSS}] [{1}/{2}] {3}\n");
     private static final Formatter DEFAULT_FORMATTER;
-    private static boolean closed = true;
+    @Getter
+    private static State state = State.NOT_STARTED;
 
     static {
         val str = "%tF-%%d.log".formatted(new Date());
@@ -71,8 +73,12 @@ public final class Logging {
     private Logging() {
     }
 
+    public static boolean isStarted() {
+        return state == State.STARTED;
+    }
+
     private static void checkState() {
-        if (closed) {
+        if (!isStarted()) {
             throw new IllegalStateException("Logger closed or uninitialized");
         }
     }
@@ -121,12 +127,12 @@ public final class Logging {
      * Starts logging.
      */
     public static void start(final boolean withGUI) {
-        if (!closed) {
+        if (isStarted()) {
             debug("Logging already started, there's no need to start it twice");
             return;
         }
 
-        closed = false;
+        state = State.STARTED;
 
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);
@@ -217,7 +223,13 @@ public final class Logging {
             logger.removeHandler(h);
             h.close();
         }
-        closed = true;
+        state = State.CLOSED;
+    }
+
+    private enum State {
+        NOT_STARTED,
+        STARTED,
+        CLOSED
     }
 
     /**
