@@ -148,8 +148,8 @@ val pack = task("pack") {
         val packageDir = Path.of(projectPath, "packages")
         if (!Files.isDirectory(packageDir)) {
             Files.deleteIfExists(packageDir)
+            Files.createDirectories(packageDir)
         }
-        Files.createDirectories(packageDir)
 
         if (!(isMac || isWin)) {
             val sourcesJarName = "$fName-sources.jar"

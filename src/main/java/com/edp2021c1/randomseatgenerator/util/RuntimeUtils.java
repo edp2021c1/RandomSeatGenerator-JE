@@ -51,13 +51,15 @@ public final class RuntimeUtils {
 
     /**
      * Called on application start up.
+     *
+     * @param withGUI whether the application is launched with a GUI
      */
-    public static void initStatic(final boolean gui) {
+    public static void initStatic(final boolean withGUI) {
         if (!staticInitialized) {
             getRuntime().addShutdownHook(new Thread(() -> {
                 synchronized (runOnExit) {
                     for (int i = 0, j = runOnExit.size(); i < j; i++) {
-                        new Thread(runOnExit.get(i), "Exit Hook " + i).start();
+                        Thread.ofVirtual().name("Exit Hook No." + i).start(runOnExit.get(i));
                     }
                 }
             }, "Exit Hooks"));
@@ -69,11 +71,16 @@ public final class RuntimeUtils {
                 }
             });
 
-            runtimeConfig.put("launching.gui", gui);
+            runtimeConfig.put("launching.gui", withGUI);
             staticInitialized = true;
         }
     }
 
+    /**
+     * Returns a set of all live threads.
+     *
+     * @return all live threads
+     */
     public static Set<Thread> getThreads() {
         return Thread.getAllStackTraces().keySet();
     }
@@ -97,6 +104,11 @@ public final class RuntimeUtils {
         return threadIdHashtable.getOrDefault(id, null);
     }
 
+    /**
+     * Adds a {@link Runnable} to call on application exit.
+     *
+     * @param taskToRun a {@code Runnable} to call on application exit
+     */
     public static void addRunOnExit(final Runnable taskToRun) {
         runOnExit.add(taskToRun);
     }

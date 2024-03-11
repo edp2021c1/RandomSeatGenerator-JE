@@ -126,6 +126,14 @@ public final class CollectionUtils {
         return new IndexFilterList<>(list, indexPredicate);
     }
 
+    /**
+     * Returns a list containing the elements that matches the predicate.
+     *
+     * @param src              input collection
+     * @param elementPredicate filter of elements
+     * @param <T>              type of elements in the list
+     * @return a list containing the elements that matches the predicate
+     */
     public static <T> List<T> elementFilter(final Collection<T> src, final Predicate<T> elementPredicate) {
         return src.stream().filter(elementPredicate).toList();
     }

@@ -113,7 +113,8 @@ public class JSONAppConfigHolder implements AutoCloseable {
     /**
      * Creates an instance with the given config path and adds it to the holders set.
      *
-     * @param configPath path of config
+     * @param configPath  path of config
+     * @param closeOnExit whether the created holder will be automatically closed on application exit
      * @return the holder created
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
@@ -165,6 +166,7 @@ public class JSONAppConfigHolder implements AutoCloseable {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         } finally {
+            Logging.debug("Config holder at " + configPath + " closed");
             closed = true;
         }
     }

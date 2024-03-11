@@ -27,7 +27,6 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.*;
 
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
@@ -49,7 +48,7 @@ public final class Logging {
     private static final MessageFormat messageFormat = new MessageFormat("[{0,date,yyyy-MM-dd HH:mm:ss.SSS}] [{1}/{2}] {3}\n");
     private static final Formatter DEFAULT_FORMATTER;
     @Getter
-    private static State state = State.NOT_STARTED;
+    private static State state = State.UNINITIALIZED;
 
     static {
         val str = "%tF-%%d.log".formatted(new Date());
@@ -73,6 +72,11 @@ public final class Logging {
     private Logging() {
     }
 
+    /**
+     * Returns whether the log manager is started.
+     *
+     * @return whether the log manager is started
+     */
     public static boolean isStarted() {
         return state == State.STARTED;
     }
@@ -125,11 +129,16 @@ public final class Logging {
 
     /**
      * Starts logging.
+     *
+     * @param withGUI whether the application is launched with a GUI
      */
     public static void start(final boolean withGUI) {
-        if (isStarted()) {
-            debug("Logging already started, there's no need to start it twice");
-            return;
+        switch (state) {
+            case STARTED -> {
+                debug("Logging already started, there's no need to start it twice");
+                return;
+            }
+            case ENDED -> throw new IllegalStateException("Logging manager already closed");
         }
 
         state = State.STARTED;
@@ -144,8 +153,7 @@ public final class Logging {
         final ConsoleHandler consoleHandler = new ConsoleHandler() {
             @Override
             public void close() {
-                val record = new LogRecord(LoggingLevels.DEBUG, "Closing console log handler");
-                format(record);
+                val record = format(new LogRecord(LoggingLevels.DEBUG, "Closing console log handler"));
                 for (val h : logger.getHandlers()) {
                     h.publish(record);
                 }
@@ -171,8 +179,7 @@ public final class Logging {
                 val fileHandler = new FileHandler(path.toString()) {
                     @Override
                     public void close() throws SecurityException {
-                        val record = new LogRecord(LoggingLevels.DEBUG, "Closing log file " + path);
-                        format(record);
+                        val record = format(new LogRecord(LoggingLevels.DEBUG, "Closing log file " + path));
                         for (val h : logger.getHandlers()) {
                             h.publish(record);
                         }
@@ -202,34 +209,40 @@ public final class Logging {
         info("Data directory: " + DATA_DIR);
     }
 
-    private static void format(LogRecord record) {
-        val buffer = new StringBuffer(1024);
+    private static LogRecord format(final LogRecord record) {
+        val thread = RuntimeUtils.getThreadById(record.getLongThreadID());
 
-        messageFormat.format(new Object[]{
-                new Date(record.getMillis()),
-                Objects.requireNonNull(RuntimeUtils.getThreadById(record.getLongThreadID())).getName(),
-                record.getLevel().getName(),
-                record.getMessage()
-        }, buffer, null);
+        record.setMessage(messageFormat.format(
+                new Object[]{
+                        new Date(record.getMillis()),
+                        thread == null ? "Unknown Thread" : thread.getName(),
+                        record.getLevel().getName(),
+                        record.getMessage()
+                },
+                new StringBuffer(1024),
+                null
+        ).toString());
 
-        record.setMessage(buffer.toString());
+        return record;
     }
 
     /**
-     * Ends logging
+     * Ends logging.
      */
     public static void close() {
-        for (val h : logger.getHandlers()) {
-            logger.removeHandler(h);
-            h.close();
+        if (state != State.ENDED) {
+            for (val h : logger.getHandlers()) {
+                logger.removeHandler(h);
+                h.close();
+            }
+            state = State.ENDED;
         }
-        state = State.CLOSED;
     }
 
     private enum State {
-        NOT_STARTED,
+        UNINITIALIZED,
         STARTED,
-        CLOSED
+        ENDED
     }
 
     /**

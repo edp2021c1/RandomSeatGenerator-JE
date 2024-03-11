@@ -104,6 +104,11 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
         super(DEFAULT_INITIAL_CAPACITY);
     }
 
+    /**
+     * Constructs an instance with the specified initial capacity.
+     *
+     * @param initialCapacity initial size of the map
+     */
     public JSONAppConfig(final int initialCapacity) {
         super(initialCapacity);
     }

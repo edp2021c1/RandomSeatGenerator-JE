@@ -51,8 +51,8 @@ public final class DesktopUtils {
      * is determined from the protocol and path of the {@code URI}, as
      * defined by the {@code URI} class.
      *
+     * @param uri the URI to be displayed in the user default browser
      * @see java.net.URI
-     * @see java.awt.AWTPermission
      * @see java.awt.Desktop#browse(URI)
      */
     public static void browseIfSupported(final URI uri) {
