@@ -19,6 +19,7 @@
 package com.edp2021c1.randomseatgenerator.util;
 
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -59,7 +60,7 @@ public final class RuntimeUtils {
             getRuntime().addShutdownHook(new Thread(() -> {
                 synchronized (runOnExit) {
                     for (int i = 0, j = runOnExit.size(); i < j; i++) {
-                        Thread.ofVirtual().name("Exit Hook No." + i).start(runOnExit.get(i));
+                        new Thread(runOnExit.get(i), "Exit Hook No." + i).start();
                     }
                 }
             }, "Exit Hooks"));
@@ -67,13 +68,19 @@ public final class RuntimeUtils {
             addRunOnExit(() -> {
                 if (Logging.isStarted()) {
                     Logging.debug("Exiting");
-                    Logging.close();
+                    Logging.end();
                 }
             });
+
+            loopThread(System::gc, 1000, "GC Thread").start();
 
             runtimeConfig.put("launching.gui", withGUI);
             staticInitialized = true;
         }
+    }
+
+    public static Thread loopThread(final Runnable taskToRun, final long waitingMillis, final String name) {
+        return new LoopTaskThread(taskToRun, waitingMillis, name);
     }
 
     /**
@@ -93,15 +100,12 @@ public final class RuntimeUtils {
      * @return thread identified by {@code id}
      */
     public static Thread getThreadById(final long id) {
-        if (threadIdHashtable.containsKey(id)) {
-            return threadIdHashtable.get(id);
+        val thread = threadIdHashtable.get(id);
+        if (thread != null) {
+            return thread;
         }
-        getThreads().forEach(t -> {
-            if (!threadIdHashtable.containsValue(t)) {
-                threadIdHashtable.put(t.threadId(), t);
-            }
-        });
-        return threadIdHashtable.getOrDefault(id, null);
+        getThreads().forEach(t -> threadIdHashtable.putIfAbsent(t.threadId(), t));
+        return threadIdHashtable.get(id);
     }
 
     /**
@@ -111,6 +115,33 @@ public final class RuntimeUtils {
      */
     public static void addRunOnExit(final Runnable taskToRun) {
         runOnExit.add(taskToRun);
+    }
+
+    private static class LoopTaskThread extends Thread {
+        private final Runnable loopTask;
+        private final long waitingMillis;
+
+        private LoopTaskThread(final Runnable loopTask, final long waitingMillis, final String name) {
+            this.loopTask = loopTask;
+            this.waitingMillis = waitingMillis;
+            if (name != null) {
+                setName(name);
+            }
+        }
+
+        @Override
+        @SuppressWarnings("all")
+        public void run() {
+            while (true) {
+                loopTask.run();
+                synchronized (this) {
+                    try {
+                        wait(waitingMillis);
+                    } catch (final InterruptedException ignored) {
+                    }
+                }
+            }
+        }
     }
 
 }

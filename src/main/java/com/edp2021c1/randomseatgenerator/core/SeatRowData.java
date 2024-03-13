@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.core;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Getter;
 import lombok.val;
@@ -27,6 +28,7 @@ import lombok.val;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import static com.edp2021c1.randomseatgenerator.core.SeatTable.MAX_COLUMN_COUNT;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 
@@ -39,66 +41,67 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 
 @Getter
 @ExcelIgnoreUnannotated
+@ColumnWidth(12)
 public class SeatRowData {
 
     private static final List<Field> fields;
 
     static {
         val clazz = SeatRowData.class;
-        fields = buildList(range(1, SeatTable.MAX_COLUMN_COUNT + 1), i -> {
-            final Field field;
+        fields = buildList(range(1, MAX_COLUMN_COUNT + 1), i -> {
             try {
-                field = clazz.getDeclaredField("c" + i);
-            } catch (NoSuchFieldException e) {
+                val field = clazz.getDeclaredField("c" + i);
+                field.setAccessible(true);
+                return field;
+            } catch (final NoSuchFieldException e) {
+                // Impossible situation
                 throw new RuntimeException(e);
             }
-            field.setAccessible(true);
-            return field;
         });
     }
 
-    @ExcelProperty(value = "Column 1")
+    @ExcelProperty("Column 1")
     private final String c1 = null;
-    @ExcelProperty(value = "Column 2")
+    @ExcelProperty("Column 2")
     private final String c2 = null;
-    @ExcelProperty(value = "Column 3")
+    @ExcelProperty("Column 3")
     private final String c3 = null;
-    @ExcelProperty(value = "Column 4")
+    @ExcelProperty("Column 4")
     private final String c4 = null;
-    @ExcelProperty(value = "Column 5")
+    @ExcelProperty("Column 5")
     private final String c5 = null;
-    @ExcelProperty(value = "Column 6")
+    @ExcelProperty("Column 6")
     private final String c6 = null;
-    @ExcelProperty(value = "Column 7")
+    @ExcelProperty("Column 7")
     private final String c7 = null;
-    @ExcelProperty(value = "Column 8")
+    @ExcelProperty("Column 8")
     private final String c8 = null;
-    @ExcelProperty(value = "Column 9")
+    @ExcelProperty("Column 9")
     private final String c9 = null;
-    @ExcelProperty(value = "Column 10")
+    @ExcelProperty("Column 10")
     private final String c10 = null;
-    @ExcelProperty(value = "Column 11")
+    @ExcelProperty("Column 11")
     private final String c11 = null;
-    @ExcelProperty(value = "Column 12")
+    @ExcelProperty("Column 12")
     private final String c12 = null;
-    @ExcelProperty(value = "Column 13")
+    @ExcelProperty("Column 13")
     private final String c13 = null;
-    @ExcelProperty(value = "Column 14")
+    @ExcelProperty("Column 14")
     private final String c14 = null;
-    @ExcelProperty(value = "Column 15")
+    @ExcelProperty("Column 15")
     private final String c15 = null;
-    @ExcelProperty(value = "Column 16")
+    @ExcelProperty("Column 16")
     private final String c16 = null;
-    @ExcelProperty(value = "Column 17")
+    @ExcelProperty("Column 17")
     private final String c17 = null;
-    @ExcelProperty(value = "Column 18")
+    @ExcelProperty("Column 18")
     private final String c18 = null;
-    @ExcelProperty(value = "Column 19")
+    @ExcelProperty("Column 19")
     private final String c19 = null;
-    @ExcelProperty(value = "Column 20")
+    @ExcelProperty("Column 20")
     private final String c20 = null;
 
-    private final String[] data = new String[20];
+    private final String[] data = new String[MAX_COLUMN_COUNT];
 
     /**
      * Instantiates this class with the given names.
@@ -106,10 +109,13 @@ public class SeatRowData {
      * @param names name data
      */
     SeatRowData(final String... names) {
+        if (names == null) {
+            return;
+        }
         val len = names.length;
-        if (len > SeatTable.MAX_COLUMN_COUNT) {
+        if (len > MAX_COLUMN_COUNT) {
             throw new IllegalConfigException(
-                    "Count of people in a row cannot be larger than " + SeatTable.MAX_COLUMN_COUNT
+                    "Count of people in a row cannot be larger than " + MAX_COLUMN_COUNT
             );
         }
         try {
@@ -129,9 +135,6 @@ public class SeatRowData {
      * @return name on the given index
      */
     public String getName(final int columnIndex) {
-        if (columnIndex >= SeatTable.MAX_COLUMN_COUNT) {
-            throw new IndexOutOfBoundsException();
-        }
         return data[columnIndex];
     }
 

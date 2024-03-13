@@ -215,7 +215,7 @@ public final class Logging {
         record.setMessage(messageFormat.format(
                 new Object[]{
                         new Date(record.getMillis()),
-                        thread == null ? "Unknown Thread" : thread.getName(),
+                        thread == null ? "Unrecognized Thread" : thread.getName(),
                         record.getLevel().getName(),
                         record.getMessage()
                 },
@@ -229,7 +229,7 @@ public final class Logging {
     /**
      * Ends logging.
      */
-    public static void close() {
+    public static void end() {
         if (state != State.ENDED) {
             for (val h : logger.getHandlers()) {
                 logger.removeHandler(h);

@@ -178,13 +178,13 @@ public final class CollectionUtils {
         @Override
         @SuppressWarnings("all")
         public Iterator<Integer> iterator() {
-            return listIterator();
+            return new Itr(this);
         }
 
         @Override
         @SuppressWarnings("all")
         public ListIterator<Integer> listIterator() {
-            return new RangeIterator(this);
+            return new LItr(this);
         }
 
         @Override
@@ -200,18 +200,19 @@ public final class CollectionUtils {
             return origin <= i && i < bound;
         }
 
-        private static class RangeIterator implements ListIterator<Integer> {
+        private static class Itr implements Iterator<Integer> {
+            protected final int offset;
+            protected final int size;
+            protected int cursor = -1;
 
-            final Range root;
-            int cursor = 0;
-
-            private RangeIterator(final Range root) {
-                this.root = root;
+            private Itr(final Range root) {
+                this.offset = root.origin;
+                this.size = root.size;
             }
 
             @Override
             public boolean hasNext() {
-                return cursor < root.size - 1;
+                return cursor < size - 1;
             }
 
             @Override
@@ -219,12 +220,19 @@ public final class CollectionUtils {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return root.origin + ++cursor;
+                return offset + ++cursor;
+            }
+        }
+
+        private static class LItr extends Itr implements ListIterator<Integer> {
+
+            private LItr(final Range root) {
+                super(root);
             }
 
             @Override
             public boolean hasPrevious() {
-                return cursor > 0;
+                return cursor > -1;
             }
 
             @Override
@@ -232,7 +240,7 @@ public final class CollectionUtils {
                 if (!hasPrevious()) {
                     throw new NoSuchElementException();
                 }
-                return root.origin + --cursor;
+                return offset + --cursor;
             }
 
             @Override
@@ -246,17 +254,17 @@ public final class CollectionUtils {
             }
 
             @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
             public void set(Integer integer) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
             public void add(Integer integer) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void remove() {
                 throw new UnsupportedOperationException();
             }
         }

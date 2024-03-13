@@ -269,7 +269,7 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
      *
      * @param key whose associated {@code String} value is to be returned
      * @return the {@code String} value to which the specified key is mapped, or null if this map contains no mapping for the key
-     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code String}
+     * @throws InvalidClassTypeException if the key exists, and the value of the key is not a {@code String}
      */
     public String getString(final String key) {
         val o = get(key);
@@ -287,7 +287,7 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
      *
      * @param key whose associated {@code Double} value is to be returned
      * @return the {@code Double} value to which the specified key is mapped, or null if this map contains no mapping for the key
-     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Number}
+     * @throws InvalidClassTypeException if the key exists, and the value of the key is not a {@code Number}
      */
     public Double getDouble(final String key) {
         val o = get(key);
@@ -305,7 +305,7 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
      *
      * @param key whose associated {@code Integer} value is to be returned
      * @return the {@code Integer} value to which the specified key is mapped, or null if this map contains no mapping for the key
-     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Number}
+     * @throws InvalidClassTypeException if the key exists, and the value of the key is not a {@code Number}
      */
     public Integer getInteger(final String key) {
         val o = get(key);
@@ -323,7 +323,7 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
      *
      * @param key whose associated {@code Boolean} value is to be returned
      * @return the {@code Boolean} value to which the specified key is mapped, or null if this map contains no mapping for the key
-     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Boolean}
+     * @throws InvalidClassTypeException if the key exists, and the value of the key is not a {@code Boolean}
      */
     public Boolean getBoolean(final String key) {
         val o = get(key);

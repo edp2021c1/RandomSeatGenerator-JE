@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.ui;
 
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -36,7 +37,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.val;
 
 /**
@@ -64,14 +64,23 @@ public class UIUtils {
     };
     @Getter
     private static final Image icon = new Image(Metadata.ICON_URL);
-    @Getter
-    @Setter
-    private static MainWindow mainWindow = null;
 
     /**
      * Don't let anyone else instantiate this class.
      */
     private UIUtils() {
+    }
+
+    public static MainWindow getMainWindow() {
+        return (MainWindow) RuntimeUtils.runtimeConfig.get("window.main");
+    }
+
+    public static boolean setMainWindow(final MainWindow mainWindow) {
+        if (getMainWindow() == null) {
+            RuntimeUtils.runtimeConfig.put("window.main", mainWindow);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -109,7 +118,7 @@ public class UIUtils {
                 stage.setResizable(false);
             }
             case ERROR -> {
-                stage.initOwner(mainWindow);
+                stage.initOwner(getMainWindow());
                 stage.getIcons().add(icon);
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.setResizable(false);

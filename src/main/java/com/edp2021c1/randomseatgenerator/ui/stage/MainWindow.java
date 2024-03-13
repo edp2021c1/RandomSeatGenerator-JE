@@ -66,7 +66,9 @@ public class MainWindow extends Stage {
      */
     private MainWindow() {
         super();
-        setMainWindow(this);
+        if (!setMainWindow(this)) {
+            throw new IllegalStateException("Main window can only be constructed once");
+        }
 
         cfHolder = JSONAppConfigHolder.global();
 
