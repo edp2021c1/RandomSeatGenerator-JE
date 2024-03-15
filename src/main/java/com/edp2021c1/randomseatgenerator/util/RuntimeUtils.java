@@ -72,7 +72,7 @@ public final class RuntimeUtils {
                 }
             });
 
-            loopThread(System::gc, 1000, "GC Thread").start();
+            loopThread(System::gc, 1000, "Auto GC Thread").start();
 
             runtimeConfig.put("launching.gui", withGUI);
             staticInitialized = true;
