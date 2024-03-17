@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
 public class SeatTable {
 
     /**
-     * Max count of column in a {@code SeatRowData}.
+     * Max count of column in a {@code RowData}.
      */
     public static final int MAX_COLUMN_COUNT = 20;
     /**
@@ -156,29 +156,29 @@ public class SeatTable {
     }
 
     /**
-     * Returns a list of {@code SeatRowData} containing data of this.
+     * Returns a list of {@code RowData} containing data of this.
      *
-     * @return a {@code List} storing {@code SeatRowData} transferred from this
+     * @return a {@code List} storing {@code RowData} transferred from this
      */
-    public List<SeatRowData> toRowData() {
+    public List<RowData> toRowData() {
         val columnCount = config.getColumnCount();
-        val seatRowData = new ArrayList<SeatRowData>(config.getRowCount());
+        val rows = new ArrayList<RowData>(config.getRowCount());
         val tmp = new String[columnCount];
 
         val size = table.size();
         for (int i = 0, j = 0; i < size; i++, j = i % columnCount) {
             tmp[j] = table.get(i);
             if (j == columnCount - 1) {
-                seatRowData.add(new SeatRowData(tmp));
+                rows.add(RowData.of(tmp));
             }
         }
 
         if (config.isLucky()) {
-            seatRowData.add(new SeatRowData("Lucky Person", luckyPerson));
+            rows.add(RowData.of("Lucky Person", luckyPerson));
         }
 
-        seatRowData.add(new SeatRowData("Seed", seed));
-        return seatRowData;
+        rows.add(RowData.of("Seed", seed));
+        return rows;
     }
 
     @Override
@@ -216,7 +216,7 @@ public class SeatTable {
         try {
             IOUtils.replaceWithDirectory(filePath.getParent());
             IOUtils.deleteIfExists(filePath);
-            EasyExcel.write(filePath.toFile(), SeatRowData.class)
+            EasyExcel.write(filePath.toFile(), RowData.class)
                     .sheet("座位表-%tF".formatted(new Date()))
                     .excludeColumnIndexes(CollectionUtils.range(Math.max(config.getColumnCount(), 2), MAX_COLUMN_COUNT))
                     .doWrite(toRowData());

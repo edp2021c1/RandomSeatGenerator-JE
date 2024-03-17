@@ -18,7 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
-import com.edp2021c1.randomseatgenerator.core.SeatRowData;
+import com.edp2021c1.randomseatgenerator.core.RowData;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -41,7 +41,7 @@ public class SeatTableRow extends HBox {
      * @param rowData     of this row
      * @param columnCount of this row
      */
-    public SeatTableRow(final SeatRowData rowData, final int columnCount) {
+    public SeatTableRow(final RowData rowData, final int columnCount) {
         super();
         VBox.setVgrow(this, Priority.ALWAYS);
         setAlignment(Pos.CENTER);

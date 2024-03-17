@@ -33,8 +33,7 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 
 /**
- * An instance of this class saves a row of a seat table. This class also provides a method to
- * turn a seat table into an {@code ArrayList} of this class.
+ * Saves a row of a seat table.
  *
  * @since 1.0.1
  */
@@ -42,13 +41,13 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 @Getter
 @ExcelIgnoreUnannotated
 @ColumnWidth(12)
-public class SeatRowData {
+public class RowData {
 
-    private static final List<Field> fields;
+    private static final List<Field> cellFields;
 
     static {
-        val clazz = SeatRowData.class;
-        fields = buildList(range(1, MAX_COLUMN_COUNT + 1), i -> {
+        val clazz = RowData.class;
+        cellFields = buildList(range(1, MAX_COLUMN_COUNT + 1), i -> {
             try {
                 val field = clazz.getDeclaredField("c" + i);
                 field.setAccessible(true);
@@ -101,31 +100,31 @@ public class SeatRowData {
     @ExcelProperty("Column 20")
     private final String c20 = null;
 
-    private final String[] data = new String[MAX_COLUMN_COUNT];
+    private final String[] cells;
 
     /**
-     * Instantiates this class with the given names.
-     *
-     * @param names name data
+     * Instantiates this class.
      */
-    SeatRowData(final String... names) {
-        if (names == null) {
-            return;
-        }
-        val len = names.length;
-        if (len > MAX_COLUMN_COUNT) {
+    private RowData(final String... cells) {
+        val cellCount = cells.length;
+        if (cellCount > MAX_COLUMN_COUNT) {
             throw new IllegalConfigException(
                     "Count of people in a row cannot be larger than " + MAX_COLUMN_COUNT
             );
         }
+
+        this.cells = cells;
+
         try {
-            for (var i = 0; i < len; i++) {
-                fields.get(i).set(this, names[i]);
+            for (var i = 0; i < cellCount; i++) {
+                cellFields.get(i).set(this, cells[i]);
             }
-        } catch (final IllegalAccessException e) {
-            throw new RuntimeException(e);
+        } catch (final IllegalAccessException ignored) {
         }
-        System.arraycopy(names, 0, data, 0, len);
+    }
+
+    public static RowData of(final String... cells) {
+        return (cells == null ? new RowData() : new RowData(cells));
     }
 
     /**
@@ -135,7 +134,7 @@ public class SeatRowData {
      * @return name on the given index
      */
     public String getName(final int columnIndex) {
-        return data[columnIndex];
+        return cells[columnIndex];
     }
 
 }
