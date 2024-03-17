@@ -29,6 +29,7 @@
     -background-color-scroll-bar-thumb-hover: #9b9b9b;
     -background-color-seat-table-cell: #313131;
     -background-color-seat-table-cell-leader: #45296c;
+    -background-color-seat-table-cell-header: #2c0b17;
 
     -border-color-root: #7c7c7c;
     -border-color-button-disabled: #9b9b9b;
@@ -161,6 +162,10 @@
 
 .seat-table-cell:leader {
     -fx-background-color: -background-color-seat-table-cell-leader;
+}
+
+.seat-table-row:header .seat-table-cell {
+    -fx-background-color: -background-color-seat-table-cell-header;
 }
 
 .err-pre-label {

@@ -71,16 +71,23 @@ public class UIUtils {
     private UIUtils() {
     }
 
+    /**
+     * Returns the main window of the application.
+     *
+     * @return the app's main window
+     */
     public static MainWindow getMainWindow() {
         return (MainWindow) RuntimeUtils.runtimeConfig.get("window.main");
     }
 
+    /**
+     * Sets the main window of the application if it has never been set.
+     *
+     * @param mainWindow to be set as the app's main window
+     * @return whether the main window has never been set
+     */
     public static boolean setMainWindow(final MainWindow mainWindow) {
-        if (getMainWindow() == null) {
-            RuntimeUtils.runtimeConfig.put("window.main", mainWindow);
-            return true;
-        }
-        return false;
+        return RuntimeUtils.runtimeConfig.putIfAbsent("window.main", mainWindow) == null;
     }
 
     /**

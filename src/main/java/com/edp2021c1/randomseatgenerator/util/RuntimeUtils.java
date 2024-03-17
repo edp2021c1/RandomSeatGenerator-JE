@@ -79,8 +79,16 @@ public final class RuntimeUtils {
         }
     }
 
-    public static Thread loopThread(final Runnable taskToRun, final long waitingMillis, final String name) {
-        return new LoopTaskThread(taskToRun, waitingMillis, name);
+    /**
+     * Returns a thread that executes a task repeatedly
+     *
+     * @param exe           task to execute repeatedly
+     * @param waitingMillis time to wait between each run in millis
+     * @param name          thread name
+     * @return a thread that executes the task repeatedly
+     */
+    public static Thread loopThread(final Runnable exe, final long waitingMillis, final String name) {
+        return new LoopTaskThread(exe, waitingMillis, name);
     }
 
     /**

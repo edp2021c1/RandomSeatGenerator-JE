@@ -19,7 +19,6 @@
 package com.edp2021c1.randomseatgenerator.core;
 
 import com.alibaba.excel.EasyExcel;
-import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
@@ -38,6 +37,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
+
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 
 /**
  * Used to pack some useful data related to a seat table.
@@ -123,9 +124,7 @@ public class SeatTable {
             }
             throw new RuntimeException(ex);
         } catch (final TimeoutException e) {
-            throw new IllegalConfigException(
-                    "Seat table generating timeout, please check your config or use another seed"
-            );
+            throw new IllegalConfigException("Seat table generating timeout, please check your config or use another seed");
         } catch (final InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -162,8 +161,10 @@ public class SeatTable {
      */
     public List<RowData> toRowData() {
         val columnCount = config.getColumnCount();
-        val rows = new ArrayList<RowData>(config.getRowCount());
+        val rows = new ArrayList<RowData>(config.getRowCount() + 3);
         val tmp = new String[columnCount];
+
+        rows.add(RowData.headerRow(columnCount));
 
         val size = table.size();
         for (int i = 0, j = 0; i < size; i++, j = i % columnCount) {
@@ -216,10 +217,7 @@ public class SeatTable {
         try {
             IOUtils.replaceWithDirectory(filePath.getParent());
             IOUtils.deleteIfExists(filePath);
-            EasyExcel.write(filePath.toFile(), RowData.class)
-                    .sheet("座位表-%tF".formatted(new Date()))
-                    .excludeColumnIndexes(CollectionUtils.range(Math.max(config.getColumnCount(), 2), MAX_COLUMN_COUNT))
-                    .doWrite(toRowData());
+            EasyExcel.write(filePath.toFile(), RowData.class).sheet("座位表-%tF".formatted(new Date())).excludeColumnIndexes(range(Math.max(config.getColumnCount(), 2), MAX_COLUMN_COUNT)).doWrite(toRowData());
             if (!(writable || filePath.toFile().setReadOnly())) {
                 throw new IOException();
             }

@@ -19,14 +19,12 @@
 package com.edp2021c1.randomseatgenerator.core;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
-import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Getter;
 import lombok.val;
 
-import java.lang.reflect.Field;
-import java.util.List;
+import java.util.AbstractList;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.MAX_COLUMN_COUNT;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
@@ -39,102 +37,81 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
  */
 
 @Getter
-@ExcelIgnoreUnannotated
 @ColumnWidth(12)
-public class RowData {
+@ExcelIgnoreUnannotated
+public class RowData extends AbstractList<String> {
 
-    private static final List<Field> cellFields;
+    private static final String[] headerRow = new String[MAX_COLUMN_COUNT];
 
     static {
-        val clazz = RowData.class;
-        cellFields = buildList(range(1, MAX_COLUMN_COUNT + 1), i -> {
-            try {
-                val field = clazz.getDeclaredField("c" + i);
-                field.setAccessible(true);
-                return field;
-            } catch (final NoSuchFieldException e) {
-                // Impossible situation
-                throw new RuntimeException(e);
-            }
-        });
+        System.arraycopy(
+                buildList(range(1, MAX_COLUMN_COUNT + 1), i -> "Column " + i).toArray(new String[0]), 0,
+                headerRow, 0,
+                MAX_COLUMN_COUNT
+        );
     }
 
-    @ExcelProperty("Column 1")
-    private final String c1 = null;
-    @ExcelProperty("Column 2")
-    private final String c2 = null;
-    @ExcelProperty("Column 3")
-    private final String c3 = null;
-    @ExcelProperty("Column 4")
-    private final String c4 = null;
-    @ExcelProperty("Column 5")
-    private final String c5 = null;
-    @ExcelProperty("Column 6")
-    private final String c6 = null;
-    @ExcelProperty("Column 7")
-    private final String c7 = null;
-    @ExcelProperty("Column 8")
-    private final String c8 = null;
-    @ExcelProperty("Column 9")
-    private final String c9 = null;
-    @ExcelProperty("Column 10")
-    private final String c10 = null;
-    @ExcelProperty("Column 11")
-    private final String c11 = null;
-    @ExcelProperty("Column 12")
-    private final String c12 = null;
-    @ExcelProperty("Column 13")
-    private final String c13 = null;
-    @ExcelProperty("Column 14")
-    private final String c14 = null;
-    @ExcelProperty("Column 15")
-    private final String c15 = null;
-    @ExcelProperty("Column 16")
-    private final String c16 = null;
-    @ExcelProperty("Column 17")
-    private final String c17 = null;
-    @ExcelProperty("Column 18")
-    private final String c18 = null;
-    @ExcelProperty("Column 19")
-    private final String c19 = null;
-    @ExcelProperty("Column 20")
-    private final String c20 = null;
-
-    private final String[] cells;
+    private final String[] cells = new String[MAX_COLUMN_COUNT];
+    private final int cellCount;
+    @Getter
+    private final boolean header;
 
     /**
      * Instantiates this class.
      */
-    private RowData(final String... cells) {
-        val cellCount = cells.length;
+    private RowData(final boolean header, final String... cells) {
+        this.header = header;
+
+        this.cellCount = cells.length;
         if (cellCount > MAX_COLUMN_COUNT) {
             throw new IllegalConfigException(
                     "Count of people in a row cannot be larger than " + MAX_COLUMN_COUNT
             );
         }
 
-        this.cells = cells;
-
-        try {
-            for (var i = 0; i < cellCount; i++) {
-                cellFields.get(i).set(this, cells[i]);
-            }
-        } catch (final IllegalAccessException ignored) {
-        }
+        System.arraycopy(cells, 0, this.cells, 0, cellCount);
     }
 
+    /**
+     * Constructs and returns a row containing the given cells
+     *
+     * @param cells cell data
+     * @return a row containing the given cells
+     */
     public static RowData of(final String... cells) {
-        return (cells == null ? new RowData() : new RowData(cells));
+        return (cells == null ? new RowData(false) : new RowData(false, cells));
+    }
+
+    /**
+     * Constructs and returns a header row.
+     *
+     * @param columnCount count of column
+     * @return a header row
+     */
+    public static RowData headerRow(final int columnCount) {
+        if (columnCount > MAX_COLUMN_COUNT) {
+            throw new IllegalConfigException(
+                    "Count of people in a row cannot be larger than " + MAX_COLUMN_COUNT
+            );
+        }
+        val v = new String[columnCount];
+        System.arraycopy(headerRow, 0, v, 0, columnCount);
+        return new RowData(true, v);
     }
 
     /**
      * Returns name on the given index
      *
-     * @param columnIndex column index
+     * @param index column index
      * @return name on the given index
      */
-    public String getName(final int columnIndex) {
-        return cells[columnIndex];
+    @Override
+    public String get(final int index) {
+        return cells[index];
     }
 
+    @Override
+    public int size() {
+        return MAX_COLUMN_COUNT;
+    }
 }

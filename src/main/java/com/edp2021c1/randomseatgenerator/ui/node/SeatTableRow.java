@@ -19,7 +19,9 @@
 package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.core.RowData;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
+import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
@@ -34,6 +36,11 @@ import lombok.val;
  * @since 1.4.0
  */
 public class SeatTableRow extends HBox {
+
+    private static final String DEFAULT_STYLE_CLASS = "seat-table-row";
+
+    private static final PseudoClass PSEUDO_CLASS_HEADER
+            = PseudoClass.getPseudoClass("header");
 
     /**
      * Creates a row with the given data.
@@ -59,11 +66,20 @@ public class SeatTableRow extends HBox {
         val cellCount = Math.max(2, columnCount);
         val cells = new SeatTableCell[cellCount];
         for (var i = 0; i < cellCount; i++) {
-            val cell = new SeatTableCell(rowData.getName(i));
+            val cell = new SeatTableCell(rowData.get(i));
             cell.prefHeightProperty().bind(heightProperty());
             cell.prefWidthProperty().bind(widthProperty().divide(columnCount));
             cells[i] = cell;
         }
         getChildren().setAll(cells);
+
+        new SimpleBooleanProperty(this, "header") {
+            @Override
+            protected void invalidated() {
+                pseudoClassStateChanged(PSEUDO_CLASS_HEADER, get());
+            }
+        }.set(rowData.isHeader());
+
+        getStyleClass().add(DEFAULT_STYLE_CLASS);
     }
 }
