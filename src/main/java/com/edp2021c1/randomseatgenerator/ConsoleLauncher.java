@@ -110,7 +110,7 @@ public class ConsoleLauncher {
         Logging.info("\n" + seatTable);
 
         // 导出
-        seatTable.exportToExcelDocument(outputPath, Boolean.TRUE.equals(config.getBoolean("export.writable")));
+        seatTable.exportToChart(outputPath, Boolean.TRUE.equals(config.getBoolean("export.writable")));
         Logging.info("Seat table successfully exported to " + outputPath);
 
         // 防止某表格抽风

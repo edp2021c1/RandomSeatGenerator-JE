@@ -52,7 +52,7 @@ public class SeatTable {
     /**
      * Max count of column in a {@code RowData}.
      */
-    public static final int MAX_COLUMN_COUNT = 20;
+    public static final int MAX_COLUMN_COUNT = 128;
     /**
      * Default exporting directory.
      */
@@ -164,7 +164,7 @@ public class SeatTable {
         val rows = new ArrayList<RowData>(config.getRowCount() + 3);
         val tmp = new String[columnCount];
 
-        rows.add(RowData.headerRow(columnCount));
+        rows.add(RowData.header(columnCount));
 
         val size = table.size();
         for (int i = 0, j = 0; i < size; i++, j = i % columnCount) {
@@ -203,25 +203,29 @@ public class SeatTable {
     }
 
     /**
-     * Exports this instance to an Excel document (.xlsx).
+     * Exports this instance to a chart, either an Excel document (*.xlsx/*.xls), or an CSV file (.csv).
      *
      * @param filePath path of file to export to
      * @param writable if exports to a writable file
      * @throws RuntimeException if an I/O error occurs
      */
-    public void exportToExcelDocument(final Path filePath, final boolean writable) {
+    public void exportToChart(final Path filePath, final boolean writable) {
         if (filePath == null) {
-            exportToExcelDocument(DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date())), writable);
+            exportToChart(DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date())), writable);
             return;
         }
         try {
             IOUtils.replaceWithDirectory(filePath.getParent());
             IOUtils.deleteIfExists(filePath);
-            EasyExcel.write(filePath.toFile(), RowData.class).sheet("座位表-%tF".formatted(new Date())).excludeColumnIndexes(range(Math.max(config.getColumnCount(), 2), MAX_COLUMN_COUNT)).doWrite(toRowData());
+            EasyExcel
+                    .write(filePath.toFile(), RowData.class)
+                    .sheet("座位表-%tF".formatted(new Date()))
+                    .excludeColumnIndexes(range(Math.max(config.getColumnCount(), 2), Integer.MAX_VALUE))
+                    .doWrite(toRowData());
             if (!(writable || filePath.toFile().setReadOnly())) {
-                throw new IOException();
+                throw new IOException("Failed to set output file to read-only");
             }
-        } catch (final IOException e) {
+        } catch (final Throwable e) {
             throw new RuntimeException("Failed to save seat table to " + filePath, e);
         }
     }

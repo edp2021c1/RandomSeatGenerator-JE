@@ -19,12 +19,12 @@
 package com.edp2021c1.randomseatgenerator.core;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
-import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Getter;
-import lombok.val;
 
 import java.util.AbstractList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.MAX_COLUMN_COUNT;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
@@ -34,25 +34,17 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
  * Saves a row of a seat table.
  *
  * @since 1.0.1
+ * @author Calboot
  */
-
 @Getter
-@ColumnWidth(12)
 @ExcelIgnoreUnannotated
 public class RowData extends AbstractList<String> {
 
-    private static final String[] headerRow = new String[MAX_COLUMN_COUNT];
+    private static final List<String> headerRow = buildList(range(1, MAX_COLUMN_COUNT + 1), i -> "Column " + i);
 
-    static {
-        System.arraycopy(
-                buildList(range(1, MAX_COLUMN_COUNT + 1), i -> "Column " + i).toArray(new String[0]), 0,
-                headerRow, 0,
-                MAX_COLUMN_COUNT
-        );
-    }
-
-    private final String[] cells = new String[MAX_COLUMN_COUNT];
+    private final String[] cells;
     private final int cellCount;
+
     @Getter
     private final boolean header;
 
@@ -61,15 +53,13 @@ public class RowData extends AbstractList<String> {
      */
     private RowData(final boolean header, final String... cells) {
         this.header = header;
-
-        this.cellCount = cells.length;
+        cellCount = cells.length;
         if (cellCount > MAX_COLUMN_COUNT) {
             throw new IllegalConfigException(
                     "Count of people in a row cannot be larger than " + MAX_COLUMN_COUNT
             );
         }
-
-        System.arraycopy(cells, 0, this.cells, 0, cellCount);
+        this.cells = Arrays.copyOf(cells, cellCount);
     }
 
     /**
@@ -78,7 +68,7 @@ public class RowData extends AbstractList<String> {
      * @param cells cell data
      * @return a row containing the given cells
      */
-    public static RowData of(final String... cells) {
+    static RowData of(final String... cells) {
         return (cells == null ? new RowData(false) : new RowData(false, cells));
     }
 
@@ -88,30 +78,23 @@ public class RowData extends AbstractList<String> {
      * @param columnCount count of column
      * @return a header row
      */
-    public static RowData headerRow(final int columnCount) {
-        if (columnCount > MAX_COLUMN_COUNT) {
-            throw new IllegalConfigException(
-                    "Count of people in a row cannot be larger than " + MAX_COLUMN_COUNT
-            );
-        }
-        val v = new String[columnCount];
-        System.arraycopy(headerRow, 0, v, 0, columnCount);
-        return new RowData(true, v);
+    static RowData header(final int columnCount) {
+        return new RowData(true, headerRow.subList(0, columnCount).toArray(new String[0]));
     }
 
     /**
      * Returns name on the given index
      *
-     * @param index column index
+     * @param index column index, possibly larger than {@link #cellCount}
      * @return name on the given index
      */
     @Override
     public String get(final int index) {
-        return cells[index];
+        return index > cellCount - 1 ? null : cells[index];
     }
 
     @Override
     public int size() {
-        return MAX_COLUMN_COUNT;
+        return cellCount;
     }
 }

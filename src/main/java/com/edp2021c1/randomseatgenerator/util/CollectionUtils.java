@@ -106,9 +106,7 @@ public final class CollectionUtils {
      * @return list generated
      */
     public static <T, R> List<R> buildList(final List<? extends T> input, final Function<T, R> builder) {
-        val res = new ArrayList<R>(input.size());
-        input.forEach(t -> res.add(builder.apply(t)));
-        return res;
+        return input.stream().map(builder).toList();
     }
 
     /**

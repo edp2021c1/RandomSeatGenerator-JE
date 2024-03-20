@@ -125,7 +125,11 @@ public class MainWindow extends Stage {
 
         val fc = new FileChooser();
         fc.setTitle("导出座位表");
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"));
+        fc.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"),
+                new FileChooser.ExtensionFilter("Excel 97-2004 工作薄", "*.xls"),
+                new FileChooser.ExtensionFilter("CSV 逗号分隔", "*.csv")
+        );
 
         val obj = config.getString("export.dir.previous");
         fc.setInitialDirectory(new File(
@@ -177,7 +181,7 @@ public class MainWindow extends Stage {
                 if (exportFile == null) {
                     return;
                 }
-                seatTable.get().exportToExcelDocument(exportFile.toPath(), Boolean.TRUE.equals(cfHolder.get().getBoolean("export.writable")));
+                seatTable.get().exportToChart(exportFile.toPath(), Boolean.TRUE.equals(cfHolder.get().getBoolean("export.writable")));
 
                 Logging.info("Successfully exported seat table to " + exportFile);
                 MessageDialog.showMessage(this, "成功导出座位表到\n" + exportFile);
