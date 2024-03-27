@@ -23,8 +23,6 @@ import lombok.val;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Objects;
 
 /**
@@ -34,68 +32,11 @@ import java.util.Objects;
  * @since 1.4.6
  */
 public final class IOUtils {
-    private static final FileVisitor<Path> deleteAllUnder = new SimpleFileVisitor<>() {
-        @Override
-        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
-                throws IOException {
-            Files.delete(file);
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult postVisitDirectory(final Path dir, final IOException e)
-                throws IOException {
-            if (e != null) {
-                throw e;
-            }
-            Files.delete(dir);
-            return FileVisitResult.CONTINUE;
-        }
-    };
 
     /**
      * Don't let anyone else instantiate this class.
      */
     private IOUtils() {
-    }
-
-    /**
-     * Deletes a path and (if exists) everything under it.
-     *
-     * @param path to delete
-     * @throws IOException if an I/O error occurs
-     */
-    public static void deleteIfExists(final Path path) throws IOException {
-        if (Files.isDirectory(path)) {
-            Files.walkFileTree(path, deleteAllUnder);
-            return;
-        }
-        Files.deleteIfExists(path);
-    }
-
-    /**
-     * Checks if this application has permission to read and write a specific path.
-     *
-     * @param path to check permission
-     * @return if this app does not have read and write permission of the target path
-     */
-    public static boolean notFullyPermitted(final Path path) {
-        return !(Files.isReadable(path) && Files.isWritable(path));
-    }
-
-    /**
-     * Replaces the file on the given path (if exists) with an empty directory.
-     *
-     * @param path to replace
-     * @return the path
-     * @throws IOException if an I/O error occurs
-     */
-    public static Path replaceWithDirectory(final Path path) throws IOException {
-        if (!Files.isDirectory(path)) {
-            deleteIfExists(path);
-            Files.createDirectories(path);
-        }
-        return path;
     }
 
     /**

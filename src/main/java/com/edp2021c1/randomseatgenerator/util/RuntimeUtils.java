@@ -52,10 +52,8 @@ public final class RuntimeUtils {
 
     /**
      * Called on application start up.
-     *
-     * @param withGUI whether the application is launched with a GUI
      */
-    public static void initStatic(final boolean withGUI) {
+    public static void initStatic() {
         if (!staticInitialized) {
             getRuntime().addShutdownHook(new Thread(() -> {
                 synchronized (runOnExit) {
@@ -74,7 +72,6 @@ public final class RuntimeUtils {
 
             loopThread(System::gc, 1000, "Auto GC Thread").start();
 
-            runtimeConfig.put("launching.gui", withGUI);
             staticInitialized = true;
         }
     }

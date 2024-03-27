@@ -24,7 +24,6 @@ import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -53,7 +52,6 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
 public class SettingsDialog extends Stage {
     @Getter
     private static final SettingsDialog settingsDialog = new SettingsDialog();
-    private final ObjectProperty<File> importDir;
     private final JSONAppConfigHolder cfHolder;
 
     /**
@@ -186,16 +184,14 @@ public class SettingsDialog extends Stage {
         setScene(new Scene(mainBox));
         setTitle(NAME + " - 设置");
         initOwner(getMainWindow());
-        decorate(this, StageType.DIALOG);
+        decorate(this, DIALOG);
 
         val fc = new FileChooser();
         fc.setTitle("加载配置文件");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
 
-        importDir = fc.initialDirectoryProperty();
-
         val config = cfHolder.get();
-        importDir.set(config.getString("import.dir.previous") == null ? cfHolder.getConfigPath().getParent().toFile() : new File(config.getString("import.dir.previous")));
+        fc.setInitialDirectory(new File(Objects.requireNonNullElse(config.getString("import.dir.previous"), cfHolder.getConfigPath().getParent().toString())));
 
         /* *************************************************************************
          *                                                                         *
@@ -205,12 +201,9 @@ public class SettingsDialog extends Stage {
 
         loadConfigBtn.setOnAction(event -> {
             try {
-                var tmp = importDir.get();
+                var tmp = fc.getInitialDirectory();
                 if (tmp != null) {
-                    while (!tmp.isDirectory()) {
-                        tmp = tmp.getParentFile();
-                    }
-                    importDir.set(tmp);
+                    fc.setInitialDirectory(PathWrapper.of(tmp).getDirParent().toFile());
                 }
 
                 val importFile = fc.showOpenDialog(this);
@@ -228,8 +221,8 @@ public class SettingsDialog extends Stage {
                     MessageDialog.showMessage(this, "导入设置失败");
                 }
 
-                importDir.set(importFile.getParentFile());
-                cfHolder.put("import.dir.previous", importDir.get().toString());
+                fc.setInitialDirectory(importFile.getParentFile());
+                cfHolder.put("import.dir.previous", fc.getInitialDirectory().toString());
             } catch (final Throwable e) {
                 CrashReporter.report(e);
             }

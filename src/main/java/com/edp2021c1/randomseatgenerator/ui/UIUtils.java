@@ -24,7 +24,6 @@ import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -39,6 +38,8 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.val;
 
+import java.util.Objects;
+
 /**
  * Contains several useful methods for creating or initializing JavaFX controls.
  *
@@ -46,6 +47,27 @@ import lombok.val;
  * @since 1.3.3
  */
 public class UIUtils {
+
+    /**
+     * Identifies the main window in the application.
+     */
+    public static final int MAIN_WINDOW = 0;
+
+    /**
+     * Identifies dialogs in the application.
+     * <p>
+     * Not resizable.
+     * <p>
+     * Always on the top of other windows of this app.
+     */
+    public static final int DIALOG = 1;
+
+    /**
+     * Identifies crash reporter windows in the application.
+     * <p>
+     * Icon set to the error icon.
+     */
+    public static final int CRASH_REPORTER = 2;
 
     /**
      * Dark stylesheets of the windows of the app.
@@ -105,26 +127,25 @@ public class UIUtils {
      * @param isDarkMode value
      */
     public static void setGlobalDarkMode(final Boolean isDarkMode) {
-        globalDarkMode.setValue(isDarkMode);
+        globalDarkMode.set(Objects.requireNonNullElse(isDarkMode, true));
     }
 
     /**
      * Decorates the given stage by adding an icon related to
      * the window type of the stage and stylesheets.
      *
-     * @param stage to be decorated
-     * @param type  of the window
-     * @see StageType
+     * @param stage     to be decorated
+     * @param stageType of the window
      */
-    public static void decorate(final Stage stage, final StageType type) {
-        switch (type) {
-            case MAIN -> stage.getIcons().add(icon);
+    public static void decorate(final Stage stage, final int stageType) {
+        switch (stageType) {
+            case MAIN_WINDOW -> stage.getIcons().add(icon);
             case DIALOG -> {
                 stage.getIcons().add(icon);
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.setResizable(false);
             }
-            case ERROR -> {
+            case CRASH_REPORTER -> {
                 stage.initOwner(getMainWindow());
                 stage.getIcons().add(icon);
                 stage.initModality(Modality.APPLICATION_MODAL);
@@ -132,7 +153,7 @@ public class UIUtils {
             }
         }
 
-        final ObservableList<String> stylesheets = stage.getScene().getStylesheets();
+        val stylesheets = stage.getScene().getStylesheets();
         globalDarkMode.addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 stylesheets.setAll(STYLESHEETS_DARK);
@@ -225,27 +246,4 @@ public class UIUtils {
         return t;
     }
 
-    /**
-     * Type of stage decorated.
-     */
-    public enum StageType {
-        /**
-         * Identifies the main window in the application.
-         */
-        MAIN,
-        /**
-         * Identifies dialogs in the application.
-         * <p>
-         * Not resizable.
-         * <p>
-         * Always on the top of other windows of this app.
-         */
-        DIALOG,
-        /**
-         * Identifies crash reporter windows in the application.
-         * <p>
-         * Icon set to the error icon.
-         */
-        ERROR
-    }
 }

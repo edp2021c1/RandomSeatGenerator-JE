@@ -118,10 +118,9 @@ public final class CollectionUtils {
      * @return a list containing the elements whose index matches the predicate
      */
     public static <T> List<T> indexFilter(final List<T> list, final IntPredicate indexPredicate) {
-        if (list instanceof RandomAccess) {
-            return new RandomAccessIndexFilterList<>(list, indexPredicate);
-        }
-        return new IndexFilterList<>(list, indexPredicate);
+        val res = new ArrayList<T>();
+        elementFilter(range(0, list.size()), indexPredicate::test).forEach(i -> res.add(list.get(i)));
+        return res;
     }
 
     /**
@@ -266,105 +265,6 @@ public final class CollectionUtils {
                 throw new UnsupportedOperationException();
             }
         }
-    }
-
-    private static class IndexFilterList<T> extends AbstractList<T> {
-        private final List<Integer> indexes;
-        private final List<T> root;
-        private final int size;
-        private final int rootSize;
-
-        public IndexFilterList(final List<T> root, final IntPredicate indexPredicate) {
-            this.root = root;
-            this.rootSize = root.size();
-            this.indexes = elementFilter(range(0, rootSize), indexPredicate::test);
-            this.size = this.indexes.size();
-        }
-
-        @Override
-        public T get(final int index) {
-            checkRootSize();
-            return root.get(indexes.get(Objects.checkIndex(index, size)));
-        }
-
-        @Override
-        public T set(final int index, final T obj) {
-            checkRootSize();
-            return root.set(indexes.get(index), obj);
-        }
-
-        @Override
-        public int indexOf(final Object o) {
-            checkRootSize();
-            return super.indexOf(o);
-        }
-
-        @Override
-        public int lastIndexOf(final Object o) {
-            checkRootSize();
-            return super.lastIndexOf(o);
-        }
-
-        @Override
-        public int size() {
-            checkRootSize();
-            return size;
-        }
-
-        @Override
-        public boolean contains(final Object o) {
-            checkRootSize();
-            return super.contains(o);
-        }
-
-        protected void checkRootSize() {
-            if (rootSize != root.size()) {
-                throw new ConcurrentModificationException();
-            }
-        }
-    }
-
-    private static class RandomAccessIndexFilterList<T> extends IndexFilterList<T> implements RandomAccess {
-
-        public RandomAccessIndexFilterList(final List<T> root, final IntPredicate indexPredicate) {
-            super(root, indexPredicate);
-        }
-
-        @Override
-        public int indexOf(final Object o) {
-            checkRootSize();
-            var index = -1;
-            for (var i = 0; i < size(); i++) {
-                if (Objects.equals(get(i), o)) {
-                    index = i;
-                }
-            }
-            return index;
-        }
-
-        @Override
-        public int lastIndexOf(final Object o) {
-            checkRootSize();
-            var lastIndex = -1;
-            for (var i = size() - 1; i > -1; i--) {
-                if (Objects.equals(get(i), o)) {
-                    lastIndex = i;
-                }
-            }
-            return lastIndex;
-        }
-
-        @Override
-        public boolean contains(final Object o) {
-            checkRootSize();
-            for (val t : this) {
-                if (Objects.equals(t, o)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
     }
 
 }

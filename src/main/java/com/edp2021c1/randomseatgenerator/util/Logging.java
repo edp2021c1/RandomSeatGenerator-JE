@@ -22,8 +22,6 @@ import lombok.Getter;
 import lombok.val;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
@@ -43,8 +41,8 @@ public final class Logging {
      * Logger.
      */
     private static final Logger logger = Logger.getLogger("RandomSeat");
-    private static final Path logDir = DATA_DIR.resolve("logs");
-    private static final List<Path> logPaths;
+    private static final PathWrapper logDir = DATA_DIR.resolve("logs");
+    private static final List<PathWrapper> logPaths;
     private static final MessageFormat messageFormat = new MessageFormat("[{0,date,yyyy-MM-dd HH:mm:ss.SSS}] [{1}/{2}] {3}\n");
     private static final Formatter DEFAULT_FORMATTER;
     @Getter
@@ -53,7 +51,7 @@ public final class Logging {
     static {
         val str = "%tF-%%d.log".formatted(new Date());
         var t = 1;
-        while (Files.exists(logDir.resolve(str.formatted(t)))) {
+        while (logDir.resolve(str.formatted(t)).exists()) {
             t++;
         }
         logPaths = List.of(logDir.resolve("latest.log"), logDir.resolve(str.formatted(t)));
@@ -129,10 +127,8 @@ public final class Logging {
 
     /**
      * Starts logging.
-     *
-     * @param withGUI whether the application is launched with a GUI
      */
-    public static void start(final boolean withGUI) {
+    public static void start() {
         switch (state) {
             case STARTED -> {
                 debug("Logging already started, there's no need to start it twice");
@@ -142,6 +138,8 @@ public final class Logging {
         }
 
         state = State.STARTED;
+
+        val withGUI = (boolean) RuntimeUtils.runtimeConfig.getOrDefault("launching.gui", false);
 
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);
@@ -166,12 +164,12 @@ public final class Logging {
         logger.addHandler(consoleHandler);
 
         try {
-            IOUtils.replaceWithDirectory(logDir);
+            logDir.replaceWithDirectory();
         } catch (final IOException e) {
             warning("Unable to create log dir, log may not be saved");
             warning(Strings.getStackTrace(e));
         }
-        if (IOUtils.notFullyPermitted(logDir)) {
+        if (logDir.notFullyPermitted()) {
             warning("Does not have read/write permission of the log directory");
         }
         logPaths.forEach(path -> {

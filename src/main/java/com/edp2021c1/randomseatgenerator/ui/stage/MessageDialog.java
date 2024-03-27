@@ -59,7 +59,7 @@ public class MessageDialog extends Stage {
         setTitle("消息");
         setMaxWidth(1280);
         setMaxHeight(720);
-        decorate(this, StageType.DIALOG);
+        decorate(this, DIALOG);
     }
 
     /**

@@ -25,9 +25,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import lombok.val;
-
-import java.util.Objects;
 
 /**
  * Cell of {@code SeatTableView}.
@@ -43,22 +40,20 @@ public class SeatTableCell extends Label {
     /**
      * Creates a cell showing the given object.
      *
-     * @param o {@code Object} to be shown
+     * @param str {@code Object} to be shown
      */
-    public SeatTableCell(final Object o) {
+    public SeatTableCell(final String str) {
         setAlignment(Pos.CENTER);
         HBox.setHgrow(this, Priority.ALWAYS);
         setMinSize(120, 60);
-
-        val s = Objects.toString(o, "");
-        setText(s);
+        setText(str);
 
         new SimpleBooleanProperty(this, "leader") {
             @Override
             protected void invalidated() {
                 pseudoClassStateChanged(PSEUDO_CLASS_LEADER, get());
             }
-        }.set(SeatTable.groupLeaderRegex.matcher(s).matches());
+        }.set(SeatTable.groupLeaderRegex.matcher(str == null ? "" : str).matches());
 
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
     }

@@ -18,10 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
-import com.edp2021c1.randomseatgenerator.util.Logging;
-import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
-import com.edp2021c1.randomseatgenerator.util.Strings;
+import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
 import lombok.Getter;
@@ -29,12 +26,12 @@ import lombok.val;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
-import static com.edp2021c1.randomseatgenerator.util.IOUtils.*;
+import static com.edp2021c1.randomseatgenerator.util.IOUtils.overwriteString;
+import static com.edp2021c1.randomseatgenerator.util.IOUtils.readString;
 
 /**
  * Handles {@link JSONAppConfig}.
@@ -49,16 +46,16 @@ public class JSONAppConfigHolder implements AutoCloseable {
      * Default config handler.
      */
     private static final JSONAppConfigHolder global;
-    private static final Path GLOBAL_CONFIG_PATH = Path.of(Metadata.DATA_DIR.toString(), "config", "randomseatgenerator.json");
+    private static final PathWrapper GLOBAL_CONFIG_PATH = PathWrapper.of(Metadata.DATA_DIR.toString(), "config", "randomseatgenerator.json");
 
     static {
         try {
-            replaceWithDirectory(GLOBAL_CONFIG_PATH.getParent());
+            GLOBAL_CONFIG_PATH.getParent().replaceWithDirectory();
 
-            if (!Files.isRegularFile(GLOBAL_CONFIG_PATH)) {
-                deleteIfExists(GLOBAL_CONFIG_PATH);
-                Files.createFile(GLOBAL_CONFIG_PATH);
+            if (GLOBAL_CONFIG_PATH.notRegularFile()) {
+                GLOBAL_CONFIG_PATH.delete().createFile();
             }
+
             global = createHolder(GLOBAL_CONFIG_PATH, true);
             if (readString(global.channel).isBlank()) {
                 val builtInConfigStream = JSONAppConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
@@ -78,7 +75,7 @@ public class JSONAppConfigHolder implements AutoCloseable {
     }
 
     @Getter
-    private final Path configPath;
+    private final PathWrapper configPath;
     private final JSONAppConfig content;
     private FileChannel channel;
     private boolean closed;
@@ -92,9 +89,9 @@ public class JSONAppConfigHolder implements AutoCloseable {
      */
     private JSONAppConfigHolder(final Path configPath) throws IOException {
         this.content = new JSONAppConfig();
-        this.configPath = configPath;
+        this.configPath = PathWrapper.of(configPath);
 
-        if (notFullyPermitted(replaceWithDirectory(configPath.getParent()))) {
+        if (this.configPath.getParent().replaceWithDirectory().notFullyPermitted()) {
             throw new IOException("Does not has enough permission to read/write config");
         }
 
@@ -127,11 +124,10 @@ public class JSONAppConfigHolder implements AutoCloseable {
     }
 
     private synchronized void loadConfig0() throws IOException {
-        if (!Files.isRegularFile(configPath)) {
-            deleteIfExists(configPath);
-            Files.createFile(configPath);
+        if (this.configPath.notRegularFile()) {
+            this.configPath.delete().createFile();
         }
-        if (notFullyPermitted(configPath)) {
+        if (this.configPath.notFullyPermitted()) {
             throw new IOException("Does not has enough permission to read/write config");
         }
         channel = FileChannel.open(configPath, StandardOpenOption.READ, StandardOpenOption.WRITE);

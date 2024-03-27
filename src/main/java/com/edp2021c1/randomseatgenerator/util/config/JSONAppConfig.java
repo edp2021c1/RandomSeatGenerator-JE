@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
+import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONObject;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
@@ -26,16 +27,12 @@ import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.util.exception.InvalidClassTypeException;
 import lombok.val;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.alibaba.fastjson2.JSONWriter.Feature.MapSortField;
 import static com.alibaba.fastjson2.JSONWriter.Feature.PrettyFormat;
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.*;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.modifiableList;
 
 /**
  * Stores the config of the application.
@@ -147,8 +144,11 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
     @Override
     public int getRandomBetweenRows() throws IllegalConfigException {
         val randomBetweenRows = getInteger(KEY_RANDOM_BETWEEN_ROWS);
-        if (randomBetweenRows == null || randomBetweenRows <= 0) {
+        if (randomBetweenRows == null || randomBetweenRows == 0) {
             return getRowCount();
+        }
+        if (randomBetweenRows < 0) {
+            throw new IllegalConfigException("Random between rows cannot be less than 0");
         }
         return randomBetweenRows;
     }
@@ -181,14 +181,12 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
             );
         }
         l.removeAll(List.of(""));
-        for (val s : l) {
-            if (groupLeaderRegex.matcher(s).matches()) {
-                throw new IllegalConfigException(
-                        "Name list must not contain names matching the format of a group leader"
-                );
-            }
+        if (l.stream().anyMatch(s -> groupLeaderRegex.matcher(s).matches())) {
+            throw new IllegalConfigException(
+                    "Name list must not contain names matching the format of a group leader"
+            );
         }
-        return modifiableList(l);
+        return l;
     }
 
     @Override
@@ -203,7 +201,7 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
                     "Group leader list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
             );
         }
-        return modifiableList(l);
+        return l;
     }
 
     @Override
@@ -217,7 +215,7 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
 
     @Override
     public boolean isLucky() {
-        return !Boolean.FALSE.equals(getBoolean(KEY_LUCKY));
+        return Objects.requireNonNullElse(getBoolean(KEY_LUCKY), true);
     }
 
     @Override
@@ -269,17 +267,14 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
      *
      * @param key whose associated {@code String} value is to be returned
      * @return the {@code String} value to which the specified key is mapped, or null if this map contains no mapping for the key
-     * @throws InvalidClassTypeException if the key exists, and the value of the key is not a {@code String}
+     * @throws IllegalConfigException if the key exists, and the value of the key cannot be cast to {@code String}
      */
     public String getString(final String key) {
-        val o = get(key);
-        if (o == null) {
-            return null;
+        try {
+            return super.getString(key);
+        } catch (final JSONException e) {
+            throw new IllegalConfigException("Cannot cast to String");
         }
-        if (o instanceof final String s) {
-            return s;
-        }
-        throw new InvalidClassTypeException(String.class, o.getClass());
     }
 
     /**
@@ -287,17 +282,14 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
      *
      * @param key whose associated {@code Double} value is to be returned
      * @return the {@code Double} value to which the specified key is mapped, or null if this map contains no mapping for the key
-     * @throws InvalidClassTypeException if the key exists, and the value of the key is not a {@code Number}
+     * @throws IllegalConfigException if the key exists, and the value of the key cannot be cast to {@code String}
      */
     public Double getDouble(final String key) {
-        val o = get(key);
-        if (o == null) {
-            return null;
+        try {
+            return super.getDouble(key);
+        } catch (final JSONException e) {
+            throw new IllegalConfigException("Cannot cast to Double");
         }
-        if (o instanceof final Number n) {
-            return n.doubleValue();
-        }
-        throw new InvalidClassTypeException(Double.class, o.getClass());
     }
 
     /**
@@ -308,14 +300,11 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
      * @throws InvalidClassTypeException if the key exists, and the value of the key is not a {@code Number}
      */
     public Integer getInteger(final String key) {
-        val o = get(key);
-        if (o == null) {
-            return null;
+        try {
+            return super.getInteger(key);
+        } catch (final JSONException e) {
+            throw new IllegalConfigException("Cannot cast to Integer");
         }
-        if (o instanceof final Number n) {
-            return n.intValue();
-        }
-        throw new InvalidClassTypeException(Integer.class, o.getClass());
     }
 
     /**
@@ -326,14 +315,11 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
      * @throws InvalidClassTypeException if the key exists, and the value of the key is not a {@code Boolean}
      */
     public Boolean getBoolean(final String key) {
-        val o = get(key);
-        if (o == null) {
-            return null;
+        try {
+            return super.getBoolean(key);
+        } catch (final JSONException e) {
+            throw new IllegalConfigException("Cannot cast to Boolean");
         }
-        if (o instanceof final Boolean b) {
-            return b;
-        }
-        throw new InvalidClassTypeException(Boolean.class, o.getClass());
     }
 
     /**

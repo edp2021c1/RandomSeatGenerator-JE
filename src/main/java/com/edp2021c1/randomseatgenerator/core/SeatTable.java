@@ -19,8 +19,9 @@
 package com.edp2021c1.randomseatgenerator.core;
 
 import com.alibaba.excel.EasyExcel;
-import com.edp2021c1.randomseatgenerator.util.IOUtils;
+import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.PathWrapper;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -50,13 +51,13 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 public class SeatTable {
 
     /**
-     * Max count of column in a {@code RowData}.
+     * Max count of column in a seat table.
      */
     public static final int MAX_COLUMN_COUNT = 128;
     /**
      * Default exporting directory.
      */
-    public static final Path DEFAULT_EXPORTING_DIR = Path.of(Metadata.USER_HOME, "Seat Tables");
+    public static final PathWrapper DEFAULT_EXPORTING_DIR = PathWrapper.of(Metadata.USER_HOME, "Seat Tables");
     /**
      * Placeholder of an empty seat.
      */
@@ -69,7 +70,7 @@ public class SeatTable {
      * Format of a group leader.
      */
     public static final String groupLeaderFormat = "*%s*";
-
+    private static final ExcelWriterBuilder excelWriterBuilder = EasyExcel.write().head(RowData.class);
     /**
      * The seat table stored as a {@code  List}.
      */
@@ -95,7 +96,7 @@ public class SeatTable {
      * @param seed        {@link #seed}
      * @param luckyPerson {@link #luckyPerson}
      */
-    SeatTable(final List<String> table, final SeatConfig config, final String seed, final String luckyPerson) {
+    public SeatTable(final List<String> table, final SeatConfig config, final String seed, final String luckyPerson) {
         this.table = Collections.unmodifiableList(table);
         this.config = config;
         this.seed = seed == null ? "null" : seed.isEmpty() ? "empty_string" : seed;
@@ -161,15 +162,17 @@ public class SeatTable {
      */
     public List<RowData> toRowData() {
         val columnCount = config.getColumnCount();
-        val rows = new ArrayList<RowData>(config.getRowCount() + 3);
-        val tmp = new String[columnCount];
+        val rows = new ArrayList<RowData>(config.getRowCount() + 2);
+        val size = table.size();
 
         rows.add(RowData.header(columnCount));
 
-        val size = table.size();
-        for (int i = 0, j = 0; i < size; i++, j = i % columnCount) {
+        val tmp = new String[columnCount];
+        val t = columnCount - 1;
+        for (var i = 0; i < size; i++) {
+            val j = i % columnCount;
             tmp[j] = table.get(i);
-            if (j == columnCount - 1) {
+            if (j == t) {
                 rows.add(RowData.of(tmp));
             }
         }
@@ -185,10 +188,11 @@ public class SeatTable {
     @Override
     public String toString() {
         val columnCount = config.getColumnCount();
+        val size = table.size();
 
         val str = new StringBuilder("Seat Table:\n");
 
-        for (var i = 0; i < table.size(); i++) {
+        for (var i = 0; i < size; i++) {
             if (i % columnCount == 0) {
                 str.append("\n");
             }
@@ -215,12 +219,11 @@ public class SeatTable {
             return;
         }
         try {
-            IOUtils.replaceWithDirectory(filePath.getParent());
-            IOUtils.deleteIfExists(filePath);
-            EasyExcel
-                    .write(filePath.toFile(), RowData.class)
-                    .sheet("座位表-%tF".formatted(new Date()))
+            PathWrapper.of(filePath).delete().getParent().replaceWithDirectory();
+            excelWriterBuilder
+                    .file(filePath.toFile())
                     .excludeColumnIndexes(range(Math.max(config.getColumnCount(), 2), Integer.MAX_VALUE))
+                    .sheet("座位表-%tF".formatted(new Date()))
                     .doWrite(toRowData());
             if (!(writable || filePath.toFile().setReadOnly())) {
                 throw new IOException("Failed to set output file to read-only");

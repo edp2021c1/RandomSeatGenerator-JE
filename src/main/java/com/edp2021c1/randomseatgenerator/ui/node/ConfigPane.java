@@ -22,6 +22,8 @@ import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
@@ -41,25 +43,25 @@ import static com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig.*;
  * @since 1.3.4
  */
 public class ConfigPane extends VBox {
-    private final IntegerField rowCountInput;
+    private final IntegerProperty rowCountProperty;
 
-    private final IntegerField columnCountInput;
+    private final IntegerProperty columnCountProperty;
 
-    private final IntegerField rbrInput;
+    private final IntegerProperty randomBetweenRowsProperty;
 
-    private final TextField disabledLastRowPosInput;
+    private final StringProperty disabledLastRowPosProperty;
 
-    private final TextField nameListInput;
+    private final StringProperty nameListProperty;
 
-    private final TextField groupLeaderListInput;
+    private final StringProperty groupLeaderListProperty;
 
-    private final TextArea separateListInput;
+    private final StringProperty separateListProperty;
 
-    private final CheckBox luckyOptionCheck;
+    private final BooleanProperty luckyOptionProperty;
 
-    private final CheckBox exportWritableCheck;
+    private final BooleanProperty exportWritableProperty;
 
-    private final CheckBox darkModeCheck;
+    private final BooleanProperty darkModeProperty;
 
     private final JSONAppConfigHolder source;
 
@@ -68,47 +70,49 @@ public class ConfigPane extends VBox {
     /**
      * Constructs an instance.
      *
-     * @param rowCountInput            input of {@code row_count}
-     * @param columnCountInput         input of {@code column_count}
-     * @param rbrInput                 input of {@code random_between_rows}
-     * @param disabledLastRowPosInput  input of {@code last_row_pos_cannot_be_chosen}
-     * @param nameListInput            input of {@code person_sort_by_height}
-     * @param groupLeaderListInput     input of {@code group_leader_list}
-     * @param separateListInput        input of {@code separate_list}
-     * @param luckyOptionCheck         input of {@code lucky_option}
-     * @param exportWritableCheck      input of {@code export_writable}
-     * @param darkModeCheck            input of {@code dark_mode}
+     * @param rowCountInput            input of row count
+     * @param columnCountInput         input of column count
+     * @param rbrInput                 input of random between rows
+     * @param disabledLastRowPosInput  input of unavailable last row positions
+     * @param nameListInput            input of names
+     * @param groupLeaderListInput     input of group leaders
+     * @param separateListInput        input of separated pairs
+     * @param luckyOptionCheck         input of lucky option
+     * @param exportWritableCheck      input of whether the seat table will be exported to a writable chart
+     * @param darkModeCheck            input of dark mode
      * @param applyBtnDisabledProperty property of whether the current globalHolder config is equal to the config in the pane,
-     *                                 usually decides whether the apply button is disabled. Ignored if is null.
+     *                                 usually decides whether the apply button is disabled, ignored if is null
      * @param configSource             holder of the config
      */
-    public ConfigPane(final IntegerField rowCountInput,
-                      final IntegerField columnCountInput,
-                      final IntegerField rbrInput,
-                      final TextField disabledLastRowPosInput,
-                      final TextField nameListInput,
-                      final TextField groupLeaderListInput,
-                      final TextArea separateListInput,
-                      final CheckBox luckyOptionCheck,
-                      final CheckBox exportWritableCheck,
-                      final CheckBox darkModeCheck,
-                      final BooleanProperty applyBtnDisabledProperty,
-                      final JSONAppConfigHolder configSource) {
+    public ConfigPane(
+            final IntegerField rowCountInput,
+            final IntegerField columnCountInput,
+            final IntegerField rbrInput,
+            final TextField disabledLastRowPosInput,
+            final TextField nameListInput,
+            final TextField groupLeaderListInput,
+            final TextArea separateListInput,
+            final CheckBox luckyOptionCheck,
+            final CheckBox exportWritableCheck,
+            final CheckBox darkModeCheck,
+            final BooleanProperty applyBtnDisabledProperty,
+            final JSONAppConfigHolder configSource
+    ) {
         super();
 
-        this.rowCountInput = rowCountInput;
-        this.columnCountInput = columnCountInput;
-        this.rbrInput = rbrInput;
-        this.disabledLastRowPosInput = disabledLastRowPosInput;
-        this.nameListInput = nameListInput;
-        this.groupLeaderListInput = groupLeaderListInput;
-        this.separateListInput = separateListInput;
-        this.luckyOptionCheck = luckyOptionCheck;
-        this.exportWritableCheck = exportWritableCheck;
-        this.darkModeCheck = darkModeCheck;
+        rowCountProperty = rowCountInput.valueProperty();
+        columnCountProperty = columnCountInput.valueProperty();
+        randomBetweenRowsProperty = rbrInput.valueProperty();
+        disabledLastRowPosProperty = disabledLastRowPosInput.textProperty();
+        nameListProperty = nameListInput.textProperty();
+        groupLeaderListProperty = groupLeaderListInput.textProperty();
+        separateListProperty = separateListInput.textProperty();
+        luckyOptionProperty = luckyOptionCheck.selectedProperty();
+        exportWritableProperty = exportWritableCheck.selectedProperty();
+        darkModeProperty = darkModeCheck.selectedProperty();
 
-        this.source = configSource;
-        this.content = source.get();
+        source = configSource;
+        content = source.get();
 
         val box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
         box1.setPrefHeight(60);
@@ -124,43 +128,43 @@ public class ConfigPane extends VBox {
         if (applyBtnDisabledProperty == null) {
             return;
         }
-        rowCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
+        rowCountProperty.addListener((observable, oldValue, newValue) -> {
             content.put(KEY_ROW_COUNT, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
-        columnCountInput.valueProperty().addListener((observable, oldValue, newValue) -> {
+        columnCountProperty.addListener((observable, oldValue, newValue) -> {
             content.put(KEY_COLUMN_COUNT, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
-        rbrInput.valueProperty().addListener((observable, oldValue, newValue) -> {
+        randomBetweenRowsProperty.addListener((observable, oldValue, newValue) -> {
             content.put(KEY_RANDOM_BETWEEN_ROWS, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
-        disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
+        disabledLastRowPosProperty.addListener((observable, oldValue, newValue) -> {
             content.put(KEY_DISABLED_LAST_ROW_POS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        nameListInput.textProperty().addListener((observable, oldValue, newValue) -> {
+        nameListProperty.addListener((observable, oldValue, newValue) -> {
             content.put(KEY_NAMES, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        groupLeaderListInput.textProperty().addListener((observable, oldValue, newValue) -> {
+        groupLeaderListProperty.addListener((observable, oldValue, newValue) -> {
             content.put(KEY_GROUP_LEADERS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        separateListInput.textProperty().addListener((observable, oldValue, newValue) -> {
+        separateListProperty.addListener((observable, oldValue, newValue) -> {
             content.put(KEY_SEPARATED_PAIRS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        luckyOptionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        luckyOptionProperty.addListener((observable, oldValue, newValue) -> {
             content.put(KEY_LUCKY, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        exportWritableCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        exportWritableProperty.addListener((observable, oldValue, newValue) -> {
             content.put("export.writable", newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        darkModeCheck.selectedProperty().bindBidirectional(UIUtils.globalDarkModeProperty());
+        darkModeProperty.bindBidirectional(UIUtils.globalDarkModeProperty());
     }
 
     /**
@@ -181,16 +185,16 @@ public class ConfigPane extends VBox {
         if (config == null) {
             return;
         }
-        rowCountInput.setValue(config.getRowCount());
-        columnCountInput.setValue(config.getColumnCount());
-        rbrInput.setValue(config.getRandomBetweenRows());
-        disabledLastRowPosInput.setText(config.getString(KEY_DISABLED_LAST_ROW_POS));
-        nameListInput.setText(config.getString(KEY_NAMES));
-        groupLeaderListInput.setText(config.getString(KEY_GROUP_LEADERS));
-        separateListInput.setText(config.getString(KEY_SEPARATED_PAIRS));
-        luckyOptionCheck.setSelected(config.isLucky());
-        exportWritableCheck.setSelected(Boolean.TRUE.equals(config.getBoolean("export.writable")));
-        darkModeCheck.setSelected(!Boolean.FALSE.equals(config.getBoolean("appearance.style.dark")));
+        rowCountProperty.set(config.getRowCount());
+        columnCountProperty.set(config.getColumnCount());
+        randomBetweenRowsProperty.set(config.getRandomBetweenRows());
+        disabledLastRowPosProperty.set(config.getString(KEY_DISABLED_LAST_ROW_POS));
+        nameListProperty.set(config.getString(KEY_NAMES));
+        groupLeaderListProperty.set(config.getString(KEY_GROUP_LEADERS));
+        separateListProperty.set(config.getString(KEY_SEPARATED_PAIRS));
+        luckyOptionProperty.set(config.isLucky());
+        exportWritableProperty.set(Objects.requireNonNullElse(config.getBoolean("export.writable"), false));
+        darkModeProperty.set(Objects.requireNonNullElse(config.getBoolean("appearance.style.dark"), true));
     }
 
     private boolean checkEquals() {

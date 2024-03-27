@@ -20,11 +20,10 @@ package com.edp2021c1.randomseatgenerator.util;
 
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
-import lombok.val;
 
 import java.awt.*;
 import java.net.URI;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Desktop utils.
@@ -70,8 +69,6 @@ public final class DesktopUtils {
      * @param text to copy.
      */
     public static void copyPlainText(String text) {
-        val t = new HashMap<DataFormat, Object>();
-        t.put(DataFormat.PLAIN_TEXT, text);
-        clipboard.setContent(t);
+        clipboard.setContent(Map.of(DataFormat.PLAIN_TEXT, text));
     }
 }

@@ -22,6 +22,7 @@ import com.edp2021c1.randomseatgenerator.ui.stage.CrashReporterDialog;
 import com.edp2021c1.randomseatgenerator.ui.stage.MessageDialog;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
+import lombok.Getter;
 import lombok.val;
 
 /**
@@ -30,12 +31,15 @@ import lombok.val;
  * @author Calboot
  * @since 1.2.8
  */
-public class CrashReporter implements Thread.UncaughtExceptionHandler {
+public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
 
     /**
-     * Instance.
+     * The now-in-use instance.
      */
-    public static final CrashReporter instance = new CrashReporter();
+    @Getter
+    private static final CrashReporter instance = (boolean) RuntimeUtils.runtimeConfig.getOrDefault("launching.gui", false)
+            ? new ConsoleCrashReporter()
+            : new GUICrashReporter();
 
     /**
      * Creates an instance.
@@ -44,63 +48,81 @@ public class CrashReporter implements Thread.UncaughtExceptionHandler {
     }
 
     /**
-     * Reports an exception with {@link #instance}
+     * Reports an exception with {@link #getInstance()}
      *
      * @param e exception to report
      */
     public static void report(final Throwable e) {
-        instance.uncaughtException(null, e);
+        getInstance().uncaughtException(Thread.currentThread(), e);
     }
 
-    /**
-     * Handles crashes.
-     *
-     * @param t the thread
-     * @param e the exception
-     */
-    @Override
-    public void uncaughtException(final Thread t, final Throwable e) {
-        if (e == null) {
-            return;
-        }
-        if (e instanceof ExceptionInInitializerError) {
-            uncaughtException(t, e.getCause());
-            return;
-        }
+    private static class ConsoleCrashReporter extends CrashReporter {
+        @Override
+        public void uncaughtException(final Thread t, final Throwable e) {
+            if (e == null) {
+                return;
+            }
+            if (e instanceof ExceptionInInitializerError) {
+                uncaughtException(t, e.getCause());
+                return;
+            }
 
-        val withGUI = Boolean.TRUE.equals(RuntimeUtils.runtimeConfig.getBoolean("launching.gui"));
+            try {
+                if (e instanceof final IllegalConfigException ex) {
+                    Logging.error(
+                            (ex.isSingle() ? "IllegalConfigException: " : "IllegalConfigException:") + ex.getLocalizedMessage()
+                    );
+                    return;
+                }
 
-        try {
-            if (e instanceof final IllegalConfigException ex) {
-                Logging.error(
-                        (ex.isSingle() ? "IllegalConfigException: " : "IllegalConfigException:") + ex.getLocalizedMessage()
-                );
-                if (withGUI) {
+                if (e instanceof ApplicationAlreadyRunningException) {
+                    Logging.error("Another instance of the application is already running");
+                    System.exit(1);
+                    return;
+                }
+
+                Logging.error((t == null ? "" : "Throwable thrown from thread \"%s\":\n".formatted(t.getName())) + Strings.getStackTrace(e));
+            } catch (final Throwable ex) {
+                System.err.println(Strings.getStackTrace(ex));
+            }
+        }
+    }
+
+    private static class GUICrashReporter extends CrashReporter {
+        @Override
+        public void uncaughtException(final Thread t, final Throwable e) {
+            if (e == null) {
+                return;
+            }
+            if (e instanceof ExceptionInInitializerError) {
+                uncaughtException(t, e.getCause());
+                return;
+            }
+
+            try {
+                if (e instanceof final IllegalConfigException ex) {
+                    Logging.error(
+                            (ex.isSingle() ? "IllegalConfigException: " : "IllegalConfigException:") + ex.getLocalizedMessage()
+                    );
                     MessageDialog.showMessage(
                             (ex.isSingle() ? "配置格式错误\n" : "配置格式错误") + ex.getLocalizedMessage()
                     );
+                    return;
                 }
-                return;
-            }
 
-            if (e instanceof ApplicationAlreadyRunningException) {
-                Logging.error("Another instance of the application is already running");
-                if (withGUI) {
+                if (e instanceof ApplicationAlreadyRunningException) {
+                    Logging.error("Another instance of the application is already running");
                     MessageDialog.showMessage("已有另一个实例在运行");
+                    System.exit(1);
+                    return;
                 }
-                System.exit(1);
-                return;
-            }
 
-            val str = t == null ?
-                    Strings.getStackTrace(e) :
-                    "Throwable thrown from thread \"%s\":\n".formatted(t.getName()) + Strings.getStackTrace(e);
-            Logging.error(str);
-            if (withGUI) {
+                val str = (t == null ? "" : "Throwable thrown from thread \"%s\":\n".formatted(t.getName())) + Strings.getStackTrace(e);
+                Logging.error(str);
                 CrashReporterDialog.showCrashReporter(e.getClass().getName(), str);
+            } catch (final Throwable ex) {
+                System.err.println(Strings.getStackTrace(ex));
             }
-        } catch (final Throwable ex) {
-            System.err.println(Strings.getStackTrace(ex));
         }
     }
 }

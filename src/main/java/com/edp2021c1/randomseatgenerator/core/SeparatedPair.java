@@ -21,7 +21,6 @@ package com.edp2021c1.randomseatgenerator.core;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.val;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,23 +48,23 @@ public class SeparatedPair {
      * @throws IllegalConfigException if the {@code String} contains only one name
      */
     public SeparatedPair(final String s) throws IllegalConfigException {
-        val t = Arrays.asList(s.split(" ", 2));
-        if (t.size() < 2) {
+        val t = s.split(" ", 2);
+        if (t.length < 2) {
             throw new IllegalConfigException("Invalid separate pair: \"%s\"".formatted(s));
         }
-        if (t.contains(EMPTY_SEAT_PLACEHOLDER)) {
+        if (EMPTY_SEAT_PLACEHOLDER.equals(t[0]) || EMPTY_SEAT_PLACEHOLDER.equals(t[1])) {
             throw new IllegalConfigException(
                     "Separated name list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER));
         }
-        if (Objects.equals(t.getFirst(), t.getLast())) {
+        if (Objects.equals(t[0], t[1])) {
             throw new IllegalConfigException("Two names in one separate pair cannot be the same");
         }
-        first = t.getFirst();
-        last = t.getLast();
+        first = t[0];
+        last = t[1];
     }
 
     /**
-     * Check if {@code name_1} and {@code name_2} are separated in the specified seat table.
+     * Check if {@code first} and {@code last} are separated in the specified seat table.
      *
      * @param seat        the seat table checked.
      * @param columnCount count of columns of the seat table.
@@ -75,12 +74,14 @@ public class SeparatedPair {
         if (seat == null || !(seat.contains(first) && seat.contains(last))) {
             return true;
         }
-        return !List.of(
-                1,
-                columnCount - 1,
-                columnCount,
-                columnCount + 1
-        ).contains(Math.abs(seat.indexOf(first) - seat.indexOf(last)));
+        val i = Math.abs(seat.indexOf(first) - seat.indexOf(last));
+        if (columnCount == 1) {
+            return i != 1;
+        }
+        if (columnCount == 2) {
+            return i != 1 && i != 2 && i != 3;
+        }
+        return i != 1 && i != columnCount && i != columnCount - 1 && i != columnCount + 1;
     }
 
 }

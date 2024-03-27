@@ -121,7 +121,7 @@ public class MainWindow extends Stage {
 
         setScene(new Scene(mainBox));
         setTitle(Metadata.TITLE);
-        decorate(this, StageType.MAIN);
+        decorate(this, MAIN_WINDOW);
 
         val fc = new FileChooser();
         fc.setTitle("导出座位表");
@@ -131,10 +131,10 @@ public class MainWindow extends Stage {
                 new FileChooser.ExtensionFilter("CSV 逗号分隔", "*.csv")
         );
 
-        val obj = config.getString("export.dir.previous");
-        fc.setInitialDirectory(new File(
-                obj == null ? SeatTable.DEFAULT_EXPORTING_DIR.toString() : obj
-        ));
+        fc.setInitialDirectory(new File(Objects.requireNonNullElse(
+                config.getString("export.dir.previous"),
+                SeatTable.DEFAULT_EXPORTING_DIR.toString()
+        )));
 
         /* *************************************************************************
          *                                                                         *
@@ -181,7 +181,7 @@ public class MainWindow extends Stage {
                 if (exportFile == null) {
                     return;
                 }
-                seatTable.get().exportToChart(exportFile.toPath(), Boolean.TRUE.equals(cfHolder.get().getBoolean("export.writable")));
+                seatTable.get().exportToChart(exportFile.toPath(), Objects.requireNonNullElse(cfHolder.get().getBoolean("export.writable"), false));
 
                 Logging.info("Successfully exported seat table to " + exportFile);
                 MessageDialog.showMessage(this, "成功导出座位表到\n" + exportFile);
@@ -201,7 +201,7 @@ public class MainWindow extends Stage {
         dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
 
         if (OperatingSystem.getCurrent().isMac()) {
-            setOnShown(event -> setFullScreen(Boolean.TRUE.equals(cfHolder.get().getBoolean("appearance.window.main.maximized"))));
+            setOnShown(event -> setFullScreen(Objects.requireNonNullElse(cfHolder.get().getBoolean("appearance.window.main.maximized"), false)));
             fullScreenProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
             setFullScreenExitHint("");
             mainBox.setOnKeyPressed(event -> {
@@ -219,7 +219,7 @@ public class MainWindow extends Stage {
                 }
             });
         } else {
-            setOnShown(event -> setMaximized(Boolean.TRUE.equals(cfHolder.get().getBoolean("appearance.window.main.maximized"))));
+            setOnShown(event -> setMaximized(Objects.requireNonNullElse(cfHolder.get().getBoolean("appearance.window.main.maximized"), false)));
             maximizedProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isControlDown()) {

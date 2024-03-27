@@ -68,7 +68,6 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         // 获取配置
         val rowCount = config.getRowCount();
         val columnCount = config.getColumnCount();
-        val randomBetweenRows = config.getRandomBetweenRows();
         val nameList = config.getNames();
         val groupLeaderList = config.getGroupLeaders();
         val lucky = config.isLucky();
@@ -79,11 +78,12 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         // 临时变量，提前声明以减少内存和计算操作
         val peopleNum = nameList.size();
 
-        // 防止行数过多引发无限递归
+        // 防止行数过多引发死循环
         if (rowCount > Math.ceil((double) (peopleNum - minus) / columnCount)) {
             throw new IllegalConfigException("Too many seat with row count " + rowCount);
         }
 
+        // 防止组长不足引发死循环
         if (groupLeaderList.size() < columnCount) {
             throw new IllegalConfigException("Not enough group leader for " + columnCount + " column(s)");
         }
@@ -95,20 +95,19 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
             throw new IllegalConfigException("Too many people and not enough seat");
         }
 
-        val tPeopleNum = peopleNum - minus;
-        val peopleLeft = tPeopleNum % columnCount;
-        val randomPeopleCount = Math.min(columnCount * randomBetweenRows, tPeopleNum - peopleLeft);
+        val peopleInSeat = peopleNum - minus;
+        val peopleLeft = peopleInSeat % columnCount;
+        val noPeopleLeft = peopleLeft == 0;
+        val randomPeopleCount = Math.min(columnCount * config.getRandomBetweenRows(), peopleInSeat - peopleLeft);
 
-        val forTimesMinusOne = (
-                peopleNum % randomPeopleCount > columnCount
-                        ? seatNum / randomPeopleCount + 1
-                        : seatNum / randomPeopleCount
-        ) - 1;
+        val forTimesMinusOne = peopleNum % randomPeopleCount > columnCount
+                ? seatNum / randomPeopleCount
+                : seatNum / randomPeopleCount - 1;
 
         val emptyRow = Arrays.asList(new String[columnCount]);
         fill(emptyRow, EMPTY_SEAT_PLACEHOLDER);
 
-        val availableLastRowPos = elementFilter(range(1, columnCount), integer -> !config.getDisabledLastRowPos().contains(integer));
+        val availableLastRowPos = elementFilter(range(1, columnCount + 1), i -> !config.getDisabledLastRowPos().contains(i));
         if (availableLastRowPos.size() < peopleLeft) {
             throw new IllegalConfigException("Available last row seat not enough");
         }
@@ -116,6 +115,11 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         // 座位表数据
         val seatTable = new ArrayList<String>(seatNum);
         var luckyPerson = "";
+
+        // 临时变量，提前声明以减少内存和计算操作
+        val luckyPersonOriginIndex = peopleNum - randomPeopleCount - peopleLeft;
+        val peopleNumShuffledInLoop = forTimesMinusOne * randomPeopleCount;
+        val seatNumMinusColumnCount = seatNum - columnCount;
 
         do {
             seatTable.clear();
@@ -125,23 +129,23 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
 
             if (lucky) {
                 luckyPerson = pickRandomlyAndRemove(tNameList.subList(
-                        peopleNum - randomPeopleCount - peopleLeft,
+                        luckyPersonOriginIndex,
                         peopleNum
                 ), rd);
             }
 
-            for (var i = 0; i < forTimesMinusOne; i++) {
-                shuffle(tNameList.subList(i * randomPeopleCount, (i + 1) * randomPeopleCount), rd);
+            for (var i = 0; i < peopleNumShuffledInLoop; ) {
+                shuffle(tNameList.subList(i, i += randomPeopleCount), rd);
             }
-            shuffle(tNameList.subList(forTimesMinusOne * randomPeopleCount, tPeopleNum), rd);
+            shuffle(tNameList.subList(peopleNumShuffledInLoop, peopleInSeat), rd);
 
-            if (peopleLeft == 0) {
-                seatTable.addAll(tNameList.subList(0, seatNum));
+            if (noPeopleLeft) {
+                seatTable.addAll(tNameList);
             } else {
-                seatTable.addAll(tNameList.subList(0, seatNum - columnCount));
+                seatTable.addAll(tNameList.subList(0, seatNumMinusColumnCount));
                 seatTable.addAll(emptyRow);
-                for (var i = seatNum - columnCount; i < tPeopleNum; i++) {
-                    seatTable.set(pickRandomlyAndRemove(tAvailableLastRowPos, rd) + seatNum - columnCount - 1, tNameList.get(i));
+                for (var i = seatNumMinusColumnCount; i < peopleInSeat; i++) {
+                    seatTable.set(pickRandomlyAndRemove(tAvailableLastRowPos, rd) + seatNumMinusColumnCount - 1, tNameList.get(i));
                 }
             }
         } while (!check(seatTable, config));

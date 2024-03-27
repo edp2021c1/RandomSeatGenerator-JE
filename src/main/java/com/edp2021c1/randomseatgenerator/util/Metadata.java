@@ -20,7 +20,6 @@ package com.edp2021c1.randomseatgenerator.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 
 import static java.lang.System.getProperty;
 
@@ -93,7 +92,7 @@ public final class Metadata {
     /**
      * Data directory.
      */
-    public static final Path DATA_DIR;
+    public static final PathWrapper DATA_DIR;
     /**
      * Application name.
      */
@@ -145,9 +144,9 @@ public final class Metadata {
         }
 
         switch (OperatingSystem.getCurrent()) {
-            case WINDOWS -> DATA_DIR = Path.of(USER_HOME, "AppData", "Local", "RandomSeatGenerator");
-            case MAC -> DATA_DIR = Path.of(USER_HOME, "Library", "Application Support", "RandomSeatGenerator");
-            default -> DATA_DIR = Path.of(USER_HOME, ".rdstgnrt");
+            case WINDOWS -> DATA_DIR = PathWrapper.of(USER_HOME, "AppData", "Local", "RandomSeatGenerator");
+            case MAC -> DATA_DIR = PathWrapper.of(USER_HOME, "Library", "Application Support", "RandomSeatGenerator");
+            default -> DATA_DIR = PathWrapper.of(USER_HOME, ".rdstgnrt");
         }
     }
 

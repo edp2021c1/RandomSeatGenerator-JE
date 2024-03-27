@@ -24,7 +24,6 @@ import lombok.val;
 import java.util.Arrays;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
-import static java.util.Collections.fill;
 
 /**
  * Seat table generator class.
@@ -44,9 +43,9 @@ public interface SeatTableGenerator {
      * Empty generator.
      */
     SeatTableGenerator emptyGenerator = (config, seed) -> {
-        val seat = Arrays.asList(new String[config.getRowCount() * config.getColumnCount()]);
-        fill(seat, EMPTY_SEAT_PLACEHOLDER);
-        return new SeatTable(seat, config, EMPTY_SEAT_PLACEHOLDER, EMPTY_SEAT_PLACEHOLDER);
+        val seat = new String[config.getRowCount() * config.getColumnCount()];
+        Arrays.fill(seat, EMPTY_SEAT_PLACEHOLDER);
+        return new SeatTable(Arrays.asList(seat), config, EMPTY_SEAT_PLACEHOLDER, EMPTY_SEAT_PLACEHOLDER);
     };
 
 

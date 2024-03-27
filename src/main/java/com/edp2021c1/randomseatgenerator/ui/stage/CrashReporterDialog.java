@@ -62,7 +62,7 @@ public class CrashReporterDialog extends Stage {
         setMaxWidth(1440);
         setMaxHeight(810);
         setTitle(title);
-        UIUtils.decorate(this, UIUtils.StageType.ERROR);
+        UIUtils.decorate(this, UIUtils.CRASH_REPORTER);
 
         here.setOnAction(event -> DesktopUtils.copyPlainText(mainText.getText()));
 

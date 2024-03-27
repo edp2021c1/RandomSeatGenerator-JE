@@ -63,16 +63,17 @@ public class RandomSeatGenerator {
             System.exit(0);
         }
 
-        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.instance);
+        Thread.currentThread().setUncaughtExceptionHandler(CrashReporter.getInstance());
         Thread.currentThread().setName("Main Thread");
 
         launch(!arguments.contains("--nogui"), arguments);
     }
 
-    private static void launch(final boolean useGUI, final List<String> args) {
-        RuntimeUtils.initStatic(useGUI);
-        Logging.start(useGUI);
-        if (useGUI) {
+    private static void launch(final boolean withGUI, final List<String> args) {
+        RuntimeUtils.initStatic();
+        RuntimeUtils.runtimeConfig.put("launching.gui", withGUI);
+        Logging.start();
+        if (withGUI) {
             GUILauncher.launch();
         } else {
             ConsoleLauncher.launch(args);

@@ -79,9 +79,8 @@ public final class Strings {
      * @return hash code of {@code str}
      */
     public static long longHashCode(final String str) {
-        val bytes = str.getBytes();
         var h = 0;
-        for (val v : bytes) {
+        for (val v : str.getBytes()) {
             h = (v & 0xffff) + (h << 5) - h;
         }
         return h;
@@ -95,9 +94,9 @@ public final class Strings {
      */
     public static String getStackTrace(final Throwable e) {
         val writer = new StringWriter(1024);
-        try (val printWriter = new PrintWriter(writer)) {
-            e.printStackTrace(printWriter);
-        }
+        val printWriter = new PrintWriter(writer);
+        e.printStackTrace(printWriter);
+        printWriter.close();
         return writer.toString();
     }
 
@@ -110,8 +109,9 @@ public final class Strings {
      */
     public static String randomString(final int len) {
         val chars = new char[len];
+        val rd = new Random();
         for (var i = 0; i < len; i++) {
-            chars[i] = CollectionUtils.pickRandomly(CHARACTERS_AND_DIGITS, new Random());
+            chars[i] = CollectionUtils.pickRandomly(CHARACTERS_AND_DIGITS, rd);
         }
         return new String(chars);
     }

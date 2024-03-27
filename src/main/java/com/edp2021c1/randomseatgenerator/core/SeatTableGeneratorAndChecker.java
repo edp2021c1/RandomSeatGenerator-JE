@@ -23,7 +23,6 @@ import lombok.val;
 
 import java.util.List;
 
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.elementFilter;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.indexFilter;
 
 /**
@@ -45,20 +44,18 @@ public interface SeatTableGeneratorAndChecker extends SeatTableGenerator {
      */
     default boolean check(final List<String> seatTable, final SeatConfig config) throws IllegalConfigException {
         val gl = config.getGroupLeaders();
-        val sp = config.getSeparatedPairs();
-        val spNum = sp.size();
         val columnCount = config.getColumnCount();
 
         // 检查每列是否都有组长
         for (var i = 0; i < columnCount; i++) {
             val iCopy = i;
-            if (elementFilter(indexFilter(seatTable, index -> index % columnCount == iCopy), gl::contains).isEmpty()) {
+            if (indexFilter(seatTable, index -> index % columnCount == iCopy).stream().noneMatch(gl::contains)) {
                 return false;
             }
         }
         // 检查是否分开
-        for (var i = 0; i < spNum; i++) {
-            if (!sp.get(i).check(seatTable, columnCount)) {
+        for (final SeparatedPair separatedPair : config.getSeparatedPairs()) {
+            if (!separatedPair.check(seatTable, columnCount)) {
                 return false;
             }
         }

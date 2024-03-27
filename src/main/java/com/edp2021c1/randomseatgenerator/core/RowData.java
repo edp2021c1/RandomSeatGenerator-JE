@@ -24,7 +24,6 @@ import lombok.Getter;
 
 import java.util.AbstractList;
 import java.util.Arrays;
-import java.util.List;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.MAX_COLUMN_COUNT;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
@@ -33,14 +32,12 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 /**
  * Saves a row of a seat table.
  *
- * @since 1.0.1
  * @author Calboot
+ * @since 1.0.1
  */
 @Getter
 @ExcelIgnoreUnannotated
 public class RowData extends AbstractList<String> {
-
-    private static final List<String> headerRow = buildList(range(1, MAX_COLUMN_COUNT + 1), i -> "Column " + i);
 
     private final String[] cells;
     private final int cellCount;
@@ -79,7 +76,7 @@ public class RowData extends AbstractList<String> {
      * @return a header row
      */
     static RowData header(final int columnCount) {
-        return new RowData(true, headerRow.subList(0, columnCount).toArray(new String[0]));
+        return new RowData(true, buildList(range(1, columnCount + 1), i -> "Column " + i).toArray(new String[columnCount]));
     }
 
     /**
