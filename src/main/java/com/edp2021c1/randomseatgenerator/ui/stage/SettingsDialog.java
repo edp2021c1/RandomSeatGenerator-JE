@@ -203,7 +203,7 @@ public class SettingsDialog extends Stage {
             try {
                 var tmp = fc.getInitialDirectory();
                 if (tmp != null) {
-                    fc.setInitialDirectory(PathWrapper.of(tmp).getDirParent().toFile());
+                    fc.setInitialDirectory(PathWrapper.wrap(tmp).getDirParent().toFile());
                 }
 
                 val importFile = fc.showOpenDialog(this);

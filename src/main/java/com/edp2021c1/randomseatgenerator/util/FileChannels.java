@@ -26,17 +26,18 @@ import java.nio.channels.FileChannel;
 import java.util.Objects;
 
 /**
- * IO utils.
+ * File channel utils.
  *
  * @author Calboot
- * @since 1.4.6
+ * @see FileChannel
+ * @since 1.5.2
  */
-public final class IOUtils {
+public final class FileChannels {
 
     /**
      * Don't let anyone else instantiate this class.
      */
-    private IOUtils() {
+    private FileChannels() {
     }
 
     /**

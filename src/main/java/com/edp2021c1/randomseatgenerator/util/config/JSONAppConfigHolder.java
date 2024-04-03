@@ -30,8 +30,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
-import static com.edp2021c1.randomseatgenerator.util.IOUtils.overwriteString;
-import static com.edp2021c1.randomseatgenerator.util.IOUtils.readString;
+import static com.edp2021c1.randomseatgenerator.util.FileChannels.overwriteString;
+import static com.edp2021c1.randomseatgenerator.util.FileChannels.readString;
 
 /**
  * Handles {@link JSONAppConfig}.
@@ -46,17 +46,13 @@ public class JSONAppConfigHolder implements AutoCloseable {
      * Default config handler.
      */
     private static final JSONAppConfigHolder global;
-    private static final PathWrapper GLOBAL_CONFIG_PATH = PathWrapper.of(Metadata.DATA_DIR.toString(), "config", "randomseatgenerator.json");
+    private static final PathWrapper GLOBAL_CONFIG_PATH = PathWrapper.wrap(Metadata.DATA_DIR.toString(), "config", "randomseatgenerator.json");
 
     static {
         try {
             GLOBAL_CONFIG_PATH.getParent().replaceWithDirectory();
 
-            if (GLOBAL_CONFIG_PATH.notRegularFile()) {
-                GLOBAL_CONFIG_PATH.delete().createFile();
-            }
-
-            global = createHolder(GLOBAL_CONFIG_PATH, true);
+            global = createHolder(GLOBAL_CONFIG_PATH.replaceIfNonRegularFile(), true);
             if (readString(global.channel).isBlank()) {
                 val builtInConfigStream = JSONAppConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
                 if (builtInConfigStream != null) {
@@ -89,7 +85,7 @@ public class JSONAppConfigHolder implements AutoCloseable {
      */
     private JSONAppConfigHolder(final Path configPath) throws IOException {
         this.content = new JSONAppConfig();
-        this.configPath = PathWrapper.of(configPath);
+        this.configPath = PathWrapper.wrap(configPath);
 
         if (this.configPath.getParent().replaceWithDirectory().notFullyPermitted()) {
             throw new IOException("Does not has enough permission to read/write config");
@@ -124,13 +120,10 @@ public class JSONAppConfigHolder implements AutoCloseable {
     }
 
     private synchronized void loadConfig0() throws IOException {
-        if (this.configPath.notRegularFile()) {
-            this.configPath.delete().createFile();
-        }
-        if (this.configPath.notFullyPermitted()) {
+        if (this.configPath.replaceIfNonRegularFile().notFullyPermitted()) {
             throw new IOException("Does not has enough permission to read/write config");
         }
-        channel = FileChannel.open(configPath, StandardOpenOption.READ, StandardOpenOption.WRITE);
+        channel = FileChannel.open(configPath.getPath(), StandardOpenOption.READ, StandardOpenOption.WRITE);
         if (channel.tryLock() == null) {
             throw new FileAlreadyLockedException(configPath);
         }

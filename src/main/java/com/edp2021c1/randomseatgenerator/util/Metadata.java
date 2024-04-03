@@ -144,9 +144,9 @@ public final class Metadata {
         }
 
         switch (OperatingSystem.getCurrent()) {
-            case WINDOWS -> DATA_DIR = PathWrapper.of(USER_HOME, "AppData", "Local", "RandomSeatGenerator");
-            case MAC -> DATA_DIR = PathWrapper.of(USER_HOME, "Library", "Application Support", "RandomSeatGenerator");
-            default -> DATA_DIR = PathWrapper.of(USER_HOME, ".rdstgnrt");
+            case WINDOWS -> DATA_DIR = PathWrapper.wrap(USER_HOME, "AppData", "Local", "RandomSeatGenerator");
+            case MAC -> DATA_DIR = PathWrapper.wrap(USER_HOME, "Library", "Application Support", "RandomSeatGenerator");
+            default -> DATA_DIR = PathWrapper.wrap(USER_HOME, ".rdstgnrt");
         }
     }
 

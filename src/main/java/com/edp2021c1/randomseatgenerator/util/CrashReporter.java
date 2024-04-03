@@ -48,7 +48,7 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
     }
 
     /**
-     * Reports an exception with {@link #getInstance()}
+     * Reports an exception with {@link #instance}
      *
      * @param e exception to report
      */

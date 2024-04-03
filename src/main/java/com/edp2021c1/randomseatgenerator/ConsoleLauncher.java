@@ -67,10 +67,10 @@ public class ConsoleLauncher {
         }
 
         // 导出路径
-        val outputPath = PathWrapper.of(SeatTable.DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date())));
+        var outputPath = PathWrapper.wrap(SeatTable.DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date())));
         // 获取导出路径
         if ((i = args.lastIndexOf("--output-path")) != -1 && i < args.size() - 1) {
-            outputPath.setPath(args.get(i + 1));
+            outputPath = PathWrapper.wrap(args.get(i + 1));
             if (!outputPath.getPath().endsWith(".xlsx")) {
                 Logging.error("Invalid output path: " + outputPath);
                 System.exit(1);
@@ -89,10 +89,10 @@ public class ConsoleLauncher {
         // 处理座位表生成配置
         var config = JSONAppConfigHolder.global().get().checkAndReturn();
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
-        val configPath = JSONAppConfigHolder.global().getConfigPath();
+        var configPath = JSONAppConfigHolder.global().getConfigPath();
         // 获取配置文件路径
         if ((i = args.lastIndexOf("--config-path")) != -1 && i < args.size() - 1) {
-            configPath.setPath(args.get(i + 1));
+            configPath = PathWrapper.wrap(args.get(i + 1));
             Logging.info("Config path set to " + configPath);
             try {
                 val holder = JSONAppConfigHolder.createHolder(configPath.getPath(), false);

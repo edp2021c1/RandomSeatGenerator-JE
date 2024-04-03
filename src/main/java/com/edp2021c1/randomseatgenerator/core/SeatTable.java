@@ -57,7 +57,7 @@ public class SeatTable {
     /**
      * Default exporting directory.
      */
-    public static final PathWrapper DEFAULT_EXPORTING_DIR = PathWrapper.of(Metadata.USER_HOME, "Seat Tables");
+    public static final PathWrapper DEFAULT_EXPORTING_DIR = PathWrapper.wrap(Metadata.USER_HOME, "Seat Tables");
     /**
      * Placeholder of an empty seat.
      */
@@ -219,7 +219,7 @@ public class SeatTable {
             return;
         }
         try {
-            PathWrapper.of(filePath).delete().getParent().replaceWithDirectory();
+            PathWrapper.wrap(filePath).delete().getParent().replaceWithDirectory();
             excelWriterBuilder
                     .file(filePath.toFile())
                     .excludeColumnIndexes(range(Math.max(config.getColumnCount(), 2), Integer.MAX_VALUE))
