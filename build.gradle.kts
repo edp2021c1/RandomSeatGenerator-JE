@@ -81,7 +81,7 @@ tasks.javadoc {
 
 tasks.jar {
     manifest {
-        attributes("Main-Class" to prop.getProperty("version"))
+        attributes("Main-Class" to prop.getProperty("mainClass"))
         attributes("Created-By" to "Copyright (C) EDP2021C1")
         attributes("Implementation-Version" to version)
     }
