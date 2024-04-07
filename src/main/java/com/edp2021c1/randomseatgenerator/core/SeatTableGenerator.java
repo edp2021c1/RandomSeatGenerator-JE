@@ -58,6 +58,6 @@ public interface SeatTableGenerator {
      * @throws IllegalConfigException if config is null or is illegal
      */
     SeatTable generate(SeatConfig config, String seed)
-            throws NullPointerException, IllegalConfigException;
+            throws IllegalConfigException;
 
 }

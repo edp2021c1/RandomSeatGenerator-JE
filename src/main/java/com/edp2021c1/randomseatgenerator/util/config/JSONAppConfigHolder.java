@@ -24,14 +24,12 @@ import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedExcepti
 import lombok.Getter;
 import lombok.val;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
-
-import static com.edp2021c1.randomseatgenerator.util.FileChannels.overwriteString;
-import static com.edp2021c1.randomseatgenerator.util.FileChannels.readString;
 
 /**
  * Handles {@link JSONAppConfig}.
@@ -40,7 +38,7 @@ import static com.edp2021c1.randomseatgenerator.util.FileChannels.readString;
  * @see JSONAppConfig
  * @since 1.4.9
  */
-public class JSONAppConfigHolder implements AutoCloseable {
+public class JSONAppConfigHolder implements Closeable {
 
     /**
      * Default config handler.
@@ -53,7 +51,7 @@ public class JSONAppConfigHolder implements AutoCloseable {
             GLOBAL_CONFIG_PATH.getParent().replaceWithDirectory();
 
             global = createHolder(GLOBAL_CONFIG_PATH.replaceIfNonRegularFile(), true);
-            if (readString(global.channel).isBlank()) {
+            if (global.configPath.readString().isBlank()) {
                 val builtInConfigStream = JSONAppConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
                 if (builtInConfigStream != null) {
                     global.putJson(new String(
@@ -120,18 +118,18 @@ public class JSONAppConfigHolder implements AutoCloseable {
     }
 
     private synchronized void loadConfig0() throws IOException {
-        if (this.configPath.replaceIfNonRegularFile().notFullyPermitted()) {
+        if (configPath.replaceIfNonRegularFile().notFullyPermitted()) {
             throw new IOException("Does not has enough permission to read/write config");
         }
-        channel = FileChannel.open(configPath.getPath(), StandardOpenOption.READ, StandardOpenOption.WRITE);
+        channel = configPath.openFileChannel(StandardOpenOption.READ, StandardOpenOption.WRITE);
         if (channel.tryLock() == null) {
             throw new FileAlreadyLockedException(configPath);
         }
-        if (readString(channel).isEmpty()) {
+        if (configPath.readString().isEmpty()) {
             return;
         }
         try {
-            content.putJsonAndReturn(readString(channel)).check();
+            content.putJsonAndReturn(configPath.readString()).check();
         } catch (final RuntimeException e) {
             Logging.warning("Invalid config loaded");
             Logging.warning(Strings.getStackTrace(e));
@@ -194,7 +192,7 @@ public class JSONAppConfigHolder implements AutoCloseable {
     public synchronized void putAll(final Map<? extends String, ?> map) {
         checkState();
         try {
-            overwriteString(channel, content.putAllAndReturn(map).checkAndReturn().toString());
+            configPath.writeString(content.putAllAndReturn(map).checkAndReturn().toString());
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
@@ -210,7 +208,7 @@ public class JSONAppConfigHolder implements AutoCloseable {
     public synchronized void putJson(final String jsonString) {
         checkState();
         try {
-            overwriteString(channel, content.putJsonAndReturn(jsonString).checkAndReturn().toString());
+            configPath.writeString(content.putJsonAndReturn(jsonString).checkAndReturn().toString());
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }

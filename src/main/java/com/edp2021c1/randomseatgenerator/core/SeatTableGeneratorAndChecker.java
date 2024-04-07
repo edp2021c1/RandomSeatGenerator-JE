@@ -22,6 +22,7 @@ import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.val;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.indexFilter;
 
@@ -47,19 +48,10 @@ public interface SeatTableGeneratorAndChecker extends SeatTableGenerator {
         val columnCount = config.getColumnCount();
 
         // 检查每列是否都有组长
-        for (var i = 0; i < columnCount; i++) {
-            val iCopy = i;
-            if (indexFilter(seatTable, index -> index % columnCount == iCopy).stream().noneMatch(gl::contains)) {
-                return false;
-            }
+        if (IntStream.range(0, columnCount).anyMatch(i -> indexFilter(seatTable, index -> index % columnCount == i).stream().noneMatch(gl::contains))) {
+            return false;
         }
         // 检查是否分开
-        for (final SeparatedPair separatedPair : config.getSeparatedPairs()) {
-            if (!separatedPair.check(seatTable, columnCount)) {
-                return false;
-            }
-        }
-
-        return true;
+        return config.getSeparatedPairs().stream().allMatch(separatedPair -> separatedPair.check(seatTable, columnCount));
     }
 }

@@ -24,7 +24,6 @@ import com.edp2021c1.randomseatgenerator.core.SeatConfig;
 import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
-import com.edp2021c1.randomseatgenerator.util.exception.InvalidClassTypeException;
 import lombok.val;
 
 import java.util.*;
@@ -181,7 +180,7 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
             );
         }
         l.removeAll(List.of(""));
-        if (l.stream().anyMatch(s -> groupLeaderRegex.matcher(s).matches())) {
+        if (l.stream().anyMatch(groupLeaderRegex.asMatchPredicate())) {
             throw new IllegalConfigException(
                     "Name list must not contain names matching the format of a group leader"
             );
@@ -297,7 +296,7 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
      *
      * @param key whose associated {@code Integer} value is to be returned
      * @return the {@code Integer} value to which the specified key is mapped, or null if this map contains no mapping for the key
-     * @throws InvalidClassTypeException if the key exists, and the value of the key is not a {@code Number}
+     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Number}
      */
     public Integer getInteger(final String key) {
         try {
@@ -312,7 +311,7 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
      *
      * @param key whose associated {@code Boolean} value is to be returned
      * @return the {@code Boolean} value to which the specified key is mapped, or null if this map contains no mapping for the key
-     * @throws InvalidClassTypeException if the key exists, and the value of the key is not a {@code Boolean}
+     * @throws IllegalConfigException if the key exists, and the value of the key is not a {@code Boolean}
      */
     public Boolean getBoolean(final String key) {
         try {

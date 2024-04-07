@@ -125,6 +125,7 @@ public final class RuntimeUtils {
     private static class LoopTaskThread extends Thread {
         private final Runnable loopTask;
         private final long waitingMillis;
+        private final byte[] lock = new byte[0];
 
         private LoopTaskThread(final Runnable loopTask, final long waitingMillis, final String name) {
             this.loopTask = loopTask;
@@ -135,13 +136,12 @@ public final class RuntimeUtils {
         }
 
         @Override
-        @SuppressWarnings("all")
         public void run() {
-            while (true) {
+            while (isAlive()) {
                 loopTask.run();
-                synchronized (this) {
+                synchronized (lock) {
                     try {
-                        wait(waitingMillis);
+                        lock.wait(waitingMillis);
                     } catch (final InterruptedException ignored) {
                     }
                 }

@@ -200,7 +200,7 @@ public class MainWindow extends Stage {
 
         dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
 
-        if (OperatingSystem.getCurrent().isMac()) {
+        if (OperatingSystem.MAC == OperatingSystem.getCurrent()) {
             setOnShown(event -> setFullScreen(Objects.requireNonNullElse(cfHolder.get().getBoolean("appearance.window.main.maximized"), false)));
             fullScreenProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
             setFullScreenExitHint("");

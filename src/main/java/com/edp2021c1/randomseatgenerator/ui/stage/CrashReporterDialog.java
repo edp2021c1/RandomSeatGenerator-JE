@@ -71,7 +71,7 @@ public class CrashReporterDialog extends Stage {
             close();
         });
 
-        if (OperatingSystem.getCurrent().isMac()) {
+        if (OperatingSystem.MAC == OperatingSystem.getCurrent()) {
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;

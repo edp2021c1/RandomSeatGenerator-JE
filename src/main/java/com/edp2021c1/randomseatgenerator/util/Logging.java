@@ -148,7 +148,7 @@ public final class Logging {
             return true;
         });
 
-        final ConsoleHandler consoleHandler = new ConsoleHandler() {
+        final var consoleHandler = new ConsoleHandler() {
             @Override
             public void close() {
                 val record = format(new LogRecord(LoggingLevels.DEBUG, "Closing console log handler"));

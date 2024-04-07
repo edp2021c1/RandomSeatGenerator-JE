@@ -1,11 +1,31 @@
+/*
+ * RandomSeatGenerator
+ * Copyright © 2023 EDP2021C1
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.edp2021c1.randomseatgenerator.util;
 
-import lombok.Getter;
 import lombok.NonNull;
+import lombok.val;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
@@ -14,10 +34,10 @@ import java.util.Objects;
 /**
  * Path wrapper, containing many useful methods that allow chained calling.
  *
+ * @author Calboot
  * @see Path
  * @since 1.5.2
  */
-@Getter
 public class PathWrapper implements Path {
 
     private static final FileVisitor<Path> deleter = new SimpleFileVisitor<>() {
@@ -40,10 +60,11 @@ public class PathWrapper implements Path {
     };
 
     private final Path path;
+    private FileChannel channel;
 
     private PathWrapper(final Path path) {
         if (path instanceof final PathWrapper wrapper) {
-            this.path = wrapper.getPath();
+            this.path = wrapper.path;
             return;
         }
         this.path = path;
@@ -327,13 +348,64 @@ public class PathWrapper implements Path {
     @NonNull
     @Override
     @SuppressWarnings("all")
-    public WatchKey register(final @NonNull WatchService watcher, final @NonNull WatchEvent.Kind<?>[] events, final WatchEvent.Modifier... modifiers) throws IOException {
+    public WatchKey register(final @NonNull WatchService watcher,
+                             final @NonNull WatchEvent.Kind<?>[] events,
+                             final WatchEvent.Modifier... modifiers) throws IOException {
         return path.register(watcher, events, modifiers);
     }
 
     @Override
     public int compareTo(final @NonNull Path other) {
         return path.compareTo(other);
+    }
+
+    /**
+     * Opens or creates a file, returning a file channel to access the file.
+     *
+     * @param openOptions options specifying how the file is opened
+     * @return a file channel
+     * @throws IOException if an I/O error occurs
+     * @see FileChannel#open(Path, OpenOption...)
+     */
+    public FileChannel openFileChannel(final OpenOption... openOptions) throws IOException {
+        return (channel = FileChannel.open(path, Objects.requireNonNullElse(openOptions, new OpenOption[0])));
+    }
+
+    /**
+     * Reads all the content from the path to a string.
+     * <p>Will not modify the position of the channel, even if is is used.
+     *
+     * @return string read from the channel
+     * @throws IOException if an I/O error occurs
+     * @see FileChannel#read(ByteBuffer, long)
+     * @see Files#readString(Path)
+     */
+    public String readString() throws IOException {
+        if (channel != null && channel.isOpen()) {
+            val buffer = ByteBuffer.allocate((int) channel.size());
+            channel.read(buffer, 0);
+            return new String(buffer.array());
+        }
+        return Files.readString(path);
+    }
+
+    /**
+     * Overwrites the content of the path with the string.
+     *
+     * @param str string to write
+     * @throws IOException if an I/O error occurs
+     * @see FileChannel#write(ByteBuffer)
+     * @see Files#writeString(Path, CharSequence, OpenOption...)
+     */
+    public void writeString(final String str) throws IOException {
+        if (channel != null && channel.isOpen()) {
+            val bytes = Objects.requireNonNullElse(str, "").getBytes();
+            if (channel.truncate(0).write(ByteBuffer.wrap(bytes)) != bytes.length) {
+                throw new IOException();
+            }
+            return;
+        }
+        Files.writeString(path, str);
     }
 
 }

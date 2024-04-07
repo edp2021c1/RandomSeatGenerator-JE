@@ -21,6 +21,8 @@ package com.edp2021c1.randomseatgenerator.util;
 import lombok.Getter;
 import lombok.val;
 
+import java.util.stream.Stream;
+
 import static com.edp2021c1.randomseatgenerator.util.Metadata.OS_NAME;
 
 /**
@@ -34,19 +36,19 @@ public enum OperatingSystem {
     /**
      * Microsoft Windows.
      */
-    WINDOWS("windows"),
+    WINDOWS(),
     /**
      * Mac OS X.
      */
-    MAC("mac"),
+    MAC(),
     /**
      * Linux and Unix like OS, including Solaris.
      */
-    LINUX("linux"),
+    LINUX(),
     /**
      * Unknown operating system.
      */
-    UNKNOWN("unknown");
+    UNKNOWN();
 
     /**
      * Current operating system.
@@ -61,46 +63,13 @@ public enum OperatingSystem {
                 current = WINDOWS;
             } else if (osName.startsWith("mac")) {
                 current = MAC;
-            } else if (osName.contains("solaris")
-                    || osName.contains("linux")
-                    || osName.contains("unix")
-                    || osName.contains("sunos")) {
+            } else if (Stream.of("solaris", "linux", "unix", "sunos").anyMatch(osName::contains)) {
                 current = LINUX;
             } else {
                 current = UNKNOWN;
             }
         } else {
             current = UNKNOWN;
-        }
-    }
-
-    @Getter
-    private final boolean windows;
-    @Getter
-    private final boolean mac;
-    @Getter
-    private final boolean linux;
-    @Getter
-    private final boolean unknown;
-
-    OperatingSystem(final String osName) {
-        switch (osName) {
-            case "windows" -> {
-                windows = true;
-                mac = linux = unknown = false;
-            }
-            case "mac" -> {
-                mac = true;
-                windows = linux = unknown = false;
-            }
-            case "linux" -> {
-                linux = true;
-                windows = mac = unknown = false;
-            }
-            default -> {
-                unknown = true;
-                windows = mac = linux = false;
-            }
         }
     }
 

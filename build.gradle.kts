@@ -18,6 +18,7 @@
 
 import java.nio.file.*
 import java.nio.file.Path
+import java.util.*
 import java.util.spi.ToolProvider
 
 plugins {
@@ -25,10 +26,11 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
-group = "com.edp2021c1"
-version = "1.5.2"
+val prop = Properties(3)
+prop.load(Files.newInputStream(projectDir.toPath().resolve("project.properties")))
 
-val mainClass = "com.edp2021c1.randomseatgenerator.RandomSeatGenerator"
+group = prop.getProperty("group")
+version = prop.getProperty("version")
 
 val os = System.getProperty("os.name").lowercase()
 val isWin = os.startsWith("win")
@@ -79,7 +81,7 @@ tasks.javadoc {
 
 tasks.jar {
     manifest {
-        attributes("Main-Class" to mainClass)
+        attributes("Main-Class" to prop.getProperty("version"))
         attributes("Created-By" to "Copyright (C) EDP2021C1")
         attributes("Implementation-Version" to version)
     }

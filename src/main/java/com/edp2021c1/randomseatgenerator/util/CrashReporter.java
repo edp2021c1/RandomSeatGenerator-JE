@@ -57,6 +57,10 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
     }
 
     private static class ConsoleCrashReporter extends CrashReporter {
+
+        private ConsoleCrashReporter() {
+        }
+
         @Override
         public void uncaughtException(final Thread t, final Throwable e) {
             if (e == null) {
@@ -89,6 +93,10 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
     }
 
     private static class GUICrashReporter extends CrashReporter {
+
+        private GUICrashReporter() {
+        }
+
         @Override
         public void uncaughtException(final Thread t, final Throwable e) {
             if (e == null) {

@@ -23,7 +23,6 @@ import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
-import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -100,7 +99,7 @@ public class SettingsDialog extends Stage {
 
         val applyBtn = createButton("应用", 80, 26);
         applyBtn.setDisable(true);
-        BooleanProperty applyBtnDisabledProperty = applyBtn.disableProperty();
+        var applyBtnDisabledProperty = applyBtn.disableProperty();
 
         val configPane = new ConfigPane(
                 rowCountInput,
@@ -253,7 +252,7 @@ public class SettingsDialog extends Stage {
         cancelBtn.setOnAction(event -> close());
         cancelBtn.setCancelButton(true);
 
-        if (OperatingSystem.getCurrent().isMac()) {
+        if (OperatingSystem.MAC == OperatingSystem.getCurrent()) {
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;

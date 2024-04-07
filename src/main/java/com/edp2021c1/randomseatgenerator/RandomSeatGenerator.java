@@ -75,8 +75,8 @@ public class RandomSeatGenerator {
         Logging.start();
         if (withGUI) {
             GUILauncher.launch();
-        } else {
-            ConsoleLauncher.launch(args);
+            return;
         }
+        ConsoleLauncher.launch(args);
     }
 }

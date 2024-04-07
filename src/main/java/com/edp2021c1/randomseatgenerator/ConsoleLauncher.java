@@ -71,7 +71,7 @@ public class ConsoleLauncher {
         // 获取导出路径
         if ((i = args.lastIndexOf("--output-path")) != -1 && i < args.size() - 1) {
             outputPath = PathWrapper.wrap(args.get(i + 1));
-            if (!outputPath.getPath().endsWith(".xlsx")) {
+            if (!outputPath.endsWith(".xlsx")) {
                 Logging.error("Invalid output path: " + outputPath);
                 System.exit(1);
             }
@@ -95,7 +95,7 @@ public class ConsoleLauncher {
             configPath = PathWrapper.wrap(args.get(i + 1));
             Logging.info("Config path set to " + configPath);
             try {
-                val holder = JSONAppConfigHolder.createHolder(configPath.getPath(), false);
+                val holder = JSONAppConfigHolder.createHolder(configPath, false);
                 config = holder.get().checkAndReturn();
                 holder.close();
             } catch (final IOException e) {
@@ -110,7 +110,7 @@ public class ConsoleLauncher {
         Logging.info("\n" + seatTable);
 
         // 导出
-        seatTable.exportToChart(outputPath.getPath(), Objects.requireNonNullElse(config.getBoolean("export.writable"), false));
+        seatTable.exportToChart(outputPath, Objects.requireNonNullElse(config.getBoolean("export.writable"), false));
         Logging.info("Seat table successfully exported to " + outputPath);
 
         // 防止某表格抽风

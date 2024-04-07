@@ -17,28 +17,28 @@
  */
 
 * {
-    -highlight-fill: #2571d5;
-    -hyperlink-text-fill: #76b9ff;
+    -highlight-fill: rgb(37, 113, 213);
+    -hyperlink-text-fill: rgb(118, 185, 255);
 
-    -text-fill-root: white;
-    -text-fill-button-disabled: #9b9b9b;
-    -text-fill-err: #e74f4f;
+    -text-fill-root: rgb(255, 255, 255);
+    -text-fill-button-disabled: rgb(155, 155, 155);
+    -text-fill-err: rgb(231, 79, 79);
 
-    -background-color-root: #232323;
-    -background-color-scroll-bar-thumb: #696969;
-    -background-color-scroll-bar-thumb-hover: #9b9b9b;
-    -background-color-seat-table-cell: #313131;
-    -background-color-seat-table-cell-leader: #45296c;
-    -background-color-seat-table-cell-header: #2c0b17;
+    -background-color-root: rgb(35, 35, 35);
+    -background-color-scroll-bar-thumb: rgb(105, 105, 105);
+    -background-color-scroll-bar-thumb-hover: rgb(155, 155, 155);
+    -background-color-seat-table-cell: rgb(49, 49, 49);
+    -background-color-seat-table-cell-leader: rgb(69, 41, 108);
+    -background-color-seat-table-cell-header: rgb(44, 11, 23);
 
-    -border-color-root: #7c7c7c;
-    -border-color-button-disabled: #9b9b9b;
-    -border-color-focused: #d9d9d9;
-    -border-color-checkbox-box: white;
-    -border-color-button-default: #358dff;
-    -border-color-button-default-hover: #85b7ff;
-    -border-color-seat-table-cell: #282828;
-    -border-color-err: #e74f4f;
+    -border-color-root: rgb(124, 124, 124);
+    -border-color-button-disabled: rgb(155, 155, 155);
+    -border-color-focused: rgb(217, 217, 217);
+    -border-color-checkbox-box: rgb(255, 255, 255);
+    -border-color-button-default: rgb(53, 141, 255);
+    -border-color-button-default-hover: rgb(133, 183, 255);
+    -border-color-seat-table-cell: rgb(40, 40, 40);
+    -border-color-err: rgb(231, 79, 79);
 }
 
 .root {

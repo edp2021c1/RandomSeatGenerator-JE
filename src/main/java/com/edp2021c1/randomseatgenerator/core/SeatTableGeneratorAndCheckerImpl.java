@@ -50,6 +50,10 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
 
     @Override
     public SeatTable generate(final SeatConfig config, String seed) throws IllegalConfigException {
+        if (config == null) {
+            throw new IllegalConfigException("Config cannot be null");
+        }
+
         long longSeed;
         try {
             longSeed = Long.parseLong(seed);

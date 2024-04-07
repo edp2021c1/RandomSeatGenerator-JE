@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import lombok.NonNull;
 import lombok.val;
 
 import java.util.*;
@@ -25,6 +26,7 @@ import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.random.RandomGenerator;
+import java.util.stream.Collectors;
 
 /**
  * Utils of {@code arrays} and {@link Collection} and its subclasses.
@@ -118,9 +120,7 @@ public final class CollectionUtils {
      * @return a list containing the elements whose index matches the predicate
      */
     public static <T> List<T> indexFilter(final List<T> list, final IntPredicate indexPredicate) {
-        val res = new ArrayList<T>();
-        elementFilter(range(0, list.size()), indexPredicate::test).forEach(i -> res.add(list.get(i)));
-        return res;
+        return elementFilter(range(0, list.size()), indexPredicate::test).stream().map(list::get).collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
@@ -173,13 +173,13 @@ public final class CollectionUtils {
         }
 
         @Override
-        @SuppressWarnings("all")
+        @NonNull
         public Iterator<Integer> iterator() {
             return new Itr(this);
         }
 
         @Override
-        @SuppressWarnings("all")
+        @NonNull
         public ListIterator<Integer> listIterator() {
             return new LItr(this);
         }
