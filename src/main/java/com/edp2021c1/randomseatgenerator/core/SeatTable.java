@@ -220,12 +220,13 @@ public class SeatTable {
         }
         try {
             PathWrapper.wrap(filePath).delete().getParent().replaceWithDirectory();
+            val f = filePath.toFile();
             excelWriterBuilder
-                    .file(filePath.toFile())
-                    .excludeColumnIndexes(range(Math.max(config.getColumnCount(), 2), Integer.MAX_VALUE))
+                    .file(f)
+                    .excludeColumnIndexes(range(Math.max(config.getColumnCount(), 2), MAX_COLUMN_COUNT))
                     .sheet("座位表-%tF".formatted(new Date()))
                     .doWrite(toRowData());
-            if (!(writable || filePath.toFile().setReadOnly())) {
+            if (!(writable || f.setReadOnly())) {
                 throw new IOException("Failed to set output file to read-only");
             }
         } catch (final Throwable e) {

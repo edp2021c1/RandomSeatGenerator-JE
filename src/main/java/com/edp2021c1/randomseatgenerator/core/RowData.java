@@ -94,4 +94,10 @@ public class RowData extends AbstractList<String> {
     public int size() {
         return cellCount;
     }
+
+    @Override
+    @SuppressWarnings("all")
+    public Object[] toArray() {
+        return cells;
+    }
 }
