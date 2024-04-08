@@ -19,13 +19,11 @@
 package com.edp2021c1.randomseatgenerator.core;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
-import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Getter;
 
 import java.util.AbstractList;
 import java.util.Arrays;
 
-import static com.edp2021c1.randomseatgenerator.core.SeatTable.MAX_COLUMN_COUNT;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 
@@ -51,11 +49,6 @@ public class RowData extends AbstractList<String> {
     private RowData(final boolean header, final String... cells) {
         this.header = header;
         cellCount = cells.length;
-        if (cellCount > MAX_COLUMN_COUNT) {
-            throw new IllegalConfigException(
-                    "Count of people in a row cannot be larger than " + MAX_COLUMN_COUNT
-            );
-        }
         this.cells = Arrays.copyOf(cells, cellCount);
     }
 

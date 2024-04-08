@@ -30,7 +30,8 @@ import java.util.*;
 
 import static com.alibaba.fastjson2.JSONWriter.Feature.MapSortField;
 import static com.alibaba.fastjson2.JSONWriter.Feature.PrettyFormat;
-import static com.edp2021c1.randomseatgenerator.core.SeatTable.*;
+import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
+import static com.edp2021c1.randomseatgenerator.core.SeatTable.groupLeaderRegex;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
 
 /**
@@ -133,9 +134,6 @@ public class JSONAppConfig extends JSONObject implements SeatConfig {
         val columnCount = getInteger(KEY_COLUMN_COUNT);
         if (columnCount == null || columnCount == 0) {
             throw new IllegalConfigException("Column count cannot be equal to or less than 0");
-        }
-        if (columnCount > MAX_COLUMN_COUNT) {
-            throw new IllegalConfigException("Column count cannot be larger than " + MAX_COLUMN_COUNT);
         }
         return columnCount;
     }

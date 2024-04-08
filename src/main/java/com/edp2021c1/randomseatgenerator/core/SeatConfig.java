@@ -42,9 +42,7 @@ public interface SeatConfig {
      * Returns column count.
      *
      * @return column count
-     * @throws IllegalConfigException if column count is null or not positive,
-     *                                or larger than {@link SeatTable#MAX_COLUMN_COUNT}
-     * @see SeatTable#MAX_COLUMN_COUNT
+     * @throws IllegalConfigException if column count is null or not positive
      */
     int getColumnCount() throws IllegalConfigException;
 

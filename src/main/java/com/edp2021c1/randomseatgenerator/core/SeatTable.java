@@ -39,8 +39,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
-
 /**
  * Used to pack some useful data related to a seat table.
  *
@@ -50,10 +48,6 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 @Getter
 public class SeatTable {
 
-    /**
-     * Max count of column in a seat table.
-     */
-    public static final int MAX_COLUMN_COUNT = 128;
     /**
      * Default exporting directory.
      */
@@ -223,7 +217,6 @@ public class SeatTable {
             val f = filePath.toFile();
             excelWriterBuilder
                     .file(f)
-                    .excludeColumnIndexes(range(Math.max(config.getColumnCount(), 2), MAX_COLUMN_COUNT))
                     .sheet("座位表-%tF".formatted(new Date()))
                     .doWrite(toRowData());
             if (!(writable || f.setReadOnly())) {
