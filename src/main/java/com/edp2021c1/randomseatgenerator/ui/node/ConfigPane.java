@@ -128,39 +128,39 @@ public class ConfigPane extends VBox {
         if (applyBtnDisabledProperty == null) {
             return;
         }
-        rowCountProperty.addListener((observable, oldValue, newValue) -> {
+        rowCountProperty.subscribe(newValue -> {
             content.put(KEY_ROW_COUNT, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
-        columnCountProperty.addListener((observable, oldValue, newValue) -> {
+        columnCountProperty.subscribe(newValue -> {
             content.put(KEY_COLUMN_COUNT, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
-        randomBetweenRowsProperty.addListener((observable, oldValue, newValue) -> {
+        randomBetweenRowsProperty.subscribe(newValue -> {
             content.put(KEY_RANDOM_BETWEEN_ROWS, newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
-        disabledLastRowPosProperty.addListener((observable, oldValue, newValue) -> {
+        disabledLastRowPosProperty.subscribe(newValue -> {
             content.put(KEY_DISABLED_LAST_ROW_POS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        nameListProperty.addListener((observable, oldValue, newValue) -> {
+        nameListProperty.subscribe(newValue -> {
             content.put(KEY_NAMES, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        groupLeaderListProperty.addListener((observable, oldValue, newValue) -> {
+        groupLeaderListProperty.subscribe(newValue -> {
             content.put(KEY_GROUP_LEADERS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        separateListProperty.addListener((observable, oldValue, newValue) -> {
+        separateListProperty.subscribe(newValue -> {
             content.put(KEY_SEPARATED_PAIRS, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        luckyOptionProperty.addListener((observable, oldValue, newValue) -> {
+        luckyOptionProperty.subscribe(newValue -> {
             content.put(KEY_LUCKY, newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        exportWritableProperty.addListener((observable, oldValue, newValue) -> {
+        exportWritableProperty.subscribe(newValue -> {
             content.put("export.writable", newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });

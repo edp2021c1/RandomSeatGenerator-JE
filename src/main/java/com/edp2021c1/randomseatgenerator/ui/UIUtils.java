@@ -154,7 +154,7 @@ public class UIUtils {
         }
 
         val stylesheets = stage.getScene().getStylesheets();
-        globalDarkMode.addListener((observable, oldValue, newValue) -> {
+        globalDarkMode.subscribe(newValue -> {
             if (newValue) {
                 stylesheets.setAll(STYLESHEETS_DARK);
                 return;
@@ -182,7 +182,7 @@ public class UIUtils {
     }
 
     /**
-     * Creates a {@code Button}.
+     * Creates a {@link Button}.
      *
      * @param text   of the button
      * @param width  of the button
@@ -196,7 +196,7 @@ public class UIUtils {
     }
 
     /**
-     * Creates a {@code VBox}.
+     * Creates a {@link VBox}.
      *
      * @param children of the box
      * @return the box created
@@ -208,7 +208,7 @@ public class UIUtils {
     }
 
     /**
-     * Creates a {@code HBox}.
+     * Creates a {@link HBox}.
      *
      * @param children of the box
      * @return the box created
@@ -220,9 +220,9 @@ public class UIUtils {
     }
 
     /**
-     * Creates a {@code TextField}.
+     * Creates a {@link TextField}.
      *
-     * @param promptText of the field
+     * @param promptText prompt text of the field
      * @return the field created
      */
     public static TextField createEmptyTextField(final String promptText) {
@@ -232,14 +232,14 @@ public class UIUtils {
     }
 
     /**
-     * Creates a {@code TextArea}.
+     * Creates a {@link TextArea}.
      *
      * @param promptText of the area
      * @param width      of the area
      * @param height     of the area
      * @return the area created
      */
-    public static TextArea createTextArea(final String promptText, final double width, final double height) {
+    public static TextArea createEmptyTextArea(final String promptText, final double width, final double height) {
         val t = new TextArea();
         t.setPromptText(promptText);
         t.setPrefSize(width, height);

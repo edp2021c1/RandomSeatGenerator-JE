@@ -22,8 +22,8 @@ import com.edp2021c1.randomseatgenerator.util.Strings;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.scene.control.TextField;
-import lombok.val;
+
+import java.util.regex.Pattern;
 
 /**
  * Input for integer.
@@ -32,7 +32,7 @@ import lombok.val;
  * @since 1.5.0
  */
 @DefaultProperty("value")
-public class IntegerField extends TextField {
+public class IntegerField extends FormatableTextField {
 
     private final IntegerProperty value = new SimpleIntegerProperty(this, "value") {
         @Override
@@ -40,6 +40,8 @@ public class IntegerField extends TextField {
             setText(String.valueOf(get()));
         }
     };
+
+    private final Pattern pattern;
 
     /**
      * Constructs an instance.
@@ -51,24 +53,12 @@ public class IntegerField extends TextField {
         super();
         setPromptText(promptText);
 
-        val pattern = unsigned ? Strings.unsignedIntegerPattern : Strings.integerPattern;
-
-        textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null || newValue.isEmpty()) {
-                value.set(0);
-                return;
-            }
-            if (!pattern.matcher(newValue).matches()) {
-                setText(oldValue);
-                return;
-            }
-            value.set(Integer.parseInt(getText()));
-        });
+        pattern = unsigned ? Strings.unsignedIntegerPattern : Strings.integerPattern;
 
         setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case UP, KP_UP -> value.set(Integer.parseInt(getText()) + 1);
-                case DOWN, KP_DOWN -> value.set(Integer.parseInt(getText()) - 1);
+                case UP, KP_UP -> value.set(value.get() + 1);
+                case DOWN, KP_DOWN -> value.set(value.get() - 1);
             }
         });
     }
@@ -82,4 +72,15 @@ public class IntegerField extends TextField {
         return value;
     }
 
+    @Override
+    protected String format(final String oldValue, final String newValue) {
+        if (newValue == null || newValue.isEmpty()) {
+            return "0";
+        }
+        if (!pattern.matcher(newValue).matches()) {
+            return oldValue;
+        }
+        value.set(Integer.parseInt(newValue));
+        return newValue;
+    }
 }

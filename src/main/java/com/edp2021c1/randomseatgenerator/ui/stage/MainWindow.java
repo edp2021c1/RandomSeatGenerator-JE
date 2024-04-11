@@ -202,7 +202,7 @@ public class MainWindow extends Stage {
 
         if (OperatingSystem.MAC == OperatingSystem.getCurrent()) {
             setOnShown(event -> setFullScreen(Objects.requireNonNullElse(cfHolder.get().getBoolean("appearance.window.main.maximized"), false)));
-            fullScreenProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
+            fullScreenProperty().subscribe(newValue -> cfHolder.put("appearance.window.main.maximized", newValue));
             setFullScreenExitHint("");
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
@@ -220,7 +220,7 @@ public class MainWindow extends Stage {
             });
         } else {
             setOnShown(event -> setMaximized(Objects.requireNonNullElse(cfHolder.get().getBoolean("appearance.window.main.maximized"), false)));
-            maximizedProperty().addListener((observable, oldValue, newValue) -> cfHolder.put("appearance.window.main.maximized", newValue));
+            maximizedProperty().subscribe(newValue -> cfHolder.put("appearance.window.main.maximized", newValue));
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isControlDown()) {
                     return;
@@ -241,12 +241,12 @@ public class MainWindow extends Stage {
             setWidth(d);
         }
 
-        heightProperty().addListener((observable, oldValue, newValue) -> {
+        heightProperty().subscribe(newValue -> {
             if (!isFullScreen()) {
                 cfHolder.put("appearance.window.main.height", newValue.doubleValue());
             }
         });
-        widthProperty().addListener((observable, oldValue, newValue) -> {
+        widthProperty().subscribe(newValue -> {
             if (!isFullScreen()) {
                 cfHolder.put("appearance.window.main.width", newValue.doubleValue());
             }

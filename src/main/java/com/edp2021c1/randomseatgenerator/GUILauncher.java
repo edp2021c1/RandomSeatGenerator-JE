@@ -71,4 +71,8 @@ public class GUILauncher extends Application {
         }
     }
 
+    @Override
+    public void stop() {
+        System.exit(0);
+    }
 }

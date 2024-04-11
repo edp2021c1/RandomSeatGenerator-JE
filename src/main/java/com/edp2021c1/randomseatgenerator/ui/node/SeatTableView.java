@@ -62,7 +62,7 @@ public class SeatTableView extends VBox {
             }
         });
 
-        seatTable.addListener((observable, oldValue, newValue) -> {
+        seatTable.subscribe(newValue -> {
             if (newValue == null) {
                 return;
             }

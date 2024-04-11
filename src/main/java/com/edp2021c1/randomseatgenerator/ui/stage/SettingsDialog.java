@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
+import com.edp2021c1.randomseatgenerator.ui.node.FormatableTextField;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
@@ -73,21 +74,19 @@ public class SettingsDialog extends Stage {
 
         val rbrInput = new IntegerField(true, "随机轮换的行数");
 
-        val disabledLastRowPosInput = createEmptyTextField("最后一排不可选位置");
-        disabledLastRowPosInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (Objects.equals(oldValue, newValue)) {
-                return;
-            }
+        val disabledLastRowPosInput = FormatableTextField.of((oldValue, newValue) -> {
             if (newValue == null || !Strings.integerListPattern.matcher(newValue).matches()) {
-                disabledLastRowPosInput.setText(oldValue);
+                return oldValue;
             }
+            return newValue;
         });
+        disabledLastRowPosInput.setPromptText("最后一排不可选位置");
 
         val nameListInput = createEmptyTextField("名单 (按身高排序)");
 
         val groupLeaderListInput = createEmptyTextField("组长列表");
 
-        val separateListInput = createTextArea("拆分列表", 165, 56);
+        val separateListInput = createEmptyTextArea("拆分列表", 165, 56);
 
         val luckyOptionCheck = new CheckBox("随机挑选左护法");
 
@@ -99,7 +98,6 @@ public class SettingsDialog extends Stage {
 
         val applyBtn = createButton("应用", 80, 26);
         applyBtn.setDisable(true);
-        var applyBtnDisabledProperty = applyBtn.disableProperty();
 
         val configPane = new ConfigPane(
                 rowCountInput,
@@ -112,7 +110,7 @@ public class SettingsDialog extends Stage {
                 luckyOptionCheck,
                 exportWritableCheck,
                 darkModeCheck,
-                applyBtnDisabledProperty,
+                applyBtn.disableProperty(),
                 cfHolder
         );
 
@@ -136,7 +134,7 @@ public class SettingsDialog extends Stage {
 
         val licenseLink = new Hyperlink("许可证:    %s(%s)".formatted(LICENSE_NAME, LICENSE_URI));
 
-        val licenseText = createTextArea(null, 650, 288);
+        val licenseText = createEmptyTextArea(null, 650, 288);
         licenseText.setText(LICENSE_INFO);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");

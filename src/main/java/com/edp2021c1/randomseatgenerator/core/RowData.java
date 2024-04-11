@@ -91,6 +91,6 @@ public class RowData extends AbstractList<String> {
     @Override
     @SuppressWarnings("all")
     public Object[] toArray() {
-        return cells;
+        return Arrays.copyOf(cells, cellCount);
     }
 }
