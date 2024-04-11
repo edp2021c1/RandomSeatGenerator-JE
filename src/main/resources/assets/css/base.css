@@ -119,6 +119,9 @@
 
     -fx-border-width: 1;
     -fx-border-radius: 5;
+
+    -fx-pref-width: 120;
+    -fx-pref-height: 60;
 }
 
 .hyperlink {

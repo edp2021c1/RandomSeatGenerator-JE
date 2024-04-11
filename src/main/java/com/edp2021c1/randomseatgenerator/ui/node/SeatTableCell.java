@@ -23,8 +23,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 
 /**
  * Cell of {@code SeatTableView}.
@@ -44,8 +42,6 @@ public class SeatTableCell extends Label {
      */
     public SeatTableCell(final String str) {
         setAlignment(Pos.CENTER);
-        HBox.setHgrow(this, Priority.ALWAYS);
-        setMinSize(120, 60);
         setText(str);
 
         new SimpleBooleanProperty(this, "leader") {
