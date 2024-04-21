@@ -37,7 +37,7 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
      * The now-in-use instance.
      */
     @Getter
-    private static final CrashReporter instance = (boolean) RuntimeUtils.runtimeConfig.getOrDefault("launching.gui", false)
+    private static final CrashReporter instance = (boolean) RuntimeUtils.getPropertyOrDefault("launching.gui", false)
             ? new ConsoleCrashReporter()
             : new GUICrashReporter();
 

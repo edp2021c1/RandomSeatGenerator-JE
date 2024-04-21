@@ -139,7 +139,7 @@ public final class Logging {
 
         state = State.STARTED;
 
-        val withGUI = (boolean) RuntimeUtils.runtimeConfig.getOrDefault("launching.gui", false);
+        val withGUI = (boolean) RuntimeUtils.getPropertyOrDefault("launching.gui", false);
 
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);

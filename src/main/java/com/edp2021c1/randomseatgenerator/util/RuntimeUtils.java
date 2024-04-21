@@ -18,13 +18,9 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
 import lombok.val;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.lang.Runtime.getRuntime;
 
@@ -39,15 +35,26 @@ public final class RuntimeUtils {
     /**
      * Runtime config.
      */
-    public static final JSONAppConfig runtimeConfig = new JSONAppConfig();
+    private static final Properties runtimeProperties = new Properties(2);
     private static final Hashtable<Long, Thread> threadIdHashtable = new Hashtable<>();
     private static final List<Runnable> runOnExit = new ArrayList<>(3);
     private static boolean staticInitialized;
-
     /**
      * Don't let anyone else instantiate this class.
      */
     private RuntimeUtils() {
+    }
+
+    public static boolean setProperty(final Object key, final Object value) {
+        return runtimeProperties.put(key, value) == null;
+    }
+
+    public static Object getProperty(final Object key) {
+        return runtimeProperties.get(key);
+    }
+
+    public static Object getPropertyOrDefault(final Object key, final Object def) {
+        return runtimeProperties.getOrDefault(key, def);
     }
 
     /**

@@ -71,7 +71,7 @@ public class RandomSeatGenerator {
 
     private static void launch(final boolean withGUI, final List<String> args) {
         RuntimeUtils.initStatic();
-        RuntimeUtils.runtimeConfig.put("launching.gui", withGUI);
+        RuntimeUtils.setProperty("launching.gui", withGUI);
         Logging.start();
         if (withGUI) {
             GUILauncher.launch();

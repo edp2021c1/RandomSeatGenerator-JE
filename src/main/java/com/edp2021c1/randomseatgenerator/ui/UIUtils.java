@@ -99,7 +99,7 @@ public class UIUtils {
      * @return the app's main window
      */
     public static MainWindow getMainWindow() {
-        return (MainWindow) RuntimeUtils.runtimeConfig.get("window.main");
+        return (MainWindow) RuntimeUtils.getProperty("window.main");
     }
 
     /**
@@ -109,7 +109,7 @@ public class UIUtils {
      * @return whether the main window has never been set
      */
     public static boolean setMainWindow(final MainWindow mainWindow) {
-        return RuntimeUtils.runtimeConfig.putIfAbsent("window.main", mainWindow) == null;
+        return RuntimeUtils.setProperty("window.main", mainWindow);
     }
 
     /**
