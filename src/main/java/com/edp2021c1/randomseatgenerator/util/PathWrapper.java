@@ -60,6 +60,7 @@ public class PathWrapper implements Path {
     };
 
     private final Path path;
+
     private FileChannel channel;
 
     private PathWrapper(final Path path) {
@@ -71,20 +72,12 @@ public class PathWrapper implements Path {
     }
 
     /**
-     * Wraps the given path.
-     *
-     * @param path to wrap into the instance
-     * @return an instance wrapping the path
-     */
-    public static PathWrapper wrap(final Path path) {
-        return new PathWrapper(path);
-    }
-
-    /**
      * Wraps the given file.
      *
      * @param file to wrap into the instance
+     *
      * @return an instance wrapping the path
+     *
      * @see File#toPath()
      */
     public static PathWrapper wrap(final File file) {
@@ -96,7 +89,9 @@ public class PathWrapper implements Path {
      *
      * @param first the path string or initial part of the path string
      * @param more  additional strings to be joined to form the path string
+     *
      * @return an instance wrapping the path
+     *
      * @see Path#of(String, String...)
      */
     public static PathWrapper wrap(final String first, final String... more) {
@@ -107,7 +102,9 @@ public class PathWrapper implements Path {
      * Returns the wrapper of the closest parent of {@code this} which is a directory.
      *
      * @param options options indicating how symbolic links are handled
+     *
      * @return the wrapper of the closest parent of {@code this} which is a directory
+     *
      * @see Files#isDirectory(Path, LinkOption...)
      */
     public PathWrapper getDirParent(final LinkOption... options) {
@@ -119,9 +116,21 @@ public class PathWrapper implements Path {
     }
 
     /**
+     * Wraps the given path.
+     *
+     * @param path to wrap into the instance
+     *
+     * @return an instance wrapping the path
+     */
+    public static PathWrapper wrap(final Path path) {
+        return new PathWrapper(path);
+    }
+
+    /**
      * Replaces the file on the path (if exists) with an empty directory.
      *
      * @return {@code this}
+     *
      * @throws IOException if an I/O error occurs
      * @see #nonDirectory(LinkOption...)
      * @see #delete()
@@ -135,20 +144,10 @@ public class PathWrapper implements Path {
     }
 
     /**
-     * Checks if this application has permission to read and write the path.
-     *
-     * @return if this app does not have read and write permission of the path
-     * @see Files#isReadable(Path)
-     * @see Files#isWritable(Path)
-     */
-    public boolean notFullyPermitted() {
-        return !(Files.isReadable(path) && Files.isWritable(path));
-    }
-
-    /**
      * Deletes the content of the path.
      *
      * @return {@code this}
+     *
      * @throws IOException if an I/O error occurs
      * @see Files#walkFileTree(Path, FileVisitor)
      * @see Files#deleteIfExists(Path)
@@ -164,7 +163,9 @@ public class PathWrapper implements Path {
      * Returns if {@code this} exists in the current file system.
      *
      * @param options options indicating how symbolic links are handled
+     *
      * @return if exists
+     *
      * @see Files#exists(Path, LinkOption...)
      */
     public boolean exists(final LinkOption... options) {
@@ -172,21 +173,12 @@ public class PathWrapper implements Path {
     }
 
     /**
-     * Returns if {@code this} is not a regular file.
-     *
-     * @param options options indicating how symbolic links are handled
-     * @return if is not a regular file
-     * @see Files#isRegularFile(Path, LinkOption...)
-     */
-    public boolean nonRegularFile(final LinkOption... options) {
-        return !Files.isRegularFile(path, options);
-    }
-
-    /**
      * Returns if {@code this} is not a directory.
      *
      * @param options options indicating how symbolic links are handled
+     *
      * @return if is not a directory
+     *
      * @see Files#isDirectory(Path, LinkOption...)
      */
     public boolean nonDirectory(final LinkOption... options) {
@@ -197,7 +189,9 @@ public class PathWrapper implements Path {
      * Creates a directory and all of its parent directory.
      *
      * @param attr an optional list of file attributes to set atomically when creating the directory
+     *
      * @return #{@code this}
+     *
      * @throws IOException if an I/O error occurs
      * @see Files#createDirectories(Path, FileAttribute[])
      */
@@ -207,9 +201,22 @@ public class PathWrapper implements Path {
     }
 
     /**
+     * Checks if this application has permission to read and write the path.
+     *
+     * @return if this app does not have read and write permission of the path
+     *
+     * @see Files#isReadable(Path)
+     * @see Files#isWritable(Path)
+     */
+    public boolean notFullyPermitted() {
+        return !(Files.isReadable(path) && Files.isWritable(path));
+    }
+
+    /**
      * Replace with a new file if is not a regular file.
      *
      * @return #{@code this}
+     *
      * @throws IOException if an I/O error occurs
      * @see #delete()
      * @see #createFile(FileAttribute[])
@@ -223,10 +230,25 @@ public class PathWrapper implements Path {
     }
 
     /**
+     * Returns if {@code this} is not a regular file.
+     *
+     * @param options options indicating how symbolic links are handled
+     *
+     * @return if is not a regular file
+     *
+     * @see Files#isRegularFile(Path, LinkOption...)
+     */
+    public boolean nonRegularFile(final LinkOption... options) {
+        return !Files.isRegularFile(path, options);
+    }
+
+    /**
      * Creates a new file.
      *
      * @param attrs an optional list of file attributes to set atomically when creating the file
+     *
      * @return #{@code this}
+     *
      * @throws IOException if an I/O error occurs
      * @see Files#createFile(Path, FileAttribute[])
      */
@@ -363,7 +385,9 @@ public class PathWrapper implements Path {
      * Opens or creates a file, returning a file channel to access the file.
      *
      * @param openOptions options specifying how the file is opened
+     *
      * @return a file channel
+     *
      * @throws IOException if an I/O error occurs
      * @see FileChannel#open(Path, OpenOption...)
      */
@@ -376,6 +400,7 @@ public class PathWrapper implements Path {
      * <p>Will not modify the position of the channel, even if is is used.
      *
      * @return string read from the channel
+     *
      * @throws IOException if an I/O error occurs
      * @see FileChannel#read(ByteBuffer, long)
      * @see Files#readString(Path)
@@ -393,6 +418,7 @@ public class PathWrapper implements Path {
      * Overwrites the content of the path with the string.
      *
      * @param str string to write
+     *
      * @throws IOException if an I/O error occurs
      * @see FileChannel#write(ByteBuffer)
      * @see Files#writeString(Path, CharSequence, OpenOption...)

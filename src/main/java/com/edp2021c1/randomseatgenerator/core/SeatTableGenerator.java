@@ -43,7 +43,7 @@ public interface SeatTableGenerator {
      * Empty generator.
      */
     SeatTableGenerator emptyGenerator = (config, seed) -> {
-        val seat = new String[config.getRowCount() * config.getColumnCount()];
+        val seat = new String[config.rowCount() * config.columnCount()];
         Arrays.fill(seat, EMPTY_SEAT_PLACEHOLDER);
         return new SeatTable(Arrays.asList(seat), config, EMPTY_SEAT_PLACEHOLDER, EMPTY_SEAT_PLACEHOLDER);
     };
@@ -54,7 +54,9 @@ public interface SeatTableGenerator {
      *
      * @param config used to generate the seat table
      * @param seed   used to generate the seat table
+     *
      * @return an instance of {@code SeatTable}
+     *
      * @throws IllegalConfigException if config is null or is illegal
      */
     SeatTable generate(SeatConfig config, String seed)

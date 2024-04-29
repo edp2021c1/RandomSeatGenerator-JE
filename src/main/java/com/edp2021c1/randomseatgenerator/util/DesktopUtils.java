@@ -32,8 +32,11 @@ import java.util.Map;
  * @since 1.4.7
  */
 public final class DesktopUtils {
+
     private static final boolean desktopSupported = Desktop.isDesktopSupported();
+
     private static final Desktop desktopTk = desktopSupported ? Desktop.getDesktop() : null;
+
     private static final Clipboard clipboard = Clipboard.getSystemClipboard();
 
     /**
@@ -51,6 +54,7 @@ public final class DesktopUtils {
      * defined by the {@code URI} class.
      *
      * @param uri the URI to be displayed in the user default browser
+     *
      * @see java.net.URI
      * @see java.awt.Desktop#browse(URI)
      */
@@ -71,4 +75,5 @@ public final class DesktopUtils {
     public static void copyPlainText(String text) {
         clipboard.setContent(Map.of(DataFormat.PLAIN_TEXT, text));
     }
+
 }

@@ -83,4 +83,5 @@ public class IntegerField extends FormatableTextField {
         value.set(Integer.parseInt(newValue));
         return newValue;
     }
+
 }

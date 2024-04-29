@@ -40,18 +40,22 @@ public final class Strings {
      * Pattern of integer.
      */
     public static final Pattern integerPattern = Pattern.compile("-?\\d+");
+
     /**
      * Pattern of unsigned integer.
      */
     public static final Pattern unsignedIntegerPattern = Pattern.compile("\\d+");
+
     /**
      * Pattern of list of integer, divided by spaces.
      */
     public static final Pattern integerListPattern = Pattern.compile("[0-9 ]+");
+
     /**
      * Simple date format
      */
     private static final SimpleDateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
     private static final List<Character> CHARACTERS_AND_DIGITS = List.of(
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -76,6 +80,7 @@ public final class Strings {
      * Returns a long hash code of a {@code String}.
      *
      * @param str owner of the hash code
+     *
      * @return hash code of {@code str}
      */
     public static long longHashCode(final String str) {
@@ -90,6 +95,7 @@ public final class Strings {
      * Returns stack trace of a {@code Throwable}.
      *
      * @param e owner of stack trace
+     *
      * @return stack trace of {@code e}
      */
     public static String getStackTrace(final Throwable e) {
@@ -105,6 +111,7 @@ public final class Strings {
      * decimal digits and English letters.
      *
      * @param len length of the string
+     *
      * @return a randomly generated string
      */
     public static String randomString(final int len) {
@@ -115,4 +122,5 @@ public final class Strings {
         }
         return new String(chars);
     }
+
 }

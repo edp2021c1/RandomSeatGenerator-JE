@@ -38,6 +38,7 @@ import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
 public class RowData extends AbstractList<String> {
 
     private final String[] cells;
+
     private final int cellCount;
 
     @Getter
@@ -56,6 +57,7 @@ public class RowData extends AbstractList<String> {
      * Constructs and returns a row containing the given cells
      *
      * @param cells cell data
+     *
      * @return a row containing the given cells
      */
     static RowData of(final String... cells) {
@@ -66,6 +68,7 @@ public class RowData extends AbstractList<String> {
      * Constructs and returns a header row.
      *
      * @param columnCount count of column
+     *
      * @return a header row
      */
     static RowData header(final int columnCount) {
@@ -76,6 +79,7 @@ public class RowData extends AbstractList<String> {
      * Returns name on the given index
      *
      * @param index column index, possibly larger than {@link #cellCount}
+     *
      * @return name on the given index
      */
     @Override
@@ -93,4 +97,5 @@ public class RowData extends AbstractList<String> {
     public Object[] toArray() {
         return Arrays.copyOf(cells, cellCount);
     }
+
 }

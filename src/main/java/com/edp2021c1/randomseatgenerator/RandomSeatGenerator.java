@@ -79,4 +79,5 @@ public class RandomSeatGenerator {
         }
         ConsoleLauncher.launch(args);
     }
+
 }

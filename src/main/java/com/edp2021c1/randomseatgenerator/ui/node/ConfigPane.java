@@ -19,8 +19,9 @@
 package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.ui.UIUtils;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
+import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.config.SeatConfigWrapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
@@ -34,7 +35,7 @@ import lombok.val;
 
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig.*;
+import static com.edp2021c1.randomseatgenerator.ui.UIUtils.KEY_DARK_MODE;
 
 /**
  * Config pane.
@@ -43,6 +44,7 @@ import static com.edp2021c1.randomseatgenerator.util.config.JSONAppConfig.*;
  * @since 1.3.4
  */
 public class ConfigPane extends VBox {
+
     private final IntegerProperty rowCountProperty;
 
     private final IntegerProperty columnCountProperty;
@@ -63,9 +65,9 @@ public class ConfigPane extends VBox {
 
     private final BooleanProperty darkModeProperty;
 
-    private final JSONAppConfigHolder source;
+    private final SeatConfigHolder source;
 
-    private final JSONAppConfig content;
+    private final SeatConfigWrapper content;
 
     /**
      * Constructs an instance.
@@ -96,7 +98,7 @@ public class ConfigPane extends VBox {
             final CheckBox exportWritableCheck,
             final CheckBox darkModeCheck,
             final BooleanProperty applyBtnDisabledProperty,
-            final JSONAppConfigHolder configSource
+            final SeatConfigHolder configSource
     ) {
         super();
 
@@ -129,42 +131,43 @@ public class ConfigPane extends VBox {
             return;
         }
         rowCountProperty.subscribe(newValue -> {
-            content.put(KEY_ROW_COUNT, newValue.intValue());
+            content.setRowCount(newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         columnCountProperty.subscribe(newValue -> {
-            content.put(KEY_COLUMN_COUNT, newValue.intValue());
+            content.setColumnCount(newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         randomBetweenRowsProperty.subscribe(newValue -> {
-            content.put(KEY_RANDOM_BETWEEN_ROWS, newValue.intValue());
+            content.setRandomBetweenRows(newValue.intValue());
             applyBtnDisabledProperty.set(checkEquals());
         });
         disabledLastRowPosProperty.subscribe(newValue -> {
-            content.put(KEY_DISABLED_LAST_ROW_POS, newValue);
+            content.setDisabledLastRowPos(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         nameListProperty.subscribe(newValue -> {
-            content.put(KEY_NAMES, newValue);
+            content.setNames(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         groupLeaderListProperty.subscribe(newValue -> {
-            content.put(KEY_GROUP_LEADERS, newValue);
+            content.setGroupLeaders(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         separateListProperty.subscribe(newValue -> {
-            content.put(KEY_SEPARATED_PAIRS, newValue);
+            content.setSeparatedPairs(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
         luckyOptionProperty.subscribe(newValue -> {
-            content.put(KEY_LUCKY, newValue);
+            content.setLucky(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        exportWritableProperty.subscribe(newValue -> {
-            content.put("export.writable", newValue);
-            applyBtnDisabledProperty.set(checkEquals());
-        });
+        exportWritableProperty.bindBidirectional(UIUtils.exportWritableProperty());
         darkModeProperty.bindBidirectional(UIUtils.globalDarkModeProperty());
+    }
+
+    private boolean checkEquals() {
+        return Objects.equals(content, source.get());
     }
 
     /**
@@ -172,7 +175,7 @@ public class ConfigPane extends VBox {
      *
      * @return a copy of {@link #content}
      */
-    public JSONAppConfig getContent() {
+    public SeatConfigWrapper getContent() {
         return content.cloneThis();
     }
 
@@ -181,24 +184,20 @@ public class ConfigPane extends VBox {
      *
      * @param config to set to the pane.
      */
-    public void setContent(final JSONAppConfig config) {
+    public void setContent(final SeatConfigWrapper config) {
         if (config == null) {
             return;
         }
-        rowCountProperty.set(config.getRowCount());
-        columnCountProperty.set(config.getColumnCount());
-        randomBetweenRowsProperty.set(config.getRandomBetweenRows());
-        disabledLastRowPosProperty.set(config.getString(KEY_DISABLED_LAST_ROW_POS));
-        nameListProperty.set(config.getString(KEY_NAMES));
-        groupLeaderListProperty.set(config.getString(KEY_GROUP_LEADERS));
-        separateListProperty.set(config.getString(KEY_SEPARATED_PAIRS));
-        luckyOptionProperty.set(config.isLucky());
-        exportWritableProperty.set(Objects.requireNonNullElse(config.getBoolean("export.writable"), false));
-        darkModeProperty.set(Objects.requireNonNullElse(config.getBoolean("appearance.style.dark"), true));
-    }
-
-    private boolean checkEquals() {
-        return Objects.equals(content, source.get());
+        rowCountProperty.setValue(config.getRowCount());
+        columnCountProperty.setValue(config.getColumnCount());
+        randomBetweenRowsProperty.setValue(config.getRandomBetweenRows());
+        disabledLastRowPosProperty.set(config.getDisabledLastRowPos());
+        nameListProperty.set(config.getNames());
+        groupLeaderListProperty.set(config.getGroupLeaders());
+        separateListProperty.set(config.getSeparatedPairs());
+        luckyOptionProperty.set(config.lucky());
+        exportWritableProperty.set(UIUtils.exportWritableProperty().get());
+        darkModeProperty.set(AppPropertiesHolder.global().getBoolean(KEY_DARK_MODE));
     }
 
 }

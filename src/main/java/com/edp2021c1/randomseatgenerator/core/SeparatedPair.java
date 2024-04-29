@@ -34,7 +34,9 @@ import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEH
  * @since 1.0.0
  */
 public class SeparatedPair {
+
     private final String first;
+
     private final String last;
 
     /**
@@ -45,6 +47,7 @@ public class SeparatedPair {
      * Note that every character after the first space will be taken as the second name.
      *
      * @param s a {@code String} contains the names of the two people separated, divided by a {@code space}
+     *
      * @throws IllegalConfigException if the {@code String} contains only one name
      */
     public SeparatedPair(final String s) throws IllegalConfigException {
@@ -68,6 +71,7 @@ public class SeparatedPair {
      *
      * @param seat        the seat table checked.
      * @param columnCount count of columns of the seat table.
+     *
      * @return if {@code name_1} and {@code name_2} are separated in the seat table.
      */
     public boolean check(final List<String> seat, final int columnCount) {

@@ -43,38 +43,13 @@ public final class CollectionUtils {
     }
 
     /**
-     * Returns a range of integers from origin (inclusive) to bound (exclusive).
-     *
-     * @param origin the least value that can be returned
-     * @param bound  the upper bound (exclusive)
-     * @return a range of integer from origin (inclusive) to bound (exclusive)
-     */
-    public static List<Integer> range(final int origin, final int bound) {
-        return new Range(origin, bound);
-    }
-
-    /**
-     * Returns a randomly picked element of the source collection.
-     *
-     * @param src source collection
-     * @param rd  random service used to choose the element
-     * @param <T> type of the element
-     * @return a randomly picked element of the source collection
-     */
-    public static <T> T pickRandomly(final Collection<? extends T> src, final RandomGenerator rd) {
-        if (src instanceof final List<? extends T> list) {
-            return list.get(rd.nextInt(list.size()));
-        }
-        return CollectionUtils.<T>modifiableList(src).get(rd.nextInt(src.size()));
-    }
-
-    /**
      * Returns a randomly picked element of the source collection
      * and then remove it from the collection.
      *
      * @param src source collection
      * @param rd  random service used to choose the element
      * @param <T> type of the element
+     *
      * @return a randomly picked and removed element of the source collection
      */
     public static <T> T pickRandomlyAndRemove(final Collection<? extends T> src, final RandomGenerator rd) {
@@ -87,11 +62,28 @@ public final class CollectionUtils {
     }
 
     /**
+     * Returns a randomly picked element of the source collection.
+     *
+     * @param src source collection
+     * @param rd  random service used to choose the element
+     * @param <T> type of the element
+     *
+     * @return a randomly picked element of the source collection
+     */
+    public static <T> T pickRandomly(final Collection<? extends T> src, final RandomGenerator rd) {
+        if (src instanceof final List<? extends T> list) {
+            return list.get(rd.nextInt(list.size()));
+        }
+        return CollectionUtils.<T>modifiableList(src).get(rd.nextInt(src.size()));
+    }
+
+    /**
      * Returns a list containing elements in the source collection that is free to modify.
      * That means any change of the returned list will not affect the source collection.
      *
      * @param src source collection
      * @param <T> type of the
+     *
      * @return a modify-free list
      */
     public static <T> List<T> modifiableList(final Collection<? extends T> src) {
@@ -105,6 +97,7 @@ public final class CollectionUtils {
      * @param builder {@code Function} used to generate elements of the output list
      * @param <T>     type of input
      * @param <R>     type of output
+     *
      * @return list generated
      */
     public static <T, R> List<R> buildList(final List<? extends T> input, final Function<T, R> builder) {
@@ -117,10 +110,23 @@ public final class CollectionUtils {
      * @param list           input list
      * @param indexPredicate filter of the index of elements
      * @param <T>            type of elements in the list
+     *
      * @return a list containing the elements whose index matches the predicate
      */
     public static <T> List<T> indexFilter(final List<T> list, final IntPredicate indexPredicate) {
         return elementFilter(range(0, list.size()), indexPredicate::test).stream().map(list::get).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
+     * Returns a range of integers from origin (inclusive) to bound (exclusive).
+     *
+     * @param origin the least value that can be returned
+     * @param bound  the upper bound (exclusive)
+     *
+     * @return a range of integer from origin (inclusive) to bound (exclusive)
+     */
+    public static List<Integer> range(final int origin, final int bound) {
+        return new Range(origin, bound);
     }
 
     /**
@@ -129,6 +135,7 @@ public final class CollectionUtils {
      * @param src              input collection
      * @param elementPredicate filter of elements
      * @param <T>              type of elements in the list
+     *
      * @return a list containing the elements that matches the predicate
      */
     public static <T> List<T> elementFilter(final Collection<T> src, final Predicate<T> elementPredicate) {
@@ -141,7 +148,9 @@ public final class CollectionUtils {
     private static class Range extends AbstractList<Integer> implements RandomAccess {
 
         private final int origin;
+
         private final int bound;
+
         private final int size;
 
         public Range(final int origin, final int bound) {
@@ -198,8 +207,11 @@ public final class CollectionUtils {
         }
 
         private static class Itr implements Iterator<Integer> {
+
             protected final int offset;
+
             protected final int size;
+
             protected int cursor = -1;
 
             private Itr(final Range root) {
@@ -219,12 +231,18 @@ public final class CollectionUtils {
                 }
                 return offset + ++cursor;
             }
+
         }
 
         private static class LItr extends Itr implements ListIterator<Integer> {
 
             private LItr(final Range root) {
                 super(root);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
             }
 
             @Override
@@ -260,11 +278,9 @@ public final class CollectionUtils {
                 throw new UnsupportedOperationException();
             }
 
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
+
         }
+
     }
 
 }

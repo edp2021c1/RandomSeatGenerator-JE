@@ -37,9 +37,13 @@ import lombok.val;
  * @since 1.4.0
  */
 public class SeatTableView extends VBox {
+
     private static final String DEFAULT_STYLE_CLASS = "seat-table-view";
+
     private final IntegerProperty rowCount = new SimpleIntegerProperty(this, "rowCount");
+
     private final IntegerProperty columnCount = new SimpleIntegerProperty(this, "columnCount");
+
     private final ObjectProperty<SeatTable> seatTable = new SimpleObjectProperty<>(this, "seatTable");
 
     /**
@@ -67,8 +71,8 @@ public class SeatTableView extends VBox {
                 return;
             }
 
-            rowCount.set(newValue.getConfig().getRowCount());
-            columnCount.set(newValue.getConfig().getColumnCount());
+            rowCount.set(newValue.getConfig().rowCount());
+            columnCount.set(newValue.getConfig().columnCount());
 
             getChildren().clear();
             newValue.toRowData().stream().map(s -> new SeatTableRow(s, columnCount.get())).forEach(row -> {
@@ -84,15 +88,6 @@ public class SeatTableView extends VBox {
     }
 
     /**
-     * Returns the property of the table shown.
-     *
-     * @return {@link #seatTable}
-     */
-    public ObjectProperty<SeatTable> seatTableProperty() {
-        return seatTable;
-    }
-
-    /**
      * Sets {@code seatTable} as empty and refreshes the
      * view to display the table.
      *
@@ -100,6 +95,15 @@ public class SeatTableView extends VBox {
      */
     public void setEmptySeatTable(final SeatConfig config) {
         seatTable.set(SeatTable.generateEmpty(config));
+    }
+
+    /**
+     * Returns the property of the table shown.
+     *
+     * @return {@link #seatTable}
+     */
+    public ObjectProperty<SeatTable> seatTableProperty() {
+        return seatTable;
     }
 
 }

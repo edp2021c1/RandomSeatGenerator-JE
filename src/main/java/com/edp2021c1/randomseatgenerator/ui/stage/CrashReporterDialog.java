@@ -25,13 +25,14 @@ import lombok.val;
 public class CrashReporterDialog extends Stage {
 
     private static String titleToBeShown;
+
     private static String messageToBeShown;
 
     private CrashReporterDialog(final String title, final String msg) {
         super();
 
         val preLabelBeforeLink = new Label("Something's wrong... Click");
-        val here = new Hyperlink("here");
+        val here              = new Hyperlink("here");
         val preLabelAfterLink = new Label("to copy the error message");
         preLabelBeforeLink.getStyleClass().add("err-pre-label");
         here.getStyleClass().add("err-pre-label");
@@ -124,6 +125,7 @@ public class CrashReporterDialog extends Stage {
         public void start(final Stage primaryStage) {
             new CrashReporterDialog(titleToBeShown, messageToBeShown).showAndWait();
         }
+
     }
 
 }

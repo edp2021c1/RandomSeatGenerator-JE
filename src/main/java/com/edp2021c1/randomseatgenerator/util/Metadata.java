@@ -30,6 +30,12 @@ import static java.lang.System.getProperty;
  * @since 1.2.9
  */
 public final class Metadata {
+
+    /**
+     * Key of the option controlling whether exported seat table should be writable.
+     */
+    public static final String KEY_EXPORT_WRITABLE = "export.writable";
+
     /**
      * Helping information.
      */
@@ -42,8 +48,9 @@ public final class Metadata {
                         --config-path <path>    Path of a specific Json config file. Only useful in console mode. (optional)
                         --seed <value>          Seed used to generate seat table, must be in the format of a number. Only useful in console mode. (optional, default to a random string)
                         --output-path <path>    Path to export seat table to. Only useful in console mode. (optional, default to yyyy-mm-dd.xlsx under the current directory)
-                        
+                                        
                     """;
+
     /**
      * License.
      */
@@ -54,7 +61,7 @@ public final class Metadata {
             See the GNU General Public License for more details.
             You should have received a copy of the GNU General Public License along with this program.
             If not, see <https://www.gnu.org/licenses/>.
-                
+                        
             Libraries that have been used in RandomSeatGenerator are listed below :
             Name\t\tVersion\tOwner\t\t\tLicense\t\tGithub Repository
             JavaFX\t\t21.0.1\tOracle\t\t\tGPLv2\t\thttps://github.com/openjdk/jfx
@@ -62,73 +69,90 @@ public final class Metadata {
             SLF4J-NOP\t2.0.11\tQOS.ch\t\t\tMIT\t\t\thttps://github.com/qos-ch/slf4j
             Lombok\t\t1.18.30\tProjectLombok\tunknown\t\thttps://github.com/projectlombok/lombok
             FastJson2\t2.0.46\tAlibaba\t\t\tApache 2.0\thttps://github.com/alibaba/fastjson2
-                
+                        
             Contributors:
             Calboot <calboot39@outlook.com>""";
+
     /**
      * URL of the default app icon.
      */
     public static final String ICON_URL = "/assets/img/icon.png";
+
     /**
      * User home.
      */
     public static final String USER_HOME = getProperty("user.home");
+
     /**
      * URI of the git repository.
      */
     public static final URI GIT_REPOSITORY_URI;
+
     /**
      * URI of the license.
      */
     public static final URI LICENSE_URI;
+
     /**
      * URI of the version page of this app on GitHub.
      */
     public static final URI VERSION_PAGE_URI;
+
     /**
      * Name of the license of this application.
      */
     public static final String LICENSE_NAME = "GPLv3";
+
     /**
      * Data directory.
      */
     public static final PathWrapper DATA_DIR;
+
     /**
      * Application name.
      */
     public static final String NAME = "Random Seat Generator";
+
     /**
      * Java home.
      */
     public static final String JAVA_HOME = getProperty("java.home");
+
     /**
      * Java version.
      */
     public static final String JAVA_VERSION = "%s, %s".formatted(getProperty("java.version"), getProperty("java.vendor"));
+
     /**
      * Java Virtual Machine version.
      */
     public static final String JVM_VERSION = "%s (%s), %s".formatted(getProperty("java.vm.name"), getProperty("java.vm.info"), getProperty("java.vm.vendor"));
+
     /**
      * Operating system name.
      */
     public static final String OS_NAME = getProperty("os.name");
+
     /**
      * Operating system version.
      */
     public static final String OS_VERSION = getProperty("os.version");
+
     /**
      * Current architecture.
      */
     public static final String OS_ARCH = getProperty("os.arch");
+
     /**
      * Version ID.
      */
     private static final String VERSION_ID = Metadata.class.getPackage().getImplementationVersion();
+
     /**
      * Version of the app.
      */
     public static final String VERSION = (VERSION_ID == null) ? "dev" : ("v" + VERSION_ID);
+
     /**
      * Application title.
      */
@@ -155,4 +179,5 @@ public final class Metadata {
      */
     private Metadata() {
     }
+
 }

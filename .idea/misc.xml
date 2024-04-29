@@ -9,6 +9,7 @@
     </list>
     <writeAnnotations>
       <writeAnnotation name="com.alibaba.excel.annotation.ExcelProperty" />
+      <writeAnnotation name="com.alibaba.fastjson2.annotation.JSONField" />
     </writeAnnotations>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />

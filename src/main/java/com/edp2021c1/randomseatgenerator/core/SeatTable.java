@@ -52,31 +52,39 @@ public class SeatTable {
      * Default exporting directory.
      */
     public static final PathWrapper DEFAULT_EXPORTING_DIR = PathWrapper.wrap(Metadata.USER_HOME, "Seat Tables");
+
     /**
      * Placeholder of an empty seat.
      */
     public static final String EMPTY_SEAT_PLACEHOLDER = "-";
+
     /**
      * Regular expression of a group leader.
      */
     public static final Pattern groupLeaderRegex = Pattern.compile("\\*.*\\*");
+
     /**
      * Format of a group leader.
      */
     public static final String groupLeaderFormat = "*%s*";
+
     private static final ExcelWriterBuilder excelWriterBuilder = EasyExcel.write().head(RowData.class);
+
     /**
      * The seat table stored as a {@code  List}.
      */
     private final List<String> table;
+
     /**
      * The config used to generate the seat table.
      */
     private final SeatConfig config;
+
     /**
      * The seed used to generate the seat table.
      */
     private final String seed;
+
     /**
      * The lucky person specially chosen.
      */
@@ -94,7 +102,23 @@ public class SeatTable {
         this.table = Collections.unmodifiableList(table);
         this.config = config;
         this.seed = seed == null ? "null" : seed.isEmpty() ? "empty_string" : seed;
-        this.luckyPerson = config.isLucky() ? luckyPerson : null;
+        this.luckyPerson = config.lucky() ? luckyPerson : null;
+    }
+
+    /**
+     * Generate a seat table using the specified config and the seed.
+     *
+     * @param config used to generate the seat table
+     * @param seed   used to generate the seat table
+     *
+     * @return an instance of {@code SeatTable}
+     *
+     * @throws NullPointerException   if the config is null
+     * @throws IllegalConfigException if the config has an illegal format, or if it
+     *                                costs too much time to generate the seat table
+     */
+    public static SeatTable generate(final SeatConfig config, final String seed) {
+        return generate(config, seed, SeatTableGenerator.defaultGenerator);
     }
 
     /**
@@ -103,7 +127,9 @@ public class SeatTable {
      * @param config    used to generate the seat table
      * @param seed      used to generate the seat table
      * @param generator used to generate the seat table
+     *
      * @return an instance of {@code SeatTable}
+     *
      * @throws NullPointerException   if the config is null.
      * @throws IllegalConfigException if the config has an illegal format, or if it
      *                                costs too much time to generate the seat table
@@ -126,23 +152,10 @@ public class SeatTable {
     }
 
     /**
-     * Generate a seat table using the specified config and the seed.
-     *
-     * @param config used to generate the seat table
-     * @param seed   used to generate the seat table
-     * @return an instance of {@code SeatTable}
-     * @throws NullPointerException   if the config is null
-     * @throws IllegalConfigException if the config has an illegal format, or if it
-     *                                costs too much time to generate the seat table
-     */
-    public static SeatTable generate(final SeatConfig config, final String seed) {
-        return generate(config, seed, SeatTableGenerator.defaultGenerator);
-    }
-
-    /**
      * Generates an empty seat table.
      *
      * @param config used to generate the empty seat table
+     *
      * @return an empty seat table
      */
     public static SeatTable generateEmpty(final SeatConfig config) {
@@ -155,9 +168,9 @@ public class SeatTable {
      * @return a {@code List} storing {@code RowData} transferred from this
      */
     public List<RowData> toRowData() {
-        val columnCount = config.getColumnCount();
-        val rows = new ArrayList<RowData>(config.getRowCount() + 2);
-        val size = table.size();
+        val columnCount = config.columnCount();
+        val rows        = new ArrayList<RowData>(config.rowCount() + 2);
+        val size        = table.size();
 
         rows.add(RowData.header(columnCount));
 
@@ -171,7 +184,7 @@ public class SeatTable {
             }
         }
 
-        if (config.isLucky()) {
+        if (config.lucky()) {
             rows.add(RowData.of("Lucky Person", luckyPerson));
         }
 
@@ -181,8 +194,8 @@ public class SeatTable {
 
     @Override
     public String toString() {
-        val columnCount = config.getColumnCount();
-        val size = table.size();
+        val columnCount = config.columnCount();
+        val size        = table.size();
 
         val str = new StringBuilder("Seat Table:\n");
 
@@ -193,7 +206,7 @@ public class SeatTable {
             str.append(table.get(i)).append("\t\t");
         }
 
-        if (config.isLucky()) {
+        if (config.lucky()) {
             str.append("\nLucky Person: ").append(luckyPerson);
         }
 
@@ -205,6 +218,7 @@ public class SeatTable {
      *
      * @param filePath path of file to export to
      * @param writable if exports to a writable file
+     *
      * @throws RuntimeException if an I/O error occurs
      */
     public void exportToChart(final Path filePath, final boolean writable) {

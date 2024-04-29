@@ -82,4 +82,5 @@ public class SeatTableRow extends HBox {
 
         getStyleClass().add(DEFAULT_STYLE_CLASS);
     }
+
 }

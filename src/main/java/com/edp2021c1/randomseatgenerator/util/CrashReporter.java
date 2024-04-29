@@ -90,6 +90,7 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
                 System.err.println(Strings.getStackTrace(ex));
             }
         }
+
     }
 
     private static class GUICrashReporter extends CrashReporter {
@@ -132,5 +133,7 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
                 System.err.println(Strings.getStackTrace(ex));
             }
         }
+
     }
+
 }

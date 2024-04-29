@@ -19,18 +19,18 @@
 package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
+import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.util.Logging;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.PathWrapper;
 import com.edp2021c1.randomseatgenerator.util.Strings;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
 import lombok.val;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Launches the application in console mode.
@@ -87,15 +87,15 @@ public class ConsoleLauncher {
         }
 
         // 处理座位表生成配置
-        var config = JSONAppConfigHolder.global().get().checkAndReturn();
+        var config = SeatConfigHolder.global().get().checkAndReturn();
         // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
-        var configPath = JSONAppConfigHolder.global().getConfigPath();
+        var configPath = SeatConfigHolder.global().getConfigPath();
         // 获取配置文件路径
         if ((i = args.lastIndexOf("--config-path")) != -1 && i < args.size() - 1) {
             configPath = PathWrapper.wrap(args.get(i + 1));
             Logging.info("Config path set to " + configPath);
             try {
-                val holder = JSONAppConfigHolder.createHolder(configPath, false);
+                val holder = SeatConfigHolder.createHolder(configPath, false);
                 config = holder.get().checkAndReturn();
                 holder.close();
             } catch (final IOException e) {
@@ -110,10 +110,11 @@ public class ConsoleLauncher {
         Logging.info("\n" + seatTable);
 
         // 导出
-        seatTable.exportToChart(outputPath, Objects.requireNonNullElse(config.getBoolean("export.writable"), false));
+        seatTable.exportToChart(outputPath, UIUtils.exportWritableProperty().get());
         Logging.info("Seat table successfully exported to " + outputPath);
 
         // 防止某表格抽风
         System.exit(0);
     }
+
 }

@@ -31,7 +31,9 @@ import javafx.scene.control.Label;
  * @since 1.4.0
  */
 public class SeatTableCell extends Label {
+
     private static final String DEFAULT_STYLE_CLASS = "seat-table-cell";
+
     private static final PseudoClass PSEUDO_CLASS_LEADER
             = PseudoClass.getPseudoClass("leader");
 
@@ -53,4 +55,5 @@ public class SeatTableCell extends Label {
 
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
     }
+
 }

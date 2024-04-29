@@ -24,7 +24,6 @@ import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedExcepti
 import lombok.Getter;
 import lombok.val;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
@@ -32,27 +31,28 @@ import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
 /**
- * Handles {@link JSONAppConfig}.
+ * Handles {@link SeatConfigWrapper}.
  *
  * @author Calboot
- * @see JSONAppConfig
+ * @see SeatConfigWrapper
  * @since 1.4.9
  */
-public class JSONAppConfigHolder implements Closeable {
+public class SeatConfigHolder {
 
     /**
      * Default config handler.
      */
-    private static final JSONAppConfigHolder global;
-    private static final PathWrapper GLOBAL_CONFIG_PATH = PathWrapper.wrap(Metadata.DATA_DIR.toString(), "config", "randomseatgenerator.json");
+    private static final SeatConfigHolder global;
+
+    private static final PathWrapper globalPath = PathWrapper.wrap(Metadata.DATA_DIR.toString(), "config", "randomseatgenerator.json");
 
     static {
         try {
-            GLOBAL_CONFIG_PATH.getParent().replaceWithDirectory();
+            globalPath.getParent().replaceWithDirectory();
 
-            global = createHolder(GLOBAL_CONFIG_PATH.replaceIfNonRegularFile(), true);
+            global = createHolder(globalPath.replaceIfNonRegularFile(), true);
             if (global.configPath.readString().isBlank()) {
-                val builtInConfigStream = JSONAppConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
+                val builtInConfigStream = SeatConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
                 if (builtInConfigStream != null) {
                     global.putJson(new String(
                             builtInConfigStream.readAllBytes()
@@ -70,19 +70,24 @@ public class JSONAppConfigHolder implements Closeable {
 
     @Getter
     private final PathWrapper configPath;
-    private final JSONAppConfig content;
+
+    private final SeatConfigWrapper content;
+
     private FileChannel channel;
+
     private boolean closed;
+
     private boolean loaded;
 
     /**
      * Creates an instance with the given config path.
      *
      * @param configPath path of config
+     *
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
-    private JSONAppConfigHolder(final Path configPath) throws IOException {
-        this.content = new JSONAppConfig();
+    private SeatConfigHolder(final Path configPath) throws IOException {
+        this.content = new SeatConfigWrapper();
         this.configPath = PathWrapper.wrap(configPath);
 
         if (this.configPath.getParent().replaceWithDirectory().notFullyPermitted()) {
@@ -92,29 +97,9 @@ public class JSONAppConfigHolder implements Closeable {
         loadConfig();
     }
 
-    /**
-     * Returns the global config holder.
-     *
-     * @return the global config holder
-     */
-    public static JSONAppConfigHolder global() {
-        return global;
-    }
-
-    /**
-     * Creates an instance with the given config path and adds it to the holders set.
-     *
-     * @param configPath  path of config
-     * @param closeOnExit whether the created holder will be automatically closed on application exit
-     * @return the holder created
-     * @throws IOException if failed to init config path, or does not have enough permission of the path
-     */
-    public static JSONAppConfigHolder createHolder(final Path configPath, final boolean closeOnExit) throws IOException {
-        val res = new JSONAppConfigHolder(configPath);
-        if (closeOnExit) {
-            RuntimeUtils.addRunOnExit(res::close);
-        }
-        return res;
+    private synchronized void loadConfig() throws IOException {
+        loadConfig0();
+        loaded = true;
     }
 
     private synchronized void loadConfig0() throws IOException {
@@ -136,9 +121,31 @@ public class JSONAppConfigHolder implements Closeable {
         }
     }
 
-    private synchronized void loadConfig() throws IOException {
-        loadConfig0();
-        loaded = true;
+    /**
+     * Returns the global config holder.
+     *
+     * @return the global config holder
+     */
+    public static SeatConfigHolder global() {
+        return global;
+    }
+
+    /**
+     * Creates an instance with the given config path and adds it to the holders set.
+     *
+     * @param configPath  path of config
+     * @param closeOnExit whether the created holder will be automatically closed on application exit
+     *
+     * @return the holder created
+     *
+     * @throws IOException if failed to init config path, or does not have enough permission of the path
+     */
+    public static SeatConfigHolder createHolder(final Path configPath, final boolean closeOnExit) throws IOException {
+        val res = new SeatConfigHolder(configPath);
+        if (closeOnExit) {
+            RuntimeUtils.addRunOnExit(res::close);
+        }
+        return res;
     }
 
     /**
@@ -158,9 +165,25 @@ public class JSONAppConfigHolder implements Closeable {
         }
     }
 
+    /**
+     * Puts a map.
+     *
+     * @param map to put
+     *
+     * @throws RuntimeException if an I/O error occurs
+     */
+    public synchronized void putAll(final Map<? extends String, ?> map) {
+        checkState();
+        try {
+            configPath.writeString(content.putAllAndReturn(map).checkAndReturn().toString());
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private synchronized void checkState() {
         if (closed) {
-            throw new IllegalStateException("Closed JSONAppConfigHolder");
+            throw new IllegalStateException("Closed SeatConfigHolder");
         }
         if (!loaded) {
             try {
@@ -173,37 +196,12 @@ public class JSONAppConfigHolder implements Closeable {
     }
 
     /**
-     * Associates the specified value with the specified key in the config.
-     *
-     * @param key   with which the specified value is to be associated
-     * @param value to be associated with the specified key
-     * @throws RuntimeException if an I/O error occurs
-     */
-    public synchronized void put(final String key, final Object value) {
-        putAll(new JSONAppConfig(1).putAndReturn(key, value));
-    }
-
-    /**
-     * Puts a map.
-     *
-     * @param map to put
-     * @throws RuntimeException if an I/O error occurs
-     */
-    public synchronized void putAll(final Map<? extends String, ?> map) {
-        checkState();
-        try {
-            configPath.writeString(content.putAllAndReturn(map).checkAndReturn().toString());
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
      * Parses and puts the JSONObject from the string.
      *
      * @param jsonString that contains the map to parse and put
+     *
      * @throws RuntimeException if an I/O error occurs
-     * @see JSONAppConfig#putJsonAndReturn(String)
+     * @see SeatConfigWrapper#putJsonAndReturn(String)
      */
     public synchronized void putJson(final String jsonString) {
         checkState();
@@ -219,7 +217,7 @@ public class JSONAppConfigHolder implements Closeable {
      *
      * @return the clone of the config
      */
-    public synchronized JSONAppConfig get() {
+    public synchronized SeatConfigWrapper get() {
         checkState();
         return content.cloneThis();
     }

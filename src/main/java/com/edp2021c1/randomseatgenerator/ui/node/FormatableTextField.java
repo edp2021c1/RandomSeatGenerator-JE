@@ -29,6 +29,7 @@ public abstract class FormatableTextField extends TextField {
      * Creates an instance.
      *
      * @param formatter used for formatting the text, inputting the old and new value, and returning the formatted value
+     *
      * @return the field created
      */
     public static FormatableTextField of(final BiFunction<String, String, String> formatter) {

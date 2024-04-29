@@ -19,9 +19,11 @@
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
+import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
 import com.edp2021c1.randomseatgenerator.util.*;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
+import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -54,11 +56,17 @@ public class MainWindow extends Stage {
 
     @Getter
     private static final MainWindow mainWindow = new MainWindow();
+
     private final SeatTableView seatTableView;
-    private final JSONAppConfigHolder cfHolder;
+
+    private final SeatConfigHolder cfHolder;
+
     private final StringProperty seed;
+
     private final ObjectProperty<SeatTable> seatTable;
+
     private String previousSeed = null;
+
     private boolean generated;
 
     /**
@@ -70,7 +78,7 @@ public class MainWindow extends Stage {
             throw new IllegalStateException("Main window can only be constructed once");
         }
 
-        cfHolder = JSONAppConfigHolder.global();
+        cfHolder = SeatConfigHolder.global();
 
         val config = cfHolder.get();
 
@@ -84,7 +92,7 @@ public class MainWindow extends Stage {
         val settingsBtn = createButton("设置", 80, 26);
         val generateBtn = createButton("生成", 80, 26);
         val exportBtn = createButton("导出", 80, 26);
-        val leftBox = createVBox(settingsBtn, generateBtn, exportBtn);
+        val leftBox   = createVBox(settingsBtn, generateBtn, exportBtn);
         leftBox.getStyleClass().add("left");
 
         // 右上种子输入栏
@@ -132,7 +140,7 @@ public class MainWindow extends Stage {
         );
 
         fc.setInitialDirectory(new File(Objects.requireNonNullElse(
-                config.getString("export.dir.previous"),
+                AppPropertiesHolder.global().getProperty(KEY_EXPORT_DIR_PREVIOUS),
                 SeatTable.DEFAULT_EXPORTING_DIR.toString()
         )));
 
@@ -181,14 +189,13 @@ public class MainWindow extends Stage {
                 if (exportFile == null) {
                     return;
                 }
-                seatTable.get().exportToChart(exportFile.toPath(), Objects.requireNonNullElse(cfHolder.get().getBoolean("export.writable"), false));
+                seatTable.get().exportToChart(exportFile.toPath(), UIUtils.exportWritableProperty().get());
 
                 Logging.info("Successfully exported seat table to " + exportFile);
                 MessageDialog.showMessage(this, "成功导出座位表到\n" + exportFile);
 
                 fc.setInitialDirectory(exportFile.getParentFile());
-
-                cfHolder.put("export.dir.previous", exportFile.getParentFile().toString());
+                AppPropertiesHolder.global().setProperty(KEY_EXPORT_DIR_PREVIOUS, exportFile.getParentFile().toString());
             } catch (final Throwable e) {
                 CrashReporter.report(e);
             }
@@ -201,8 +208,6 @@ public class MainWindow extends Stage {
         dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
 
         if (OperatingSystem.MAC == OperatingSystem.getCurrent()) {
-            setOnShown(event -> setFullScreen(Objects.requireNonNullElse(cfHolder.get().getBoolean("appearance.window.main.maximized"), false)));
-            fullScreenProperty().subscribe(newValue -> cfHolder.put("appearance.window.main.maximized", newValue));
             setFullScreenExitHint("");
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
@@ -219,8 +224,6 @@ public class MainWindow extends Stage {
                 }
             });
         } else {
-            setOnShown(event -> setMaximized(Objects.requireNonNullElse(cfHolder.get().getBoolean("appearance.window.main.maximized"), false)));
-            maximizedProperty().subscribe(newValue -> cfHolder.put("appearance.window.main.maximized", newValue));
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isControlDown()) {
                     return;
@@ -232,23 +235,44 @@ public class MainWindow extends Stage {
             });
         }
 
-        var d = cfHolder.get().getDouble("appearance.window.main.height");
-        if (d != null) {
-            setHeight(d);
+        try {
+            setHeight(AppPropertiesHolder.global().getDouble(KEY_MAIN_WINDOW_HEIGHT));
+        } catch (final NumberFormatException | NullPointerException ignored) {
         }
-        d = cfHolder.get().getDouble("appearance.window.main.width");
-        if (d != null) {
-            setWidth(d);
+
+        try {
+            setWidth(AppPropertiesHolder.global().getDouble(KEY_MAIN_WINDOW_WIDTH));
+        } catch (final NumberFormatException | NullPointerException ignored) {
+        }
+
+        try {
+            setX(AppPropertiesHolder.global().getDouble(KEY_MAIN_WINDOW_X));
+        } catch (final NumberFormatException | NullPointerException ignored) {
+        }
+
+        try {
+            setY(AppPropertiesHolder.global().getDouble(KEY_MAIN_WINDOW_Y));
+        } catch (final NumberFormatException | NullPointerException ignored) {
         }
 
         heightProperty().subscribe(newValue -> {
             if (!isFullScreen()) {
-                cfHolder.put("appearance.window.main.height", newValue.doubleValue());
+                AppPropertiesHolder.global().setProperty(KEY_MAIN_WINDOW_HEIGHT, newValue.doubleValue());
             }
         });
         widthProperty().subscribe(newValue -> {
             if (!isFullScreen()) {
-                cfHolder.put("appearance.window.main.width", newValue.doubleValue());
+                AppPropertiesHolder.global().setProperty(KEY_MAIN_WINDOW_WIDTH, newValue.doubleValue());
+            }
+        });
+        xProperty().subscribe(newValue -> {
+            if (!isFullScreen()) {
+                AppPropertiesHolder.global().setProperty(KEY_MAIN_WINDOW_X, newValue.doubleValue());
+            }
+        });
+        yProperty().subscribe(newValue -> {
+            if (!isFullScreen()) {
+                AppPropertiesHolder.global().setProperty(KEY_MAIN_WINDOW_Y, newValue.doubleValue());
             }
         });
 

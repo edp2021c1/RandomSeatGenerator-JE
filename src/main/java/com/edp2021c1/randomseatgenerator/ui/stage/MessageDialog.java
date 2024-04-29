@@ -36,6 +36,7 @@ import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
  * @since 1.5.0
  */
 public class MessageDialog extends Stage {
+
     private static String messageToBeShown;
 
     private MessageDialog(final String msg) {
@@ -109,5 +110,7 @@ public class MessageDialog extends Stage {
         public void start(final Stage primaryStage) {
             new MessageDialog(messageToBeShown).showAndWait();
         }
+
     }
+
 }

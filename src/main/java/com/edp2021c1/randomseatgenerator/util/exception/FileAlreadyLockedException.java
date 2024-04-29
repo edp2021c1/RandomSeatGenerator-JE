@@ -28,6 +28,7 @@ import java.nio.file.Path;
  * @since 1.5.0
  */
 public class FileAlreadyLockedException extends IOException {
+
     /**
      * Default constructor.
      *
@@ -36,4 +37,5 @@ public class FileAlreadyLockedException extends IOException {
     public FileAlreadyLockedException(final Path filePath) {
         super(filePath.toAbsolutePath().toString());
     }
+
 }

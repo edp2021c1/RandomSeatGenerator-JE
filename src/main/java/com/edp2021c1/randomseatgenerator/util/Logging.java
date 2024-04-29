@@ -41,10 +41,15 @@ public final class Logging {
      * Logger.
      */
     private static final Logger logger = Logger.getLogger("RandomSeat");
+
     private static final PathWrapper logDir = DATA_DIR.resolve("logs");
+
     private static final List<PathWrapper> logPaths;
+
     private static final MessageFormat messageFormat = new MessageFormat("[{0,date,yyyy-MM-dd HH:mm:ss.SSS}] [{1}/{2}] {3}\n");
+
     private static final Formatter DEFAULT_FORMATTER;
+
     @Getter
     private static State state = State.UNINITIALIZED;
 
@@ -68,21 +73,6 @@ public final class Logging {
      * Don't let anyone else instantiate this class.
      */
     private Logging() {
-    }
-
-    /**
-     * Returns whether the log manager is started.
-     *
-     * @return whether the log manager is started
-     */
-    public static boolean isStarted() {
-        return state == State.STARTED;
-    }
-
-    private static void checkState() {
-        if (!isStarted()) {
-            throw new IllegalStateException("Logger closed or uninitialized");
-        }
     }
 
     /**
@@ -113,6 +103,21 @@ public final class Logging {
     public static void error(final String msg) {
         checkState();
         logger.log(LoggingLevels.ERROR, msg);
+    }
+
+    private static void checkState() {
+        if (!isStarted()) {
+            throw new IllegalStateException("Logger closed or uninitialized");
+        }
+    }
+
+    /**
+     * Returns whether the log manager is started.
+     *
+     * @return whether the log manager is started
+     */
+    public static boolean isStarted() {
+        return state == State.STARTED;
     }
 
     /**

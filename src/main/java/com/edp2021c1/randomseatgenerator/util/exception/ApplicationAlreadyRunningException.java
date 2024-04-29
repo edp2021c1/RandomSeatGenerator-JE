@@ -32,4 +32,5 @@ public class ApplicationAlreadyRunningException extends RuntimeException {
     public ApplicationAlreadyRunningException() {
         super();
     }
+
 }

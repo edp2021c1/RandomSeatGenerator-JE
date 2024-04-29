@@ -23,7 +23,8 @@ import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.node.FormatableTextField;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.*;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
+import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -50,9 +51,11 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
  * @since 1.3.3
  */
 public class SettingsDialog extends Stage {
+
     @Getter
     private static final SettingsDialog settingsDialog = new SettingsDialog();
-    private final JSONAppConfigHolder cfHolder;
+
+    private final SeatConfigHolder cfHolder;
 
     /**
      * Creates an instance.
@@ -60,7 +63,7 @@ public class SettingsDialog extends Stage {
     private SettingsDialog() {
         super();
 
-        cfHolder = JSONAppConfigHolder.global();
+        cfHolder = SeatConfigHolder.global();
 
         /* *************************************************************************
          *                                                                         *
@@ -187,8 +190,10 @@ public class SettingsDialog extends Stage {
         fc.setTitle("加载配置文件");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
 
-        val config = cfHolder.get();
-        fc.setInitialDirectory(new File(Objects.requireNonNullElse(config.getString("import.dir.previous"), cfHolder.getConfigPath().getParent().toString())));
+        fc.setInitialDirectory(new File(Objects.requireNonNullElse(
+                AppPropertiesHolder.global().getProperty(KEY_IMPORT_DIR_PREVIOUS),
+                cfHolder.getConfigPath().getParent().toString())
+        ));
 
         /* *************************************************************************
          *                                                                         *
@@ -209,7 +214,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 try {
-                    val temp = JSONAppConfigHolder.createHolder(importFile.toPath(), false);
+                    val temp = SeatConfigHolder.createHolder(importFile.toPath(), false);
                     configPane.setContent(temp.get());
                     temp.close();
                 } catch (final IOException e) {
@@ -219,7 +224,7 @@ public class SettingsDialog extends Stage {
                 }
 
                 fc.setInitialDirectory(importFile.getParentFile());
-                cfHolder.put("import.dir.previous", fc.getInitialDirectory().toString());
+                AppPropertiesHolder.global().setProperty(KEY_IMPORT_DIR_PREVIOUS, fc.getInitialDirectory().toString());
             } catch (final Throwable e) {
                 CrashReporter.report(e);
             }
@@ -275,4 +280,5 @@ public class SettingsDialog extends Stage {
 
         setOnShown(event -> configPane.setContent(cfHolder.get()));
     }
+
 }

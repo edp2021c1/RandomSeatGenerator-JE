@@ -18,11 +18,9 @@
 
 package com.edp2021c1.randomseatgenerator;
 
-import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.config.JSONAppConfigHolder;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -59,7 +57,6 @@ public class GUILauncher extends Application {
         if (Metadata.DATA_DIR.notFullyPermitted()) {
             CrashReporter.report(new IOException("Does not have read/write permission of the data directory"));
         }
-        UIUtils.setGlobalDarkMode(JSONAppConfigHolder.global().get().getBoolean("appearance.style.dark"));
     }
 
     @Override
@@ -75,4 +72,5 @@ public class GUILauncher extends Application {
     public void stop() {
         System.exit(0);
     }
+
 }

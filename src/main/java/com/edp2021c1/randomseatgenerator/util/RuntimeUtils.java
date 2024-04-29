@@ -36,23 +36,50 @@ public final class RuntimeUtils {
      * Runtime config.
      */
     private static final Properties runtimeProperties = new Properties(2);
+
     private static final Hashtable<Long, Thread> threadIdHashtable = new Hashtable<>();
+
     private static final List<Runnable> runOnExit = new ArrayList<>(3);
+
     private static boolean staticInitialized;
+
     /**
      * Don't let anyone else instantiate this class.
      */
     private RuntimeUtils() {
     }
 
+    /**
+     * Sets the value of a specific property.
+     *
+     * @param key   of the property
+     * @param value to set
+     *
+     * @return whether the property is empty
+     */
     public static boolean setProperty(final Object key, final Object value) {
         return runtimeProperties.put(key, value) == null;
     }
 
+    /**
+     * Returns the value of a specific property.
+     *
+     * @param key of the property
+     *
+     * @return value of the property
+     */
     public static Object getProperty(final Object key) {
         return runtimeProperties.get(key);
     }
 
+    /**
+     * Returns the value of a specific property, or the given value if is null
+     *
+     * @param key of the property
+     * @param def default returned value
+     *
+     * @return the value of a specific property, or {@code def} if is null
+     */
     public static Object getPropertyOrDefault(final Object key, final Object def) {
         return runtimeProperties.getOrDefault(key, def);
     }
@@ -89,6 +116,7 @@ public final class RuntimeUtils {
      * @param exe           task to execute repeatedly
      * @param waitingMillis time to wait between each run in millis
      * @param name          thread name
+     *
      * @return a thread that executes the task repeatedly
      */
     public static Thread loopThread(final Runnable exe, final long waitingMillis, final String name) {
@@ -96,12 +124,12 @@ public final class RuntimeUtils {
     }
 
     /**
-     * Returns a set of all live threads.
+     * Adds a {@link Runnable} to call on application exit.
      *
-     * @return all live threads
+     * @param taskToRun a {@code Runnable} to call on application exit
      */
-    public static Set<Thread> getThreads() {
-        return Thread.getAllStackTraces().keySet();
+    public static void addRunOnExit(final Runnable taskToRun) {
+        runOnExit.add(taskToRun);
     }
 
     /**
@@ -109,6 +137,7 @@ public final class RuntimeUtils {
      * null if thread does not exist or is not live.
      *
      * @param id of the thread
+     *
      * @return thread identified by {@code id}
      */
     public static Thread getThreadById(final long id) {
@@ -121,17 +150,20 @@ public final class RuntimeUtils {
     }
 
     /**
-     * Adds a {@link Runnable} to call on application exit.
+     * Returns a set of all live threads.
      *
-     * @param taskToRun a {@code Runnable} to call on application exit
+     * @return all live threads
      */
-    public static void addRunOnExit(final Runnable taskToRun) {
-        runOnExit.add(taskToRun);
+    public static Set<Thread> getThreads() {
+        return Thread.getAllStackTraces().keySet();
     }
 
     private static class LoopTaskThread extends Thread {
+
         private final Runnable loopTask;
+
         private final long waitingMillis;
+
         private final byte[] lock = new byte[0];
 
         private LoopTaskThread(final Runnable loopTask, final long waitingMillis, final String name) {
@@ -154,6 +186,7 @@ public final class RuntimeUtils {
                 }
             }
         }
+
     }
 
 }

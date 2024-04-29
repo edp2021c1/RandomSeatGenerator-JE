@@ -70,11 +70,11 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         val rd = new Random(longSeed);
 
         // 获取配置
-        val rowCount = config.getRowCount();
-        val columnCount = config.getColumnCount();
-        val nameList = config.getNames();
-        val groupLeaderList = config.getGroupLeaders();
-        val lucky = config.isLucky();
+        val rowCount        = config.rowCount();
+        val columnCount     = config.columnCount();
+        val nameList        = config.names();
+        val groupLeaderList = config.groupLeaders();
+        val lucky           = config.lucky();
 
         // 防止lucky为true时数组越界
         val minus = lucky ? 1 : 0;
@@ -99,10 +99,10 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
             throw new IllegalConfigException("Too many people and not enough seat");
         }
 
-        val peopleInSeat = peopleNum - minus;
-        val peopleLeft = peopleInSeat % columnCount;
-        val noPeopleLeft = peopleLeft == 0;
-        val randomPeopleCount = Math.min(columnCount * config.getRandomBetweenRows(), peopleInSeat - peopleLeft);
+        val peopleInSeat      = peopleNum - minus;
+        val peopleLeft        = peopleInSeat % columnCount;
+        val noPeopleLeft      = peopleLeft == 0;
+        val randomPeopleCount = Math.min(columnCount * config.randomBetweenRows(), peopleInSeat - peopleLeft);
 
         val forTimesMinusOne = peopleNum % randomPeopleCount > columnCount
                 ? seatNum / randomPeopleCount
@@ -111,7 +111,7 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         val emptyRow = Arrays.asList(new String[columnCount]);
         fill(emptyRow, EMPTY_SEAT_PLACEHOLDER);
 
-        val availableLastRowPos = elementFilter(range(1, columnCount + 1), i -> !config.getDisabledLastRowPos().contains(i));
+        val availableLastRowPos = elementFilter(range(1, columnCount + 1), i -> !config.disabledLastRowPos().contains(i));
         if (availableLastRowPos.size() < peopleLeft) {
             throw new IllegalConfigException("Available last row seat not enough");
         }

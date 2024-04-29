@@ -40,18 +40,21 @@ public interface SeatTableGeneratorAndChecker extends SeatTableGenerator {
      *
      * @param seatTable to check
      * @param config    used to check
+     *
      * @return if the seat table is valid
+     *
      * @throws IllegalConfigException if config is invalid
      */
     default boolean check(final List<String> seatTable, final SeatConfig config) throws IllegalConfigException {
-        val gl = config.getGroupLeaders();
-        val columnCount = config.getColumnCount();
+        val gl          = config.groupLeaders();
+        val columnCount = config.columnCount();
 
         // 检查每列是否都有组长
         if (IntStream.range(0, columnCount).anyMatch(i -> indexFilter(seatTable, index -> index % columnCount == i).stream().noneMatch(gl::contains))) {
             return false;
         }
         // 检查是否分开
-        return config.getSeparatedPairs().stream().allMatch(separatedPair -> separatedPair.check(seatTable, columnCount));
+        return config.separatedPairs().stream().allMatch(separatedPair -> separatedPair.check(seatTable, columnCount));
     }
+
 }
