@@ -74,11 +74,11 @@ public class SeatTableView extends VBox {
             rowCount.set(newValue.getConfig().rowCount());
             columnCount.set(newValue.getConfig().columnCount());
 
-            getChildren().clear();
-            newValue.toRowData().stream().map(s -> new SeatTableRow(s, columnCount.get())).forEach(row -> {
-                row.prefHeightProperty().bind(heightProperty().divide(rowCount));
-                getChildren().add(row);
-            });
+            getChildren().setAll(newValue.toRowData().stream().map(s -> {
+                val seatTableRow = new SeatTableRow(s, columnCount.get());
+                seatTableRow.prefHeightProperty().bind(heightProperty().divide(rowCount));
+                return seatTableRow;
+            }).toArray(Node[]::new));
         });
 
         minHeightProperty().bind(rowCount.multiply(60));

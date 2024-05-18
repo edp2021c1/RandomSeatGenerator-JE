@@ -20,8 +20,8 @@ package com.edp2021c1.randomseatgenerator.util.config;
 
 import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONObject;
+import com.edp2021c1.randomseatgenerator.core.NamePair;
 import com.edp2021c1.randomseatgenerator.core.SeatConfig;
-import com.edp2021c1.randomseatgenerator.core.SeparatedPair;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.NonNull;
@@ -29,11 +29,9 @@ import lombok.val;
 
 import java.util.*;
 
-import static com.alibaba.fastjson2.JSON.parseObject;
-import static com.alibaba.fastjson2.JSONWriter.Feature.MapSortField;
 import static com.alibaba.fastjson2.JSONWriter.Feature.PrettyFormat;
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
-import static com.edp2021c1.randomseatgenerator.core.SeatTable.groupLeaderRegex;
+import static com.edp2021c1.randomseatgenerator.core.SeatTable.groupLeaderRegexPredicate;
 import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
 
 /**
@@ -102,15 +100,12 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
      */
     private static final String KEY_LUCKY = "lucky_option";
 
-    private static final int DEFAULT_INITIAL_CAPACITY = 14;
-
-    private final JSONObject config;
+    private final JSONObject config = new JSONObject(8);
 
     /**
      * Constructs an empty instance.
      */
     public SeatConfigWrapper() {
-        config = new JSONObject(DEFAULT_INITIAL_CAPACITY);
     }
 
     /**
@@ -119,7 +114,6 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
      * @param map whose mappings are to be placed in this map
      */
     public SeatConfigWrapper(final Map<String, ?> map) {
-        config = new JSONObject(Math.max(DEFAULT_INITIAL_CAPACITY, map.size()));
         putAll(map);
     }
 
@@ -250,7 +244,7 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
         if (disabledLastRowPos == null || disabledLastRowPos.isBlank()) {
             return new ArrayList<>();
         }
-        if (!Strings.integerListPattern.matcher(disabledLastRowPos).matches()) {
+        if (!Strings.integerListPatternPredicate.test(disabledLastRowPos)) {
             throw new IllegalConfigException("Invalid disabled last row positions: " + disabledLastRowPos);
         }
         return buildList(
@@ -307,7 +301,7 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
             );
         }
         l.removeAll(List.of(""));
-        if (l.stream().anyMatch(groupLeaderRegex.asMatchPredicate())) {
+        if (l.stream().anyMatch(groupLeaderRegexPredicate)) {
             throw new IllegalConfigException(
                     "Name list must not contain names matching the format of a group leader"
             );
@@ -367,12 +361,12 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
     }
 
     @Override
-    public List<SeparatedPair> separatedPairs() throws IllegalConfigException {
+    public List<NamePair> separatedPairs() throws IllegalConfigException {
         val separatedPairs = getSeparatedPairs();
         if (separatedPairs == null) {
             throw new IllegalConfigException("Separated list cannot be null");
         }
-        return buildList(separatedPairs.lines().filter(s -> s != null && !s.isBlank()).toList(), SeparatedPair::new);
+        return buildList(separatedPairs.lines().filter(s -> s != null && !s.isBlank()).toList(), NamePair::new);
     }
 
     /**
@@ -415,20 +409,8 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
      *
      * @return json string
      */
-    @Override
-    public String toString() {
-        return config.toString(PrettyFormat, MapSortField);
-    }
-
-    /**
-     * Parses and puts the {@link JSONObject} from the string.
-     *
-     * @param jsonString to parse and put
-     *
-     * @return {@code this}
-     */
-    public SeatConfigWrapper putJsonAndReturn(final String jsonString) {
-        return putAllAndReturn(parseObject(jsonString));
+    public String toJsonString() {
+        return config.toString(PrettyFormat);
     }
 
     /**
@@ -479,13 +461,8 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
 
     @Override
     public Object put(final String key, final Object value) {
-        if (key == null) {
-            throw new UnsupportedOperationException("Null cannot be used as a key in a config");
-        }
-        if (value == null) {
-            return remove(key);
-        }
         switch (key) {
+            case null -> throw new UnsupportedOperationException("Null cannot be used as a key in a config");
             case KEY_ROW_COUNT,
                  KEY_COLUMN_COUNT,
                  KEY_RANDOM_BETWEEN_ROWS,
@@ -494,10 +471,15 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
                  KEY_GROUP_LEADERS,
                  KEY_SEPARATED_PAIRS,
                  KEY_LUCKY -> {
+                if (value == null) {
+                    return remove(key);
+                }
+                return config.put(key, value);
             }
-            default -> throw new IllegalConfigException("Invalid key: " + key);
+            default -> {
+                return null;
+            }
         }
-        return config.put(key, value);
     }
 
     @Override
@@ -532,6 +514,5 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
     public Set<Entry<String, Object>> entrySet() {
         return config.entrySet();
     }
-
 
 }

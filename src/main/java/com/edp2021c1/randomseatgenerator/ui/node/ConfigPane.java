@@ -19,7 +19,6 @@
 package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.ui.UIUtils;
-import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
 import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.config.SeatConfigWrapper;
 import javafx.beans.property.BooleanProperty;
@@ -34,8 +33,6 @@ import javafx.scene.layout.VBox;
 import lombok.val;
 
 import java.util.Objects;
-
-import static com.edp2021c1.randomseatgenerator.ui.UIUtils.KEY_DARK_MODE;
 
 /**
  * Config pane.
@@ -114,7 +111,7 @@ public class ConfigPane extends VBox {
         darkModeProperty = darkModeCheck.selectedProperty();
 
         source = configSource;
-        content = source.get();
+        content = source.getClone();
 
         val box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
         box1.setPrefHeight(60);
@@ -126,6 +123,9 @@ public class ConfigPane extends VBox {
         box3.setPrefHeight(60);
         box3.setAlignment(Pos.CENTER);
         getChildren().addAll(box1, box2, box3);
+
+        exportWritableProperty.bindBidirectional(UIUtils.exportWritableProperty());
+        darkModeProperty.bindBidirectional(UIUtils.globalDarkModeProperty());
 
         if (applyBtnDisabledProperty == null) {
             return;
@@ -162,12 +162,10 @@ public class ConfigPane extends VBox {
             content.setLucky(newValue);
             applyBtnDisabledProperty.set(checkEquals());
         });
-        exportWritableProperty.bindBidirectional(UIUtils.exportWritableProperty());
-        darkModeProperty.bindBidirectional(UIUtils.globalDarkModeProperty());
     }
 
     private boolean checkEquals() {
-        return Objects.equals(content, source.get());
+        return Objects.equals(content, source.getClone());
     }
 
     /**
@@ -197,7 +195,7 @@ public class ConfigPane extends VBox {
         separateListProperty.set(config.getSeparatedPairs());
         luckyOptionProperty.set(config.lucky());
         exportWritableProperty.set(UIUtils.exportWritableProperty().get());
-        darkModeProperty.set(AppPropertiesHolder.global().getBoolean(KEY_DARK_MODE));
+        darkModeProperty.set(UIUtils.globalDarkModeProperty().get());
     }
 
 }

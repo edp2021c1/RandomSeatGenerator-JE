@@ -22,6 +22,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 
 import java.awt.*;
+import java.io.File;
 import java.net.URI;
 import java.util.Map;
 
@@ -62,6 +63,15 @@ public final class DesktopUtils {
         if (desktopSupported) {
             try {
                 desktopTk.browse(uri);
+            } catch (final Throwable ignored) {
+            }
+        }
+    }
+
+    public static void moveToTrash(final File file) {
+        if (desktopSupported) {
+            try {
+                desktopTk.moveToTrash(file);
             } catch (final Throwable ignored) {
             }
         }

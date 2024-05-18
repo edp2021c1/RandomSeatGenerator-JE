@@ -136,7 +136,7 @@ public interface SeatConfig {
      * @return names as a list of string
      *
      * @throws IllegalConfigException if name list is null, contains {@link SeatTable#EMPTY_SEAT_PLACEHOLDER},
-     *                                or contains names matching {@link SeatTable#groupLeaderRegex}
+     *                                or contains names matching {@link SeatTable#groupLeaderRegexPredicate}
      */
     List<String> names() throws IllegalConfigException;
 
@@ -150,13 +150,13 @@ public interface SeatConfig {
     List<String> groupLeaders() throws IllegalConfigException;
 
     /**
-     * Returns separated pairs as a list of {@link SeparatedPair}.
+     * Returns separated pairs as a list of {@link NamePair}.
      *
-     * @return separated pairs as a list of {@code SeparatedPair}.
+     * @return separated pairs as a list of {@code NamePair}.
      *
      * @throws IllegalConfigException if {@code separate_list} contains one or more invalid pairs.
-     * @see SeparatedPair
+     * @see NamePair
      */
-    List<SeparatedPair> separatedPairs() throws IllegalConfigException;
+    List<NamePair> separatedPairs() throws IllegalConfigException;
 
 }

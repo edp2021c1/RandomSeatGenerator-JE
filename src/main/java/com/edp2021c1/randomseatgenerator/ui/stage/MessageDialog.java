@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
+import com.edp2021c1.randomseatgenerator.util.Notice;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -37,12 +38,12 @@ import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
  */
 public class MessageDialog extends Stage {
 
-    private static String messageToBeShown;
+    private static Notice messageToBeShown;
 
-    private MessageDialog(final String msg) {
+    private MessageDialog(final Notice msg) {
         super();
 
-        val txt = new Label(msg);
+        val txt = new Label(msg.message());
 
         val button = createButton("确定", 80, 26);
         button.setDefaultButton(true);
@@ -57,7 +58,7 @@ public class MessageDialog extends Stage {
         setInsets(new Insets(5), txt, buttonBar);
 
         setScene(new Scene(mainBox));
-        setTitle("消息");
+        setTitle(msg.title());
         setMaxWidth(1280);
         setMaxHeight(720);
         decorate(this, DIALOG);
@@ -68,7 +69,7 @@ public class MessageDialog extends Stage {
      *
      * @param msg message to be shown
      */
-    public static void showMessage(final String msg) {
+    public static void showMessage(final Notice msg) {
         try {
             messageToBeShown = msg;
             Application.launch(MessageDialogApp.class);
@@ -83,7 +84,7 @@ public class MessageDialog extends Stage {
      * @param owner the owner of the dialog, possibly null
      * @param msg   message to be shown
      */
-    public static void showMessage(final Window owner, final String msg) {
+    public static void showMessage(final Window owner, final Notice msg) {
         try {
             messageToBeShown = msg;
             Application.launch(MessageDialogApp.class);

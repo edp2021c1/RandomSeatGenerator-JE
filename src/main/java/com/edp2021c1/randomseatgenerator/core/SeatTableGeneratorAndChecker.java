@@ -50,11 +50,11 @@ public interface SeatTableGeneratorAndChecker extends SeatTableGenerator {
         val columnCount = config.columnCount();
 
         // 检查每列是否都有组长
-        if (IntStream.range(0, columnCount).anyMatch(i -> indexFilter(seatTable, index -> index % columnCount == i).stream().noneMatch(gl::contains))) {
+        if (IntStream.range(0, columnCount).anyMatch(i -> indexFilter(seatTable, index -> index % columnCount == i).noneMatch(gl::contains))) {
             return false;
         }
         // 检查是否分开
-        return config.separatedPairs().stream().allMatch(separatedPair -> separatedPair.check(seatTable, columnCount));
+        return config.separatedPairs().stream().allMatch(separatedPair -> separatedPair.checkSeperated(seatTable, columnCount));
     }
 
 }

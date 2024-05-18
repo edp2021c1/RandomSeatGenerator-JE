@@ -18,15 +18,16 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import lombok.NonNull;
 import lombok.val;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
-import java.util.function.Predicate;
 import java.util.random.RandomGenerator;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Utils of {@code arrays} and {@link Collection} and its subclasses.
@@ -74,20 +75,7 @@ public final class CollectionUtils {
         if (src instanceof final List<? extends T> list) {
             return list.get(rd.nextInt(list.size()));
         }
-        return CollectionUtils.<T>modifiableList(src).get(rd.nextInt(src.size()));
-    }
-
-    /**
-     * Returns a list containing elements in the source collection that is free to modify.
-     * That means any change of the returned list will not affect the source collection.
-     *
-     * @param src source collection
-     * @param <T> type of the
-     *
-     * @return a modify-free list
-     */
-    public static <T> List<T> modifiableList(final Collection<? extends T> src) {
-        return new ArrayList<>(src);
+        return new ArrayList<T>(src).get(rd.nextInt(src.size()));
     }
 
     /**
@@ -113,174 +101,8 @@ public final class CollectionUtils {
      *
      * @return a list containing the elements whose index matches the predicate
      */
-    public static <T> List<T> indexFilter(final List<T> list, final IntPredicate indexPredicate) {
-        return elementFilter(range(0, list.size()), indexPredicate::test).stream().map(list::get).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    /**
-     * Returns a range of integers from origin (inclusive) to bound (exclusive).
-     *
-     * @param origin the least value that can be returned
-     * @param bound  the upper bound (exclusive)
-     *
-     * @return a range of integer from origin (inclusive) to bound (exclusive)
-     */
-    public static List<Integer> range(final int origin, final int bound) {
-        return new Range(origin, bound);
-    }
-
-    /**
-     * Returns a list containing the elements that matches the predicate.
-     *
-     * @param src              input collection
-     * @param elementPredicate filter of elements
-     * @param <T>              type of elements in the list
-     *
-     * @return a list containing the elements that matches the predicate
-     */
-    public static <T> List<T> elementFilter(final Collection<T> src, final Predicate<T> elementPredicate) {
-        return src.stream().filter(elementPredicate).toList();
-    }
-
-    /**
-     * Implementation of integer range with smaller memory cost.
-     */
-    private static class Range extends AbstractList<Integer> implements RandomAccess {
-
-        private final int origin;
-
-        private final int bound;
-
-        private final int size;
-
-        public Range(final int origin, final int bound) {
-            if (origin > bound) {
-                throw new IllegalArgumentException("Origin %d larger than bound %d".formatted(origin, bound));
-            }
-
-            this.origin = origin;
-            this.bound = bound;
-            this.size = bound - origin;
-        }
-
-        @Override
-        public Integer get(final int index) {
-            return origin + Objects.checkIndex(index, size);
-        }
-
-        @Override
-        public int indexOf(final Object o) {
-            if (!(o instanceof final Integer i) || !(origin <= i && i < bound)) {
-                return -1;
-            }
-            return i - origin;
-        }
-
-        @Override
-        public int lastIndexOf(final Object o) {
-            return indexOf(o);
-        }
-
-        @Override
-        @NonNull
-        public Iterator<Integer> iterator() {
-            return new Itr(this);
-        }
-
-        @Override
-        @NonNull
-        public ListIterator<Integer> listIterator() {
-            return new LItr(this);
-        }
-
-        @Override
-        public int size() {
-            return size;
-        }
-
-        @Override
-        public boolean contains(final Object o) {
-            if (!(o instanceof final Integer i)) {
-                return false;
-            }
-            return origin <= i && i < bound;
-        }
-
-        private static class Itr implements Iterator<Integer> {
-
-            protected final int offset;
-
-            protected final int size;
-
-            protected int cursor = -1;
-
-            private Itr(final Range root) {
-                this.offset = root.origin;
-                this.size = root.size;
-            }
-
-            @Override
-            public boolean hasNext() {
-                return cursor < size - 1;
-            }
-
-            @Override
-            public Integer next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                return offset + ++cursor;
-            }
-
-        }
-
-        private static class LItr extends Itr implements ListIterator<Integer> {
-
-            private LItr(final Range root) {
-                super(root);
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public boolean hasPrevious() {
-                return cursor > -1;
-            }
-
-            @Override
-            public Integer previous() {
-                if (!hasPrevious()) {
-                    throw new NoSuchElementException();
-                }
-                return offset + --cursor;
-            }
-
-            @Override
-            public int nextIndex() {
-                return cursor + 1;
-            }
-
-            @Override
-            public int previousIndex() {
-                return cursor - 1;
-            }
-
-            @Override
-            public void set(Integer integer) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void add(Integer integer) {
-                throw new UnsupportedOperationException();
-            }
-
-
-        }
-
+    public static <T> Stream<T> indexFilter(final List<T> list, final IntPredicate indexPredicate) {
+        return IntStream.range(0, list.size()).filter(indexPredicate).mapToObj(list::get);
     }
 
 }

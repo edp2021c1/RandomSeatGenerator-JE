@@ -63,15 +63,15 @@ public class SeatTableRow extends HBox {
             }
         });
 
+        getChildren().clear();
+
         val cellCount = Math.max(2, columnCount);
-        val cells = new SeatTableCell[cellCount];
         for (var i = 0; i < cellCount; i++) {
             val cell = new SeatTableCell(rowData.get(i));
             cell.prefHeightProperty().bind(heightProperty());
             cell.prefWidthProperty().bind(widthProperty().divide(columnCount));
-            cells[i] = cell;
+            getChildren().add(cell);
         }
-        getChildren().setAll(cells);
 
         new SimpleBooleanProperty(this, "header") {
             @Override

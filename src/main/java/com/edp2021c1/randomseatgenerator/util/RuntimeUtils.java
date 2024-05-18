@@ -20,7 +20,10 @@ package com.edp2021c1.randomseatgenerator.util;
 
 import lombok.val;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
 
 import static java.lang.Runtime.getRuntime;
 
@@ -35,18 +38,36 @@ public final class RuntimeUtils {
     /**
      * Runtime config.
      */
-    private static final Properties runtimeProperties = new Properties(2);
+    private static final Hashtable<String, Object> runtimeProperties = new Hashtable<>(2);
 
     private static final Hashtable<Long, Thread> threadIdHashtable = new Hashtable<>();
 
-    private static final List<Runnable> runOnExit = new ArrayList<>(3);
+    private static final List<Runnable> exitHooks = new ArrayList<>(3);
 
-    private static boolean staticInitialized;
+    static {
+        getRuntime().addShutdownHook(new Thread(RuntimeUtils::runExitHooks, "Exit Hooks"));
+
+        addExitHook(() -> {
+            if (LoggerWrapper.global().isOpen()) {
+                LoggerWrapper.global().debug("Exiting");
+                LoggerWrapper.global().close();
+            }
+        });
+
+        loopThread(System::gc, 1000, "Auto GC Thread").start();
+    }
 
     /**
      * Don't let anyone else instantiate this class.
      */
     private RuntimeUtils() {
+    }
+
+    public static void runExitHooks() {
+        synchronized (exitHooks) {
+            exitHooks.forEach(Runnable::run);
+            exitHooks.clear();
+        }
     }
 
     /**
@@ -57,7 +78,7 @@ public final class RuntimeUtils {
      *
      * @return whether the property is empty
      */
-    public static boolean setProperty(final Object key, final Object value) {
+    public static boolean setProperty(final String key, final Object value) {
         return runtimeProperties.put(key, value) == null;
     }
 
@@ -68,7 +89,7 @@ public final class RuntimeUtils {
      *
      * @return value of the property
      */
-    public static Object getProperty(final Object key) {
+    public static Object getProperty(final String key) {
         return runtimeProperties.get(key);
     }
 
@@ -80,34 +101,16 @@ public final class RuntimeUtils {
      *
      * @return the value of a specific property, or {@code def} if is null
      */
-    public static Object getPropertyOrDefault(final Object key, final Object def) {
+    public static Object getPropertyOrDefault(final String key, final Object def) {
         return runtimeProperties.getOrDefault(key, def);
     }
 
     /**
-     * Called on application start up.
+     * An empty method called on application start up,
+     * to ensure that the class is loaded.
      */
-    public static void initStatic() {
-        if (!staticInitialized) {
-            getRuntime().addShutdownHook(new Thread(() -> {
-                synchronized (runOnExit) {
-                    for (int i = 0, j = runOnExit.size(); i < j; i++) {
-                        new Thread(runOnExit.get(i), "Exit Hook No." + i).start();
-                    }
-                }
-            }, "Exit Hooks"));
+    public static void loadClass() {
 
-            addRunOnExit(() -> {
-                if (Logging.isStarted()) {
-                    Logging.debug("Exiting");
-                    Logging.end();
-                }
-            });
-
-            loopThread(System::gc, 1000, "Auto GC Thread").start();
-
-            staticInitialized = true;
-        }
     }
 
     /**
@@ -128,8 +131,8 @@ public final class RuntimeUtils {
      *
      * @param taskToRun a {@code Runnable} to call on application exit
      */
-    public static void addRunOnExit(final Runnable taskToRun) {
-        runOnExit.add(taskToRun);
+    public static void addExitHook(final Runnable taskToRun) {
+        exitHooks.add(taskToRun);
     }
 
     /**

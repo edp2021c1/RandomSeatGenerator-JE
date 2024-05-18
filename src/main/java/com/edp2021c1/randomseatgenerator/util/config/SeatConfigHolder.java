@@ -18,7 +18,10 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.LoggerWrapper;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.PathWrapper;
+import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
 import lombok.Getter;
@@ -30,6 +33,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
+import static com.alibaba.fastjson2.JSON.parseObject;
+
 /**
  * Handles {@link SeatConfigWrapper}.
  *
@@ -38,6 +43,8 @@ import java.util.Map;
  * @since 1.4.9
  */
 public class SeatConfigHolder {
+
+    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
 
     /**
      * Default config handler.
@@ -50,13 +57,11 @@ public class SeatConfigHolder {
         try {
             globalPath.getParent().replaceWithDirectory();
 
-            global = createHolder(globalPath.replaceIfNonRegularFile(), true);
+            global = createHolder(globalPath, true);
             if (global.configPath.readString().isBlank()) {
                 val builtInConfigStream = SeatConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
                 if (builtInConfigStream != null) {
-                    global.putJson(new String(
-                            builtInConfigStream.readAllBytes()
-                    ));
+                    global.putAll(parseObject(new String(builtInConfigStream.readAllBytes())));
                     builtInConfigStream.close();
                 }
             }
@@ -73,11 +78,9 @@ public class SeatConfigHolder {
 
     private final SeatConfigWrapper content;
 
-    private FileChannel channel;
+    private final FileChannel channel;
 
     private boolean closed;
-
-    private boolean loaded;
 
     /**
      * Creates an instance with the given config path.
@@ -89,35 +92,49 @@ public class SeatConfigHolder {
     private SeatConfigHolder(final Path configPath) throws IOException {
         this.content = new SeatConfigWrapper();
         this.configPath = PathWrapper.wrap(configPath);
+        initConfigPath();
 
-        if (this.configPath.getParent().replaceWithDirectory().notFullyPermitted()) {
+        this.channel = this.configPath.openFileChannel(StandardOpenOption.READ, StandardOpenOption.WRITE);
+        initChannel();
+    }
+
+    private void initConfigPath() throws IOException {
+        if (configPath.getParent().replaceWithDirectory().notFullyPermitted()) {
             throw new IOException("Does not has enough permission to read/write config");
         }
-
-        loadConfig();
-    }
-
-    private synchronized void loadConfig() throws IOException {
-        loadConfig0();
-        loaded = true;
-    }
-
-    private synchronized void loadConfig0() throws IOException {
         if (configPath.replaceIfNonRegularFile().notFullyPermitted()) {
             throw new IOException("Does not has enough permission to read/write config");
         }
-        channel = configPath.openFileChannel(StandardOpenOption.READ, StandardOpenOption.WRITE);
+    }
+
+    private void initChannel() throws IOException {
         if (channel.tryLock() == null) {
             throw new FileAlreadyLockedException(configPath);
         }
-        if (configPath.readString().isEmpty()) {
-            return;
-        }
-        try {
-            content.putJsonAndReturn(configPath.readString()).check();
-        } catch (final RuntimeException e) {
-            Logging.warning("Invalid config loaded");
-            Logging.warning(Strings.getStackTrace(e));
+        val obj = parseObject(configPath.readString());
+        putAll(
+                content.putAllAndReturn(
+                        obj == null ? Map.of() : obj
+                ).checkAndReturn()
+        ); // To load and truncate the content
+    }
+
+    /**
+     * Puts a map.
+     *
+     * @param map to put
+     *
+     * @throws IOException           if an I/O error occurs
+     * @throws IllegalStateException if is closed
+     */
+    public synchronized void putAll(final Map<? extends String, ?> map) throws IOException {
+        checkState();
+        configPath.writeString(content.putAllAndReturn(map).checkAndReturn().toJsonString());
+    }
+
+    private void checkState() {
+        if (closed) {
+            throw new IllegalStateException("Closed SeatConfigHolder");
         }
     }
 
@@ -143,7 +160,7 @@ public class SeatConfigHolder {
     public static SeatConfigHolder createHolder(final Path configPath, final boolean closeOnExit) throws IOException {
         val res = new SeatConfigHolder(configPath);
         if (closeOnExit) {
-            RuntimeUtils.addRunOnExit(res::close);
+            RuntimeUtils.addExitHook(res::close);
         }
         return res;
     }
@@ -160,55 +177,10 @@ public class SeatConfigHolder {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         } finally {
-            Logging.debug("Config holder at " + configPath + " closed");
-            closed = true;
-        }
-    }
-
-    /**
-     * Puts a map.
-     *
-     * @param map to put
-     *
-     * @throws RuntimeException if an I/O error occurs
-     */
-    public synchronized void putAll(final Map<? extends String, ?> map) {
-        checkState();
-        try {
-            configPath.writeString(content.putAllAndReturn(map).checkAndReturn().toString());
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private synchronized void checkState() {
-        if (closed) {
-            throw new IllegalStateException("Closed SeatConfigHolder");
-        }
-        if (!loaded) {
-            try {
-                loadConfig();
-            } catch (final IOException e) {
-                Logging.warning("Failed to load config from " + configPath);
-                Logging.warning(Strings.getStackTrace(e));
+            if (LOGGER.isOpen()) {
+                LOGGER.debug("Config holder at " + configPath + " closed");
             }
-        }
-    }
-
-    /**
-     * Parses and puts the JSONObject from the string.
-     *
-     * @param jsonString that contains the map to parse and put
-     *
-     * @throws RuntimeException if an I/O error occurs
-     * @see SeatConfigWrapper#putJsonAndReturn(String)
-     */
-    public synchronized void putJson(final String jsonString) {
-        checkState();
-        try {
-            configPath.writeString(content.putJsonAndReturn(jsonString).checkAndReturn().toString());
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+            closed = true;
         }
     }
 
@@ -216,8 +188,10 @@ public class SeatConfigHolder {
      * Returns the clone of the config.
      *
      * @return the clone of the config
+     *
+     * @throws IllegalStateException if is closed
      */
-    public synchronized SeatConfigWrapper get() {
+    public SeatConfigWrapper getClone() {
         checkState();
         return content.cloneThis();
     }

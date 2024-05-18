@@ -51,7 +51,7 @@ public class SeatTableCell extends Label {
             protected void invalidated() {
                 pseudoClassStateChanged(PSEUDO_CLASS_LEADER, get());
             }
-        }.set(SeatTable.groupLeaderRegex.matcher(str == null ? "" : str).matches());
+        }.set(str != null && SeatTable.groupLeaderRegexPredicate.test(str));
 
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
     }

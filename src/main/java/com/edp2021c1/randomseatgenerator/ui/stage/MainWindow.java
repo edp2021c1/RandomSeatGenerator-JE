@@ -54,6 +54,8 @@ import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
  */
 public class MainWindow extends Stage {
 
+    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
+
     @Getter
     private static final MainWindow mainWindow = new MainWindow();
 
@@ -80,7 +82,7 @@ public class MainWindow extends Stage {
 
         cfHolder = SeatConfigHolder.global();
 
-        val config = cfHolder.get();
+        val config = cfHolder.getClone();
 
         /* *************************************************************************
          *                                                                         *
@@ -159,8 +161,8 @@ public class MainWindow extends Stage {
                 }
 
                 val seed1 = seed.get();
-                seatTable.set(SeatTable.generate(cfHolder.get().checkAndReturn(), seed1));
-                Logging.info("\n" + seatTable.get());
+                seatTable.set(SeatTable.generate(cfHolder.getClone().checkAndReturn(), seed1));
+                LOGGER.info("\n" + seatTable.get());
                 previousSeed = seed1;
                 generated = true;
             } catch (final Throwable e) {
@@ -191,8 +193,7 @@ public class MainWindow extends Stage {
                 }
                 seatTable.get().exportToChart(exportFile.toPath(), UIUtils.exportWritableProperty().get());
 
-                Logging.info("Successfully exported seat table to " + exportFile);
-                MessageDialog.showMessage(this, "成功导出座位表到\n" + exportFile);
+                MessageDialog.showMessage(this, Notice.of("成功导出座位表到\n" + exportFile));
 
                 fc.setInitialDirectory(exportFile.getParentFile());
                 AppPropertiesHolder.global().setProperty(KEY_EXPORT_DIR_PREVIOUS, exportFile.getParentFile().toString());
@@ -283,7 +284,7 @@ public class MainWindow extends Stage {
      * Action to do if config is changed.
      */
     public void configChanged() {
-        seatTableView.setEmptySeatTable(cfHolder.get());
+        seatTableView.setEmptySeatTable(cfHolder.getClone());
         generated = false;
         previousSeed = null;
     }

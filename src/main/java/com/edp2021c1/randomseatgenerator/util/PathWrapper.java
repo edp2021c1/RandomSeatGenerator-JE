@@ -40,11 +40,13 @@ import java.util.Objects;
  */
 public class PathWrapper implements Path {
 
+    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
+
     private static final FileVisitor<Path> deleter = new SimpleFileVisitor<>() {
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
                 throws IOException {
-            Files.deleteIfExists(Objects.requireNonNull(file));
+            Files.deleteIfExists(file);
             return FileVisitResult.CONTINUE;
         }
 
@@ -54,7 +56,7 @@ public class PathWrapper implements Path {
             if (e != null) {
                 throw e;
             }
-            Files.deleteIfExists(Objects.requireNonNull(dir));
+            Files.deleteIfExists(dir);
             return FileVisitResult.CONTINUE;
         }
     };
@@ -68,7 +70,7 @@ public class PathWrapper implements Path {
             this.path = wrapper.path;
             return;
         }
-        this.path = path;
+        this.path = path.toAbsolutePath();
     }
 
     /**
@@ -108,22 +110,28 @@ public class PathWrapper implements Path {
      * @see Files#isDirectory(Path, LinkOption...)
      */
     public PathWrapper getDirParent(final LinkOption... options) {
-        var p = path;
-        while (!Files.isDirectory(p, options)) {
+        PathWrapper p;
+        if ((p = getRoot()).nonDirectory(options)) {
+            return wrap(p);
+        }
+        p = this;
+        while (p.nonDirectory(options)) {
             p = p.getParent();
         }
         return wrap(p);
     }
 
     /**
-     * Wraps the given path.
+     * Returns if {@code this} is not a directory.
      *
-     * @param path to wrap into the instance
+     * @param options options indicating how symbolic links are handled
      *
-     * @return an instance wrapping the path
+     * @return if is not a directory
+     *
+     * @see Files#isDirectory(Path, LinkOption...)
      */
-    public static PathWrapper wrap(final Path path) {
-        return new PathWrapper(path);
+    public boolean nonDirectory(final LinkOption... options) {
+        return !Files.isDirectory(path, options);
     }
 
     /**
@@ -144,17 +152,30 @@ public class PathWrapper implements Path {
     }
 
     /**
-     * Deletes the content of the path.
+     * Wraps the given path.
      *
-     * @return {@code this}
+     * @param path to wrap into the instance
+     *
+     * @return an instance wrapping the path
+     */
+    public static PathWrapper wrap(final Path path) {
+        return new PathWrapper(path);
+    }
+
+    /**
+     * Creates a directory and all of its parent directory.
+     *
+     * @param attr an optional list of file attributes to set atomically when creating the directory
+     *
+     * @return #{@code this}
      *
      * @throws IOException if an I/O error occurs
-     * @see Files#walkFileTree(Path, FileVisitor)
-     * @see Files#deleteIfExists(Path)
+     * @see Files#createDirectories(Path, FileAttribute[])
      */
-    public PathWrapper delete() throws IOException {
-        if (exists()) {
-            Files.walkFileTree(path, deleter);
+    public PathWrapper createDirectories(final FileAttribute<?>... attr) throws IOException {
+        Files.createDirectories(path, attr);
+        if (LOGGER.isOpen()) {
+            LOGGER.io("Directory \"%s\" created".formatted(this));
         }
         return this;
     }
@@ -173,30 +194,21 @@ public class PathWrapper implements Path {
     }
 
     /**
-     * Returns if {@code this} is not a directory.
+     * Deletes the content of the path.
      *
-     * @param options options indicating how symbolic links are handled
-     *
-     * @return if is not a directory
-     *
-     * @see Files#isDirectory(Path, LinkOption...)
-     */
-    public boolean nonDirectory(final LinkOption... options) {
-        return !Files.isDirectory(path, options);
-    }
-
-    /**
-     * Creates a directory and all of its parent directory.
-     *
-     * @param attr an optional list of file attributes to set atomically when creating the directory
-     *
-     * @return #{@code this}
+     * @return {@code this}
      *
      * @throws IOException if an I/O error occurs
-     * @see Files#createDirectories(Path, FileAttribute[])
+     * @see Files#walkFileTree(Path, FileVisitor)
+     * @see Files#deleteIfExists(Path)
      */
-    public PathWrapper createDirectories(final FileAttribute<?>... attr) throws IOException {
-        Files.createDirectories(path, attr);
+    public PathWrapper delete() throws IOException {
+        if (exists()) {
+            Files.walkFileTree(path, deleter);
+            if (LOGGER.isOpen()) {
+                LOGGER.io("File or directory \"%s\" deleted".formatted(this));
+            }
+        }
         return this;
     }
 
@@ -242,18 +254,13 @@ public class PathWrapper implements Path {
         return !Files.isRegularFile(path, options);
     }
 
-    /**
-     * Creates a new file.
-     *
-     * @param attrs an optional list of file attributes to set atomically when creating the file
-     *
-     * @return #{@code this}
-     *
-     * @throws IOException if an I/O error occurs
-     * @see Files#createFile(Path, FileAttribute[])
-     */
-    public PathWrapper createFile(final FileAttribute<?>... attrs) throws IOException {
-        Files.createFile(path, attrs);
+    public PathWrapper moveToTrash() {
+        if (exists()) {
+            DesktopUtils.moveToTrash(toFile());
+            if (LOGGER.isOpen()) {
+                LOGGER.io("File or directory \"%s\" moved to trash".formatted(this));
+            }
+        }
         return this;
     }
 
@@ -278,6 +285,24 @@ public class PathWrapper implements Path {
     @Override
     public PathWrapper getRoot() {
         return wrap(path.getRoot());
+    }
+
+    /**
+     * Creates a new file.
+     *
+     * @param attrs an optional list of file attributes to set atomically when creating the file
+     *
+     * @return #{@code this}
+     *
+     * @throws IOException if an I/O error occurs
+     * @see Files#createFile(Path, FileAttribute[])
+     */
+    public PathWrapper createFile(final FileAttribute<?>... attrs) throws IOException {
+        Files.createFile(path, attrs);
+        if (LOGGER.isOpen()) {
+            LOGGER.io("File \"%s\" created".formatted(this));
+        }
+        return this;
     }
 
     @NonNull

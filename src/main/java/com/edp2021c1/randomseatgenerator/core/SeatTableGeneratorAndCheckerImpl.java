@@ -25,10 +25,11 @@ import lombok.val;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.groupLeaderFormat;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.*;
+import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.pickRandomlyAndRemove;
 import static java.util.Collections.fill;
 import static java.util.Collections.shuffle;
 
@@ -111,7 +112,7 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         val emptyRow = Arrays.asList(new String[columnCount]);
         fill(emptyRow, EMPTY_SEAT_PLACEHOLDER);
 
-        val availableLastRowPos = elementFilter(range(1, columnCount + 1), i -> !config.disabledLastRowPos().contains(i));
+        val availableLastRowPos = IntStream.range(1, columnCount + 1).filter(value -> !config.disabledLastRowPos().contains(value)).boxed().toList();
         if (availableLastRowPos.size() < peopleLeft) {
             throw new IllegalConfigException("Available last row seat not enough");
         }
@@ -128,8 +129,8 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         do {
             seatTable.clear();
 
-            val tNameList = modifiableList(nameList);
-            val tAvailableLastRowPos = modifiableList(availableLastRowPos);
+            val tNameList            = new ArrayList<>(nameList);
+            val tAvailableLastRowPos = new ArrayList<>(availableLastRowPos);
 
             if (lucky) {
                 luckyPerson = pickRandomlyAndRemove(tNameList.subList(

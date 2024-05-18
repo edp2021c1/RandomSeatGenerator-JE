@@ -23,9 +23,8 @@ import lombok.Getter;
 
 import java.util.AbstractList;
 import java.util.Arrays;
-
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.range;
+import java.util.Collection;
+import java.util.stream.IntStream;
 
 /**
  * Saves a row of a seat table.
@@ -49,8 +48,14 @@ public class RowData extends AbstractList<String> {
      */
     private RowData(final boolean header, final String... cells) {
         this.header = header;
-        cellCount = cells.length;
+        this.cellCount = cells.length;
         this.cells = Arrays.copyOf(cells, cellCount);
+    }
+
+    private RowData(final boolean header, final Collection<String> cells) {
+        this.header = header;
+        this.cellCount = cells.size();
+        this.cells = cells.toArray(new String[0]);
     }
 
     /**
@@ -60,7 +65,18 @@ public class RowData extends AbstractList<String> {
      *
      * @return a row containing the given cells
      */
-    static RowData of(final String... cells) {
+    public static RowData of(final String... cells) {
+        return (cells == null ? new RowData(false) : new RowData(false, cells));
+    }
+
+    /**
+     * Constructs and returns a row containing the given cells
+     *
+     * @param cells cell data
+     *
+     * @return a row containing the given cells
+     */
+    public static RowData of(final Collection<String> cells) {
         return (cells == null ? new RowData(false) : new RowData(false, cells));
     }
 
@@ -71,8 +87,8 @@ public class RowData extends AbstractList<String> {
      *
      * @return a header row
      */
-    static RowData header(final int columnCount) {
-        return new RowData(true, buildList(range(1, columnCount + 1), i -> "Column " + i).toArray(new String[columnCount]));
+    public static RowData header(final int columnCount) {
+        return new RowData(true, IntStream.range(1, columnCount + 1).mapToObj(i -> "Column " + i).toArray(String[]::new));
     }
 
     /**

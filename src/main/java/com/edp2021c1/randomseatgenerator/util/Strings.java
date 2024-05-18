@@ -22,10 +22,12 @@ import lombok.val;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
@@ -39,17 +41,17 @@ public final class Strings {
     /**
      * Pattern of integer.
      */
-    public static final Pattern integerPattern = Pattern.compile("-?\\d+");
+    public static final Predicate<String> integerPatternPredicate = Pattern.compile("-?\\d+").asMatchPredicate();
 
     /**
      * Pattern of unsigned integer.
      */
-    public static final Pattern unsignedIntegerPattern = Pattern.compile("\\d+");
+    public static final Predicate<String> unsignedIntegerPatternPredicate = Pattern.compile("\\d+").asMatchPredicate();
 
     /**
      * Pattern of list of integer, divided by spaces.
      */
-    public static final Pattern integerListPattern = Pattern.compile("[0-9 ]+");
+    public static final Predicate<String> integerListPatternPredicate = Pattern.compile("[0-9 ]*").asMatchPredicate();
 
     /**
      * Simple date format
@@ -73,7 +75,11 @@ public final class Strings {
      * @return now in {@code String}
      */
     public static String nowStr() {
-        return defaultDateFormat.format(new Date());
+        return nowStr(defaultDateFormat);
+    }
+
+    public static String nowStr(final DateFormat format) {
+        return format.format(new Date());
     }
 
     /**

@@ -20,10 +20,7 @@ package com.edp2021c1.randomseatgenerator.util;
 
 import com.edp2021c1.randomseatgenerator.ui.stage.CrashReporterDialog;
 import com.edp2021c1.randomseatgenerator.ui.stage.MessageDialog;
-import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
-import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Getter;
-import lombok.val;
 
 /**
  * Reports uncaught exceptions.
@@ -33,11 +30,13 @@ import lombok.val;
  */
 public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
 
+    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
+
     /**
      * The now-in-use instance.
      */
     @Getter
-    private static final CrashReporter instance = (boolean) RuntimeUtils.getPropertyOrDefault("launching.gui", false)
+    private static final CrashReporter instance = (boolean) RuntimeUtils.getPropertyOrDefault("launching.gui", true)
             ? new ConsoleCrashReporter()
             : new GUICrashReporter();
 
@@ -56,37 +55,33 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
         getInstance().uncaughtException(Thread.currentThread(), e);
     }
 
+    @Override
+    public final void uncaughtException(final Thread t, final Throwable e) {
+        if (e == null) {
+            return;
+        }
+        if (e instanceof ExceptionInInitializerError) {
+            uncaughtException(t, e.getCause());
+            return;
+        }
+
+        reportNotice(Notice.of(t, e), e);
+        if (e instanceof final ExecutableOnCaught ex) {
+            ex.exec();
+        }
+    }
+
     private static class ConsoleCrashReporter extends CrashReporter {
 
         private ConsoleCrashReporter() {
         }
 
         @Override
-        public void uncaughtException(final Thread t, final Throwable e) {
-            if (e == null) {
-                return;
-            }
-            if (e instanceof ExceptionInInitializerError) {
-                uncaughtException(t, e.getCause());
-                return;
-            }
-
+        protected void reportNotice(Notice n, Throwable e) {
             try {
-                if (e instanceof final IllegalConfigException ex) {
-                    Logging.error(
-                            (ex.isSingle() ? "IllegalConfigException: " : "IllegalConfigException:") + ex.getLocalizedMessage()
-                    );
-                    return;
-                }
-
-                if (e instanceof ApplicationAlreadyRunningException) {
-                    Logging.error("Another instance of the application is already running");
-                    System.exit(1);
-                    return;
-                }
-
-                Logging.error((t == null ? "" : "Throwable thrown from thread \"%s\":\n".formatted(t.getName())) + Strings.getStackTrace(e));
+                LOGGER.error(n);
             } catch (final Throwable ex) {
+                System.err.println(n.string());
                 System.err.println(Strings.getStackTrace(ex));
             }
         }
@@ -99,41 +94,21 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
         }
 
         @Override
-        public void uncaughtException(final Thread t, final Throwable e) {
-            if (e == null) {
-                return;
-            }
-            if (e instanceof ExceptionInInitializerError) {
-                uncaughtException(t, e.getCause());
-                return;
-            }
-
+        protected void reportNotice(final Notice n, final Throwable e) {
             try {
-                if (e instanceof final IllegalConfigException ex) {
-                    Logging.error(
-                            (ex.isSingle() ? "IllegalConfigException: " : "IllegalConfigException:") + ex.getLocalizedMessage()
-                    );
-                    MessageDialog.showMessage(
-                            (ex.isSingle() ? "配置格式错误\n" : "配置格式错误") + ex.getLocalizedMessage()
-                    );
-                    return;
+                LOGGER.error(n);
+                if (e instanceof Notice) {
+                    MessageDialog.showMessage(n);
+                } else {
+                    CrashReporterDialog.showCrashReporter(n);
                 }
-
-                if (e instanceof ApplicationAlreadyRunningException) {
-                    Logging.error("Another instance of the application is already running");
-                    MessageDialog.showMessage("已有另一个实例在运行");
-                    System.exit(1);
-                    return;
-                }
-
-                val str = (t == null ? "" : "Throwable thrown from thread \"%s\":\n".formatted(t.getName())) + Strings.getStackTrace(e);
-                Logging.error(str);
-                CrashReporterDialog.showCrashReporter(e.getClass().getName(), str);
             } catch (final Throwable ex) {
                 System.err.println(Strings.getStackTrace(ex));
             }
         }
 
     }
+
+    protected abstract void reportNotice(Notice n, Throwable e);
 
 }

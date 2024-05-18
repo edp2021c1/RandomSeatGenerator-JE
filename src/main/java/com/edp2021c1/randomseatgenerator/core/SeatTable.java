@@ -20,6 +20,7 @@ package com.edp2021c1.randomseatgenerator.core;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
+import com.edp2021c1.randomseatgenerator.util.LoggerWrapper;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.PathWrapper;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
@@ -29,14 +30,15 @@ import lombok.val;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
@@ -61,12 +63,14 @@ public class SeatTable {
     /**
      * Regular expression of a group leader.
      */
-    public static final Pattern groupLeaderRegex = Pattern.compile("\\*.*\\*");
+    public static final Predicate<String> groupLeaderRegexPredicate = Pattern.compile("\\*.*\\*").asMatchPredicate();
 
     /**
      * Format of a group leader.
      */
     public static final String groupLeaderFormat = "*%s*";
+
+    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
 
     private static final ExcelWriterBuilder excelWriterBuilder = EasyExcel.write().head(RowData.class);
 
@@ -101,7 +105,7 @@ public class SeatTable {
     public SeatTable(final List<String> table, final SeatConfig config, final String seed, final String luckyPerson) {
         this.table = Collections.unmodifiableList(table);
         this.config = config;
-        this.seed = seed == null ? "null" : seed.isEmpty() ? "empty_string" : seed;
+        this.seed = seed == null ? "$null$" : seed.isEmpty() ? "$empty_string$" : seed;
         this.luckyPerson = config.lucky() ? luckyPerson : null;
     }
 
@@ -140,7 +144,7 @@ public class SeatTable {
             return exe.submit(() -> generator.generate(config.checkAndReturn(), seed)).get(3, TimeUnit.SECONDS);
         } catch (final ExecutionException e) {
             val ex = e.getCause();
-            if (ex instanceof final RuntimeException exx) {
+            if (ex instanceof RuntimeException exx) {
                 throw exx;
             }
             throw new RuntimeException(ex);
@@ -168,20 +172,14 @@ public class SeatTable {
      * @return a {@code List} storing {@code RowData} transferred from this
      */
     public List<RowData> toRowData() {
+        val rowCount = config.rowCount();
         val columnCount = config.columnCount();
-        val rows        = new ArrayList<RowData>(config.rowCount() + 2);
-        val size        = table.size();
+        val rows     = new LinkedList<RowData>();
 
         rows.add(RowData.header(columnCount));
 
-        val tmp = new String[columnCount];
-        val t = columnCount - 1;
-        for (var i = 0; i < size; i++) {
-            val j = i % columnCount;
-            tmp[j] = table.get(i);
-            if (j == t) {
-                rows.add(RowData.of(tmp));
-            }
+        for (var i = 0; i < rowCount; i++) {
+            rows.add(RowData.of(table.subList(i * columnCount, (i + 1) * columnCount)));
         }
 
         if (config.lucky()) {
@@ -227,18 +225,19 @@ public class SeatTable {
             return;
         }
         try {
-            PathWrapper.wrap(filePath).delete().getParent().replaceWithDirectory();
+            PathWrapper.wrap(filePath).moveToTrash().getParent().replaceWithDirectory();
             val f = filePath.toFile();
             excelWriterBuilder
                     .file(f)
                     .sheet("座位表-%tF".formatted(new Date()))
                     .doWrite(toRowData());
             if (!(writable || f.setReadOnly())) {
-                throw new IOException("Failed to set output file to read-only");
+                throw new IOException("Failed to set output file \"%s\" to read-only".formatted(f));
             }
         } catch (final Throwable e) {
-            throw new RuntimeException("Failed to save seat table to " + filePath, e);
+            throw new RuntimeException("Failed to save seat table to \"%s\"".formatted(filePath), e);
         }
+        LOGGER.info("Seat table successfully exported to \"%s\"".formatted(filePath));
     }
 
 }

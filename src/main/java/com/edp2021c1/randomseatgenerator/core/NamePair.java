@@ -27,13 +27,13 @@ import java.util.Objects;
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
 
 /**
- * This class packs the names of a pair of people separated when generating the seat and
- * provides a method to check if they are separated in a certain seat table.
+ * This class packs the names of a pair of people,
+ * and provides a method to check if they are separated in a certain seat table.
  *
  * @author Calboot
  * @since 1.0.0
  */
-public class SeparatedPair {
+public class NamePair {
 
     private final String first;
 
@@ -50,7 +50,7 @@ public class SeparatedPair {
      *
      * @throws IllegalConfigException if the {@code String} contains only one name
      */
-    public SeparatedPair(final String s) throws IllegalConfigException {
+    public NamePair(final String s) throws IllegalConfigException {
         val t = s.split(" ", 2);
         if (t.length < 2) {
             throw new IllegalConfigException("Invalid separate pair: \"%s\"".formatted(s));
@@ -74,18 +74,25 @@ public class SeparatedPair {
      *
      * @return if {@code name_1} and {@code name_2} are separated in the seat table.
      */
-    public boolean check(final List<String> seat, final int columnCount) {
+    public boolean checkSeperated(final List<String> seat, final int columnCount) {
         if (seat == null || !(seat.contains(first) && seat.contains(last))) {
             return true;
         }
         val i = Math.abs(seat.indexOf(first) - seat.indexOf(last));
-        if (columnCount == 1) {
-            return i != 1;
+        if (i == 1) {
+            return false;
         }
-        if (columnCount == 2) {
-            return i != 1 && i != 2 && i != 3;
+        switch (columnCount) {
+            case 1 -> {
+                return true;
+            }
+            case 2 -> {
+                return i != 2 && i != 3;
+            }
+            default -> {
+                return i != columnCount && i != columnCount - 1 && i != columnCount + 1;
+            }
         }
-        return i != 1 && i != columnCount && i != columnCount - 1 && i != columnCount + 1;
     }
 
 }

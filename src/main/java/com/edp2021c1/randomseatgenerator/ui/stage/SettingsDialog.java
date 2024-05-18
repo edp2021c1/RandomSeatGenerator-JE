@@ -55,6 +55,8 @@ public class SettingsDialog extends Stage {
     @Getter
     private static final SettingsDialog settingsDialog = new SettingsDialog();
 
+    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
+
     private final SeatConfigHolder cfHolder;
 
     /**
@@ -78,7 +80,7 @@ public class SettingsDialog extends Stage {
         val rbrInput = new IntegerField(true, "随机轮换的行数");
 
         val disabledLastRowPosInput = FormatableTextField.of((oldValue, newValue) -> {
-            if (newValue == null || !Strings.integerListPattern.matcher(newValue).matches()) {
+            if (newValue == null || !Strings.integerListPatternPredicate.test(newValue)) {
                 return oldValue;
             }
             return newValue;
@@ -215,12 +217,12 @@ public class SettingsDialog extends Stage {
 
                 try {
                     val temp = SeatConfigHolder.createHolder(importFile.toPath(), false);
-                    configPane.setContent(temp.get());
+                    configPane.setContent(temp.getClone());
                     temp.close();
                 } catch (final IOException e) {
-                    Logging.warning("Failed to import config");
-                    Logging.warning(Strings.getStackTrace(e));
-                    MessageDialog.showMessage(this, "导入设置失败");
+                    LOGGER.warning("Failed to import config");
+                    LOGGER.warning(Strings.getStackTrace(e));
+                    MessageDialog.showMessage(this, Notice.of("导入设置失败"));
                 }
 
                 fc.setInitialDirectory(importFile.getParentFile());
@@ -278,7 +280,7 @@ public class SettingsDialog extends Stage {
             });
         }
 
-        setOnShown(event -> configPane.setContent(cfHolder.get()));
+        setOnShown(event -> configPane.setContent(cfHolder.getClone()));
     }
 
 }

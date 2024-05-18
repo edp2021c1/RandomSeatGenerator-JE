@@ -16,34 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.util.exception;
+package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.util.ExecutableOnCaught;
-import com.edp2021c1.randomseatgenerator.util.Notice;
+public interface ExecutableOnCaught {
 
-/**
- * Thrown if another instance of this application is detected.
- *
- * @author Calboot
- * @since 1.5.0
- */
-public class ApplicationAlreadyRunningException extends RuntimeException implements Notice, ExecutableOnCaught {
-
-    /**
-     * Default constructor.
-     */
-    public ApplicationAlreadyRunningException() {
-        super();
-    }
-
-    @Override
-    public String message() {
-        return "Another instance of the application is already running";
-    }
-
-    @Override
-    public void exec() {
-        System.exit(1);
-    }
+    void exec();
 
 }

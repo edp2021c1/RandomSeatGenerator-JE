@@ -23,7 +23,7 @@ import javafx.beans.DefaultProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
-import java.util.regex.Pattern;
+import java.util.function.Predicate;
 
 /**
  * Input for integer.
@@ -41,7 +41,7 @@ public class IntegerField extends FormatableTextField {
         }
     };
 
-    private final Pattern pattern;
+    private final Predicate<String> patternPredicate;
 
     /**
      * Constructs an instance.
@@ -53,7 +53,7 @@ public class IntegerField extends FormatableTextField {
         super();
         setPromptText(promptText);
 
-        pattern = unsigned ? Strings.unsignedIntegerPattern : Strings.integerPattern;
+        patternPredicate = unsigned ? Strings.unsignedIntegerPatternPredicate : Strings.integerPatternPredicate;
 
         setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -77,7 +77,7 @@ public class IntegerField extends FormatableTextField {
         if (newValue == null || newValue.isEmpty()) {
             return "0";
         }
-        if (!pattern.matcher(newValue).matches()) {
+        if (!patternPredicate.test(newValue)) {
             return oldValue;
         }
         value.set(Integer.parseInt(newValue));

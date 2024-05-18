@@ -1,7 +1,25 @@
+/*
+ * RandomSeatGenerator
+ * Copyright (C) 2023  EDP2021C1
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
-import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
+import com.edp2021c1.randomseatgenerator.util.Notice;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import javafx.application.Application;
 import javafx.geometry.Pos;
@@ -16,6 +34,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.val;
 
+import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
+
 /**
  * Stage of FX crash reporter.
  *
@@ -24,11 +44,9 @@ import lombok.val;
  */
 public class CrashReporterDialog extends Stage {
 
-    private static String titleToBeShown;
+    private static Notice messageToBeShown;
 
-    private static String messageToBeShown;
-
-    private CrashReporterDialog(final String title, final String msg) {
+    private CrashReporterDialog(final Notice msg) {
         super();
 
         val preLabelBeforeLink = new Label("Something's wrong... Click");
@@ -41,15 +59,15 @@ public class CrashReporterDialog extends Stage {
         val preBox = new HBox(preLabelBeforeLink, here, preLabelAfterLink);
         preBox.setAlignment(Pos.CENTER_LEFT);
 
-        val mainText = new TextArea(msg);
+        val mainText = new TextArea(msg.message());
         mainText.setEditable(false);
         mainText.getStyleClass().add("err-main-text");
 
-        val confirmBtn = UIUtils.createButton("关闭", 80, 26);
+        val confirmBtn = createButton("关闭", 80, 26);
         confirmBtn.setOnAction(event -> close());
         confirmBtn.setDefaultButton(true);
 
-        val copyBtn = UIUtils.createButton("复制并关闭", 80, 26);
+        val copyBtn = createButton("复制并关闭", 80, 26);
 
         val buttonBar = new ButtonBar();
         buttonBar.getButtons().addAll(copyBtn, confirmBtn);
@@ -62,8 +80,8 @@ public class CrashReporterDialog extends Stage {
         setScene(new Scene(mainBox));
         setMaxWidth(1440);
         setMaxHeight(810);
-        setTitle(title);
-        UIUtils.decorate(this, UIUtils.CRASH_REPORTER);
+        setTitle(msg.title());
+        decorate(this, CRASH_REPORTER);
 
         here.setOnAction(event -> DesktopUtils.copyPlainText(mainText.getText()));
 
@@ -84,10 +102,7 @@ public class CrashReporterDialog extends Stage {
             });
         } else {
             mainBox.setOnKeyPressed(event -> {
-                if (!event.isControlDown()) {
-                    return;
-                }
-                if (KeyCode.C == event.getCode()) {
+                if (event.isControlDown() && KeyCode.C == event.getCode()) {
                     DesktopUtils.copyPlainText(mainText.getText());
                 }
             });
@@ -97,16 +112,14 @@ public class CrashReporterDialog extends Stage {
     /**
      * Shows a crash reporter dialog.
      *
-     * @param title dialog title
-     * @param msg   error message
+     * @param msg error message
      */
-    public static void showCrashReporter(final String title, final String msg) {
+    public static void showCrashReporter(final Notice msg) {
         try {
-            titleToBeShown = title;
             messageToBeShown = msg;
             Application.launch(CrashReporterApp.class);
         } catch (final IllegalStateException e) {
-            new CrashReporterDialog(title, msg).showAndWait();
+            new CrashReporterDialog(msg).showAndWait();
         }
     }
 
@@ -123,7 +136,7 @@ public class CrashReporterDialog extends Stage {
 
         @Override
         public void start(final Stage primaryStage) {
-            new CrashReporterDialog(titleToBeShown, messageToBeShown).showAndWait();
+            new CrashReporterDialog(messageToBeShown).showAndWait();
         }
 
     }

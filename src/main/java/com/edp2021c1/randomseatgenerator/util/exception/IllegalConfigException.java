@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util.exception;
 
+import com.edp2021c1.randomseatgenerator.util.Notice;
 import lombok.Getter;
 import lombok.val;
 
@@ -30,7 +31,7 @@ import java.util.List;
  * @since 1.2.6
  */
 @Getter
-public class IllegalConfigException extends RuntimeException {
+public class IllegalConfigException extends RuntimeException implements Notice {
 
     /**
      * Localized message.
@@ -80,6 +81,16 @@ public class IllegalConfigException extends RuntimeException {
             str.append(e.getLocalizedMessage());
         });
         localizedMessage = str.toString();
+    }
+
+    @Override
+    public String title() {
+        return "Invalid configuration";
+    }
+
+    @Override
+    public String message() {
+        return getLocalizedMessage();
     }
 
 }

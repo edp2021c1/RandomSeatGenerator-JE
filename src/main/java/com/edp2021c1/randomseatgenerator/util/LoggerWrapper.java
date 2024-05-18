@@ -18,12 +18,13 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import lombok.Getter;
 import lombok.val;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.*;
 
@@ -35,116 +36,50 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
  * @author Calboot
  * @since 1.4.4
  */
-public final class Logging {
+public final class LoggerWrapper {
+
+    public static final String GLOBAL_LOGGER_NAME = "RandomSeatGenerator";
 
     /**
      * Logger.
      */
-    private static final Logger logger = Logger.getLogger("RandomSeat");
+    private static final LoggerWrapper global;
 
-    private static final PathWrapper logDir = DATA_DIR.resolve("logs");
-
-    private static final List<PathWrapper> logPaths;
+    private static final PathWrapper globalLogDir = DATA_DIR.resolve("logs");
 
     private static final MessageFormat messageFormat = new MessageFormat("[{0,date,yyyy-MM-dd HH:mm:ss.SSS}] [{1}/{2}] {3}\n");
 
-    private static final Formatter DEFAULT_FORMATTER;
+    private static final Formatter DEFAULT_FORMATTER = new Formatter() {
+        @Override
+        public String format(final LogRecord record) {
+            return record.getMessage();
+        }
+    };
 
-    @Getter
-    private static State state = State.UNINITIALIZED;
+    private static boolean started;
 
     static {
-        val str = "%tF-%%d.log".formatted(new Date());
-        var t = 1;
-        while (logDir.resolve(str.formatted(t)).exists()) {
-            t++;
-        }
-        logPaths = List.of(logDir.resolve("latest.log"), logDir.resolve(str.formatted(t)));
-
-        DEFAULT_FORMATTER = new Formatter() {
-            @Override
-            public String format(final LogRecord record) {
-                return record.getMessage();
-            }
-        };
+        global = new LoggerWrapper();
     }
 
-    /**
-     * Don't let anyone else instantiate this class.
-     */
-    private Logging() {
+    private final Logger logger;
+
+    private final List<PathWrapper> logFiles;
+
+    private boolean closed;
+
+    private LoggerWrapper() {
+        this(GLOBAL_LOGGER_NAME, globalLogDir);
     }
 
-    /**
-     * Logs an INFO message.
-     *
-     * @param msg logged message
-     */
-    public static void info(final String msg) {
-        checkState();
-        logger.log(LoggingLevels.INFO, msg);
-    }
-
-    /**
-     * Logs a WARNING message.
-     *
-     * @param msg logged message
-     */
-    public static void warning(final String msg) {
-        checkState();
-        logger.log(LoggingLevels.WARNING, msg);
-    }
-
-    /**
-     * Logs an ERROR message.
-     *
-     * @param msg logged message
-     */
-    public static void error(final String msg) {
-        checkState();
-        logger.log(LoggingLevels.ERROR, msg);
-    }
-
-    private static void checkState() {
-        if (!isStarted()) {
-            throw new IllegalStateException("Logger closed or uninitialized");
-        }
-    }
-
-    /**
-     * Returns whether the log manager is started.
-     *
-     * @return whether the log manager is started
-     */
-    public static boolean isStarted() {
-        return state == State.STARTED;
-    }
-
-    /**
-     * Logs a DEBUG message.
-     *
-     * @param msg logged message
-     */
-    public static void debug(final String msg) {
-        checkState();
-        logger.log(LoggingLevels.DEBUG, msg);
-    }
-
-    /**
-     * Starts logging.
-     */
-    public static void start() {
-        switch (state) {
-            case STARTED -> {
-                debug("Logging already started, there's no need to start it twice");
-                return;
-            }
-            case ENDED -> throw new IllegalStateException("Logging manager already closed");
-        }
-
-        state = State.STARTED;
-
-        val withGUI = (boolean) RuntimeUtils.getPropertyOrDefault("launching.gui", false);
+    private LoggerWrapper(final String loggerName, final PathWrapper... logDirs) {
+        this.logger = Logger.getLogger(loggerName);
+        val logDirList = new LinkedList<>(logDirs == null ? List.of() : List.of(logDirs));
+        this.logFiles = new LinkedList<>();
+        logDirList.forEach(logDir -> {
+            logFiles.add(logDir.resolve("latest.log"));
+            logFiles.add(logDir.resolve(Strings.nowStr(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS")) + ".log"));
+        });
 
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);
@@ -165,24 +100,26 @@ public final class Logging {
             }
         };
         consoleHandler.setFormatter(DEFAULT_FORMATTER);
-        consoleHandler.setLevel(withGUI ? LoggingLevels.DEBUG : LoggingLevels.INFO);
+        consoleHandler.setLevel(LoggingLevels.DEBUG);
         logger.addHandler(consoleHandler);
 
         try {
-            logDir.replaceWithDirectory();
+            for (val logDir : logDirList) {
+                logDir.replaceWithDirectory();
+                if (logDir.notFullyPermitted()) {
+                    warning("Does not have read/write permission of the log directory");
+                }
+            }
         } catch (final IOException e) {
             warning("Unable to create log dir, log may not be saved");
             warning(Strings.getStackTrace(e));
         }
-        if (logDir.notFullyPermitted()) {
-            warning("Does not have read/write permission of the log directory");
-        }
-        logPaths.forEach(path -> {
+        logFiles.forEach(path -> {
             try {
                 val fileHandler = new FileHandler(path.toString()) {
                     @Override
                     public void close() throws SecurityException {
-                        val record = format(new LogRecord(LoggingLevels.DEBUG, "Closing log file " + path));
+                        val record = format(new LogRecord(LoggingLevels.DEBUG, "Closing log file \"%s\"".formatted(path)));
                         for (val h : logger.getHandlers()) {
                             h.publish(record);
                         }
@@ -195,21 +132,26 @@ public final class Logging {
                 fileHandler.setEncoding("UTF-8");
                 logger.addHandler(fileHandler);
             } catch (final Throwable e) {
-                warning("Failed to create log file at " + path);
+                warning("Failed to create log file at \"%s\"".formatted(path));
                 warning(Strings.getStackTrace(e));
             }
         });
+    }
 
-        debug("Logging started");
-        info("*** %s ***".formatted(TITLE));
-        debug("Launching mode: " + (withGUI ? "GUI" : "Console"));
-        debug("OS: %s %s".formatted(OS_NAME, OS_VERSION));
-        debug("Architecture: " + OS_ARCH);
-        debug("Java Version: " + JAVA_VERSION);
-        debug("JVM Version: " + JVM_VERSION);
-        debug("Java Home: " + JAVA_HOME);
-        debug("VM Memory: %dMB".formatted(Runtime.getRuntime().maxMemory() >>> 20));
-        info("Data directory: " + DATA_DIR);
+    /**
+     * Logs a WARNING message.
+     *
+     * @param msg logged message
+     */
+    public void warning(final String msg) {
+        checkState();
+        logger.log(LoggingLevels.WARNING, msg);
+    }
+
+    private void checkState() {
+        if (closed) {
+            throw new IllegalStateException("Logger already closed");
+        }
     }
 
     private static LogRecord format(final LogRecord record) {
@@ -229,23 +171,88 @@ public final class Logging {
         return record;
     }
 
+    public static LoggerWrapper global() {
+        return global;
+    }
+
     /**
-     * Ends logging.
+     * Starts logging.
      */
-    public static void end() {
-        if (state != State.ENDED) {
+    public static void start() {
+        if (started) {
+            return;
+        }
+
+        started = true;
+
+        global.debug("Logging started");
+        global.info("*** %s ***".formatted(TITLE));
+        global.debug("Launching mode: " + ((boolean) RuntimeUtils.getPropertyOrDefault("launching.gui", false) ? "GUI" : "Console"));
+        global.debug("OS: %s %s".formatted(OS_NAME, OS_VERSION));
+        global.debug("Architecture: " + OS_ARCH);
+        global.debug("Java Version: " + JAVA_VERSION);
+        global.debug("JVM Version: " + JVM_VERSION);
+        global.debug("Java Home: " + JAVA_HOME);
+        global.debug("VM Memory: %dMB".formatted(Runtime.getRuntime().maxMemory() >>> 20));
+        global.info("Data directory: " + DATA_DIR);
+    }
+
+    /**
+     * Logs an INFO message.
+     *
+     * @param msg logged message
+     */
+    public void info(final String msg) {
+        checkState();
+        logger.log(LoggingLevels.INFO, msg);
+    }
+
+    /**
+     * Logs a DEBUG message.
+     *
+     * @param msg logged message
+     */
+    public void debug(final String msg) {
+        checkState();
+        logger.log(LoggingLevels.DEBUG, msg);
+    }
+
+    public void error(final Notice msg) {
+        error(msg.string());
+    }
+
+    /**
+     * Logs an ERROR message.
+     *
+     * @param msg logged message
+     */
+    public void error(final String msg) {
+        checkState();
+        logger.log(LoggingLevels.ERROR, msg);
+    }
+
+    public void close() {
+        if (!closed) {
             for (val h : logger.getHandlers()) {
                 logger.removeHandler(h);
                 h.close();
             }
-            state = State.ENDED;
+            closed = true;
         }
     }
 
-    private enum State {
-        UNINITIALIZED,
-        STARTED,
-        ENDED
+    /**
+     * Returns whether the log manager is started.
+     *
+     * @return whether the log manager is started
+     */
+    public boolean isOpen() {
+        return !closed;
+    }
+
+    public void io(final String msg) {
+        checkState();
+        logger.log(LoggingLevels.IO, msg);
     }
 
     /**
@@ -264,6 +271,8 @@ public final class Logging {
          * @see Level#SEVERE
          */
         public static final Level ERROR = new LoggingLevels("ERROR", 1000);
+
+        public static final Level IO = new LoggingLevels("IO", 300);
 
         private LoggingLevels(final String name, final int value) {
             super(name, value, null);
