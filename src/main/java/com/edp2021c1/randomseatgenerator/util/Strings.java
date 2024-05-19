@@ -78,6 +78,13 @@ public final class Strings {
         return nowStr(defaultDateFormat);
     }
 
+    /**
+     * Returns a string representing the current time in the given format.
+     *
+     * @param format to format the date
+     *
+     * @return a string representing the current time
+     */
     public static String nowStr(final DateFormat format) {
         return format.format(new Date());
     }
@@ -105,7 +112,7 @@ public final class Strings {
      * @return stack trace of {@code e}
      */
     public static String getStackTrace(final Throwable e) {
-        val writer = new StringWriter(1024);
+        val writer      = new StringWriter(1024);
         val printWriter = new PrintWriter(writer);
         e.printStackTrace(printWriter);
         printWriter.close();
@@ -122,7 +129,7 @@ public final class Strings {
      */
     public static String randomString(final int len) {
         val chars = new char[len];
-        val rd = new Random();
+        val rd    = new Random();
         for (var i = 0; i < len; i++) {
             chars[i] = CollectionUtils.pickRandomly(CHARACTERS_AND_DIGITS, rd);
         }

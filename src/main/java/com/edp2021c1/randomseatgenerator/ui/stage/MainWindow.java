@@ -93,12 +93,12 @@ public class MainWindow extends Stage {
         // 左侧按钮栏
         val settingsBtn = createButton("设置", 80, 26);
         val generateBtn = createButton("生成", 80, 26);
-        val exportBtn = createButton("导出", 80, 26);
-        val leftBox   = createVBox(settingsBtn, generateBtn, exportBtn);
+        val exportBtn   = createButton("导出", 80, 26);
+        val leftBox     = createVBox(settingsBtn, generateBtn, exportBtn);
         leftBox.getStyleClass().add("left");
 
         // 右上种子输入栏
-        val seedInput = createEmptyTextField("种子");
+        val seedInput     = createEmptyTextField("种子");
         val randomSeedBtn = createButton("随机种子", 80, 26);
         val dateAsSeedBtn = createButton("填入日期", 80, 26);
 

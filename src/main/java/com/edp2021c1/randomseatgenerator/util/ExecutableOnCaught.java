@@ -18,8 +18,17 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+/**
+ * Implemented by {@link Throwable} classes that takes specific action on being caught by {@link CrashReporter}.
+ *
+ * @author Calboot
+ * @since 1.6.0
+ */
 public interface ExecutableOnCaught {
 
+    /**
+     * Action to execute on being caught.
+     */
     void exec();
 
 }

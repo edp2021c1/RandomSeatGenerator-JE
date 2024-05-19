@@ -172,9 +172,9 @@ public class SeatTable {
      * @return a {@code List} storing {@code RowData} transferred from this
      */
     public List<RowData> toRowData() {
-        val rowCount = config.rowCount();
+        val rowCount    = config.rowCount();
         val columnCount = config.columnCount();
-        val rows     = new LinkedList<RowData>();
+        val rows        = new LinkedList<RowData>();
 
         rows.add(RowData.header(columnCount));
 

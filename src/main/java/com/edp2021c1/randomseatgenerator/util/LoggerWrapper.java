@@ -38,6 +38,9 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
  */
 public final class LoggerWrapper {
 
+    /**
+     * Name of the global logger.
+     */
     public static final String GLOBAL_LOGGER_NAME = "RandomSeatGenerator";
 
     /**
@@ -171,6 +174,11 @@ public final class LoggerWrapper {
         return record;
     }
 
+    /**
+     * Returns the global logger.
+     *
+     * @return the global logger
+     */
     public static LoggerWrapper global() {
         return global;
     }
@@ -217,10 +225,6 @@ public final class LoggerWrapper {
         logger.log(LoggingLevels.DEBUG, msg);
     }
 
-    public void error(final Notice msg) {
-        error(msg.string());
-    }
-
     /**
      * Logs an ERROR message.
      *
@@ -231,6 +235,9 @@ public final class LoggerWrapper {
         logger.log(LoggingLevels.ERROR, msg);
     }
 
+    /**
+     * Closes the current logger, returns immediately if the logger is already closed.
+     */
     public void close() {
         if (!closed) {
             for (val h : logger.getHandlers()) {
@@ -250,6 +257,11 @@ public final class LoggerWrapper {
         return !closed;
     }
 
+    /**
+     * Logs an IO related message.
+     *
+     * @param msg logged message
+     */
     public void io(final String msg) {
         checkState();
         logger.log(LoggingLevels.IO, msg);

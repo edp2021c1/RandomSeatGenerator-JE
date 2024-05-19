@@ -50,8 +50,8 @@ public class CrashReporterDialog extends Stage {
         super();
 
         val preLabelBeforeLink = new Label("Something's wrong... Click");
-        val here              = new Hyperlink("here");
-        val preLabelAfterLink = new Label("to copy the error message");
+        val here               = new Hyperlink("here");
+        val preLabelAfterLink  = new Label("to copy the error message");
         preLabelBeforeLink.getStyleClass().add("err-pre-label");
         here.getStyleClass().add("err-pre-label");
         preLabelAfterLink.getStyleClass().add("err-pre-label");

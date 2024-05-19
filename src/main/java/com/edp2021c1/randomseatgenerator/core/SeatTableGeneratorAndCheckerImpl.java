@@ -118,11 +118,11 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         }
 
         // 座位表数据
-        val seatTable = new ArrayList<String>(seatNum);
+        val seatTable   = new ArrayList<String>(seatNum);
         var luckyPerson = "";
 
         // 临时变量，提前声明以减少内存和计算操作
-        val luckyPersonOriginIndex = peopleNum - randomPeopleCount - peopleLeft;
+        val luckyPersonOriginIndex  = peopleNum - randomPeopleCount - peopleLeft;
         val peopleNumShuffledInLoop = forTimesMinusOne * randomPeopleCount;
         val seatNumMinusColumnCount = seatNum - columnCount;
 
@@ -156,7 +156,7 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         } while (!check(seatTable, config));
 
         for (var i = 0; i < columnCount; i++) {
-            int t;
+            int    t;
             String tGroupLeader;
             do {
                 t = rd.nextInt(rowCount) * columnCount + i;

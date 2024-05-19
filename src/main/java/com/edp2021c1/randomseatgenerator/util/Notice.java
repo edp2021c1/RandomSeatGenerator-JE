@@ -18,15 +18,38 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import java.util.Objects;
+
+/**
+ * Implemented by classes that can be shown in a simple dialog.
+ *
+ * @author Calboot
+ * @since 1.6.0
+ */
 @FunctionalInterface
 public interface Notice {
 
+    /**
+     * Returns a notice whose {@link #message()} method returns the given value.
+     *
+     * @param message of the notice
+     *
+     * @return a notice whose {@code message()} method returns the given value
+     */
     static Notice of(final String message) {
         return () -> message;
     }
 
+    /**
+     * Returns a notice that represents the given {@link Throwable}.
+     *
+     * @param t thread from which the {@code Throwable} is thrown from
+     * @param e the {@code Throwable} to show in the notice
+     *
+     * @return a notice that represents the given {@code Throwable}
+     */
     static Notice of(final Thread t, final Throwable e) {
-        if (e instanceof final Notice n) {
+        if (Objects.requireNonNull(e) instanceof final Notice n) {
             return n;
         }
 
@@ -34,7 +57,7 @@ public interface Notice {
 
             private final String message = Strings.getStackTrace(e);
 
-            private final String title = e.getClass().getName() + (t == null ? "" : " thrown by " + t.getName());
+            private final String title = e.getClass().getSimpleName() + (t == null ? "" : " thrown from " + t);
 
             @Override
             public String title() {
@@ -48,14 +71,30 @@ public interface Notice {
         };
     }
 
+    /**
+     * Returns the string form of the notice.
+     *
+     * @return the string form of the notice
+     */
     default String string() {
         return title() + ": " + message();
     }
 
+    /**
+     * Returns the title of the notice, default to {@code "Notice"}.
+     *
+     * @return the title of the notice
+     */
     default String title() {
         return "Notice";
     }
 
+    /**
+     * Returns the message of the notice.
+     * The message should be shown in the body part of the dialog.
+     *
+     * @return the message of the notice
+     */
     String message();
 
 }

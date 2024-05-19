@@ -61,7 +61,6 @@ public class RandomSeatGenerator extends Application {
      * @param args used to start the application.
      */
     public static void main(final String... args) {
-        RuntimeUtils.loadClass();
         Thread.currentThread().setName("Main Thread");
 
         try {

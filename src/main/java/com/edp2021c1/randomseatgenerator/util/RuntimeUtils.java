@@ -63,6 +63,9 @@ public final class RuntimeUtils {
     private RuntimeUtils() {
     }
 
+    /**
+     * Runs the exit hooks one by one.
+     */
     public static void runExitHooks() {
         synchronized (exitHooks) {
             exitHooks.forEach(Runnable::run);
@@ -103,14 +106,6 @@ public final class RuntimeUtils {
      */
     public static Object getPropertyOrDefault(final String key, final Object def) {
         return runtimeProperties.getOrDefault(key, def);
-    }
-
-    /**
-     * An empty method called on application start up,
-     * to ensure that the class is loaded.
-     */
-    public static void loadClass() {
-
     }
 
     /**

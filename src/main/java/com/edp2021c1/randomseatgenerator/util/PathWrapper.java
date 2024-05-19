@@ -152,17 +152,6 @@ public class PathWrapper implements Path {
     }
 
     /**
-     * Wraps the given path.
-     *
-     * @param path to wrap into the instance
-     *
-     * @return an instance wrapping the path
-     */
-    public static PathWrapper wrap(final Path path) {
-        return new PathWrapper(path);
-    }
-
-    /**
      * Creates a directory and all of its parent directory.
      *
      * @param attr an optional list of file attributes to set atomically when creating the directory
@@ -178,19 +167,6 @@ public class PathWrapper implements Path {
             LOGGER.io("Directory \"%s\" created".formatted(this));
         }
         return this;
-    }
-
-    /**
-     * Returns if {@code this} exists in the current file system.
-     *
-     * @param options options indicating how symbolic links are handled
-     *
-     * @return if exists
-     *
-     * @see Files#exists(Path, LinkOption...)
-     */
-    public boolean exists(final LinkOption... options) {
-        return Files.exists(path, options);
     }
 
     /**
@@ -210,6 +186,19 @@ public class PathWrapper implements Path {
             }
         }
         return this;
+    }
+
+    /**
+     * Returns if {@code this} exists in the current file system.
+     *
+     * @param options options indicating how symbolic links are handled
+     *
+     * @return if exists
+     *
+     * @see Files#exists(Path, LinkOption...)
+     */
+    public boolean exists(final LinkOption... options) {
+        return Files.exists(path, options);
     }
 
     /**
@@ -254,9 +243,35 @@ public class PathWrapper implements Path {
         return !Files.isRegularFile(path, options);
     }
 
-    public PathWrapper moveToTrash() {
+    /**
+     * Creates a new file.
+     *
+     * @param attrs an optional list of file attributes to set atomically when creating the file
+     *
+     * @return #{@code this}
+     *
+     * @throws IOException if an I/O error occurs
+     * @see Files#createFile(Path, FileAttribute[])
+     */
+    public PathWrapper createFile(final FileAttribute<?>... attrs) throws IOException {
+        Files.createFile(path, attrs);
+        if (LOGGER.isOpen()) {
+            LOGGER.io("File \"%s\" created".formatted(this));
+        }
+        return this;
+    }
+
+    /**
+     * Moves the file on the path to trash if the action is supported.
+     *
+     * @return {@code this}
+     *
+     * @throws IOException if an I/O error occurs
+     * @see DesktopUtils#moveToTrashIfSupported(File)
+     */
+    public PathWrapper moveToTrash() throws IOException {
         if (exists()) {
-            DesktopUtils.moveToTrash(toFile());
+            DesktopUtils.moveToTrashIfSupported(toFile());
             if (LOGGER.isOpen()) {
                 LOGGER.io("File or directory \"%s\" moved to trash".formatted(this));
             }
@@ -288,21 +303,14 @@ public class PathWrapper implements Path {
     }
 
     /**
-     * Creates a new file.
+     * Wraps the given path.
      *
-     * @param attrs an optional list of file attributes to set atomically when creating the file
+     * @param path to wrap into the instance
      *
-     * @return #{@code this}
-     *
-     * @throws IOException if an I/O error occurs
-     * @see Files#createFile(Path, FileAttribute[])
+     * @return an instance wrapping the path
      */
-    public PathWrapper createFile(final FileAttribute<?>... attrs) throws IOException {
-        Files.createFile(path, attrs);
-        if (LOGGER.isOpen()) {
-            LOGGER.io("File \"%s\" created".formatted(this));
-        }
-        return this;
+    public static PathWrapper wrap(final Path path) {
+        return new PathWrapper(path);
     }
 
     @NonNull

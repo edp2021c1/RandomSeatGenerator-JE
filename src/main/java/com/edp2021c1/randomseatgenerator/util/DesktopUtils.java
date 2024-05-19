@@ -23,6 +23,7 @@ import javafx.scene.input.DataFormat;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
@@ -60,7 +61,7 @@ public final class DesktopUtils {
      * @see java.awt.Desktop#browse(URI)
      */
     public static void browseIfSupported(final URI uri) {
-        if (desktopSupported) {
+        if (desktopSupported && desktopTk.isSupported(Desktop.Action.BROWSE)) {
             try {
                 desktopTk.browse(uri);
             } catch (final Throwable ignored) {
@@ -68,11 +69,24 @@ public final class DesktopUtils {
         }
     }
 
-    public static void moveToTrash(final File file) {
-        if (desktopSupported) {
+    /**
+     * Moves a file to trash if the action is supported.
+     *
+     * @param file to move to trash
+     *
+     * @throws IOException if failed to move the file to trash
+     * @see Desktop#moveToTrash(File)
+     */
+    public static void moveToTrashIfSupported(final File file) throws IOException {
+        if (desktopSupported && desktopTk.isSupported(Desktop.Action.MOVE_TO_TRASH)) {
+            boolean b;
             try {
-                desktopTk.moveToTrash(file);
-            } catch (final Throwable ignored) {
+                b = desktopTk.moveToTrash(file);
+            } catch (final Throwable e) {
+                throw new IOException("Failed to move file \"%s\" to trash".formatted(file), e);
+            }
+            if (!b) {
+                throw new IOException("Failed to move file \"%s\" to trash".formatted(file));
             }
         }
     }
