@@ -28,11 +28,12 @@ import lombok.NonNull;
 import lombok.val;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.alibaba.fastjson2.JSONWriter.Feature.PrettyFormat;
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.groupLeaderRegexPredicate;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.buildList;
 
 /**
  * Stores the config of the application.
@@ -193,24 +194,6 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
         return rowCount;
     }
 
-    /**
-     * Returns raw row count value.
-     *
-     * @return raw row count value
-     */
-    public Integer getRowCount() {
-        return getInteger(KEY_ROW_COUNT);
-    }
-
-    /**
-     * Sets raw row count value.
-     *
-     * @param value raw value to be set
-     */
-    public void setRowCount(final Integer value) {
-        put(KEY_ROW_COUNT, value);
-    }
-
     @Override
     public int columnCount() throws IllegalConfigException {
         val columnCount = getColumnCount();
@@ -218,24 +201,6 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
             throw new IllegalConfigException("Column count cannot be equal to or less than 0");
         }
         return columnCount;
-    }
-
-    /**
-     * Returns raw column count value.
-     *
-     * @return raw column count value
-     */
-    public Integer getColumnCount() {
-        return getInteger(KEY_COLUMN_COUNT);
-    }
-
-    /**
-     * Sets raw column count value.
-     *
-     * @param value raw value to be set
-     */
-    public void setColumnCount(final Integer value) {
-        put(KEY_COLUMN_COUNT, value);
     }
 
     @Override
@@ -247,10 +212,7 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
         if (!Strings.integerListPatternPredicate.test(disabledLastRowPos)) {
             throw new IllegalConfigException("Invalid disabled last row positions: " + disabledLastRowPos);
         }
-        return buildList(
-                Arrays.asList(disabledLastRowPos.split(" ")),
-                Integer::parseUnsignedInt
-        );
+        return Stream.of(disabledLastRowPos.split(" ")).map(Integer::parseUnsignedInt).collect(Collectors.toList());
     }
 
     /**
@@ -301,30 +263,12 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
             );
         }
         l.removeAll(List.of(""));
-        if (l.stream().anyMatch(groupLeaderRegexPredicate)) {
+        if (l.parallelStream().anyMatch(groupLeaderRegexPredicate)) {
             throw new IllegalConfigException(
                     "Name list must not contain names matching the format of a group leader"
             );
         }
         return l;
-    }
-
-    /**
-     * Returns raw name list value.
-     *
-     * @return raw name list value
-     */
-    public String getNames() {
-        return getString(KEY_NAMES);
-    }
-
-    /**
-     * Sets raw name list value.
-     *
-     * @param value raw value to be set
-     */
-    public void setNames(final String value) {
-        put(KEY_NAMES, value);
     }
 
     @Override
@@ -339,25 +283,10 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
                     "Group leader list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
             );
         }
+        if (l.size() < columnCount()) {
+            throw new IllegalConfigException("Group leader count less than column count");
+        }
         return l;
-    }
-
-    /**
-     * Returns raw group leader list value.
-     *
-     * @return raw group leader list value
-     */
-    public String getGroupLeaders() {
-        return getString(KEY_GROUP_LEADERS);
-    }
-
-    /**
-     * Sets raw group leader list value.
-     *
-     * @param value raw value to be set
-     */
-    public void setGroupLeaders(final String value) {
-        put(KEY_GROUP_LEADERS, value);
     }
 
     @Override
@@ -366,7 +295,7 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
         if (separatedPairs == null) {
             throw new IllegalConfigException("Separated list cannot be null");
         }
-        return buildList(separatedPairs.lines().filter(s -> s != null && !s.isBlank()).toList(), NamePair::new);
+        return separatedPairs.lines().filter(s -> !s.isBlank()).map(NamePair::new).collect(Collectors.toList());
     }
 
     /**
@@ -388,6 +317,78 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
     }
 
     /**
+     * Returns raw group leader list value.
+     *
+     * @return raw group leader list value
+     */
+    public String getGroupLeaders() {
+        return getString(KEY_GROUP_LEADERS);
+    }
+
+    /**
+     * Sets raw group leader list value.
+     *
+     * @param value raw value to be set
+     */
+    public void setGroupLeaders(final String value) {
+        put(KEY_GROUP_LEADERS, value);
+    }
+
+    /**
+     * Returns raw name list value.
+     *
+     * @return raw name list value
+     */
+    public String getNames() {
+        return getString(KEY_NAMES);
+    }
+
+    /**
+     * Sets raw name list value.
+     *
+     * @param value raw value to be set
+     */
+    public void setNames(final String value) {
+        put(KEY_NAMES, value);
+    }
+
+    /**
+     * Returns raw column count value.
+     *
+     * @return raw column count value
+     */
+    public Integer getColumnCount() {
+        return getInteger(KEY_COLUMN_COUNT);
+    }
+
+    /**
+     * Sets raw column count value.
+     *
+     * @param value raw value to be set
+     */
+    public void setColumnCount(final Integer value) {
+        put(KEY_COLUMN_COUNT, value);
+    }
+
+    /**
+     * Returns raw row count value.
+     *
+     * @return raw row count value
+     */
+    public Integer getRowCount() {
+        return getInteger(KEY_ROW_COUNT);
+    }
+
+    /**
+     * Sets raw row count value.
+     *
+     * @param value raw value to be set
+     */
+    public void setRowCount(final Integer value) {
+        put(KEY_ROW_COUNT, value);
+    }
+
+    /**
      * Returns the {@code Boolean} value to which the specified key is mapped, or null if this map contains no mapping for the key.
      *
      * @param key whose associated {@code Boolean} value is to be returned
@@ -402,6 +403,22 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
         } catch (final JSONException e) {
             throw new IllegalConfigException("Cannot cast to Boolean");
         }
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof final SeatConfigWrapper other)) {
+            return false;
+        }
+        return Objects.equals(other.getRowCount(), getRowCount())
+                && Objects.equals(other.getColumnCount(), getColumnCount())
+                && Objects.equals(other.getDisabledLastRowPos(), getDisabledLastRowPos())
+                && Objects.equals(other.getNames(), getNames())
+                && Objects.equals(other.getGroupLeaders(), getGroupLeaders())
+                && Objects.equals(other.getSeparatedPairs(), getSeparatedPairs())
+                && other.lucky() == lucky();
     }
 
     /**
@@ -514,5 +531,6 @@ public class SeatConfigWrapper implements Map<String, Object>, SeatConfig {
     public Set<Entry<String, Object>> entrySet() {
         return config.entrySet();
     }
+
 
 }

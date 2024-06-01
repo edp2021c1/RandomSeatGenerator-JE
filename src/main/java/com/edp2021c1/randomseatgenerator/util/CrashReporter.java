@@ -37,8 +37,8 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
      */
     @Getter
     private static final CrashReporter instance = (boolean) RuntimeUtils.getPropertyOrDefault("launching.gui", true)
-            ? new ConsoleCrashReporter()
-            : new GUICrashReporter();
+            ? new GUICrashReporter()
+            : new ConsoleCrashReporter();
 
     /**
      * Creates an instance.
@@ -66,8 +66,8 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
         }
 
         reportNotice(Notice.of(t, e), e);
-        if (e instanceof final ExecutableOnCaught ex) {
-            ex.exec();
+        if (e instanceof ExecutableOnCaught) {
+            ((ExecutableOnCaught) e).exec();
         }
     }
 

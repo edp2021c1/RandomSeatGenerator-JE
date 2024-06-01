@@ -49,8 +49,8 @@ public interface Notice {
      * @return a notice that represents the given {@code Throwable}
      */
     static Notice of(final Thread t, final Throwable e) {
-        if (Objects.requireNonNull(e) instanceof final Notice n) {
-            return n;
+        if (Objects.requireNonNull(e) instanceof Notice) {
+            return (Notice) e;
         }
 
         return new Notice() {

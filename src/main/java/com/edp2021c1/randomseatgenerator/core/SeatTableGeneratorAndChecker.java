@@ -24,8 +24,6 @@ import lombok.val;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.indexFilter;
-
 /**
  * Default checker implementation class.
  *
@@ -47,10 +45,18 @@ public interface SeatTableGeneratorAndChecker extends SeatTableGenerator {
      */
     default boolean check(final List<String> seatTable, final SeatConfig config) throws IllegalConfigException {
         val gl          = config.groupLeaders();
+        val rowCount    = config.rowCount();
         val columnCount = config.columnCount();
 
         // 检查每列是否都有组长
-        if (IntStream.range(0, columnCount).anyMatch(i -> indexFilter(seatTable, index -> index % columnCount == i).noneMatch(gl::contains))) {
+        if (IntStream
+                .range(0, columnCount)
+                .anyMatch(
+                        i -> IntStream
+                                .iterate(i, i1 -> i1 + columnCount)
+                                .limit(rowCount)
+                                .noneMatch(o -> gl.contains(seatTable.get(o)))
+                )) {
             return false;
         }
         // 检查是否分开

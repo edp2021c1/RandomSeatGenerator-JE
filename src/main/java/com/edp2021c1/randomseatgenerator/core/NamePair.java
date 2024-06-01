@@ -72,27 +72,38 @@ public class NamePair {
      * @param seat        the seat table checked.
      * @param columnCount count of columns of the seat table.
      *
-     * @return if {@code name_1} and {@code name_2} are separated in the seat table.
+     * @return if {@code first} and {@code last} are separated in the seat table.
      */
     public boolean checkSeperated(final List<String> seat, final int columnCount) {
         if (seat == null || !(seat.contains(first) && seat.contains(last))) {
             return true;
         }
-        val i = Math.abs(seat.indexOf(first) - seat.indexOf(last));
-        if (i == 1) {
-            return false;
+        val a = seat.indexOf(first);
+        val b = seat.indexOf(last);
+        val c = a - b;
+        val d = Math.abs(c);
+        val e = a % columnCount;
+        val f = b % columnCount;
+
+        if (columnCount == 1) {
+            return d != 1;
         }
-        switch (columnCount) {
-            case 1 -> {
-                return true;
-            }
-            case 2 -> {
-                return i != 2 && i != 3;
-            }
-            default -> {
-                return i != columnCount && i != columnCount - 1 && i != columnCount + 1;
+
+        if (columnCount == 2) {
+            if (e == 0) {
+                return d != 1 && d != 2 && c != -3;
+            } else {
+                return d != 1 && d != 2 && c != 3;
             }
         }
+
+        if (e == 0 || f == columnCount - 1) {
+            return c != -1 && d != columnCount && d != columnCount - 1 && d != columnCount + 1;
+        }
+        if (f == 0 || e == columnCount - 1) {
+            return c != 1 && d != columnCount && d != columnCount - 1 && d != columnCount + 1;
+        }
+        return d != 1 && d != columnCount && d != columnCount - 1 && d != columnCount + 1;
     }
 
 }

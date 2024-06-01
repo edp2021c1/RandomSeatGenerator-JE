@@ -151,7 +151,7 @@ public class RandomSeatGenerator extends Application {
                 // 生成座位表
                 val seatTable = SeatTable.generate(config, seed);
 
-                LOGGER.info("\n" + seatTable);
+                LOGGER.info(System.lineSeparator() + seatTable);
 
                 // 导出
                 seatTable.exportToChart(outputPath, UIUtils.exportWritableProperty().get());

@@ -20,10 +20,9 @@ package com.edp2021c1.randomseatgenerator.util;
 
 import lombok.val;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 import static java.lang.Runtime.getRuntime;
 
@@ -35,14 +34,15 @@ import static java.lang.Runtime.getRuntime;
  */
 public final class RuntimeUtils {
 
-    /**
-     * Runtime config.
-     */
-    private static final Hashtable<String, Object> runtimeProperties = new Hashtable<>(2);
+    private static final Hashtable<Object, Object> sysProp = System.getProperties();
 
     private static final Hashtable<Long, Thread> threadIdHashtable = new Hashtable<>();
 
     private static final List<Runnable> exitHooks = new ArrayList<>(3);
+
+    private static final Timer timer = new Timer("Global Timer", true);
+
+    private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
     static {
         getRuntime().addShutdownHook(new Thread(RuntimeUtils::runExitHooks, "Exit Hooks"));
@@ -54,7 +54,9 @@ public final class RuntimeUtils {
             }
         });
 
-        loopThread(System::gc, 1000, "Auto GC Thread").start();
+        addExitHook(timer::cancel);
+
+        runLoopingTask(System::gc, 5000);
     }
 
     /**
@@ -68,7 +70,9 @@ public final class RuntimeUtils {
      */
     public static void runExitHooks() {
         synchronized (exitHooks) {
-            exitHooks.forEach(Runnable::run);
+            exitHooks
+                    .parallelStream()
+                    .forEachOrdered(Runnable::run);
             exitHooks.clear();
         }
     }
@@ -81,8 +85,8 @@ public final class RuntimeUtils {
      *
      * @return whether the property is empty
      */
-    public static boolean setProperty(final String key, final Object value) {
-        return runtimeProperties.put(key, value) == null;
+    public static boolean setProperty(final Object key, final Object value) {
+        return sysProp.put(key, value) == null;
     }
 
     /**
@@ -92,8 +96,8 @@ public final class RuntimeUtils {
      *
      * @return value of the property
      */
-    public static Object getProperty(final String key) {
-        return runtimeProperties.get(key);
+    public static Object getProperty(final Object key) {
+        return sysProp.get(key);
     }
 
     /**
@@ -104,21 +108,8 @@ public final class RuntimeUtils {
      *
      * @return the value of a specific property, or {@code def} if is null
      */
-    public static Object getPropertyOrDefault(final String key, final Object def) {
-        return runtimeProperties.getOrDefault(key, def);
-    }
-
-    /**
-     * Returns a thread that executes a task repeatedly
-     *
-     * @param exe           task to execute repeatedly
-     * @param waitingMillis time to wait between each run in millis
-     * @param name          thread name
-     *
-     * @return a thread that executes the task repeatedly
-     */
-    public static Thread loopThread(final Runnable exe, final long waitingMillis, final String name) {
-        return new LoopTaskThread(exe, waitingMillis, name);
+    public static Object getPropertyOrDefault(final Object key, final Object def) {
+        return sysProp.getOrDefault(key, def);
     }
 
     /**
@@ -128,6 +119,15 @@ public final class RuntimeUtils {
      */
     public static void addExitHook(final Runnable taskToRun) {
         exitHooks.add(taskToRun);
+    }
+
+    public static void runLoopingTask(final Runnable taskToRun, final long waitingMillis) {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                taskToRun.run();
+            }
+        }, 0L, waitingMillis);
     }
 
     /**
@@ -143,8 +143,9 @@ public final class RuntimeUtils {
         if (thread != null) {
             return thread;
         }
-        getThreads().forEach(t -> threadIdHashtable.putIfAbsent(t.threadId(), t));
-        return threadIdHashtable.get(id);
+        val res = getThreads().parallelStream().filter(t -> t.threadId() == id).findAny();
+        res.ifPresent(value -> threadIdHashtable.put(id, value));
+        return res.orElse(null);
     }
 
     /**
@@ -156,35 +157,8 @@ public final class RuntimeUtils {
         return Thread.getAllStackTraces().keySet();
     }
 
-    private static class LoopTaskThread extends Thread {
-
-        private final Runnable loopTask;
-
-        private final long waitingMillis;
-
-        private final byte[] lock = new byte[0];
-
-        private LoopTaskThread(final Runnable loopTask, final long waitingMillis, final String name) {
-            this.loopTask = loopTask;
-            this.waitingMillis = waitingMillis;
-            if (name != null) {
-                setName(name);
-            }
-        }
-
-        @Override
-        public void run() {
-            while (isAlive()) {
-                loopTask.run();
-                synchronized (lock) {
-                    try {
-                        lock.wait(waitingMillis);
-                    } catch (final InterruptedException ignored) {
-                    }
-                }
-            }
-        }
-
+    public static <T> T runWithTimeout(final Supplier<T> task, final long timeout, final TimeUnit timeUnit) throws TimeoutException, ExecutionException, InterruptedException {
+        return executorService.submit(task::get).get(timeout, timeUnit);
     }
 
 }

@@ -21,8 +21,6 @@ package com.edp2021c1.randomseatgenerator.ui.stage;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.Notice;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
-import javafx.application.Application;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Hyperlink;
@@ -44,8 +42,6 @@ import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
  */
 public class CrashReporterDialog extends Stage {
 
-    private static Notice messageToBeShown;
-
     private CrashReporterDialog(final Notice msg) {
         super();
 
@@ -55,9 +51,6 @@ public class CrashReporterDialog extends Stage {
         preLabelBeforeLink.getStyleClass().add("err-pre-label");
         here.getStyleClass().add("err-pre-label");
         preLabelAfterLink.getStyleClass().add("err-pre-label");
-
-        val preBox = new HBox(preLabelBeforeLink, here, preLabelAfterLink);
-        preBox.setAlignment(Pos.CENTER_LEFT);
 
         val mainText = new TextArea(msg.message());
         mainText.setEditable(false);
@@ -74,7 +67,7 @@ public class CrashReporterDialog extends Stage {
         buttonBar.setPrefHeight(66);
         buttonBar.getStyleClass().add("bottom");
 
-        val mainBox = new VBox(preBox, mainText, buttonBar);
+        val mainBox = new VBox(new HBox(preLabelBeforeLink, here, preLabelAfterLink), mainText, buttonBar);
         mainBox.getStyleClass().add("main");
 
         setScene(new Scene(mainBox));
@@ -115,30 +108,7 @@ public class CrashReporterDialog extends Stage {
      * @param msg error message
      */
     public static void showCrashReporter(final Notice msg) {
-        try {
-            messageToBeShown = msg;
-            Application.launch(CrashReporterApp.class);
-        } catch (final IllegalStateException e) {
-            new CrashReporterDialog(msg).showAndWait();
-        }
-    }
-
-    /**
-     * JavaFX application used to launch {@code CrashReporterDialog}.
-     */
-    public static class CrashReporterApp extends Application {
-
-        /**
-         * Default constructor.
-         */
-        public CrashReporterApp() {
-        }
-
-        @Override
-        public void start(final Stage primaryStage) {
-            new CrashReporterDialog(messageToBeShown).showAndWait();
-        }
-
+        DesktopUtils.runOnFXThread(() -> new CrashReporterDialog(msg).showAndWait());
     }
 
 }

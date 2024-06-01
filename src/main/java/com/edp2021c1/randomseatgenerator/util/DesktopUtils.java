@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 
@@ -96,8 +97,20 @@ public final class DesktopUtils {
      *
      * @param text to copy.
      */
-    public static void copyPlainText(String text) {
+    public static void copyPlainText(final String text) {
         clipboard.setContent(Map.of(DataFormat.PLAIN_TEXT, text));
+    }
+
+    public static void runOnFXThread(final Runnable runnable) {
+        if (Platform.isFxApplicationThread()) {
+            runnable.run();
+        } else {
+            try {
+                Platform.runLater(runnable);
+            } catch (final IllegalStateException e) {
+                Platform.startup(runnable);
+            }
+        }
     }
 
 }

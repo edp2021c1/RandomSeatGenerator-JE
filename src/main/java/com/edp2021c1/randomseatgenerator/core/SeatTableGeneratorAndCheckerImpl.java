@@ -18,20 +18,21 @@
 
 package com.edp2021c1.randomseatgenerator.core;
 
+import com.edp2021c1.randomseatgenerator.util.DataUtils;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 import java.util.stream.IntStream;
 
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.EMPTY_SEAT_PLACEHOLDER;
 import static com.edp2021c1.randomseatgenerator.core.SeatTable.groupLeaderFormat;
-import static com.edp2021c1.randomseatgenerator.util.CollectionUtils.pickRandomlyAndRemove;
+import static com.edp2021c1.randomseatgenerator.util.DataUtils.pickRandomlyAndRemove;
 import static java.util.Collections.fill;
-import static java.util.Collections.shuffle;
 
 /**
  * Default generator implementation class.
@@ -88,7 +89,7 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
             throw new IllegalConfigException("Too many seat with row count " + rowCount);
         }
 
-        // 防止组长不足引发死循环
+        // 防止组长数量不足引发死循环
         if (groupLeaderList.size() < columnCount) {
             throw new IllegalConfigException("Not enough group leader for " + columnCount + " column(s)");
         }
@@ -112,7 +113,7 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         val emptyRow = Arrays.asList(new String[columnCount]);
         fill(emptyRow, EMPTY_SEAT_PLACEHOLDER);
 
-        val availableLastRowPos = IntStream.range(1, columnCount + 1).filter(value -> !config.disabledLastRowPos().contains(value)).boxed().toList();
+        val availableLastRowPos = IntStream.range(1, columnCount + 1).boxed().filter(value -> !config.disabledLastRowPos().contains(value)).toList();
         if (availableLastRowPos.size() < peopleLeft) {
             throw new IllegalConfigException("Available last row seat not enough");
         }
@@ -139,30 +140,36 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
                 ), rd);
             }
 
-            for (var i = 0; i < peopleNumShuffledInLoop; ) {
-                shuffle(tNameList.subList(i, i += randomPeopleCount), rd);
-            }
-            shuffle(tNameList.subList(peopleNumShuffledInLoop, peopleInSeat), rd);
+            DataUtils.split(tNameList, peopleNumShuffledInLoop).forEach(list -> Collections.shuffle(list, rd));
 
             if (noPeopleLeft) {
                 seatTable.addAll(tNameList);
             } else {
                 seatTable.addAll(tNameList.subList(0, seatNumMinusColumnCount));
                 seatTable.addAll(emptyRow);
-                for (var i = seatNumMinusColumnCount; i < peopleInSeat; i++) {
-                    seatTable.set(pickRandomlyAndRemove(tAvailableLastRowPos, rd) + seatNumMinusColumnCount - 1, tNameList.get(i));
-                }
+                IntStream
+                        .range(seatNumMinusColumnCount, peopleInSeat)
+                        .forEach(i ->
+                                seatTable.set(pickRandomlyAndRemove(tAvailableLastRowPos, rd) + seatNumMinusColumnCount - 1, tNameList.get(i))
+                        );
             }
         } while (!check(seatTable, config));
 
-        for (var i = 0; i < columnCount; i++) {
-            int    t;
-            String tGroupLeader;
-            do {
-                t = rd.nextInt(rowCount) * columnCount + i;
-            } while (!groupLeaderList.contains((tGroupLeader = seatTable.get(t))));
-            seatTable.set(t, groupLeaderFormat.formatted(tGroupLeader));
-        }
+        IntStream
+                .range(0, columnCount)
+                .mapToObj(i ->
+                        DataUtils.pickRandomly(
+                                IntStream
+                                        .iterate(i, i1 -> i1 + columnCount)
+                                        .limit(rowCount)
+                                        .mapToObj(seatTable::get)
+                                        .filter(groupLeaderList::contains)
+                                        .toList()
+                                , rd))
+                .forEach(tGroupLeader -> {
+                    val t = seatTable.indexOf(tGroupLeader);
+                    seatTable.set(t, groupLeaderFormat.formatted(tGroupLeader));
+                });
 
         return new SeatTable(seatTable, config, seed, luckyPerson);
     }

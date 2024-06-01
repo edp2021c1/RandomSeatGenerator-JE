@@ -36,6 +36,8 @@ import java.util.stream.IntStream;
 @ExcelIgnoreUnannotated
 public class RowData extends AbstractList<String> {
 
+    private static final String DEFAULT_SEPARATOR = "\t\t";
+
     private final String[] cells;
 
     private final int cellCount;
@@ -49,7 +51,7 @@ public class RowData extends AbstractList<String> {
     private RowData(final boolean header, final String... cells) {
         this.header = header;
         this.cellCount = cells.length;
-        this.cells = Arrays.copyOf(cells, cellCount);
+        this.cells = cells;
     }
 
     private RowData(final boolean header, final Collection<String> cells) {
@@ -112,6 +114,14 @@ public class RowData extends AbstractList<String> {
     @SuppressWarnings("all")
     public Object[] toArray() {
         return Arrays.copyOf(cells, cellCount);
+    }
+
+    public String toString() {
+        return toString(DEFAULT_SEPARATOR);
+    }
+
+    public String toString(final String separator) {
+        return String.join(separator, cells);
     }
 
 }

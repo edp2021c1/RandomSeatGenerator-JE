@@ -19,7 +19,6 @@
 package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.core.RowData;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
 import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
@@ -55,10 +54,8 @@ public class SeatTableRow extends HBox {
 
         getChildren().addListener((ListChangeListener<Node>) c -> {
             while (c.next()) {
-                for (val n : c.getAddedSubList()) {
-                    if (!(n instanceof SeatTableCell)) {
-                        throw new UnsupportedOperationException("Cannot add a non-cell child");
-                    }
+                if (c.wasAdded() && c.getAddedSubList().parallelStream().anyMatch(n -> !(n instanceof SeatTableCell))) {
+                    throw new UnsupportedOperationException("Cannot add a non-cell child");
                 }
             }
         });
@@ -73,12 +70,7 @@ public class SeatTableRow extends HBox {
             getChildren().add(cell);
         }
 
-        new SimpleBooleanProperty(this, "header") {
-            @Override
-            protected void invalidated() {
-                pseudoClassStateChanged(PSEUDO_CLASS_HEADER, get());
-            }
-        }.set(rowData.isHeader());
+        pseudoClassStateChanged(PSEUDO_CLASS_HEADER, rowData.isHeader());
 
         getStyleClass().add(DEFAULT_STYLE_CLASS);
     }

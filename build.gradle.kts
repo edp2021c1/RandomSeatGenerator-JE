@@ -23,7 +23,6 @@ import java.util.spi.ToolProvider
 
 plugins {
     id("java")
-    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 val prop = Properties(3)
@@ -41,11 +40,6 @@ java {
         withSourcesJar()
         withJavadocJar()
     }
-}
-
-javafx {
-    version = "21.0.1"
-    modules("javafx.controls")
 }
 
 repositories {

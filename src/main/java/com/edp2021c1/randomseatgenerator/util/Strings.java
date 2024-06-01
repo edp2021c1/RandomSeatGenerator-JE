@@ -131,7 +131,7 @@ public final class Strings {
         val chars = new char[len];
         val rd    = new Random();
         for (var i = 0; i < len; i++) {
-            chars[i] = CollectionUtils.pickRandomly(CHARACTERS_AND_DIGITS, rd);
+            chars[i] = DataUtils.pickRandomly(CHARACTERS_AND_DIGITS, rd);
         }
         return new String(chars);
     }

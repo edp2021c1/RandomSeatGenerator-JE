@@ -82,8 +82,6 @@ public class MainWindow extends Stage {
 
         cfHolder = SeatConfigHolder.global();
 
-        val config = cfHolder.getClone();
-
         /* *************************************************************************
          *                                                                         *
          * Init Controls                                                           *
@@ -105,6 +103,7 @@ public class MainWindow extends Stage {
         seed = seedInput.textProperty();
 
         // 座位表
+        val config = cfHolder.getClone();
         try {
             config.check();
         } catch (final IllegalConfigException e) {
@@ -162,7 +161,7 @@ public class MainWindow extends Stage {
 
                 val seed1 = seed.get();
                 seatTable.set(SeatTable.generate(cfHolder.getClone().checkAndReturn(), seed1));
-                LOGGER.info("\n" + seatTable.get());
+                LOGGER.info(System.lineSeparator() + seatTable.get());
                 previousSeed = seed1;
                 generated = true;
             } catch (final Throwable e) {

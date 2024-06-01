@@ -24,11 +24,11 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import lombok.val;
+
+import java.util.LinkedList;
 
 /**
  * View of seat table.
@@ -56,16 +56,6 @@ public class SeatTableView extends VBox {
         setAlignment(Pos.CENTER);
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
 
-        getChildren().addListener((ListChangeListener<Node>) c -> {
-            while (c.next()) {
-                for (val n : c.getAddedSubList()) {
-                    if (!(n instanceof SeatTableRow)) {
-                        throw new UnsupportedOperationException("Cannot add a non-row child");
-                    }
-                }
-            }
-        });
-
         seatTable.subscribe(newValue -> {
             if (newValue == null) {
                 return;
@@ -74,11 +64,13 @@ public class SeatTableView extends VBox {
             rowCount.set(newValue.getConfig().rowCount());
             columnCount.set(newValue.getConfig().columnCount());
 
-            getChildren().setAll(newValue.toRowData().stream().map(s -> {
-                val seatTableRow = new SeatTableRow(s, columnCount.get());
+            val list = new LinkedList<SeatTableRow>();
+            for (val strings : newValue.toRowData()) {
+                val seatTableRow = new SeatTableRow(strings, columnCount.get());
                 seatTableRow.prefHeightProperty().bind(heightProperty().divide(rowCount));
-                return seatTableRow;
-            }).toArray(Node[]::new));
+                list.add(seatTableRow);
+            }
+            super.getChildren().setAll(list);
         });
 
         minHeightProperty().bind(rowCount.multiply(60));

@@ -74,12 +74,12 @@ public class IllegalConfigException extends RuntimeException implements Notice {
         }
         single = false;
         val str = new StringBuilder();
-        causes.forEach(e -> {
+        for (val e : causes) {
             if (e.isSingle()) {
-                str.append("\n");
+                str.append(System.lineSeparator());
             }
             str.append(e.getLocalizedMessage());
-        });
+        }
         localizedMessage = str.toString();
     }
 

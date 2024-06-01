@@ -18,8 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
+import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.Notice;
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
@@ -37,8 +37,6 @@ import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
  * @since 1.5.0
  */
 public class MessageDialog extends Stage {
-
-    private static Notice messageToBeShown;
 
     private MessageDialog(final Notice msg) {
         super();
@@ -70,12 +68,7 @@ public class MessageDialog extends Stage {
      * @param msg message to be shown
      */
     public static void showMessage(final Notice msg) {
-        try {
-            messageToBeShown = msg;
-            Application.launch(MessageDialogApp.class);
-        } catch (final IllegalStateException e) {
-            new MessageDialog(msg).showAndWait();
-        }
+        DesktopUtils.runOnFXThread(() -> new MessageDialog(msg).showAndWait());
     }
 
     /**
@@ -85,33 +78,11 @@ public class MessageDialog extends Stage {
      * @param msg   message to be shown
      */
     public static void showMessage(final Window owner, final Notice msg) {
-        try {
-            messageToBeShown = msg;
-            Application.launch(MessageDialogApp.class);
-        } catch (final IllegalStateException e) {
+        DesktopUtils.runOnFXThread(() -> {
             val dialog = new MessageDialog(msg);
             dialog.initOwner(owner);
             dialog.showAndWait();
-        }
-    }
-
-    /**
-     * JavaFX application used to launch {@code MessageDialog}.
-     */
-    public static class MessageDialogApp extends Application {
-
-        /**
-         * Default constructor.
-         */
-        public MessageDialogApp() {
-            super();
-        }
-
-        @Override
-        public void start(final Stage primaryStage) {
-            new MessageDialog(messageToBeShown).showAndWait();
-        }
-
+        });
     }
 
 }

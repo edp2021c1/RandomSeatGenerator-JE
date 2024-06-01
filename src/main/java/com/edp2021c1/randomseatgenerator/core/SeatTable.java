@@ -20,22 +20,17 @@ package com.edp2021c1.randomseatgenerator.core;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
-import com.edp2021c1.randomseatgenerator.util.LoggerWrapper;
-import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.PathWrapper;
+import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
-import lombok.Cleanup;
 import lombok.Getter;
 import lombok.val;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
@@ -70,6 +65,8 @@ public class SeatTable {
      */
     public static final String groupLeaderFormat = "*%s*";
 
+    private static final long MAX_GENERATING_TIME_SECONDS = 3L;
+
     private static final LoggerWrapper LOGGER = LoggerWrapper.global();
 
     private static final ExcelWriterBuilder excelWriterBuilder = EasyExcel.write().head(RowData.class);
@@ -103,7 +100,7 @@ public class SeatTable {
      * @param luckyPerson {@link #luckyPerson}
      */
     public SeatTable(final List<String> table, final SeatConfig config, final String seed, final String luckyPerson) {
-        this.table = Collections.unmodifiableList(table);
+        this.table = table;
         this.config = config;
         this.seed = seed == null ? "$null$" : seed.isEmpty() ? "$empty_string$" : seed;
         this.luckyPerson = config.lucky() ? luckyPerson : null;
@@ -139,19 +136,22 @@ public class SeatTable {
      *                                costs too much time to generate the seat table
      */
     public static SeatTable generate(final SeatConfig config, final String seed, final SeatTableGenerator generator) {
-        @Cleanup("shutdownNow") val exe = Executors.newSingleThreadExecutor(r -> new Thread(r, "Seat Table Factory Thread"));
         try {
-            return exe.submit(() -> generator.generate(config.checkAndReturn(), seed)).get(3, TimeUnit.SECONDS);
-        } catch (final ExecutionException e) {
-            val ex = e.getCause();
-            if (ex instanceof RuntimeException exx) {
-                throw exx;
+            return RuntimeUtils.runWithTimeout(() -> generator.generate(config, seed), MAX_GENERATING_TIME_SECONDS, TimeUnit.SECONDS);
+        } catch (final Throwable e) {
+            var e1 = e;
+            if (e1 instanceof ExecutionException) {
+                e1 = e1.getCause();
             }
-            throw new RuntimeException(ex);
-        } catch (final TimeoutException e) {
-            throw new IllegalConfigException("Seat table generating timeout, please check your config or use another seed");
-        } catch (final InterruptedException e) {
-            throw new RuntimeException(e);
+            if (e1 instanceof RuntimeException) {
+                throw (RuntimeException) e1;
+            }
+            if (e1 instanceof TimeoutException) {
+                val ex  = new IllegalConfigException("Seat table generating timeout, please check your config or use another seed");
+                val exx = new IllegalConfigException("Seed: " + seed);
+                throw new IllegalConfigException(List.of(ex, exx));
+            }
+            throw new RuntimeException(e1);
         }
     }
 
@@ -166,21 +166,26 @@ public class SeatTable {
         return generate(config, null, SeatTableGenerator.emptyGenerator);
     }
 
+    @Override
+    public String toString() {
+        return toString(System.lineSeparator());
+    }
+
+    public String toString(final String lineSeparator) {
+        return String.join(lineSeparator, toRowData().stream().map(RowData::toString).toList());
+    }
+
     /**
      * Returns a list of {@code RowData} containing data of this.
      *
      * @return a {@code List} storing {@code RowData} transferred from this
      */
     public List<RowData> toRowData() {
-        val rowCount    = config.rowCount();
         val columnCount = config.columnCount();
         val rows        = new LinkedList<RowData>();
 
         rows.add(RowData.header(columnCount));
-
-        for (var i = 0; i < rowCount; i++) {
-            rows.add(RowData.of(table.subList(i * columnCount, (i + 1) * columnCount)));
-        }
+        rows.addAll(DataUtils.split(table, columnCount).map(RowData::of).toList());
 
         if (config.lucky()) {
             rows.add(RowData.of("Lucky Person", luckyPerson));
@@ -190,25 +195,8 @@ public class SeatTable {
         return rows;
     }
 
-    @Override
-    public String toString() {
-        val columnCount = config.columnCount();
-        val size        = table.size();
-
-        val str = new StringBuilder("Seat Table:\n");
-
-        for (var i = 0; i < size; i++) {
-            if (i % columnCount == 0) {
-                str.append("\n");
-            }
-            str.append(table.get(i)).append("\t\t");
-        }
-
-        if (config.lucky()) {
-            str.append("\nLucky Person: ").append(luckyPerson);
-        }
-
-        return str.append("\nSeed: ").append(seed).toString();
+    public String toString(final String seatSeparator, final String lineSeparator) {
+        return String.join(lineSeparator, toRowData().stream().map(strings -> strings.toString(seatSeparator)).toList());
     }
 
     /**
@@ -217,11 +205,15 @@ public class SeatTable {
      * @param filePath path of file to export to
      * @param writable if exports to a writable file
      *
-     * @throws RuntimeException if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
-    public void exportToChart(final Path filePath, final boolean writable) {
+    public void exportToChart(final Path filePath, final boolean writable) throws IOException {
         if (filePath == null) {
             exportToChart(DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date())), writable);
+            return;
+        }
+        if (filePath.endsWith(".csv")) {
+            PathWrapper.wrap(filePath).writeString(toString(",", System.lineSeparator()));
             return;
         }
         try {
@@ -235,7 +227,7 @@ public class SeatTable {
                 throw new IOException("Failed to set output file \"%s\" to read-only".formatted(f));
             }
         } catch (final Throwable e) {
-            throw new RuntimeException("Failed to save seat table to \"%s\"".formatted(filePath), e);
+            throw new IOException("Failed to save seat table to \"%s\"".formatted(filePath), e);
         }
         LOGGER.info("Seat table successfully exported to \"%s\"".formatted(filePath));
     }

@@ -23,24 +23,22 @@ import lombok.val;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.IntPredicate;
 import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
- * Utils of {@code arrays} and {@link Collection} and its subclasses.
+ * Utils of data processing.
  *
  * @author Calboot
  * @since 1.4.9
  */
-public final class CollectionUtils {
+public final class DataUtils {
 
     /**
      * Don't let anyone else instantiate this class.
      */
-    private CollectionUtils() {
+    private DataUtils() {
     }
 
     /**
@@ -53,9 +51,9 @@ public final class CollectionUtils {
      *
      * @return a randomly picked and removed element of the source collection
      */
-    public static <T> T pickRandomlyAndRemove(final Collection<? extends T> src, final RandomGenerator rd) {
-        if (src instanceof final List<? extends T> list) {
-            return list.remove(rd.nextInt(list.size()));
+    public static <T> T pickRandomlyAndRemove(final Collection<T> src, final RandomGenerator rd) {
+        if (src instanceof List<? extends T>) {
+            return ((List<T>) src).remove(rd.nextInt(src.size()));
         }
         val res = pickRandomly(src, rd);
         src.remove(res);
@@ -71,38 +69,17 @@ public final class CollectionUtils {
      *
      * @return a randomly picked element of the source collection
      */
-    public static <T> T pickRandomly(final Collection<? extends T> src, final RandomGenerator rd) {
-        if (src instanceof final List<? extends T> list) {
-            return list.get(rd.nextInt(list.size()));
+    public static <T> T pickRandomly(final Collection<T> src, final RandomGenerator rd) {
+        if (src instanceof List<? extends T>) {
+            return ((List<T>) src).get(rd.nextInt(src.size()));
         }
-        return new ArrayList<T>(src).get(rd.nextInt(src.size()));
+        return new ArrayList<>(src).get(rd.nextInt(src.size()));
     }
 
-    /**
-     * Generates a list with a source list and a builder.
-     *
-     * @param input   source list
-     * @param builder {@code Function} used to generate elements of the output list
-     * @param <T>     type of input
-     * @param <R>     type of output
-     *
-     * @return list generated
-     */
-    public static <T, R> List<R> buildList(final List<? extends T> input, final Function<T, R> builder) {
-        return input.stream().map(builder).toList();
-    }
-
-    /**
-     * Returns a list containing the elements whose index matches the predicate.
-     *
-     * @param list           input list
-     * @param indexPredicate filter of the index of elements
-     * @param <T>            type of elements in the list
-     *
-     * @return a list containing the elements whose index matches the predicate
-     */
-    public static <T> Stream<T> indexFilter(final List<T> list, final IntPredicate indexPredicate) {
-        return IntStream.range(0, list.size()).filter(indexPredicate).mapToObj(list::get);
+    public static <T> Stream<List<T>> split(final List<T> list, final int chunkSize) {
+        return IntStream
+                .range(0, (int) Math.ceil((double) list.size() / chunkSize))
+                .mapToObj(i -> list.subList(i * chunkSize, Math.min((i + 1) * chunkSize, list.size())));
     }
 
 }

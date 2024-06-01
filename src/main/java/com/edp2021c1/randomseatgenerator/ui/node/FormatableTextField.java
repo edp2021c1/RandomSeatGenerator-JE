@@ -63,7 +63,7 @@ public abstract class FormatableTextField extends TextField {
     public static FormatableTextField of(final BiFunction<String, String, String> formatter) {
         return new FormatableTextField() {
             @Override
-            protected String format(String oldValue, String newValue) {
+            protected String format(final String oldValue, final String newValue) {
                 return formatter.apply(oldValue, newValue);
             }
         };

@@ -24,9 +24,10 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.*;
+import java.util.stream.Collectors;
 
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
 
@@ -67,34 +68,24 @@ public final class LoggerWrapper {
 
     private final Logger logger;
 
-    private final List<PathWrapper> logFiles;
-
     private boolean closed;
 
     private LoggerWrapper() {
         this(GLOBAL_LOGGER_NAME, globalLogDir);
     }
 
-    private LoggerWrapper(final String loggerName, final PathWrapper... logDirs) {
+    private LoggerWrapper(final String loggerName, PathWrapper... logDirs) {
         this.logger = Logger.getLogger(loggerName);
-        val logDirList = new LinkedList<>(logDirs == null ? List.of() : List.of(logDirs));
-        this.logFiles = new LinkedList<>();
-        logDirList.forEach(logDir -> {
-            logFiles.add(logDir.resolve("latest.log"));
-            logFiles.add(logDir.resolve(Strings.nowStr(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS")) + ".log"));
-        });
 
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);
-        logger.setFilter(record -> {
-            format(record);
-            return true;
-        });
+        logger.setFilter(LoggerWrapper::checkAndFormat);
 
         final var consoleHandler = new ConsoleHandler() {
             @Override
             public void close() {
-                val record = format(new LogRecord(LoggingLevels.DEBUG, "Closing console log handler"));
+                val record = new LogRecord(LoggingLevels.DEBUG, "Closing console log handler");
+                checkAndFormat(record);
                 for (val h : logger.getHandlers()) {
                     h.publish(record);
                 }
@@ -106,27 +97,42 @@ public final class LoggerWrapper {
         consoleHandler.setLevel(LoggingLevels.DEBUG);
         logger.addHandler(consoleHandler);
 
-        try {
-            for (val logDir : logDirList) {
-                logDir.replaceWithDirectory();
-                if (logDir.notFullyPermitted()) {
-                    warning("Does not have read/write permission of the log directory");
-                }
-            }
-        } catch (final IOException e) {
-            warning("Unable to create log dir, log may not be saved");
-            warning(Strings.getStackTrace(e));
+        if (logDirs == null || logDirs.length == 0) {
+            return;
         }
-        logFiles.forEach(path -> {
+
+        val logDirSet = Set.of(logDirs);
+        val logFileSet =
+                logDirSet
+                        .parallelStream()
+                        .map(paths -> paths.resolve("latest.log"))
+                        .collect(Collectors.toCollection(() -> new HashSet<>(logDirs.length << 1)));
+        val str = Strings.nowStr(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS")) + ".log";
+        logFileSet.addAll(logDirSet.parallelStream().map(paths -> paths.resolve(str)).toList());
+
+        for (val logDir : logDirSet) {
+            try {
+                logDir.replaceWithDirectory();
+            } catch (final IOException e) {
+                warning("Unable to create log dir, log may not be saved");
+                warning(Strings.getStackTrace(e));
+            }
+            if (logDir.notFullyPermitted()) {
+                warning("Does not have read/write permission of the log directory");
+            }
+        }
+
+        for (val path : logFileSet) {
             try {
                 val fileHandler = new FileHandler(path.toString()) {
                     @Override
                     public void close() throws SecurityException {
-                        val record = format(new LogRecord(LoggingLevels.DEBUG, "Closing log file \"%s\"".formatted(path)));
+                        val record = new LogRecord(LoggingLevels.DEBUG, "Closing log file \"%s\"".formatted(path));
+                        checkAndFormat(record);
+                        publish(record);
                         for (val h : logger.getHandlers()) {
                             h.publish(record);
                         }
-                        publish(record);
                         super.close();
                     }
                 };
@@ -138,7 +144,28 @@ public final class LoggerWrapper {
                 warning("Failed to create log file at \"%s\"".formatted(path));
                 warning(Strings.getStackTrace(e));
             }
-        });
+        }
+
+    }
+
+    private static boolean checkAndFormat(final LogRecord record) {
+        val msg = record.getMessage();
+        if (msg == null || msg.isEmpty()) {
+            return false;
+        }
+        val thread = RuntimeUtils.getThreadById(record.getLongThreadID());
+        record.setMessage(messageFormat.format(
+                new Object[]{
+                        new Date(record.getMillis()),
+                        thread == null ? "Unrecognized Thread" : thread.getName(),
+                        record.getLevel().getName(),
+                        (msg.lines().count() > 1) ? (System.lineSeparator() + msg) : msg
+                },
+                new StringBuffer(1024),
+                null
+        ).toString());
+
+        return true;
     }
 
     /**
@@ -155,23 +182,6 @@ public final class LoggerWrapper {
         if (closed) {
             throw new IllegalStateException("Logger already closed");
         }
-    }
-
-    private static LogRecord format(final LogRecord record) {
-        val thread = RuntimeUtils.getThreadById(record.getLongThreadID());
-
-        record.setMessage(messageFormat.format(
-                new Object[]{
-                        new Date(record.getMillis()),
-                        thread == null ? "Unrecognized Thread" : thread.getName(),
-                        record.getLevel().getName(),
-                        record.getMessage()
-                },
-                new StringBuffer(1024),
-                null
-        ).toString());
-
-        return record;
     }
 
     /**
@@ -206,16 +216,6 @@ public final class LoggerWrapper {
     }
 
     /**
-     * Logs an INFO message.
-     *
-     * @param msg logged message
-     */
-    public void info(final String msg) {
-        checkState();
-        logger.log(LoggingLevels.INFO, msg);
-    }
-
-    /**
      * Logs a DEBUG message.
      *
      * @param msg logged message
@@ -223,6 +223,16 @@ public final class LoggerWrapper {
     public void debug(final String msg) {
         checkState();
         logger.log(LoggingLevels.DEBUG, msg);
+    }
+
+    /**
+     * Logs an INFO message.
+     *
+     * @param msg logged message
+     */
+    public void info(final String msg) {
+        checkState();
+        logger.log(LoggingLevels.INFO, msg);
     }
 
     /**
