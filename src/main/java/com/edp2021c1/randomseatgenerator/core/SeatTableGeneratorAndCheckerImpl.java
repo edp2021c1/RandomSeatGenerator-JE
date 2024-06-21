@@ -124,7 +124,6 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
 
         // 临时变量，提前声明以减少内存和计算操作
         val luckyPersonOriginIndex  = peopleNum - randomPeopleCount - peopleLeft;
-        val peopleNumShuffledInLoop = forTimesMinusOne * randomPeopleCount;
         val seatNumMinusColumnCount = seatNum - columnCount;
 
         do {
@@ -140,7 +139,7 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
                 ), rd);
             }
 
-            DataUtils.split(tNameList, peopleNumShuffledInLoop).forEach(list -> Collections.shuffle(list, rd));
+            DataUtils.split(tNameList, randomPeopleCount).forEach(list -> Collections.shuffle(list, rd));
 
             if (noPeopleLeft) {
                 seatTable.addAll(tNameList);

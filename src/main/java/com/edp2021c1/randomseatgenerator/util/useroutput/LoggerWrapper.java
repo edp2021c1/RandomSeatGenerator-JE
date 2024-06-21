@@ -16,11 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.util;
+package com.edp2021c1.randomseatgenerator.util.useroutput;
 
+import com.edp2021c1.randomseatgenerator.util.PathWrapper;
+import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 import lombok.val;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -104,11 +108,11 @@ public final class LoggerWrapper {
         val logDirSet = Set.of(logDirs);
         val logFileSet =
                 logDirSet
-                        .parallelStream()
+                        .stream()
                         .map(paths -> paths.resolve("latest.log"))
                         .collect(Collectors.toCollection(() -> new HashSet<>(logDirs.length << 1)));
         val str = Strings.nowStr(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS")) + ".log";
-        logFileSet.addAll(logDirSet.parallelStream().map(paths -> paths.resolve(str)).toList());
+        logFileSet.addAll(logDirSet.stream().map(paths -> paths.resolve(str)).toList());
 
         for (val logDir : logDirSet) {
             try {
@@ -124,6 +128,7 @@ public final class LoggerWrapper {
 
         for (val path : logFileSet) {
             try {
+                Files.deleteIfExists(path.getWrapped());
                 val fileHandler = new FileHandler(path.toString()) {
                     @Override
                     public void close() throws SecurityException {

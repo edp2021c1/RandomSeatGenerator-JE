@@ -19,16 +19,15 @@
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
-import com.edp2021c1.randomseatgenerator.util.Notice;
+import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 import lombok.val;
 
-import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
+import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
 
 /**
  * Stage to show a simple message.
@@ -36,7 +35,7 @@ import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
  * @author Calboot
  * @since 1.5.0
  */
-public class MessageDialog extends Stage {
+public class MessageDialog extends DecoratedStage {
 
     private MessageDialog(final Notice msg) {
         super();
@@ -59,7 +58,6 @@ public class MessageDialog extends Stage {
         setTitle(msg.title());
         setMaxWidth(1280);
         setMaxHeight(720);
-        decorate(this, DIALOG);
     }
 
     /**
@@ -83,6 +81,11 @@ public class MessageDialog extends Stage {
             dialog.initOwner(owner);
             dialog.showAndWait();
         });
+    }
+
+    @Override
+    public StageType getStageStyle() {
+        return StageType.DIALOG;
     }
 
 }

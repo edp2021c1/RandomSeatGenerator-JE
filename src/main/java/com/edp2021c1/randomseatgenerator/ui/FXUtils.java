@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui;
 
+import com.edp2021c1.randomseatgenerator.ui.stage.DecoratedStage;
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
@@ -34,7 +35,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.val;
 
@@ -46,7 +46,7 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.KEY_EXPORT_WRITABL
  * @author Calboot
  * @since 1.3.3
  */
-public class UIUtils {
+public class FXUtils {
 
     /**
      * Key of the property of the height of the main window
@@ -84,27 +84,6 @@ public class UIUtils {
     public static final String KEY_IMPORT_DIR_PREVIOUS = "import.dir.previous";
 
     /**
-     * Identifies the main window in the application.
-     */
-    public static final int MAIN_WINDOW = 0;
-
-    /**
-     * Identifies dialogs in the application.
-     * <p>
-     * Not resizable.
-     * <p>
-     * Always on the top of other windows of this app.
-     */
-    public static final int DIALOG = 1;
-
-    /**
-     * Identifies crash reporter windows in the application.
-     * <p>
-     * Icon set to the error icon.
-     */
-    public static final int CRASH_REPORTER = 2;
-
-    /**
      * Dark stylesheets of the windows of the app.
      */
     private static final String[] STYLESHEETS_DARK = {"/assets/css/base.css", "/assets/css/dark.css"};
@@ -138,7 +117,7 @@ public class UIUtils {
     /**
      * Don't let anyone else instantiate this class.
      */
-    private UIUtils() {
+    private FXUtils() {
     }
 
     /**
@@ -174,38 +153,35 @@ public class UIUtils {
      * Decorates the given stage by adding an icon related to
      * the window type of the stage and stylesheets.
      *
-     * @param stage     to be decorated
-     * @param stageType of the window
+     * @param stage to be decorated
      */
-    public static void decorate(final Stage stage, final int stageType) {
-        switch (stageType) {
-            case MAIN_WINDOW -> stage.getIcons().add(icon);
-            case DIALOG -> {
-                stage.getIcons().add(icon);
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.setResizable(false);
-            }
-            case CRASH_REPORTER -> {
-                stage.initOwner(getMainWindow());
-                stage.getIcons().add(icon);
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.setResizable(false);
-            }
+    public static void decorate(final DecoratedStage stage) {
+        stage.getIcons().add(icon);
+        if (stage.getStageStyle().mask() > 0) {
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(false);
+        }
+        if (stage.getStageStyle().mask() > 1) {
+            stage.initOwner(getMainWindow());
         }
 
-        val stylesheets = stage.getScene().getStylesheets();
-        globalDarkMode.subscribe(newValue -> {
-            if (newValue) {
-                stylesheets.setAll(STYLESHEETS_DARK);
-                return;
+        stage.sceneProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                val stylesheets = newValue.getStylesheets();
+                globalDarkMode.subscribe(n -> {
+                    if (n) {
+                        stylesheets.setAll(STYLESHEETS_DARK);
+                        return;
+                    }
+                    stylesheets.setAll(STYLESHEETS_LIGHT);
+                });
+                if (globalDarkMode.get()) {
+                    stylesheets.setAll(STYLESHEETS_DARK);
+                    return;
+                }
+                stylesheets.setAll(STYLESHEETS_LIGHT);
             }
-            stylesheets.setAll(STYLESHEETS_LIGHT);
         });
-        if (globalDarkMode.get()) {
-            stylesheets.setAll(STYLESHEETS_DARK);
-            return;
-        }
-        stylesheets.setAll(STYLESHEETS_LIGHT);
     }
 
     /**

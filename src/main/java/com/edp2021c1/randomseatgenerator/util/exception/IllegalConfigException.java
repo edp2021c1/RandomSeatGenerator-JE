@@ -18,7 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util.exception;
 
-import com.edp2021c1.randomseatgenerator.util.Notice;
+import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
 import lombok.Getter;
 import lombok.val;
 

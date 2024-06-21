@@ -19,14 +19,22 @@
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
-import com.edp2021c1.randomseatgenerator.ui.UIUtils;
+import com.edp2021c1.randomseatgenerator.ui.FXUtils;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
+import com.edp2021c1.randomseatgenerator.util.PathWrapper;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
+import com.edp2021c1.randomseatgenerator.util.config.CachedMapSeatConfig;
 import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
+import com.edp2021c1.randomseatgenerator.util.useroutput.CrashReporter;
+import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
+import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -35,16 +43,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.val;
 
 import java.io.File;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
+import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
 
 /**
  * Main window of the application.
@@ -52,7 +58,7 @@ import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
  * @author Calboot
  * @since 1.3.3
  */
-public class MainWindow extends Stage {
+public class MainWindow extends DecoratedStage {
 
     private static final LoggerWrapper LOGGER = LoggerWrapper.global();
 
@@ -66,6 +72,10 @@ public class MainWindow extends Stage {
     private final StringProperty seed;
 
     private final ObjectProperty<SeatTable> seatTable;
+
+    private final CachedMapSeatConfig config;
+
+    private final FileChooser fileChooser = new FileChooser();
 
     private String previousSeed = null;
 
@@ -81,6 +91,7 @@ public class MainWindow extends Stage {
         }
 
         cfHolder = SeatConfigHolder.global();
+        config = cfHolder.getClone();
 
         /* *************************************************************************
          *                                                                         *
@@ -103,7 +114,6 @@ public class MainWindow extends Stage {
         seed = seedInput.textProperty();
 
         // 座位表
-        val config = cfHolder.getClone();
         try {
             config.check();
         } catch (final IllegalConfigException e) {
@@ -130,19 +140,17 @@ public class MainWindow extends Stage {
 
         setScene(new Scene(mainBox));
         setTitle(Metadata.TITLE);
-        decorate(this, MAIN_WINDOW);
 
-        val fc = new FileChooser();
-        fc.setTitle("导出座位表");
-        fc.getExtensionFilters().addAll(
+        fileChooser.setTitle("导出座位表");
+        fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"),
                 new FileChooser.ExtensionFilter("Excel 97-2004 工作薄", "*.xls"),
                 new FileChooser.ExtensionFilter("CSV 逗号分隔", "*.csv")
         );
 
-        fc.setInitialDirectory(new File(Objects.requireNonNullElse(
+        fileChooser.setInitialDirectory(new File(Objects.requireNonNullElseGet(
                 AppPropertiesHolder.global().getProperty(KEY_EXPORT_DIR_PREVIOUS),
-                SeatTable.DEFAULT_EXPORTING_DIR.toString()
+                SeatTable.DEFAULT_EXPORTING_DIR::toString
         )));
 
         /* *************************************************************************
@@ -153,59 +161,16 @@ public class MainWindow extends Stage {
 
         settingsBtn.setOnAction(event -> SettingsDialog.getSettingsDialog().showAndWait());
 
-        generateBtn.setOnAction(event -> {
-            try {
-                if (Objects.equals(previousSeed, seed.get())) {
-                    randomSeedBtn.fire();
-                }
-
-                val seed1 = seed.get();
-                seatTable.set(SeatTable.generate(cfHolder.getClone().checkAndReturn(), seed1));
-                LOGGER.info(System.lineSeparator() + seatTable.get());
-                previousSeed = seed1;
-                generated = true;
-            } catch (final Throwable e) {
-                CrashReporter.report(e);
-            }
-        });
+        generateBtn.setOnAction(this::generateSeatTable);
         generateBtn.setDefaultButton(true);
 
-        exportBtn.setOnAction(event -> {
-            try {
-                if (!generated) {
-                    generateBtn.fire();
-                }
+        exportBtn.setOnAction(this::exportSeatTable);
 
-                fc.setInitialFileName("%tF".formatted(new Date()));
+        seedInput.setOnAction(this::generateSeatTable);
 
-                var tmp = fc.getInitialDirectory();
-                if (tmp != null) {
-                    while (!tmp.isDirectory()) {
-                        tmp = tmp.getParentFile();
-                    }
-                    fc.setInitialDirectory(tmp);
-                }
+        randomSeedBtn.setOnAction(this::generateRandomSeed);
 
-                val exportFile = fc.showSaveDialog(this);
-                if (exportFile == null) {
-                    return;
-                }
-                seatTable.get().exportToChart(exportFile.toPath(), UIUtils.exportWritableProperty().get());
-
-                MessageDialog.showMessage(this, Notice.of("成功导出座位表到\n" + exportFile));
-
-                fc.setInitialDirectory(exportFile.getParentFile());
-                AppPropertiesHolder.global().setProperty(KEY_EXPORT_DIR_PREVIOUS, exportFile.getParentFile().toString());
-            } catch (final Throwable e) {
-                CrashReporter.report(e);
-            }
-        });
-
-        seedInput.setOnAction(event -> generateBtn.fire());
-
-        randomSeedBtn.setOnAction(event -> seed.set(Strings.randomString(30)));
-
-        dateAsSeedBtn.setOnAction(event -> seed.set(Strings.nowStr()));
+        dateAsSeedBtn.setOnAction(this::generateDateSeed);
 
         if (OperatingSystem.MAC == OperatingSystem.getCurrent()) {
             setFullScreenExitHint("");
@@ -214,7 +179,6 @@ public class MainWindow extends Stage {
                     return;
                 }
                 switch (event.getCode()) {
-                    case Q -> System.exit(0);
                     case W -> close();
                     case F -> setFullScreen(event.isControlDown() != isFullScreen());
                     case COMMA -> settingsBtn.fire();
@@ -279,11 +243,67 @@ public class MainWindow extends Stage {
         setOnCloseRequest(event -> close());
     }
 
+    private void generateSeatTable(final ActionEvent event) {
+        try {
+            if (Objects.equals(previousSeed, seed.get())) {
+                generateRandomSeed(event);
+            }
+
+            val seed1 = seed.get();
+            seatTable.set(SeatTable.generate(cfHolder.getClone().checkAndReturn(), seed1));
+            LOGGER.info(System.lineSeparator() + seatTable.get());
+            previousSeed = seed1;
+            generated = true;
+        } catch (final Throwable e) {
+            CrashReporter.report(e);
+        }
+    }
+
+    private void generateRandomSeed(final ActionEvent event) {
+        seed.set(Strings.randomString(30));
+    }
+
+    private void exportSeatTable(final ActionEvent event) {
+        try {
+            if (!generated) {
+                generateSeatTable(event);
+            }
+
+            fileChooser.setInitialFileName(Strings.nowStr());
+
+            val tmp = fileChooser.getInitialDirectory();
+            val p   = tmp == null ? SeatTable.DEFAULT_EXPORTING_DIR : PathWrapper.wrap(tmp);
+            fileChooser.setInitialDirectory(p.getDirParent().toFile());
+
+            val exportFile = fileChooser.showSaveDialog(this);
+            if (exportFile == null) {
+                return;
+            }
+            seatTable.get().exportToChart(exportFile.toPath(), FXUtils.exportWritableProperty().get());
+
+            MessageDialog.showMessage(this, Notice.of("成功导出座位表到\n" + exportFile));
+
+            fileChooser.setInitialDirectory(exportFile.getParentFile());
+            AppPropertiesHolder.global().setProperty(KEY_EXPORT_DIR_PREVIOUS, exportFile.getParentFile().toString());
+        } catch (final Throwable e) {
+            CrashReporter.report(e);
+        }
+    }
+
+    private void generateDateSeed(final ActionEvent event) {
+        seed.set(Strings.nowStr());
+    }
+
+    @Override
+    public StageType getStageStyle() {
+        return StageType.MAIN_WINDOW;
+    }
+
     /**
      * Action to do if config is changed.
      */
     public void configChanged() {
-        seatTableView.setEmptySeatTable(cfHolder.getClone());
+        seatTableView.setEmptySeatTable(config.putAllAndReturn(cfHolder.getClone()).refresh());
         generated = false;
         previousSeed = null;
     }

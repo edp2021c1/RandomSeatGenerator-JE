@@ -16,7 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.util;
+package com.edp2021c1.randomseatgenerator.util.useroutput;
+
+import com.edp2021c1.randomseatgenerator.util.Strings;
 
 import java.util.Objects;
 

@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
 import lombok.val;
 
 import java.util.*;
@@ -70,9 +71,7 @@ public final class RuntimeUtils {
      */
     public static void runExitHooks() {
         synchronized (exitHooks) {
-            exitHooks
-                    .parallelStream()
-                    .forEachOrdered(Runnable::run);
+            exitHooks.forEach(Runnable::run);
             exitHooks.clear();
         }
     }

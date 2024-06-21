@@ -18,12 +18,12 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
-import com.edp2021c1.randomseatgenerator.util.LoggerWrapper;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.PathWrapper;
 import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
+import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
 import lombok.Getter;
 import lombok.val;
 
@@ -36,10 +36,10 @@ import java.util.Map;
 import static com.alibaba.fastjson2.JSON.parseObject;
 
 /**
- * Handles {@link SeatConfigWrapper}.
+ * Handles {@link CachedMapSeatConfig}.
  *
  * @author Calboot
- * @see SeatConfigWrapper
+ * @see CachedMapSeatConfig
  * @since 1.4.9
  */
 public class SeatConfigHolder {
@@ -76,7 +76,7 @@ public class SeatConfigHolder {
     @Getter
     private final PathWrapper configPath;
 
-    private final SeatConfigWrapper content;
+    private final CachedMapSeatConfig content;
 
     private final FileChannel channel;
 
@@ -90,7 +90,7 @@ public class SeatConfigHolder {
      * @throws IOException if failed to init config path, or does not have enough permission of the path
      */
     private SeatConfigHolder(final Path configPath) throws IOException {
-        this.content = new SeatConfigWrapper();
+        this.content = new CachedMapSeatConfig();
         this.configPath = PathWrapper.wrap(configPath);
         initConfigPath();
 
@@ -191,7 +191,7 @@ public class SeatConfigHolder {
      *
      * @throws IllegalStateException if is closed
      */
-    public SeatConfigWrapper getClone() {
+    public CachedMapSeatConfig getClone() {
         checkState();
         return content.cloneThis();
     }

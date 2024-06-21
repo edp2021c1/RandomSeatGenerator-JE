@@ -18,8 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util.exception;
 
-import com.edp2021c1.randomseatgenerator.util.ExecutableOnCaught;
-import com.edp2021c1.randomseatgenerator.util.Notice;
+import com.edp2021c1.randomseatgenerator.util.useroutput.ExecutableOnCaught;
+import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
 
 /**
  * Thrown if another instance of this application is detected.

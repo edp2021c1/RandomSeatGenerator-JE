@@ -18,9 +18,9 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
-import com.edp2021c1.randomseatgenerator.ui.UIUtils;
+import com.edp2021c1.randomseatgenerator.ui.FXUtils;
+import com.edp2021c1.randomseatgenerator.util.config.CachedMapSeatConfig;
 import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.config.SeatConfigWrapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
@@ -64,7 +64,9 @@ public class ConfigPane extends VBox {
 
     private final SeatConfigHolder source;
 
-    private final SeatConfigWrapper content;
+    private final CachedMapSeatConfig content;
+
+    private final BooleanProperty applyButtonDisabledProperty;
 
     /**
      * Constructs an instance.
@@ -109,6 +111,7 @@ public class ConfigPane extends VBox {
         luckyOptionProperty = luckyOptionCheck.selectedProperty();
         exportWritableProperty = exportWritableCheck.selectedProperty();
         darkModeProperty = darkModeCheck.selectedProperty();
+        applyButtonDisabledProperty = applyBtnDisabledProperty;
 
         source = configSource;
         content = source.getClone();
@@ -124,44 +127,48 @@ public class ConfigPane extends VBox {
         box3.setAlignment(Pos.CENTER);
         getChildren().addAll(box1, box2, box3);
 
-        exportWritableProperty.bindBidirectional(UIUtils.exportWritableProperty());
-        darkModeProperty.bindBidirectional(UIUtils.globalDarkModeProperty());
+        exportWritableProperty.bindBidirectional(FXUtils.exportWritableProperty());
+        darkModeProperty.bindBidirectional(FXUtils.globalDarkModeProperty());
 
         if (applyBtnDisabledProperty == null) {
             return;
         }
         rowCountProperty.subscribe(newValue -> {
             content.setRowCount(newValue.intValue());
-            applyBtnDisabledProperty.set(checkEquals());
+            refreshState();
         });
         columnCountProperty.subscribe(newValue -> {
             content.setColumnCount(newValue.intValue());
-            applyBtnDisabledProperty.set(checkEquals());
+            refreshState();
         });
         randomBetweenRowsProperty.subscribe(newValue -> {
             content.setRandomBetweenRows(newValue.intValue());
-            applyBtnDisabledProperty.set(checkEquals());
+            refreshState();
         });
         disabledLastRowPosProperty.subscribe(newValue -> {
             content.setDisabledLastRowPos(newValue);
-            applyBtnDisabledProperty.set(checkEquals());
+            refreshState();
         });
         nameListProperty.subscribe(newValue -> {
             content.setNames(newValue);
-            applyBtnDisabledProperty.set(checkEquals());
+            refreshState();
         });
         groupLeaderListProperty.subscribe(newValue -> {
             content.setGroupLeaders(newValue);
-            applyBtnDisabledProperty.set(checkEquals());
+            refreshState();
         });
         separateListProperty.subscribe(newValue -> {
             content.setSeparatedPairs(newValue);
-            applyBtnDisabledProperty.set(checkEquals());
+            refreshState();
         });
         luckyOptionProperty.subscribe(newValue -> {
             content.setLucky(newValue);
-            applyBtnDisabledProperty.set(checkEquals());
+            refreshState();
         });
+    }
+
+    public void refreshState() {
+        applyButtonDisabledProperty.set(checkEquals());
     }
 
     private boolean checkEquals() {
@@ -173,7 +180,7 @@ public class ConfigPane extends VBox {
      *
      * @return a copy of {@link #content}
      */
-    public SeatConfigWrapper getContent() {
+    public CachedMapSeatConfig getContent() {
         return content.cloneThis();
     }
 
@@ -182,7 +189,7 @@ public class ConfigPane extends VBox {
      *
      * @param config to set to the pane.
      */
-    public void setContent(final SeatConfigWrapper config) {
+    public void setContent(final CachedMapSeatConfig config) {
         if (config == null) {
             return;
         }
@@ -193,9 +200,9 @@ public class ConfigPane extends VBox {
         nameListProperty.set(config.getNames());
         groupLeaderListProperty.set(config.getGroupLeaders());
         separateListProperty.set(config.getSeparatedPairs());
-        luckyOptionProperty.set(config.lucky());
-        exportWritableProperty.set(UIUtils.exportWritableProperty().get());
-        darkModeProperty.set(UIUtils.globalDarkModeProperty().get());
+        luckyOptionProperty.set(config.getLucky());
+        exportWritableProperty.set(FXUtils.exportWritableProperty().get());
+        darkModeProperty.set(FXUtils.globalDarkModeProperty().get());
     }
 
 }

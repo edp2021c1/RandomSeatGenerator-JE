@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
+import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
 import lombok.NonNull;
 import lombok.val;
 
@@ -98,6 +99,10 @@ public class PathWrapper implements Path {
      */
     public static PathWrapper wrap(final String first, final String... more) {
         return new PathWrapper(Path.of(first, more));
+    }
+
+    public Path getWrapped() {
+        return path;
     }
 
     /**

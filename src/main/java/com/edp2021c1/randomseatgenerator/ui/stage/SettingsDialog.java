@@ -18,13 +18,20 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
-import com.edp2021c1.randomseatgenerator.ui.UIUtils;
+import com.edp2021c1.randomseatgenerator.ui.FXUtils;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.node.FormatableTextField;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
+import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
+import com.edp2021c1.randomseatgenerator.util.PathWrapper;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
 import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.useroutput.CrashReporter;
+import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
+import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -33,7 +40,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.val;
 
@@ -41,7 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
+import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
 
 /**
@@ -50,7 +56,7 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
  * @author Calboot
  * @since 1.3.3
  */
-public class SettingsDialog extends Stage {
+public class SettingsDialog extends DecoratedStage {
 
     @Getter
     private static final SettingsDialog settingsDialog = new SettingsDialog();
@@ -58,6 +64,10 @@ public class SettingsDialog extends Stage {
     private static final LoggerWrapper LOGGER = LoggerWrapper.global();
 
     private final SeatConfigHolder cfHolder;
+
+    private final FileChooser fileChooser = new FileChooser();
+
+    private final ConfigPane configPane;
 
     /**
      * Creates an instance.
@@ -104,7 +114,7 @@ public class SettingsDialog extends Stage {
         val applyBtn = createButton("应用", 80, 26);
         applyBtn.setDisable(true);
 
-        val configPane = new ConfigPane(
+        configPane = new ConfigPane(
                 rowCountInput,
                 columnCountInput,
                 rbrInput,
@@ -118,6 +128,7 @@ public class SettingsDialog extends Stage {
                 applyBtn.disableProperty(),
                 cfHolder
         );
+        configPane.setContent(cfHolder.getClone());
 
         val loadConfigBtnBox = new HBox(loadConfigBtn);
         loadConfigBtnBox.setPrefHeight(45);
@@ -186,13 +197,11 @@ public class SettingsDialog extends Stage {
         setScene(new Scene(mainBox));
         setTitle(NAME + " - 设置");
         initOwner(getMainWindow());
-        decorate(this, DIALOG);
 
-        val fc = new FileChooser();
-        fc.setTitle("加载配置文件");
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
+        fileChooser.setTitle("加载配置文件");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
 
-        fc.setInitialDirectory(new File(Objects.requireNonNullElse(
+        fileChooser.setInitialDirectory(new File(Objects.requireNonNullElse(
                 AppPropertiesHolder.global().getProperty(KEY_IMPORT_DIR_PREVIOUS),
                 cfHolder.getConfigPath().getParent().toString())
         ));
@@ -203,44 +212,9 @@ public class SettingsDialog extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        loadConfigBtn.setOnAction(event -> {
-            try {
-                var tmp = fc.getInitialDirectory();
-                if (tmp != null) {
-                    fc.setInitialDirectory(PathWrapper.wrap(tmp).getDirParent().toFile());
-                }
+        loadConfigBtn.setOnAction(this::loadConfig);
 
-                val importFile = fc.showOpenDialog(this);
-                if (importFile == null) {
-                    return;
-                }
-
-                try {
-                    val temp = SeatConfigHolder.createHolder(importFile.toPath(), false);
-                    configPane.setContent(temp.getClone());
-                    temp.close();
-                } catch (final IOException e) {
-                    LOGGER.warning("Failed to import config");
-                    LOGGER.warning(Strings.getStackTrace(e));
-                    MessageDialog.showMessage(this, Notice.of("导入设置失败"));
-                }
-
-                fc.setInitialDirectory(importFile.getParentFile());
-                AppPropertiesHolder.global().setProperty(KEY_IMPORT_DIR_PREVIOUS, fc.getInitialDirectory().toString());
-            } catch (final Throwable e) {
-                CrashReporter.report(e);
-            }
-        });
-
-        applyBtn.setOnAction(event -> {
-            try {
-                cfHolder.putAll(configPane.getContent().checkAndReturn());
-                UIUtils.getMainWindow().configChanged();
-                applyBtn.setDisable(true);
-            } catch (final Throwable e) {
-                CrashReporter.report(e);
-            }
-        });
+        applyBtn.setOnAction(this::applyConfig);
 
         versionLink.setOnAction(event -> DesktopUtils.browseIfSupported(VERSION_PAGE_URI));
 
@@ -248,10 +222,7 @@ public class SettingsDialog extends Stage {
 
         licenseLink.setOnAction(event -> DesktopUtils.browseIfSupported(LICENSE_URI));
 
-        confirmBtn.setOnAction(event -> {
-            applyBtn.fire();
-            close();
-        });
+        confirmBtn.setOnAction(this::confirmConfig);
         confirmBtn.setDefaultButton(true);
 
         cancelBtn.setOnAction(event -> close());
@@ -279,8 +250,55 @@ public class SettingsDialog extends Stage {
                 }
             });
         }
+    }
 
-        setOnShown(event -> configPane.setContent(cfHolder.getClone()));
+    private void loadConfig(final ActionEvent event) {
+        try {
+            var tmp = fileChooser.getInitialDirectory();
+            if (tmp != null) {
+                fileChooser.setInitialDirectory(PathWrapper.wrap(tmp).getDirParent().toFile());
+            }
+
+            val importFile = fileChooser.showOpenDialog(this);
+            if (importFile == null) {
+                return;
+            }
+
+            try {
+                val temp = SeatConfigHolder.createHolder(importFile.toPath(), false);
+                configPane.setContent(temp.getClone());
+                temp.close();
+            } catch (final IOException e) {
+                LOGGER.warning("Failed to import config");
+                LOGGER.warning(Strings.getStackTrace(e));
+                MessageDialog.showMessage(this, Notice.of("导入设置失败"));
+            }
+
+            fileChooser.setInitialDirectory(importFile.getParentFile());
+            AppPropertiesHolder.global().setProperty(KEY_IMPORT_DIR_PREVIOUS, fileChooser.getInitialDirectory().toString());
+        } catch (final Throwable e) {
+            CrashReporter.report(e);
+        }
+    }
+
+    private void confirmConfig(final ActionEvent event) {
+        applyConfig(event);
+        close();
+    }
+
+    private void applyConfig(final ActionEvent event) {
+        try {
+            cfHolder.putAll(configPane.getContent().checkAndReturn());
+            configPane.refreshState();
+            FXUtils.getMainWindow().configChanged();
+        } catch (final Throwable e) {
+            CrashReporter.report(e);
+        }
+    }
+
+    @Override
+    public StageType getStageStyle() {
+        return StageType.DIALOG;
     }
 
 }

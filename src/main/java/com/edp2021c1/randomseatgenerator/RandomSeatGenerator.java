@@ -19,10 +19,15 @@
 package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
-import com.edp2021c1.randomseatgenerator.ui.UIUtils;
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.PathWrapper;
+import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
+import com.edp2021c1.randomseatgenerator.util.Strings;
+import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
 import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
+import com.edp2021c1.randomseatgenerator.util.useroutput.CrashReporter;
+import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.val;
@@ -31,6 +36,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static com.edp2021c1.randomseatgenerator.util.Metadata.KEY_EXPORT_WRITABLE;
 
 /**
  * Application intro.
@@ -82,6 +89,11 @@ public class RandomSeatGenerator extends Application {
         LoggerWrapper.start();
         if (Metadata.DATA_DIR.notFullyPermitted()) {
             LOGGER.warning("Does not have read/write permission of the data directory");
+        }
+
+        try {
+            SeatTable.DEFAULT_EXPORTING_DIR.replaceWithDirectory();
+        } catch (final IOException ignored) {
         }
     }
 
@@ -154,7 +166,7 @@ public class RandomSeatGenerator extends Application {
                 LOGGER.info(System.lineSeparator() + seatTable);
 
                 // 导出
-                seatTable.exportToChart(outputPath, UIUtils.exportWritableProperty().get());
+                seatTable.exportToChart(outputPath, AppPropertiesHolder.global().getBoolean(KEY_EXPORT_WRITABLE));
 
                 // 防止某表格抽风
                 System.exit(0);
@@ -168,7 +180,6 @@ public class RandomSeatGenerator extends Application {
 
     @Override
     public void stop() {
-        RuntimeUtils.runExitHooks();
         System.exit(0);
     }
 

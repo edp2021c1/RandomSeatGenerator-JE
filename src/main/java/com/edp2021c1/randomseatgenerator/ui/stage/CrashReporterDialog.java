@@ -19,8 +19,8 @@
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
-import com.edp2021c1.randomseatgenerator.util.Notice;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
+import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Hyperlink;
@@ -29,10 +29,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import lombok.val;
 
-import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
+import static com.edp2021c1.randomseatgenerator.ui.FXUtils.createButton;
 
 /**
  * Stage of FX crash reporter.
@@ -40,7 +39,7 @@ import static com.edp2021c1.randomseatgenerator.ui.UIUtils.*;
  * @author Calboot
  * @since 1.4.1
  */
-public class CrashReporterDialog extends Stage {
+public class CrashReporterDialog extends DecoratedStage {
 
     private CrashReporterDialog(final Notice msg) {
         super();
@@ -74,7 +73,6 @@ public class CrashReporterDialog extends Stage {
         setMaxWidth(1440);
         setMaxHeight(810);
         setTitle(msg.title());
-        decorate(this, CRASH_REPORTER);
 
         here.setOnAction(event -> DesktopUtils.copyPlainText(mainText.getText()));
 
@@ -109,6 +107,11 @@ public class CrashReporterDialog extends Stage {
      */
     public static void showCrashReporter(final Notice msg) {
         DesktopUtils.runOnFXThread(() -> new CrashReporterDialog(msg).showAndWait());
+    }
+
+    @Override
+    public StageType getStageStyle() {
+        return StageType.CRASH_REPORTER;
     }
 
 }
