@@ -56,7 +56,7 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
  * @author Calboot
  * @since 1.3.3
  */
-public class SettingsDialog extends DecoratedStage {
+public final class SettingsDialog extends DecoratedStage {
 
     @Getter
     private static final SettingsDialog settingsDialog = new SettingsDialog();

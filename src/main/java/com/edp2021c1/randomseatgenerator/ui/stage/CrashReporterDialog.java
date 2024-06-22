@@ -39,7 +39,7 @@ import static com.edp2021c1.randomseatgenerator.ui.FXUtils.createButton;
  * @author Calboot
  * @since 1.4.1
  */
-public class CrashReporterDialog extends DecoratedStage {
+public final class CrashReporterDialog extends DecoratedStage {
 
     private CrashReporterDialog(final Notice msg) {
         super();

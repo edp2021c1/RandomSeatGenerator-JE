@@ -46,7 +46,7 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.KEY_EXPORT_WRITABL
  * @author Calboot
  * @since 1.3.3
  */
-public class FXUtils {
+public final class FXUtils {
 
     /**
      * Key of the property of the height of the main window

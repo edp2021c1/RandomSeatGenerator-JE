@@ -1,0 +1,1 @@
+package com.edp2021c1.randomseatgenerator.util.useroutput;

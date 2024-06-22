@@ -24,14 +24,11 @@ import com.edp2021c1.randomseatgenerator.util.Strings;
 import lombok.val;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.*;
-import java.util.stream.Collectors;
 
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
 
@@ -41,7 +38,7 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
  * @author Calboot
  * @since 1.4.4
  */
-public final class LoggerWrapper {
+public class LoggerWrapper {
 
     /**
      * Name of the global logger.
@@ -55,7 +52,7 @@ public final class LoggerWrapper {
 
     private static final PathWrapper globalLogDir = DATA_DIR.resolve("logs");
 
-    private static final MessageFormat messageFormat = new MessageFormat("[{0,date,yyyy-MM-dd HH:mm:ss.SSS}] [{1}/{2}] {3}\n");
+    private static final MessageFormat messageFormat = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
 
     private static final Formatter DEFAULT_FORMATTER = new Formatter() {
         @Override
@@ -78,77 +75,33 @@ public final class LoggerWrapper {
         this(GLOBAL_LOGGER_NAME, globalLogDir);
     }
 
-    private LoggerWrapper(final String loggerName, PathWrapper... logDirs) {
+    private LoggerWrapper(final String loggerName, PathWrapper logDir) {
         this.logger = Logger.getLogger(loggerName);
 
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);
         logger.setFilter(LoggerWrapper::checkAndFormat);
 
-        final var consoleHandler = new ConsoleHandler() {
-            @Override
-            public void close() {
-                val record = new LogRecord(LoggingLevels.DEBUG, "Closing console log handler");
-                checkAndFormat(record);
-                for (val h : logger.getHandlers()) {
-                    h.publish(record);
-                }
-                publish(record);
-                super.close();
-            }
-        };
-        consoleHandler.setFormatter(DEFAULT_FORMATTER);
-        consoleHandler.setLevel(LoggingLevels.DEBUG);
-        logger.addHandler(consoleHandler);
+        CH.register(logger);
 
-        if (logDirs == null || logDirs.length == 0) {
-            return;
+        try {
+            logDir.replaceWithDirectory();
+        } catch (final IOException e) {
+            warning("Unable to create log dir, log may not be saved");
+            warning(Strings.getStackTrace(e));
         }
-
-        val logDirSet = Set.of(logDirs);
-        val logFileSet =
-                logDirSet
-                        .stream()
-                        .map(paths -> paths.resolve("latest.log"))
-                        .collect(Collectors.toCollection(() -> new HashSet<>(logDirs.length << 1)));
-        val str = Strings.nowStr(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS")) + ".log";
-        logFileSet.addAll(logDirSet.stream().map(paths -> paths.resolve(str)).toList());
-
-        for (val logDir : logDirSet) {
-            try {
-                logDir.replaceWithDirectory();
-            } catch (final IOException e) {
-                warning("Unable to create log dir, log may not be saved");
-                warning(Strings.getStackTrace(e));
-            }
-            if (logDir.notFullyPermitted()) {
-                warning("Does not have read/write permission of the log directory");
-            }
+        if (logDir.notFullyPermitted()) {
+            warning("Does not have read/write permission of the log directory");
         }
-
-        for (val path : logFileSet) {
-            try {
-                Files.deleteIfExists(path.getWrapped());
-                val fileHandler = new FileHandler(path.toString()) {
-                    @Override
-                    public void close() throws SecurityException {
-                        val record = new LogRecord(LoggingLevels.DEBUG, "Closing log file \"%s\"".formatted(path));
-                        checkAndFormat(record);
-                        publish(record);
-                        for (val h : logger.getHandlers()) {
-                            h.publish(record);
-                        }
-                        super.close();
-                    }
-                };
-                fileHandler.setLevel(LoggingLevels.DEBUG);
-                fileHandler.setFormatter(DEFAULT_FORMATTER);
-                fileHandler.setEncoding("UTF-8");
-                logger.addHandler(fileHandler);
-            } catch (final Throwable e) {
-                warning("Failed to create log file at \"%s\"".formatted(path));
-                warning(Strings.getStackTrace(e));
-            }
+        try {
+            LH.register(logger, logDir);
+        } catch (final IOException e) {
+            warning("Unable to create log file, log may not be saved");
+        }
+        try {
+            DH.register(logger, logDir);
+        } catch (final IOException e) {
+            warning("Unable to create log file, log may not be saved");
         }
 
     }
@@ -272,14 +225,102 @@ public final class LoggerWrapper {
         return !closed;
     }
 
-    /**
-     * Logs an IO related message.
-     *
-     * @param msg logged message
-     */
-    public void io(final String msg) {
-        checkState();
-        logger.log(LoggingLevels.IO, msg);
+    private static final class CH extends ConsoleHandler {
+
+        private final Logger logger;
+
+        private CH(final Logger logger) {
+            super();
+
+            this.logger = logger;
+            setFormatter(DEFAULT_FORMATTER);
+            setLevel(LoggingLevels.DEBUG);
+        }
+
+        public static void register(final Logger logger) {
+            logger.addHandler(new CH(logger));
+        }
+
+        @Override
+        public void close() throws SecurityException {
+            val record = new LogRecord(LoggingLevels.DEBUG, "Closing console log handler");
+            checkAndFormat(record);
+            for (val h : logger.getHandlers()) {
+                h.publish(record);
+            }
+            publish(record);
+            super.close();
+        }
+
+    }
+
+    private static sealed class FH extends FileHandler permits LH, DH {
+
+        private final Logger logger;
+
+        private final PathWrapper path;
+
+        protected FH(final Logger logger, final PathWrapper path) throws IOException {
+            super(path.toString());
+
+            this.logger = logger;
+            this.path = path;
+            setLevel(LoggingLevels.DEBUG);
+            setFormatter(DEFAULT_FORMATTER);
+            setEncoding("UTF-8");
+        }
+
+        @Override
+        public void close() throws SecurityException {
+            val record = new LogRecord(LoggingLevels.DEBUG, "Closing log file \"%s\"".formatted(path));
+            checkAndFormat(record);
+            publish(record);
+            for (val h : logger.getHandlers()) {
+                h.publish(record);
+            }
+            super.close();
+        }
+
+        protected PathWrapper getPath() {
+            return path;
+        }
+
+    }
+
+    private static final class LH extends FH {
+
+        private LH(final Logger logger, final PathWrapper logDir) throws IOException, SecurityException {
+            super(logger, logDir.resolve("latest.log"));
+        }
+
+        public static void register(final Logger logger, final PathWrapper logDir) throws IOException {
+            logger.addHandler(new LH(logger, logDir));
+        }
+
+    }
+
+    private static final class DH extends FH {
+
+        private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
+
+        private DH(final Logger logger, final PathWrapper logDir) throws IOException, SecurityException {
+            super(logger, logDir.resolve(Strings.nowStr(dateFormat) + ".log"));
+        }
+
+        public static void register(final Logger logger, final PathWrapper logDir) throws IOException {
+            logger.addHandler(new DH(logger, logDir));
+        }
+
+        @Override
+        public void close() throws SecurityException {
+            super.close();
+            try {
+                getPath().compressToGZip();
+                getPath().delete();
+            } catch (final IOException ignored) {
+            }
+        }
+
     }
 
     /**
@@ -298,8 +339,6 @@ public final class LoggerWrapper {
          * @see Level#SEVERE
          */
         public static final Level ERROR = new LoggingLevels("ERROR", 1000);
-
-        public static final Level IO = new LoggingLevels("IO", 300);
 
         private LoggingLevels(final String name, final int value) {
             super(name, value, null);

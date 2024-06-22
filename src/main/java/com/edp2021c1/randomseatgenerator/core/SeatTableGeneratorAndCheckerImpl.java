@@ -40,7 +40,7 @@ import static java.util.Collections.fill;
  * @author Calboot
  * @since 1.5.1
  */
-public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndChecker {
+public final class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndChecker {
 
     static final SeatTableGenerator instance = new SeatTableGeneratorAndCheckerImpl();
 
@@ -105,10 +105,6 @@ public class SeatTableGeneratorAndCheckerImpl implements SeatTableGeneratorAndCh
         val peopleLeft        = peopleInSeat % columnCount;
         val noPeopleLeft      = peopleLeft == 0;
         val randomPeopleCount = Math.min(columnCount * config.randomBetweenRows(), peopleInSeat - peopleLeft);
-
-        val forTimesMinusOne = peopleNum % randomPeopleCount > columnCount
-                ? seatNum / randomPeopleCount
-                : seatNum / randomPeopleCount - 1;
 
         val emptyRow = Arrays.asList(new String[columnCount]);
         fill(emptyRow, EMPTY_SEAT_PLACEHOLDER);

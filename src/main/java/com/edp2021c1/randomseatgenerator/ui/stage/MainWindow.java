@@ -58,7 +58,7 @@ import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
  * @author Calboot
  * @since 1.3.3
  */
-public class MainWindow extends DecoratedStage {
+public final class MainWindow extends DecoratedStage {
 
     private static final LoggerWrapper LOGGER = LoggerWrapper.global();
 

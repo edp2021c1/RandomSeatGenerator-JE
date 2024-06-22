@@ -45,7 +45,7 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.KEY_EXPORT_WRITABL
  * @author Calboot
  * @since 1.0.0
  */
-public class RandomSeatGenerator extends Application {
+public final class RandomSeatGenerator extends Application {
 
     private static final LoggerWrapper LOGGER = LoggerWrapper.global();
 
