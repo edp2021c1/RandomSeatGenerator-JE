@@ -40,11 +40,11 @@ public class SeatTableView extends VBox {
 
     private static final String DEFAULT_STYLE_CLASS = "seat-table-view";
 
-    private final IntegerProperty rowCount = new SimpleIntegerProperty(this, "rowCount");
+    private final IntegerProperty rowCount;
 
-    private final IntegerProperty columnCount = new SimpleIntegerProperty(this, "columnCount");
+    private final IntegerProperty columnCount;
 
-    private final ObjectProperty<SeatTable> seatTable = new SimpleObjectProperty<>(this, "seatTable");
+    private final ObjectProperty<SeatTable> seatTable;
 
     /**
      * Creates a view showing an empty {@code SeatTable}.
@@ -55,6 +55,10 @@ public class SeatTableView extends VBox {
         super();
         setAlignment(Pos.CENTER);
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
+
+        rowCount = new SimpleIntegerProperty(this, "rowCount");
+        columnCount = new SimpleIntegerProperty(this, "columnCount");
+        seatTable = new SimpleObjectProperty<>(this, "seatTable");
 
         seatTable.subscribe(newValue -> {
             if (newValue == null) {

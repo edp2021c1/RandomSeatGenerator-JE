@@ -49,7 +49,7 @@ public class AppPropertiesHolder {
         }
     }
 
-    private final Properties appProperties = new Properties();
+    private final Properties appProperties;
 
     private final PathWrapper path;
 
@@ -62,14 +62,8 @@ public class AppPropertiesHolder {
      */
     public AppPropertiesHolder(final Path propertiesPath) throws IOException {
         path = PathWrapper.wrap(propertiesPath);
+        appProperties = new Properties();
         init();
-    }
-
-    private void init() throws IOException {
-        if (path.replaceIfNonRegularFile().notFullyPermitted()) {
-            throw new IOException("Does not has enough permission to read/write config");
-        }
-        appProperties.load(new StringReader(path.readString()));
     }
 
     /**
@@ -79,6 +73,23 @@ public class AppPropertiesHolder {
      */
     public static AppPropertiesHolder global() {
         return global;
+    }
+
+    private void init() throws IOException {
+        if (path.replaceIfNonRegularFile().notFullyPermitted()) {
+            throw new IOException("Does not has enough permission to read/write config");
+        }
+        appProperties.load(new StringReader(path.readString()));
+    }
+
+    private void store() {
+        val str = new StringWriter();
+        try {
+            appProperties.store(str, null);
+            path.writeString(str.toString());
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -96,16 +107,6 @@ public class AppPropertiesHolder {
         } else if (appProperties.containsKey(key)) {
             appProperties.remove(key);
             store();
-        }
-    }
-
-    private void store() {
-        val str = new StringWriter();
-        try {
-            appProperties.store(str, null);
-            path.writeString(str.toString());
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

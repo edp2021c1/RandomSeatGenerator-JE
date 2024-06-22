@@ -20,14 +20,10 @@ package com.edp2021c1.randomseatgenerator;
 
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
-import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.PathWrapper;
-import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
-import com.edp2021c1.randomseatgenerator.util.Strings;
+import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
 import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.useroutput.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.val;
@@ -38,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.edp2021c1.randomseatgenerator.util.Metadata.KEY_EXPORT_WRITABLE;
+import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
 
 /**
  * Application intro.
@@ -45,9 +42,7 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.KEY_EXPORT_WRITABL
  * @author Calboot
  * @since 1.0.0
  */
-public class RandomSeatGenerator extends Application {
-
-    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
+public final class RandomSeatGenerator extends Application {
 
     private List<String> unnamedPara;
 
@@ -86,9 +81,11 @@ public class RandomSeatGenerator extends Application {
         withGUI = !unnamedPara.contains("--nogui");
         RuntimeUtils.setProperty("launching.gui", withGUI);
 
-        LoggerWrapper.start();
+        RuntimeUtils.setProperty("launching.debug", unnamedPara.contains("--debug"));
+
+        LOG.start();
         if (Metadata.DATA_DIR.notFullyPermitted()) {
-            LOGGER.warning("Does not have read/write permission of the data directory");
+            LOG.warning("Does not have read/write permission of the data directory");
         }
 
         try {
@@ -100,44 +97,42 @@ public class RandomSeatGenerator extends Application {
     @Override
     public void start(final Stage primaryStage) {
 
-        // 如果有“--help”参数则打印帮助信息然后退出
-        if (unnamedPara.contains("--help")) {
-            System.out.println(Metadata.HELP_INFO);
-            System.exit(0);
-            return;
-        }
-
-        // 如果有“--license”参数则打印许可证然后退出
-        if (unnamedPara.contains("--license")) {
-            System.out.println();
-            System.out.println(Metadata.LICENSE_INFO);
-            System.out.println();
-            System.exit(0);
-            return;
+        for (val s : unnamedPara) {
+            switch (s) {
+                case "--help" -> {
+                    System.out.println(Metadata.HELP_INFO);
+                    System.exit(0);
+                    return;
+                }
+                case "--license" -> {
+                    System.out.println();
+                    System.out.println(Metadata.LICENSE_INFO);
+                    System.out.println();
+                    System.exit(0);
+                    return;
+                }
+                case "--version" -> {
+                    System.out.println(Metadata.TITLE);
+                    System.exit(0);
+                    return;
+                }
+            }
         }
 
         try {
             if (!withGUI) {
 
                 // 种子，默认为随机字符串
-                var seed = Strings.randomString(30);
-                // 获取种子
-                if (namedPara.containsKey("--seed")) {
-                    seed = namedPara.get("--seed");
-                }
+                val seed = namedPara.getOrDefault("seed", Strings.randomString(30));
 
                 // 导出路径
                 var outputPath = PathWrapper.wrap(SeatTable.DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date())));
                 // 获取导出路径
-                if (namedPara.containsKey("--output-path")) {
-                    outputPath = PathWrapper.wrap(namedPara.get("--output-path"));
-                    if (!outputPath.endsWith(".xlsx")) {
-                        LOGGER.error("Invalid output path: " + outputPath);
-                        System.exit(1);
-                    }
-                    LOGGER.info("Output path set to " + outputPath);
+                if (namedPara.containsKey("output-path")) {
+                    outputPath = PathWrapper.wrap(namedPara.get("output-path"));
+                    LOG.info("Output path set to " + outputPath);
                     if (outputPath.exists()) {
-                        LOGGER.warning("Something's already on the output path, will move to trash");
+                        LOG.warning("Something's already on the output path, will move to trash");
                         outputPath.moveToTrash();
                     }
                 }
@@ -147,9 +142,9 @@ public class RandomSeatGenerator extends Application {
                 // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
                 var configPath = SeatConfigHolder.global().getConfigPath();
                 // 获取配置文件路径
-                if (namedPara.containsKey("--config-path")) {
-                    configPath = PathWrapper.wrap(namedPara.get("--config-path"));
-                    LOGGER.info("Config path set to " + configPath);
+                if (namedPara.containsKey("config-path")) {
+                    configPath = PathWrapper.wrap(namedPara.get("config-path"));
+                    LOG.info("Config path set to " + configPath);
                     try {
                         val holder = SeatConfigHolder.createHolder(configPath, false);
                         config = holder.getClone().checkAndReturn();
@@ -158,15 +153,26 @@ public class RandomSeatGenerator extends Application {
                         throw new RuntimeException("Failed to load config from specific file", e);
                     }
                 }
-                LOGGER.debug("Config path: " + configPath);
+                LOG.debug("Config path: " + configPath);
 
                 // 生成座位表
                 val seatTable = SeatTable.generate(config, seed);
 
-                LOGGER.info(System.lineSeparator() + seatTable);
+                LOG.info(System.lineSeparator() + seatTable);
 
                 // 导出
+                LOG.debug("Exporting seat table to \"%s\"".formatted(outputPath));
                 seatTable.exportToChart(outputPath, AppPropertiesHolder.global().getBoolean(KEY_EXPORT_WRITABLE));
+                LOG.info("Seat table successfully exported to \"%s\"".formatted(outputPath));
+
+                if (unnamedPara.contains("--open-result")) {
+                    LOG.debug("Opening output file...");
+                    if (!DesktopUtils.openFileIfSupported(outputPath.toFile())) {
+                        LOG.debug("Operation skipped because unsupported");
+                    } else {
+                        LOG.debug("Successfully opened output file");
+                    }
+                }
 
                 // 防止某表格抽风
                 System.exit(0);

@@ -18,11 +18,12 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
 import lombok.NonNull;
 import lombok.val;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -31,6 +32,9 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
 import java.util.Objects;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Path wrapper, containing many useful methods that allow chained calling.
@@ -40,8 +44,6 @@ import java.util.Objects;
  * @since 1.5.2
  */
 public class PathWrapper implements Path {
-
-    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
 
     private static final FileVisitor<Path> deleter = new SimpleFileVisitor<>() {
         @Override
@@ -74,6 +76,30 @@ public class PathWrapper implements Path {
         this.path = path.toAbsolutePath();
     }
 
+    private static void compress0(final File fileToZip, final String fileName, final ZipOutputStream zipOut) throws IOException {
+        if (fileToZip.isHidden()) {
+            return;
+        }
+
+        if (fileToZip.isDirectory()) {
+            val children = fileToZip.listFiles();
+            if (children != null) {
+                for (val childFile : children) {
+                    compress0(childFile, fileName + "/" + childFile.getName(), zipOut);
+                }
+            }
+        } else {
+            val buffer = new byte[1024];
+            val fis    = new FileInputStream(fileToZip);
+            zipOut.putNextEntry(new ZipEntry(fileName));
+            int length;
+            while ((length = fis.read(buffer)) >= 0) {
+                zipOut.write(buffer, 0, length);
+            }
+            fis.close();
+        }
+    }
+
     /**
      * Wraps the given file.
      *
@@ -101,8 +127,15 @@ public class PathWrapper implements Path {
         return new PathWrapper(Path.of(first, more));
     }
 
-    public Path getWrapped() {
-        return path;
+    /**
+     * Wraps the given path.
+     *
+     * @param path to wrap into the instance
+     *
+     * @return an instance wrapping the path
+     */
+    public static PathWrapper wrap(final Path path) {
+        return new PathWrapper(path);
     }
 
     /**
@@ -168,9 +201,6 @@ public class PathWrapper implements Path {
      */
     public PathWrapper createDirectories(final FileAttribute<?>... attr) throws IOException {
         Files.createDirectories(path, attr);
-        if (LOGGER.isOpen()) {
-            LOGGER.io("Directory \"%s\" created".formatted(this));
-        }
         return this;
     }
 
@@ -186,9 +216,6 @@ public class PathWrapper implements Path {
     public PathWrapper delete() throws IOException {
         if (exists()) {
             Files.walkFileTree(path, deleter);
-            if (LOGGER.isOpen()) {
-                LOGGER.io("File or directory \"%s\" deleted".formatted(this));
-            }
         }
         return this;
     }
@@ -260,9 +287,6 @@ public class PathWrapper implements Path {
      */
     public PathWrapper createFile(final FileAttribute<?>... attrs) throws IOException {
         Files.createFile(path, attrs);
-        if (LOGGER.isOpen()) {
-            LOGGER.io("File \"%s\" created".formatted(this));
-        }
         return this;
     }
 
@@ -277,9 +301,6 @@ public class PathWrapper implements Path {
     public PathWrapper moveToTrash() throws IOException {
         if (exists()) {
             DesktopUtils.moveToTrashIfSupported(toFile());
-            if (LOGGER.isOpen()) {
-                LOGGER.io("File or directory \"%s\" moved to trash".formatted(this));
-            }
         }
         return this;
     }
@@ -305,17 +326,6 @@ public class PathWrapper implements Path {
     @Override
     public PathWrapper getRoot() {
         return wrap(path.getRoot());
-    }
-
-    /**
-     * Wraps the given path.
-     *
-     * @param path to wrap into the instance
-     *
-     * @return an instance wrapping the path
-     */
-    public static PathWrapper wrap(final Path path) {
-        return new PathWrapper(path);
     }
 
     @NonNull
@@ -470,6 +480,12 @@ public class PathWrapper implements Path {
             return;
         }
         Files.writeString(path, str);
+    }
+
+    public void compressToGZip() throws IOException {
+        try (val zipOut = new ZipOutputStream(new GZIPOutputStream(new FileOutputStream(path.toString() + ".gz")))) {
+            compress0(toFile(), toFile().getName(), zipOut);
+        }
     }
 
 }

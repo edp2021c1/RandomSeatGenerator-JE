@@ -46,7 +46,29 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.KEY_EXPORT_WRITABL
  * @author Calboot
  * @since 1.3.3
  */
-public class FXUtils {
+public final class FXUtils {
+
+    /**
+     * Dark stylesheets of the windows of the app.
+     */
+    private static final String[] STYLESHEETS_DARK = {"/assets/css/base.css", "/assets/css/dark.css"};
+
+    /**
+     * Light stylesheets of the windows of the app.
+     */
+    private static final String[] STYLESHEETS_LIGHT = {"/assets/css/base.css", "/assets/css/light.css"};
+
+    private static final BooleanProperty exportWritable = new SimpleBooleanProperty(null, "exportWritable",
+            AppPropertiesHolder.global().getBoolean(KEY_EXPORT_WRITABLE)
+    ) {
+        @Override
+        protected void invalidated() {
+            AppPropertiesHolder.global().setProperty(KEY_EXPORT_WRITABLE, get());
+        }
+    };
+
+    @Getter
+    private static final Image icon = new Image(Metadata.ICON_URL);
 
     /**
      * Key of the property of the height of the main window
@@ -73,26 +95,6 @@ public class FXUtils {
      */
     public static final String KEY_DARK_MODE = "appearance.style.dark";
 
-    /**
-     * Key of the property of the previous exporting directory
-     */
-    public static final String KEY_EXPORT_DIR_PREVIOUS = "export.dir.previous";
-
-    /**
-     * Key of the property of the previous importing directory
-     */
-    public static final String KEY_IMPORT_DIR_PREVIOUS = "import.dir.previous";
-
-    /**
-     * Dark stylesheets of the windows of the app.
-     */
-    private static final String[] STYLESHEETS_DARK = {"/assets/css/base.css", "/assets/css/dark.css"};
-
-    /**
-     * Light stylesheets of the windows of the app.
-     */
-    private static final String[] STYLESHEETS_LIGHT = {"/assets/css/base.css", "/assets/css/light.css"};
-
     private static final BooleanProperty globalDarkMode = new SimpleBooleanProperty(null, "globalDarkMode",
             AppPropertiesHolder.global().getBoolean(KEY_DARK_MODE)
     ) {
@@ -102,17 +104,15 @@ public class FXUtils {
         }
     };
 
-    private static final BooleanProperty exportWritable = new SimpleBooleanProperty(null, "exportWritable",
-            AppPropertiesHolder.global().getBoolean(KEY_EXPORT_WRITABLE)
-    ) {
-        @Override
-        protected void invalidated() {
-            AppPropertiesHolder.global().setProperty(KEY_EXPORT_WRITABLE, get());
-        }
-    };
+    /**
+     * Key of the property of the previous exporting directory
+     */
+    public static final String KEY_EXPORT_DIR_PREVIOUS = "export.dir.previous";
 
-    @Getter
-    private static final Image icon = new Image(Metadata.ICON_URL);
+    /**
+     * Key of the property of the previous importing directory
+     */
+    public static final String KEY_IMPORT_DIR_PREVIOUS = "import.dir.previous";
 
     /**
      * Don't let anyone else instantiate this class.

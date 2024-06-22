@@ -101,7 +101,7 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
      */
     private static final String KEY_LUCKY = "lucky_option";
 
-    private final JSONObject config = new JSONObject(8);
+    private final JSONObject config;
 
     private int rowCount;
 
@@ -120,18 +120,104 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     private boolean lucky;
 
     /**
-     * Constructs an empty instance.
-     */
-    public CachedMapSeatConfig() {
-    }
-
-    /**
      * Constructs an instance.
      *
      * @param map whose mappings are to be placed in this map
      */
     public CachedMapSeatConfig(final Map<String, ?> map) {
+        this();
         putAll(map);
+    }
+
+    /**
+     * Constructs an empty instance.
+     */
+    public CachedMapSeatConfig() {
+        config = new JSONObject(8);
+    }
+
+    private List<Integer> regenerateDisabledLastRowPos() throws IllegalConfigException {
+        val disabledLastRowPos = getDisabledLastRowPos();
+        if (disabledLastRowPos == null || disabledLastRowPos.isBlank()) {
+            return new ArrayList<>();
+        }
+        if (!Strings.integerListPatternPredicate.test(disabledLastRowPos)) {
+            throw new IllegalConfigException("Invalid disabled last row positions: " + disabledLastRowPos);
+        }
+        return Stream.of(disabledLastRowPos.split(" ")).map(Integer::parseUnsignedInt).collect(Collectors.toList());
+    }
+
+    private List<String> regenerateNames() throws IllegalConfigException {
+        val names = getNames();
+        if (names == null) {
+            throw new IllegalConfigException("Name list cannot be null");
+        }
+        val l = Arrays.asList(names.split(" "));
+        if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
+            throw new IllegalConfigException(
+                    "Name list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
+            );
+        }
+        l.removeAll(List.of(""));
+        if (l.parallelStream().anyMatch(groupLeaderRegexPredicate)) {
+            throw new IllegalConfigException(
+                    "Name list must not contain names matching the format of a group leader"
+            );
+        }
+        return l;
+    }
+
+    private List<String> regenerateGroupLeaders() throws IllegalConfigException {
+        val groupLeaders = getGroupLeaders();
+        if (groupLeaders == null) {
+            throw new IllegalConfigException("Group leader list cannot be null");
+        }
+        val l = Arrays.asList(groupLeaders.split(" "));
+        if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
+            throw new IllegalConfigException(
+                    "Group leader list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
+            );
+        }
+        return l;
+    }
+
+    private List<NamePair> regenerateSeparatedPairs() throws IllegalConfigException {
+        val separatedPairs = getSeparatedPairs();
+        if (separatedPairs == null) {
+            throw new IllegalConfigException("Separated list cannot be null");
+        }
+        return separatedPairs.lines().filter(s -> !s.isBlank()).map(NamePair::new).collect(Collectors.toList());
+    }
+
+    private boolean regenerateLucky() {
+        return Objects.requireNonNullElse(getLucky(), true);
+    }
+
+    private int regenerateRandomBetweenRows() throws IllegalConfigException {
+        val randomBetweenRows = getRandomBetweenRows();
+        if (randomBetweenRows == null || randomBetweenRows == 0) {
+            return regenerateRowCount();
+        }
+        if (randomBetweenRows < 0) {
+            throw new IllegalConfigException("Random between rows cannot be less than 0");
+        }
+        return randomBetweenRows;
+    }
+
+    private int regenerateRowCount() throws IllegalConfigException {
+        val rowCount = getRowCount();
+        if (rowCount == null || rowCount == 0) {
+            throw new IllegalConfigException("Row count cannot be equal to or less than 0");
+        }
+        return rowCount;
+    }
+
+    private int regenerateColumnCount() throws IllegalConfigException {
+        val columnCount = getColumnCount();
+        if (columnCount == null || columnCount == 0) {
+            throw new IllegalConfigException("Column count cannot be equal to or less than 0");
+        }
+        return columnCount;
     }
 
     public CachedMapSeatConfig refresh() {
@@ -412,6 +498,15 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     }
 
     /**
+     * Sets raw row count value.
+     *
+     * @param value raw value to be set
+     */
+    public void setRowCount(final Integer value) {
+        put(KEY_ROW_COUNT, value);
+    }
+
+    /**
      * Returns the {@code Integer} value to which the specified key is mapped, or null if this map contains no mapping for the key.
      *
      * @param key whose associated {@code Integer} value is to be returned
@@ -426,15 +521,6 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
         } catch (final JSONException e) {
             throw new IllegalConfigException("Cannot cast to Integer");
         }
-    }
-
-    /**
-     * Sets raw row count value.
-     *
-     * @param value raw value to be set
-     */
-    public void setRowCount(final Integer value) {
-        put(KEY_ROW_COUNT, value);
     }
 
     /**
@@ -464,7 +550,7 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
      * @return a copy of {@code this}
      */
     public CachedMapSeatConfig cloneThis() {
-        return new CachedMapSeatConfig(config).refresh();
+        return new CachedMapSeatConfig(config);
     }
 
     @Override
@@ -546,93 +632,6 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     @NonNull
     public Set<Entry<String, Object>> entrySet() {
         return config.entrySet();
-    }
-
-    private List<Integer> regenerateDisabledLastRowPos() throws IllegalConfigException {
-        val disabledLastRowPos = getDisabledLastRowPos();
-        if (disabledLastRowPos == null || disabledLastRowPos.isBlank()) {
-            return new ArrayList<>();
-        }
-        if (!Strings.integerListPatternPredicate.test(disabledLastRowPos)) {
-            throw new IllegalConfigException("Invalid disabled last row positions: " + disabledLastRowPos);
-        }
-        return Stream.of(disabledLastRowPos.split(" ")).map(Integer::parseUnsignedInt).collect(Collectors.toList());
-    }
-
-    private List<String> regenerateNames() throws IllegalConfigException {
-        val names = getNames();
-        if (names == null) {
-            throw new IllegalConfigException("Name list cannot be null");
-        }
-        val l = Arrays.asList(names.split(" "));
-        if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
-            throw new IllegalConfigException(
-                    "Name list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
-            );
-        }
-        l.removeAll(List.of(""));
-        if (l.parallelStream().anyMatch(groupLeaderRegexPredicate)) {
-            throw new IllegalConfigException(
-                    "Name list must not contain names matching the format of a group leader"
-            );
-        }
-        return l;
-    }
-
-    private List<String> regenerateGroupLeaders() throws IllegalConfigException {
-        val groupLeaders = getGroupLeaders();
-        if (groupLeaders == null) {
-            throw new IllegalConfigException("Group leader list cannot be null");
-        }
-        val l = Arrays.asList(groupLeaders.split(" "));
-        if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
-            throw new IllegalConfigException(
-                    "Group leader list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
-            );
-        }
-        if (l.size() < regenerateColumnCount()) {
-            throw new IllegalConfigException("Group leader count less than column count");
-        }
-        return l;
-    }
-
-    private List<NamePair> regenerateSeparatedPairs() throws IllegalConfigException {
-        val separatedPairs = getSeparatedPairs();
-        if (separatedPairs == null) {
-            throw new IllegalConfigException("Separated list cannot be null");
-        }
-        return separatedPairs.lines().filter(s -> !s.isBlank()).map(NamePair::new).collect(Collectors.toList());
-    }
-
-    private boolean regenerateLucky() {
-        return Objects.requireNonNullElse(getLucky(), true);
-    }
-
-    private int regenerateRandomBetweenRows() throws IllegalConfigException {
-        val randomBetweenRows = getRandomBetweenRows();
-        if (randomBetweenRows == null || randomBetweenRows == 0) {
-            return regenerateRowCount();
-        }
-        if (randomBetweenRows < 0) {
-            throw new IllegalConfigException("Random between rows cannot be less than 0");
-        }
-        return randomBetweenRows;
-    }
-
-    private int regenerateRowCount() throws IllegalConfigException {
-        val rowCount = getRowCount();
-        if (rowCount == null || rowCount == 0) {
-            throw new IllegalConfigException("Row count cannot be equal to or less than 0");
-        }
-        return rowCount;
-    }
-
-    private int regenerateColumnCount() throws IllegalConfigException {
-        val columnCount = getColumnCount();
-        if (columnCount == null || columnCount == 0) {
-            throw new IllegalConfigException("Column count cannot be equal to or less than 0");
-        }
-        return columnCount;
     }
 
 

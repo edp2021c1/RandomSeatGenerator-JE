@@ -44,16 +44,6 @@ public abstract class FormatableTextField extends TextField {
     }
 
     /**
-     * Formats the value of the text.
-     *
-     * @param oldValue of the text
-     * @param newValue of the text
-     *
-     * @return the formatted value of the text
-     */
-    protected abstract String format(String oldValue, String newValue);
-
-    /**
      * Creates an instance.
      *
      * @param formatter used for formatting the text, inputting the old and new value, and returning the formatted value
@@ -68,5 +58,15 @@ public abstract class FormatableTextField extends TextField {
             }
         };
     }
+
+    /**
+     * Formats the value of the text.
+     *
+     * @param oldValue of the text
+     * @param newValue of the text
+     *
+     * @return the formatted value of the text
+     */
+    protected abstract String format(String oldValue, String newValue);
 
 }

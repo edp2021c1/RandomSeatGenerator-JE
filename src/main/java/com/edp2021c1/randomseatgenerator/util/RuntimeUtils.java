@@ -18,13 +18,13 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
 import lombok.val;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
+import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
 import static java.lang.Runtime.getRuntime;
 
 /**
@@ -49,9 +49,9 @@ public final class RuntimeUtils {
         getRuntime().addShutdownHook(new Thread(RuntimeUtils::runExitHooks, "Exit Hooks"));
 
         addExitHook(() -> {
-            if (LoggerWrapper.global().isOpen()) {
-                LoggerWrapper.global().debug("Exiting");
-                LoggerWrapper.global().close();
+            if (LOG.isOpen()) {
+                LOG.debug("Exiting");
+                LOG.shutdown();
             }
         });
 

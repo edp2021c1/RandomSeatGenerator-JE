@@ -167,12 +167,12 @@ public class ConfigPane extends VBox {
         });
     }
 
-    public void refreshState() {
-        applyButtonDisabledProperty.set(checkEquals());
-    }
-
     private boolean checkEquals() {
         return Objects.equals(content, source.getClone());
+    }
+
+    public void refreshState() {
+        applyButtonDisabledProperty.set(checkEquals());
     }
 
     /**

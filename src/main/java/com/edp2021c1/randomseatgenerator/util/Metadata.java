@@ -32,6 +32,11 @@ import static java.lang.System.getProperty;
 public final class Metadata {
 
     /**
+     * Version ID.
+     */
+    private static final String VERSION_ID = Metadata.class.getPackage().getImplementationVersion();
+
+    /**
      * Key of the option controlling whether exported seat table should be writable.
      */
     public static final String KEY_EXPORT_WRITABLE = "export.writable";
@@ -142,11 +147,6 @@ public final class Metadata {
      * Current architecture.
      */
     public static final String OS_ARCH = getProperty("os.arch");
-
-    /**
-     * Version ID.
-     */
-    private static final String VERSION_ID = Metadata.class.getPackage().getImplementationVersion();
 
     /**
      * Version of the app.

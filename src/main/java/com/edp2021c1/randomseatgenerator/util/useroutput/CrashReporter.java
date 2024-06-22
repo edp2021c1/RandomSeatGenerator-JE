@@ -24,6 +24,8 @@ import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import lombok.Getter;
 
+import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
+
 /**
  * Reports uncaught exceptions.
  *
@@ -31,8 +33,6 @@ import lombok.Getter;
  * @since 1.2.8
  */
 public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
-
-    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
 
     /**
      * The now-in-use instance.
@@ -56,6 +56,14 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
     public static void report(final Throwable e) {
         getInstance().uncaughtException(Thread.currentThread(), e);
     }
+
+    /**
+     * Reports a notice.
+     *
+     * @param n notice to report
+     * @param e {@code Throwable} to report
+     */
+    protected abstract void reportNotice(Notice n, Throwable e);
 
     @Override
     public final void uncaughtException(final Thread t, final Throwable e) {
@@ -81,7 +89,7 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
         @Override
         protected void reportNotice(Notice n, Throwable e) {
             try {
-                LOGGER.error(n.string());
+                LOG.logThrowable(e);
             } catch (final Throwable ex) {
                 System.err.println(n.string());
                 System.err.println(Strings.getStackTrace(ex));
@@ -98,7 +106,7 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
         @Override
         protected void reportNotice(final Notice n, final Throwable e) {
             try {
-                LOGGER.error(n.string());
+                LOG.logThrowable(e);
                 if (e instanceof Notice) {
                     MessageDialog.showMessage(n);
                 } else {
@@ -110,13 +118,5 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
         }
 
     }
-
-    /**
-     * Reports a notice.
-     *
-     * @param n notice to report
-     * @param e {@code Throwable} to report
-     */
-    protected abstract void reportNotice(Notice n, Throwable e);
 
 }

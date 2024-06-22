@@ -113,4 +113,13 @@ public final class DesktopUtils {
         }
     }
 
+    public static boolean openFileIfSupported(final File file) throws IOException {
+        if (desktopSupported && desktopTk.isSupported(Desktop.Action.OPEN)) {
+            desktopTk.open(file);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

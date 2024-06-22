@@ -29,7 +29,6 @@ import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
 import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.useroutput.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
 import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -49,6 +48,7 @@ import java.util.Objects;
 
 import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
+import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
 
 /**
  * Settings dialog of the application.
@@ -56,16 +56,14 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
  * @author Calboot
  * @since 1.3.3
  */
-public class SettingsDialog extends DecoratedStage {
+public final class SettingsDialog extends DecoratedStage {
 
     @Getter
     private static final SettingsDialog settingsDialog = new SettingsDialog();
 
-    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
-
     private final SeatConfigHolder cfHolder;
 
-    private final FileChooser fileChooser = new FileChooser();
+    private final FileChooser fileChooser;
 
     private final ConfigPane configPane;
 
@@ -198,6 +196,7 @@ public class SettingsDialog extends DecoratedStage {
         setTitle(NAME + " - 设置");
         initOwner(getMainWindow());
 
+        fileChooser = new FileChooser();
         fileChooser.setTitle("加载配置文件");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
 
@@ -269,8 +268,8 @@ public class SettingsDialog extends DecoratedStage {
                 configPane.setContent(temp.getClone());
                 temp.close();
             } catch (final IOException e) {
-                LOGGER.warning("Failed to import config");
-                LOGGER.warning(Strings.getStackTrace(e));
+                LOG.warning("Failed to import config");
+                LOG.warning(Strings.getStackTrace(e));
                 MessageDialog.showMessage(this, Notice.of("导入设置失败"));
             }
 

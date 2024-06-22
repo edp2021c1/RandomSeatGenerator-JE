@@ -23,7 +23,6 @@ import com.edp2021c1.randomseatgenerator.util.PathWrapper;
 import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.exception.ApplicationAlreadyRunningException;
 import com.edp2021c1.randomseatgenerator.util.exception.FileAlreadyLockedException;
-import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
 import lombok.Getter;
 import lombok.val;
 
@@ -34,6 +33,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
 import static com.alibaba.fastjson2.JSON.parseObject;
+import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
 
 /**
  * Handles {@link CachedMapSeatConfig}.
@@ -43,8 +43,6 @@ import static com.alibaba.fastjson2.JSON.parseObject;
  * @since 1.4.9
  */
 public class SeatConfigHolder {
-
-    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
 
     /**
      * Default config handler.
@@ -98,46 +96,6 @@ public class SeatConfigHolder {
         initChannel();
     }
 
-    private void initConfigPath() throws IOException {
-        if (configPath.getParent().replaceWithDirectory().notFullyPermitted()) {
-            throw new IOException("Does not has enough permission to read/write config");
-        }
-        if (configPath.replaceIfNonRegularFile().notFullyPermitted()) {
-            throw new IOException("Does not has enough permission to read/write config");
-        }
-    }
-
-    private void initChannel() throws IOException {
-        if (channel.tryLock() == null) {
-            throw new FileAlreadyLockedException(configPath);
-        }
-        val obj = parseObject(configPath.readString());
-        putAll(
-                content.putAllAndReturn(
-                        obj == null ? Map.of() : obj
-                ).checkAndReturn()
-        ); // To load and truncate the content
-    }
-
-    /**
-     * Puts a map.
-     *
-     * @param map to put
-     *
-     * @throws IOException           if an I/O error occurs
-     * @throws IllegalStateException if is closed
-     */
-    public synchronized void putAll(final Map<? extends String, ?> map) throws IOException {
-        checkState();
-        configPath.writeString(content.putAllAndReturn(map).checkAndReturn().toJsonString());
-    }
-
-    private void checkState() {
-        if (closed) {
-            throw new IllegalStateException("Closed SeatConfigHolder");
-        }
-    }
-
     /**
      * Returns the global config holder.
      *
@@ -177,11 +135,51 @@ public class SeatConfigHolder {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         } finally {
-            if (LOGGER.isOpen()) {
-                LOGGER.debug("Config holder at " + configPath + " closed");
+            if (LOG.isOpen()) {
+                LOG.debug("Config holder at " + configPath + " closed");
             }
             closed = true;
         }
+    }
+
+    private void initConfigPath() throws IOException {
+        if (configPath.getParent().replaceWithDirectory().notFullyPermitted()) {
+            throw new IOException("Does not has enough permission to read/write config");
+        }
+        if (configPath.replaceIfNonRegularFile().notFullyPermitted()) {
+            throw new IOException("Does not has enough permission to read/write config");
+        }
+    }
+
+    private void initChannel() throws IOException {
+        if (channel.tryLock() == null) {
+            throw new FileAlreadyLockedException(configPath);
+        }
+        val obj = parseObject(configPath.readString());
+        putAll(
+                content.putAllAndReturn(
+                        obj == null ? Map.of() : obj
+                ).checkAndReturn()
+        ); // To load and truncate the content
+    }
+
+    private void checkState() {
+        if (closed) {
+            throw new IllegalStateException("Closed SeatConfigHolder");
+        }
+    }
+
+    /**
+     * Puts a map.
+     *
+     * @param map to put
+     *
+     * @throws IOException           if an I/O error occurs
+     * @throws IllegalStateException if is closed
+     */
+    public synchronized void putAll(final Map<? extends String, ?> map) throws IOException {
+        checkState();
+        configPath.writeString(content.putAllAndReturn(map).checkAndReturn().toJsonString());
     }
 
     /**
@@ -193,7 +191,7 @@ public class SeatConfigHolder {
      */
     public CachedMapSeatConfig getClone() {
         checkState();
-        return content.cloneThis();
+        return content.cloneThis().refresh();
     }
 
 }

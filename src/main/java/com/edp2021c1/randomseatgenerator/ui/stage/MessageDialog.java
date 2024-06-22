@@ -35,7 +35,7 @@ import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
  * @author Calboot
  * @since 1.5.0
  */
-public class MessageDialog extends DecoratedStage {
+public final class MessageDialog extends DecoratedStage {
 
     private MessageDialog(final Notice msg) {
         super();

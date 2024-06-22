@@ -25,7 +25,6 @@ import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.PathWrapper;
 import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
-import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
 import lombok.Getter;
 import lombok.val;
 
@@ -49,6 +48,10 @@ import java.util.regex.Pattern;
 @Getter
 public class SeatTable {
 
+    private static final long MAX_GENERATING_TIME_SECONDS = 3L;
+
+    private static final ExcelWriterBuilder excelWriterBuilder = EasyExcel.write().head(RowData.class);
+
     /**
      * Default exporting directory.
      */
@@ -68,12 +71,6 @@ public class SeatTable {
      * Format of a group leader.
      */
     public static final String groupLeaderFormat = "*%s*";
-
-    private static final long MAX_GENERATING_TIME_SECONDS = 3L;
-
-    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
-
-    private static final ExcelWriterBuilder excelWriterBuilder = EasyExcel.write().head(RowData.class);
 
     /**
      * The seat table stored as a {@code  List}.
@@ -233,7 +230,6 @@ public class SeatTable {
         } catch (final Throwable e) {
             throw new IOException("Failed to save seat table to \"%s\"".formatted(filePath), e);
         }
-        LOGGER.info("Seat table successfully exported to \"%s\"".formatted(filePath));
     }
 
 }

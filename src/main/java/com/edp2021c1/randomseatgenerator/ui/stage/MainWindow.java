@@ -30,7 +30,6 @@ import com.edp2021c1.randomseatgenerator.util.config.CachedMapSeatConfig;
 import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import com.edp2021c1.randomseatgenerator.util.useroutput.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.useroutput.LoggerWrapper;
 import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -51,6 +50,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
+import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
 
 /**
  * Main window of the application.
@@ -58,9 +58,7 @@ import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
  * @author Calboot
  * @since 1.3.3
  */
-public class MainWindow extends DecoratedStage {
-
-    private static final LoggerWrapper LOGGER = LoggerWrapper.global();
+public final class MainWindow extends DecoratedStage {
 
     @Getter
     private static final MainWindow mainWindow = new MainWindow();
@@ -75,7 +73,7 @@ public class MainWindow extends DecoratedStage {
 
     private final CachedMapSeatConfig config;
 
-    private final FileChooser fileChooser = new FileChooser();
+    private final FileChooser fileChooser;
 
     private String previousSeed = null;
 
@@ -141,6 +139,7 @@ public class MainWindow extends DecoratedStage {
         setScene(new Scene(mainBox));
         setTitle(Metadata.TITLE);
 
+        fileChooser = new FileChooser();
         fileChooser.setTitle("导出座位表");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Excel 工作薄", "*.xlsx"),
@@ -251,7 +250,7 @@ public class MainWindow extends DecoratedStage {
 
             val seed1 = seed.get();
             seatTable.set(SeatTable.generate(cfHolder.getClone().checkAndReturn(), seed1));
-            LOGGER.info(System.lineSeparator() + seatTable.get());
+            LOG.info(System.lineSeparator() + seatTable.get());
             previousSeed = seed1;
             generated = true;
         } catch (final Throwable e) {
@@ -279,7 +278,9 @@ public class MainWindow extends DecoratedStage {
             if (exportFile == null) {
                 return;
             }
+            LOG.debug("Exporting seat table to \"%s\"".formatted(exportFile));
             seatTable.get().exportToChart(exportFile.toPath(), FXUtils.exportWritableProperty().get());
+            LOG.info("Successfully export seat table");
 
             MessageDialog.showMessage(this, Notice.of("成功导出座位表到\n" + exportFile));
 

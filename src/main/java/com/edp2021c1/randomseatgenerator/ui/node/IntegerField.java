@@ -63,15 +63,6 @@ public class IntegerField extends FormatableTextField {
         });
     }
 
-    /**
-     * Returns property of the integer value.
-     *
-     * @return {@link #value}
-     */
-    public IntegerProperty valueProperty() {
-        return value;
-    }
-
     @Override
     protected String format(final String oldValue, final String newValue) {
         if (newValue == null || newValue.isEmpty()) {
@@ -82,6 +73,15 @@ public class IntegerField extends FormatableTextField {
         }
         value.set(Integer.parseInt(newValue));
         return newValue;
+    }
+
+    /**
+     * Returns property of the integer value.
+     *
+     * @return {@link #value}
+     */
+    public IntegerProperty valueProperty() {
+        return value;
     }
 
 }
