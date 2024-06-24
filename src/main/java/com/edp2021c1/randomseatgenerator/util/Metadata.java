@@ -46,13 +46,18 @@ public final class Metadata {
      */
     public static final String HELP_INFO =
             """
-                    OPTIONS:
-                        --help                  Print this message and then quit.
-                        --license               Print the license of this application and then quit.
-                        --nogui                 Start the application in console mode.
-                        --config-path <path>    Path of a specific Json config file. Only useful in console mode. (optional)
-                        --seed <value>          Seed used to generate seat table, must be in the format of a number. Only useful in console mode. (optional, default to a random string)
-                        --output-path <path>    Path to export seat table to. Only useful in console mode. (optional, default to yyyy-mm-dd.xlsx under the current directory)
+                    GENERAL OPTIONS:
+                    | --help    | Prints the help info and quits    |
+                    | --license | Prints the license info and quits |
+                    | --version | Prints the version info and quits |
+                    | --debug   | Turns on the console debug output |
+                    
+                    CONSOLE MODE ONLY OPTIONS:
+                    | --nogui              | Enters the console mode without launching GUI                              |
+                    | --config-path=<path> | Sets the path of the config used for generating seat table (only for once) |
+                    | --seed=<value>       | Sets the seed used to generate the seat table, default to a random string  |
+                    | --output-path=<path> | Sets the output file or directory path (only for once)                     |
+                    | --open-result        | Opens the output file after exporting                                      |
                                         
                     """;
 
