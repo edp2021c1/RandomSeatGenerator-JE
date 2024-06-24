@@ -108,13 +108,13 @@ fun getPackingArguments(jarName: String, projectPath: String): Array<String> {
             listOf(
                 "@" + Path.of(projectPath, "package_resources", "static_arguments", "win.txt"),
                 "--icon", Path.of(projectPath, "package_resources", "app_icon", "win.ico").toString(),
-                "--app-content", Path.of(projectPath, "LICENSE").toString() + "," + Path.of(projectPath, "README.md")
+                "--app-content", Path.of(projectPath, "LICENSE").toString() + "," + Path.of(projectPath, "README.md") + "," + Path.of(projectPath, "README_en.md")
             )
         } else {
             listOf(
                 "@" + Path.of(projectPath, "package_resources", "static_arguments", "mac.txt"),
                 "--icon", Path.of(projectPath, "package_resources", "app_icon", "mac.icns").toString(),
-                "--mac-dmg-content", Path.of(projectPath, "LICENSE").toString() + "," + Path.of(projectPath, "README.md")
+                "--mac-dmg-content", Path.of(projectPath, "LICENSE").toString() + "," + Path.of(projectPath, "README.md") + "," + Path.of(projectPath, "README_en.md")
             )
         }
     )

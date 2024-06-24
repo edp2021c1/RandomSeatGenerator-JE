@@ -10,11 +10,13 @@ Java版随机排座位程序
 
 ## 环境要求
 
-|        | Windows | Mac OS        | 其他            |
-|--------|:--------|:--------------|:--------------|
-| x86-64 | ✅️      | ✅️            | 需要JRE+JavaFX️ |
-| ARM64  | ✅       | ✅ (Rosetta 2) | 需要JRE+JavaFX️ |
-| 其他     | -       | -             | 需要JRE+JavaFX️ |
+|        | Windows  | Mac OS  | 其他   |
+|--------|:---------|:--------|:-----|
+| x86-64 | msi️/jar | jar️    | jar  |
+| ARM64  | msi/jar  | dmg/jar | jar  |
+| 其他     | -        | -       | jar️ |
+
+jar：需要JRE+JavaFX运行时
 
 ## 命令行参数
 

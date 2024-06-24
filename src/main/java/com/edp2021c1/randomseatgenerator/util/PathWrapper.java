@@ -286,6 +286,7 @@ public class PathWrapper implements Path {
      * @see Files#createFile(Path, FileAttribute[])
      */
     public PathWrapper createFile(final FileAttribute<?>... attrs) throws IOException {
+        Files.createDirectories(path.getParent());
         Files.createFile(path, attrs);
         return this;
     }

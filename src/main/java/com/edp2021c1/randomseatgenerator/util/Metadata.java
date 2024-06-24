@@ -51,7 +51,7 @@ public final class Metadata {
                     | --license | Prints the license info and quits |
                     | --version | Prints the version info and quits |
                     | --debug   | Turns on the console debug output |
-                    
+                                        
                     CONSOLE MODE ONLY OPTIONS:
                     | --nogui              | Enters the console mode without launching GUI                              |
                     | --config-path=<path> | Sets the path of the config used for generating seat table (only for once) |

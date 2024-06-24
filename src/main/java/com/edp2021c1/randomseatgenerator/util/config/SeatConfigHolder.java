@@ -159,7 +159,7 @@ public class SeatConfigHolder {
         putAll(
                 content.putAllAndReturn(
                         obj == null ? Map.of() : obj
-                ).checkAndReturn()
+                )
         ); // To load and truncate the content
     }
 
@@ -179,7 +179,7 @@ public class SeatConfigHolder {
      */
     public synchronized void putAll(final Map<? extends String, ?> map) throws IOException {
         checkState();
-        configPath.writeString(content.putAllAndReturn(map).checkAndReturn().toJsonString());
+        configPath.writeString(content.putAllAndReturn(map).toJsonString());
     }
 
     /**

@@ -10,11 +10,13 @@ See also: [RandomSeat](https://github.com/edp2021c1/RandomSeat)
 
 ## Environment requirement
 
-|        | Windows | Mac OS        | Linux and Others     |
-|--------|:--------|:--------------|:---------------------|
-| x86-64 | ✅️      | ✅️            | Requires JRE+JavaFX️ |
-| ARM64  | ✅       | ✅ (Rosetta 2) | Requires JRE+JavaFX️ |
-| Others | -       | -             | Requires JRE+JavaFX️ |
+|        | Windows  | Mac OS  | Others |
+|--------|:---------|:--------|:-------|
+| x86-64 | msi️/jar | jar️    | jar    |
+| ARM64  | msi/jar  | dmg/jar | jar    |
+| Others | -        | -       | jar️   |
+
+jar: Requires JRE and JavaFX Runtime
 
 ## Command line parameters
 
