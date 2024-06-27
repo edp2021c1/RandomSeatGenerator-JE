@@ -56,7 +56,7 @@ public class SeatConfigHolder {
             globalPath.getParent().replaceWithDirectory();
 
             global = createHolder(globalPath, true);
-            if (global.configPath.readString().isBlank()) {
+            if (global.content.isEmpty()) {
                 val builtInConfigStream = SeatConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
                 if (builtInConfigStream != null) {
                     global.putAll(parseObject(new String(builtInConfigStream.readAllBytes())));
