@@ -33,7 +33,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
 import static com.alibaba.fastjson2.JSON.parseObject;
-import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
+import static com.edp2021c1.randomseatgenerator.util.Log.LOG;
 
 /**
  * Handles {@link CachedMapSeatConfig}.

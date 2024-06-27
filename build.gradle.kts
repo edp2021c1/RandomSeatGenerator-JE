@@ -70,7 +70,16 @@ tasks.compileTestJava {
 }
 
 tasks.javadoc {
-    options.encoding = "UTF-8"
+    options {
+        encoding = "UTF-8"
+        if (optionFiles != null) {
+            optionFiles?.add(Path.of(projectDir.path, "build_resources", "javadoc_args.txt").toFile())
+        } else {
+            optionFiles = mutableListOf(Path.of(projectDir.path, "build_resources", "javadoc_args.txt").toFile())
+        }
+    }
+
+    (options as StandardJavadocDocletOptions).addStringOption("-tag")
 }
 
 tasks.jar {
@@ -96,9 +105,9 @@ tasks.build {
 
 fun getPackingArguments(jarName: String, projectPath: String): Array<String> {
     val args = mutableListOf(
-        "@" + Path.of(projectPath, "package_resources", "static_arguments", "all.txt"),
+        "@" + Path.of(projectPath, "build_resources", "pack_args", "all.txt"),
         "-i", Path.of(projectPath, "build", "libs").toString(),
-        "--license-file", Path.of(projectPath, "package_resources", "license.txt").toString(),
+        "--license-file", Path.of(projectPath, "build_resources", "license.txt").toString(),
         "--app-version", version.toString(),
         "--main-jar", jarName,
         "-d", Path.of(projectPath, "packages").toString(),
@@ -106,14 +115,14 @@ fun getPackingArguments(jarName: String, projectPath: String): Array<String> {
     args.addAll(
         if (isWin) {
             listOf(
-                "@" + Path.of(projectPath, "package_resources", "static_arguments", "win.txt"),
-                "--icon", Path.of(projectPath, "package_resources", "app_icon", "win.ico").toString(),
+                "@" + Path.of(projectPath, "build_resources", "pack_args", "win.txt"),
+                "--icon", Path.of(projectPath, "build_resources", "app_icon", "win.ico").toString(),
                 "--app-content", Path.of(projectPath, "LICENSE").toString() + "," + Path.of(projectPath, "README.md") + "," + Path.of(projectPath, "README_en.md")
             )
         } else {
             listOf(
-                "@" + Path.of(projectPath, "package_resources", "static_arguments", "mac.txt"),
-                "--icon", Path.of(projectPath, "package_resources", "app_icon", "mac.icns").toString(),
+                "@" + Path.of(projectPath, "build_resources", "pack_args", "mac.txt"),
+                "--icon", Path.of(projectPath, "build_resources", "app_icon", "mac.icns").toString(),
                 "--mac-dmg-content", Path.of(projectPath, "LICENSE").toString() + "," + Path.of(projectPath, "README.md") + "," + Path.of(projectPath, "README_en.md")
             )
         }

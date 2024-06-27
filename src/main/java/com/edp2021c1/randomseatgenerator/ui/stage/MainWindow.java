@@ -33,7 +33,6 @@ import com.edp2021c1.randomseatgenerator.util.useroutput.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -50,7 +49,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
-import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
+import static com.edp2021c1.randomseatgenerator.util.Log.LOG;
 
 /**
  * Main window of the application.
@@ -160,16 +159,16 @@ public final class MainWindow extends DecoratedStage {
 
         settingsBtn.setOnAction(event -> SettingsDialog.getSettingsDialog().showAndWait());
 
-        generateBtn.setOnAction(this::generateSeatTable);
+        generateBtn.setOnAction(event -> generateSeatTable());
         generateBtn.setDefaultButton(true);
 
-        exportBtn.setOnAction(this::exportSeatTable);
+        exportBtn.setOnAction(event -> exportSeatTable());
 
-        seedInput.setOnAction(this::generateSeatTable);
+        seedInput.setOnAction(event -> generateSeatTable());
 
-        randomSeedBtn.setOnAction(this::generateRandomSeed);
+        randomSeedBtn.setOnAction(event -> generateRandomSeed());
 
-        dateAsSeedBtn.setOnAction(this::generateDateSeed);
+        dateAsSeedBtn.setOnAction(event -> generateDateSeed());
 
         if (OperatingSystem.MAC == OperatingSystem.getCurrent()) {
             setFullScreenExitHint("");
@@ -242,10 +241,10 @@ public final class MainWindow extends DecoratedStage {
         setOnCloseRequest(event -> close());
     }
 
-    private void generateSeatTable(final ActionEvent event) {
+    private void generateSeatTable() {
         try {
             if (Objects.equals(previousSeed, seed.get())) {
-                generateRandomSeed(event);
+                generateRandomSeed();
             }
 
             val seed1 = seed.get();
@@ -258,14 +257,14 @@ public final class MainWindow extends DecoratedStage {
         }
     }
 
-    private void generateRandomSeed(final ActionEvent event) {
+    private void generateRandomSeed() {
         seed.set(Strings.randomString(30));
     }
 
-    private void exportSeatTable(final ActionEvent event) {
+    private void exportSeatTable() {
         try {
             if (!generated) {
-                generateSeatTable(event);
+                generateSeatTable();
             }
 
             fileChooser.setInitialFileName(Strings.nowStr());
@@ -291,12 +290,12 @@ public final class MainWindow extends DecoratedStage {
         }
     }
 
-    private void generateDateSeed(final ActionEvent event) {
+    private void generateDateSeed() {
         seed.set(Strings.nowStr());
     }
 
     @Override
-    public StageType getStageStyle() {
+    public StageType getStageType() {
         return StageType.MAIN_WINDOW;
     }
 

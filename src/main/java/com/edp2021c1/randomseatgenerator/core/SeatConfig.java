@@ -19,9 +19,7 @@
 package com.edp2021c1.randomseatgenerator.core;
 
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
-import lombok.val;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,59 +47,14 @@ public interface SeatConfig {
     boolean lucky();
 
     /**
-     * Checks format and returns {@code this}.
-     *
-     * @return this
-     *
-     * @throws IllegalConfigException if this instance has an illegal format
-     * @see #check()
-     */
-    default SeatConfig checkAndReturn() throws IllegalConfigException {
-        check();
-        return this;
-    }
-
-    /**
      * Checks the format of this instance.
      *
      * @throws IllegalConfigException if this instance has an illegal format
+     * @implSpec Subclasses that implements this method should throw an {@code IllegalConfigException}
+     * that contains information of all the wrong-formatted values,
+     * possibly using the constructor {@link IllegalConfigException#IllegalConfigException(List)  IllegalConfigException(List)}.
      */
-    default void check() throws IllegalConfigException {
-        val causes = new ArrayList<IllegalConfigException>();
-        try {
-            rowCount();
-        } catch (final IllegalConfigException e) {
-            causes.add(e);
-        }
-        try {
-            columnCount();
-        } catch (final IllegalConfigException e) {
-            causes.add(e);
-        }
-        try {
-            disabledLastRowPos();
-        } catch (final IllegalConfigException e) {
-            causes.add(e);
-        }
-        try {
-            names();
-        } catch (final IllegalConfigException e) {
-            causes.add(e);
-        }
-        try {
-            groupLeaders();
-        } catch (final IllegalConfigException e) {
-            causes.add(e);
-        }
-        try {
-            separatedPairs();
-        } catch (final IllegalConfigException e) {
-            causes.add(e);
-        }
-        if (!causes.isEmpty()) {
-            throw new IllegalConfigException(causes);
-        }
-    }
+    void check() throws IllegalConfigException;
 
     /**
      * Returns row count.

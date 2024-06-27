@@ -220,7 +220,19 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
         return columnCount;
     }
 
-    public CachedMapSeatConfig refresh() {
+    /**
+     * Refreshes the values and returns {@code this}.
+     * <p>
+     * Note that this method should be called manually to avoid unexpected {@code IllegalConfigException},
+     * so make sure the config is legal before calling this method.
+     * <p>
+     * Also make sure the method is called before the value that might have been changed is used.
+     *
+     * @return {@code this}
+     *
+     * @throws IllegalConfigException if a value is wrong-formatted
+     */
+    public CachedMapSeatConfig refresh() throws IllegalConfigException {
         rowCount = regenerateRowCount();
         columnCount = regenerateColumnCount();
         randomBetweenRows = regenerateRandomBetweenRows();
@@ -243,11 +255,6 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     }
 
     @Override
-    public CachedMapSeatConfig checkAndReturn() throws IllegalConfigException {
-        check();
-        return this;
-    }
-
     public void check() throws IllegalConfigException {
         val causes = new ArrayList<IllegalConfigException>();
         try {
@@ -315,6 +322,19 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
         return separatedPairs;
     }
 
+    /**
+     * Checks format and returns {@code this}.
+     *
+     * @return this
+     *
+     * @throws IllegalConfigException if this instance has an illegal format
+     * @see #check()
+     */
+    public CachedMapSeatConfig checkAndReturn() throws IllegalConfigException {
+        check();
+        return this;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (o == this) {
@@ -351,6 +371,11 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
         put(KEY_RANDOM_BETWEEN_ROWS, value);
     }
 
+    /**
+     * Returns the value of lucky, may be null.
+     *
+     * @return lucky value
+     */
     public Boolean getLucky() {
         return getBoolean(KEY_LUCKY);
     }

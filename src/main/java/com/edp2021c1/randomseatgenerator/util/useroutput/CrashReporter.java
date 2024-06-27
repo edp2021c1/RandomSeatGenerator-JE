@@ -24,7 +24,7 @@ import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.Strings;
 import lombok.Getter;
 
-import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
+import static com.edp2021c1.randomseatgenerator.util.Log.LOG;
 
 /**
  * Reports uncaught exceptions.

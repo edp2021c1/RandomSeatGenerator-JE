@@ -120,6 +120,13 @@ public class RowData extends AbstractList<String> {
         return toString(DEFAULT_SEPARATOR);
     }
 
+    /**
+     * Joins the cells together into a string, separated by the given separator.
+     *
+     * @param separator between each cell
+     *
+     * @return the result string
+     */
     public String toString(final String separator) {
         return String.join(separator, cells);
     }

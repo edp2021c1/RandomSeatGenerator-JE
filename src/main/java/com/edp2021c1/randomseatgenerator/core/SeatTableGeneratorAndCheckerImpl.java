@@ -55,6 +55,7 @@ public final class SeatTableGeneratorAndCheckerImpl implements SeatTableGenerato
         if (config == null) {
             throw new IllegalConfigException("Config cannot be null");
         }
+        config.check();
 
         long longSeed;
         try {

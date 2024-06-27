@@ -101,6 +101,12 @@ public final class DesktopUtils {
         clipboard.setContent(Map.of(DataFormat.PLAIN_TEXT, text));
     }
 
+    /**
+     * Runs the given task on the {@code JavaFX Application Thread}.
+     * The method will start the JavaFX runtime if it is not initialized yet.
+     *
+     * @param runnable to run on FX App thread
+     */
     public static void runOnFXThread(final Runnable runnable) {
         if (Platform.isFxApplicationThread()) {
             runnable.run();
@@ -113,6 +119,16 @@ public final class DesktopUtils {
         }
     }
 
+    /**
+     * Opens a file with the default program if {@link Desktop} supports the operation.
+     *
+     * @param file to open
+     *
+     * @return whether the operation is supported
+     *
+     * @throws IOException if an I/O error occurs when opening the file
+     * @see Desktop#open(File)
+     */
     public static boolean openFileIfSupported(final File file) throws IOException {
         if (desktopSupported && desktopTk.isSupported(Desktop.Action.OPEN)) {
             desktopTk.open(file);

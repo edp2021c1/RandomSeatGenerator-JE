@@ -110,7 +110,7 @@ public final class CrashReporterDialog extends DecoratedStage {
     }
 
     @Override
-    public StageType getStageStyle() {
+    public StageType getStageType() {
         return StageType.CRASH_REPORTER;
     }
 

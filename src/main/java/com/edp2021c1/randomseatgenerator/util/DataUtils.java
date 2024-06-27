@@ -76,6 +76,16 @@ public final class DataUtils {
         return new ArrayList<>(src).get(rd.nextInt(src.size()));
     }
 
+    /**
+     * Splits a list by the given size and returns a {@link Stream} of the sublists.
+     * The few elements at the end of the source list will be contained in the last elements of the returned stream.
+     *
+     * @param list      source to split
+     * @param chunkSize number of elements in each chunk
+     * @param <T>       type of the elements in the source list
+     *
+     * @return a {@code Stream} of {@code List<T>}, each with a size of {@code chunkSize}
+     */
     public static <T> Stream<List<T>> split(final List<T> list, final int chunkSize) {
         return IntStream
                 .range(0, (int) Math.ceil((double) list.size() / chunkSize))

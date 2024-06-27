@@ -30,7 +30,6 @@ import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
 import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.useroutput.CrashReporter;
 import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -47,8 +46,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
+import static com.edp2021c1.randomseatgenerator.util.Log.LOG;
 import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
-import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
 
 /**
  * Settings dialog of the application.
@@ -211,9 +210,9 @@ public final class SettingsDialog extends DecoratedStage {
          *                                                                         *
          **************************************************************************/
 
-        loadConfigBtn.setOnAction(this::loadConfig);
+        loadConfigBtn.setOnAction(event -> loadConfig());
 
-        applyBtn.setOnAction(this::applyConfig);
+        applyBtn.setOnAction(event -> applyConfig());
 
         versionLink.setOnAction(event -> DesktopUtils.browseIfSupported(VERSION_PAGE_URI));
 
@@ -221,7 +220,7 @@ public final class SettingsDialog extends DecoratedStage {
 
         licenseLink.setOnAction(event -> DesktopUtils.browseIfSupported(LICENSE_URI));
 
-        confirmBtn.setOnAction(this::confirmConfig);
+        confirmBtn.setOnAction(event -> confirmConfig());
         confirmBtn.setDefaultButton(true);
 
         cancelBtn.setOnAction(event -> close());
@@ -251,7 +250,7 @@ public final class SettingsDialog extends DecoratedStage {
         }
     }
 
-    private void loadConfig(final ActionEvent event) {
+    private void loadConfig() {
         try {
             var tmp = fileChooser.getInitialDirectory();
             if (tmp != null) {
@@ -280,12 +279,12 @@ public final class SettingsDialog extends DecoratedStage {
         }
     }
 
-    private void confirmConfig(final ActionEvent event) {
-        applyConfig(event);
+    private void confirmConfig() {
+        applyConfig();
         close();
     }
 
-    private void applyConfig(final ActionEvent event) {
+    private void applyConfig() {
         try {
             cfHolder.putAll(configPane.getContent().checkAndReturn());
             configPane.refreshState();
@@ -296,7 +295,7 @@ public final class SettingsDialog extends DecoratedStage {
     }
 
     @Override
-    public StageType getStageStyle() {
+    public StageType getStageType() {
         return StageType.DIALOG;
     }
 

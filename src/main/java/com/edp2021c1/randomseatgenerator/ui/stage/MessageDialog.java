@@ -84,7 +84,7 @@ public final class MessageDialog extends DecoratedStage {
     }
 
     @Override
-    public StageType getStageStyle() {
+    public StageType getStageType() {
         return StageType.DIALOG;
     }
 

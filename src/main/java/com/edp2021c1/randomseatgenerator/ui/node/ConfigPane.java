@@ -171,6 +171,9 @@ public class ConfigPane extends VBox {
         return Objects.equals(content, source.getClone());
     }
 
+    /**
+     * Refreshes the state of {@link #applyButtonDisabledProperty}.
+     */
     public void refreshState() {
         applyButtonDisabledProperty.set(checkEquals());
     }

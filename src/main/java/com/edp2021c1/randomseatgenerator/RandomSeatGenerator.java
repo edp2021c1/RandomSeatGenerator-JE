@@ -33,8 +33,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.edp2021c1.randomseatgenerator.util.Log.LOG;
 import static com.edp2021c1.randomseatgenerator.util.Metadata.KEY_EXPORT_WRITABLE;
-import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
 
 /**
  * Application intro.

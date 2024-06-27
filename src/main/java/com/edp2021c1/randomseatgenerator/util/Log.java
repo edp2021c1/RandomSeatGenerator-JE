@@ -1,8 +1,5 @@
-package com.edp2021c1.randomseatgenerator.util.useroutput;
+package com.edp2021c1.randomseatgenerator.util;
 
-import com.edp2021c1.randomseatgenerator.util.PathWrapper;
-import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
-import com.edp2021c1.randomseatgenerator.util.Strings;
 import lombok.val;
 
 import java.io.IOException;
@@ -26,7 +23,7 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
  * @author Calboot
  * @since 1.4.4
  */
-public final class Logger {
+public final class Log {
 
     private static final Formatter DEFAULT_FORMATTER = new Formatter() {
         @Override
@@ -37,22 +34,30 @@ public final class Logger {
 
     private static final MessageFormat messageFormat = new MessageFormat("[{0,date,HH:mm:ss}] [{1}/{2}] {3}\n");
 
-    public static final Logger LOG = new Logger(DATA_DIR.resolve("logs"));
+    /**
+     * The global instance.
+     */
+    public static final Log LOG = new Log(DATA_DIR.resolve("logs"));
 
     private final BlockingQueue<LogRecord> queue = new LinkedBlockingQueue<>();
 
-    private final java.util.logging.Logger logger;
+    private final Logger logger;
 
     private final Thread loggerThread;
 
     private boolean shutdown;
 
-    private Logger(final PathWrapper logDir) {
-        logger = java.util.logging.Logger.getLogger("RandomSeatGenerator");
+    /**
+     * Constructs an instance.
+     *
+     * @param logDir dir to store the log file
+     */
+    public Log(final PathWrapper logDir) {
+        logger = Logger.getLogger("RandomSeatGenerator");
 
         logger.setLevel(LoggingLevels.ALL);
         logger.setUseParentHandlers(false);
-        logger.setFilter(Logger::checkAndFormat);
+        logger.setFilter(Log::checkAndFormat);
 
         CH.register(logger, Boolean.TRUE.equals(RuntimeUtils.getProperty("launching.debug")));
 
@@ -128,6 +133,9 @@ public final class Logger {
         );
     }
 
+    /**
+     * Starts the logger.
+     */
     public void start() {
         loggerThread.start();
 
@@ -139,12 +147,16 @@ public final class Logger {
         debug("Java Version: " + JAVA_VERSION);
         debug("JVM Version: " + JVM_VERSION);
         debug("Java Home: " + JAVA_HOME);
-        debug("Data directory: " + DATA_DIR);
-        debug("Home Dir: " + Path.of("").toAbsolutePath());
+        debug("Data Directory: " + DATA_DIR);
+        debug("Home Directory: " + Path.of("").toAbsolutePath());
         debug("VM Memory: %dMB".formatted(Runtime.getRuntime().maxMemory() >>> 20));
-        debug("Launching mode: " + ((boolean) RuntimeUtils.getPropertyOrDefault("launching.gui", false) ? "GUI" : "Console"));
+        debug("Launching Mode: " + ((boolean) RuntimeUtils.getPropertyOrDefault("launching.gui", false) ? "GUI" : "Console"));
     }
 
+    /**
+     * Stops the logging thread, then closes and removes the handlers.
+     * The instance will be useless after this method is called.
+     */
     public void shutdown() {
         shutdown = true;
         try {
@@ -157,36 +169,70 @@ public final class Logger {
         }
     }
 
+    /**
+     * Logs the message in {@link LoggingLevels#WARNING}.
+     *
+     * @param message to log
+     */
     public void warning(final String message) {
         log(LoggingLevels.WARNING, message);
     }
 
+    /**
+     * Logs the message in the given level.
+     *
+     * @param level   to log in
+     * @param message to log
+     */
     public void log(final Level level, final String message) {
         log(generateLogRecord(level, message));
     }
 
+    /**
+     * Logs the record.
+     *
+     * @param record to log
+     */
     public void log(final LogRecord record) {
         queue.add(record);
     }
 
+    /**
+     * Returns whether the logger is open to log messages.
+     *
+     * @return whether the logger is open to log messages
+     */
     public boolean isOpen() {
         return loggerThread.isAlive();
     }
 
+    /**
+     * Logs a {@link Throwable}.
+     * The {@code Throwable}'s message will be logged in {@link LoggingLevels#ERROR},
+     * and its stacktrace will be logged in {@link LoggingLevels#DEBUG}.
+     *
+     * @param throwable to log
+     */
     public void logThrowable(final Throwable throwable) {
         queue.addAll(generateLogRecord(throwable));
     }
 
+    /**
+     * Logs the message in {@link LoggingLevels#INFO}.
+     *
+     * @param message to log
+     */
     public void info(final String message) {
         log(LoggingLevels.INFO, message);
     }
 
+    /**
+     * Logs the message in {@link LoggingLevels#DEBUG}.
+     *
+     * @param message to log
+     */
     public void debug(final String message) {
         log(LoggingLevels.DEBUG, message);
-    }
-
-    public void error(final String message) {
-        log(LoggingLevels.ERROR, message);
     }
 
     /**
@@ -214,9 +260,9 @@ public final class Logger {
 
     private static final class CH extends ConsoleHandler {
 
-        private final java.util.logging.Logger logger;
+        private final Logger logger;
 
-        private CH(final java.util.logging.Logger logger, final boolean debugOn) {
+        private CH(final Logger logger, final boolean debugOn) {
             super();
 
             this.logger = logger;
@@ -224,7 +270,7 @@ public final class Logger {
             setLevel(debugOn ? LoggingLevels.DEBUG : LoggingLevels.INFO);
         }
 
-        public static void register(final java.util.logging.Logger logger, final boolean debugOn) {
+        public static void register(final Logger logger, final boolean debugOn) {
             logger.addHandler(new CH(logger, debugOn));
         }
 
@@ -243,11 +289,11 @@ public final class Logger {
 
     private static sealed class FH extends FileHandler permits LH, DH {
 
-        private final java.util.logging.Logger logger;
+        private final Logger logger;
 
         private final PathWrapper path;
 
-        protected FH(final java.util.logging.Logger logger, final PathWrapper path) throws IOException {
+        protected FH(final Logger logger, final PathWrapper path) throws IOException {
             super(path.toString());
 
             this.logger = logger;
@@ -276,11 +322,11 @@ public final class Logger {
 
     private static final class LH extends FH {
 
-        private LH(final java.util.logging.Logger logger, final PathWrapper logDir) throws IOException, SecurityException {
+        private LH(final Logger logger, final PathWrapper logDir) throws IOException, SecurityException {
             super(logger, logDir.resolve("latest.log"));
         }
 
-        public static void register(final java.util.logging.Logger logger, final PathWrapper logDir) throws IOException {
+        public static void register(final Logger logger, final PathWrapper logDir) throws IOException {
             logger.addHandler(new LH(logger, logDir));
         }
 
@@ -290,11 +336,11 @@ public final class Logger {
 
         private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
 
-        private DH(final java.util.logging.Logger logger, final PathWrapper logDir) throws IOException, SecurityException {
+        private DH(final Logger logger, final PathWrapper logDir) throws IOException, SecurityException {
             super(logger, logDir.resolve(Strings.nowStr(dateFormat) + ".log"));
         }
 
-        public static void register(final java.util.logging.Logger logger, final PathWrapper logDir) throws IOException {
+        public static void register(final Logger logger, final PathWrapper logDir) throws IOException {
             logger.addHandler(new DH(logger, logDir));
         }
 

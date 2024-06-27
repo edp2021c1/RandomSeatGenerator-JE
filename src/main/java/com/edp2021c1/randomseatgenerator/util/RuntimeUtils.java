@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
-import static com.edp2021c1.randomseatgenerator.util.useroutput.Logger.LOG;
+import static com.edp2021c1.randomseatgenerator.util.Log.LOG;
 import static java.lang.Runtime.getRuntime;
 
 /**
@@ -120,6 +120,12 @@ public final class RuntimeUtils {
         exitHooks.add(taskToRun);
     }
 
+    /**
+     * Runs a task in loop.
+     *
+     * @param taskToRun     task to run in loop
+     * @param waitingMillis millis to wait between each run
+     */
     public static void runLoopingTask(final Runnable taskToRun, final long waitingMillis) {
         timer.schedule(new TimerTask() {
             @Override
@@ -156,7 +162,25 @@ public final class RuntimeUtils {
         return Thread.getAllStackTraces().keySet();
     }
 
-    public static <T> T runWithTimeout(final Supplier<T> task, final long timeout, final TimeUnit timeUnit) throws TimeoutException, ExecutionException, InterruptedException {
+    /**
+     * Runs a {@code Supplier} task with a timeout.
+     *
+     * @param task     to run
+     * @param timeout  to wait before throwing a {@link TimeoutException}
+     * @param timeUnit of {@code timeout}
+     * @param <T>      type to return
+     *
+     * @return the result of {@code task}
+     *
+     * @throws TimeoutException      if the wait timed out
+     * @throws ExecutionException    if the computation threw an exception
+     * @throws InterruptedException  if the current thread is interrupted while waiting
+     * @throws CancellationException if the computation is cancelled
+     * @see ExecutorService#submit(Runnable)
+     * @see Future#get(long, TimeUnit)
+     */
+    public static <T> T runWithTimeout(final Supplier<T> task, final long timeout, final TimeUnit timeUnit)
+            throws TimeoutException, ExecutionException, InterruptedException, CancellationException {
         return executorService.submit(task::get).get(timeout, timeUnit);
     }
 

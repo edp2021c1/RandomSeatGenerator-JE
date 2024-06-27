@@ -172,6 +172,13 @@ public class SeatTable {
         return toString(System.lineSeparator());
     }
 
+    /**
+     * Joins the cells together into a string, separated by the given separator.
+     *
+     * @param lineSeparator between each row
+     *
+     * @return the result string
+     */
     public String toString(final String lineSeparator) {
         return String.join(lineSeparator, toRowData().stream().map(RowData::toString).toList());
     }
@@ -196,8 +203,18 @@ public class SeatTable {
         return rows;
     }
 
-    public String toString(final String seatSeparator, final String lineSeparator) {
-        return String.join(lineSeparator, toRowData().stream().map(strings -> strings.toString(seatSeparator)).toList());
+    /**
+     * Joins the cells and rows together into a string and returns the result.
+     *
+     * @param seatSeparator separator between each seat
+     * @param rowSeparator  separator between each row
+     *
+     * @return the result string
+     *
+     * @see RowData#toString(String)
+     */
+    public String toString(final String seatSeparator, final String rowSeparator) {
+        return String.join(rowSeparator, toRowData().stream().map(rowData -> rowData.toString(seatSeparator)).toList());
     }
 
     /**

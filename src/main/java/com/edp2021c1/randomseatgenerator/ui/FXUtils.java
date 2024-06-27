@@ -157,11 +157,11 @@ public final class FXUtils {
      */
     public static void decorate(final DecoratedStage stage) {
         stage.getIcons().add(icon);
-        if (stage.getStageStyle().mask() > 0) {
+        if (stage.getStageType().level() > 0) {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setResizable(false);
         }
-        if (stage.getStageStyle().mask() > 1) {
+        if (stage.getStageType().level() > 1) {
             stage.initOwner(getMainWindow());
         }
 

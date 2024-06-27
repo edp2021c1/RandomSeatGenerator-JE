@@ -77,10 +77,6 @@ public class PathWrapper implements Path {
     }
 
     private static void compress0(final File fileToZip, final String fileName, final ZipOutputStream zipOut) throws IOException {
-        if (fileToZip.isHidden()) {
-            return;
-        }
-
         if (fileToZip.isDirectory()) {
             val children = fileToZip.listFiles();
             if (children != null) {
@@ -483,9 +479,17 @@ public class PathWrapper implements Path {
         Files.writeString(path, str);
     }
 
+    /**
+     * Compresses the file or directory into a {@code GZIP (*.gz)} file.
+     * If the file does not exist, then an empty GZIP will be created.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
     public void compressToGZip() throws IOException {
-        try (val zipOut = new ZipOutputStream(new GZIPOutputStream(new FileOutputStream(path.toString() + ".gz")))) {
-            compress0(toFile(), toFile().getName(), zipOut);
+        try (val zipOut = new ZipOutputStream(new GZIPOutputStream(new FileOutputStream(path.resolveSibling(path.getFileName() + ".gz").toString())))) {
+            if (exists()) {
+                compress0(toFile(), toFile().getName(), zipOut);
+            }
         }
     }
 
