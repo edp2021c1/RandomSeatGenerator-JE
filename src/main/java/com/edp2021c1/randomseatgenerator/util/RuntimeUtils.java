@@ -148,7 +148,7 @@ public final class RuntimeUtils {
         if (thread != null) {
             return thread;
         }
-        val res = getThreads().parallelStream().filter(t -> t.threadId() == id).findAny();
+        val res = getThreads().stream().filter(t -> t.threadId() == id).findAny();
         res.ifPresent(value -> threadIdHashtable.put(id, value));
         return res.orElse(null);
     }

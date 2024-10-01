@@ -159,7 +159,7 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
             );
         }
         l.removeAll(List.of(""));
-        if (l.parallelStream().anyMatch(groupLeaderRegexPredicate)) {
+        if (l.stream().anyMatch(groupLeaderRegexPredicate)) {
             throw new IllegalConfigException(
                     "Name list must not contain names matching the format of a group leader"
             );

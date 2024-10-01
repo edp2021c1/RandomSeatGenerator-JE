@@ -54,7 +54,7 @@ public class SeatTableRow extends HBox {
 
         getChildren().addListener((ListChangeListener<Node>) c -> {
             while (c.next()) {
-                if (c.wasAdded() && c.getAddedSubList().parallelStream().anyMatch(n -> !(n instanceof SeatTableCell))) {
+                if (c.wasAdded() && c.getAddedSubList().stream().anyMatch(n -> !(n instanceof SeatTableCell))) {
                     throw new UnsupportedOperationException("Cannot add a non-cell child");
                 }
             }
