@@ -105,7 +105,7 @@ public final class SeatTableGeneratorAndCheckerImpl implements SeatTableGenerato
         val peopleInSeat      = peopleNum - minus;
         val peopleLeft        = peopleInSeat % columnCount;
         val noPeopleLeft      = peopleLeft == 0;
-        val randomPeopleCount = Math.min(columnCount * config.randomBetweenRows(), peopleInSeat - peopleLeft);
+        val randomPeopleCount = Math.min(columnCount * config.randomBetweenRows(), peopleInSeat);
 
         val emptyRow = Arrays.asList(new String[columnCount]);
         fill(emptyRow, EMPTY_SEAT_PLACEHOLDER);
@@ -120,7 +120,7 @@ public final class SeatTableGeneratorAndCheckerImpl implements SeatTableGenerato
         var luckyPerson = "";
 
         // 临时变量，提前声明以减少内存和计算操作
-        val luckyPersonOriginIndex  = peopleNum - randomPeopleCount - peopleLeft;
+        val luckyPersonOriginIndex  = peopleNum - randomPeopleCount + peopleLeft;
         val seatNumMinusColumnCount = seatNum - columnCount;
 
         do {
