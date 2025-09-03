@@ -22,8 +22,12 @@ import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
+import com.edp2021c1.randomseatgenerator.util.config.CachedMapSeatConfig;
 import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
 import com.edp2021c1.randomseatgenerator.util.useroutput.CrashReporter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.Strictness;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.val;
@@ -44,18 +48,7 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.KEY_EXPORT_WRITABL
  */
 public final class RandomSeatGenerator extends Application {
 
-    private List<String> unnamedPara;
-
-    private Map<String, String> namedPara;
-
-    private boolean withGUI;
-
-    /**
-     * Default constructor.
-     */
-    public RandomSeatGenerator() {
-        super();
-    }
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().setStrictness(Strictness.LENIENT).create();
 
     /**
      * App entrance.
@@ -72,9 +65,22 @@ public final class RandomSeatGenerator extends Application {
         }
     }
 
+    private List<String> unnamedPara;
+
+    private Map<String, String> namedPara;
+
+    private boolean withGUI;
+
+    /**
+     * Default constructor.
+     */
+    public RandomSeatGenerator() {
+        super();
+    }
+
     @Override
     public void init() {
-        val para = getParameters();
+        Parameters para = getParameters();
         unnamedPara = para.getUnnamed();
         namedPara = para.getNamed();
 
@@ -97,7 +103,7 @@ public final class RandomSeatGenerator extends Application {
     @Override
     public void start(final Stage primaryStage) {
 
-        for (val s : unnamedPara) {
+        for (String s : unnamedPara) {
             switch (s) {
                 case "--help" -> {
                     System.out.println(Metadata.HELP_INFO);
@@ -123,10 +129,10 @@ public final class RandomSeatGenerator extends Application {
             if (!withGUI) {
 
                 // 种子，默认为随机字符串
-                val seed = namedPara.getOrDefault("seed", Strings.randomString(30));
+                String seed = namedPara.getOrDefault("seed", Strings.randomString(30));
 
                 // 导出路径
-                var outputPath = PathWrapper.wrap(SeatTable.DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date())));
+                PathWrapper outputPath = PathWrapper.wrap(SeatTable.DEFAULT_EXPORTING_DIR.resolve("%tF.xlsx".formatted(new Date())));
                 // 获取导出路径
                 if (namedPara.containsKey("output-path")) {
                     outputPath = PathWrapper.wrap(namedPara.get("output-path"));
@@ -138,15 +144,15 @@ public final class RandomSeatGenerator extends Application {
                 }
 
                 // 处理座位表生成配置
-                var config = SeatConfigHolder.global().getClone().checkAndReturn();
+                CachedMapSeatConfig config = SeatConfigHolder.global().getClone().checkAndReturn();
                 // 座位表生成配置文件路径，默认为当前目录下的seat_config.json
-                var configPath = SeatConfigHolder.global().getConfigPath();
+                PathWrapper configPath = SeatConfigHolder.global().getConfigPath();
                 // 获取配置文件路径
                 if (namedPara.containsKey("config-path")) {
                     configPath = PathWrapper.wrap(namedPara.get("config-path"));
                     LOG.info("Config path set to " + configPath);
                     try {
-                        val holder = SeatConfigHolder.createHolder(configPath, false);
+                        SeatConfigHolder holder = SeatConfigHolder.createHolder(configPath, false);
                         config = holder.getClone().checkAndReturn();
                         holder.close();
                     } catch (final IOException e) {
@@ -156,7 +162,7 @@ public final class RandomSeatGenerator extends Application {
                 LOG.debug("Config path: " + configPath);
 
                 // 生成座位表
-                val seatTable = SeatTable.generate(config, seed);
+                SeatTable seatTable = SeatTable.generate(config, seed);
 
                 LOG.info(System.lineSeparator() + seatTable);
 

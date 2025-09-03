@@ -43,18 +43,18 @@ public abstract class CrashReporter implements Thread.UncaughtExceptionHandler {
             : new ConsoleCrashReporter();
 
     /**
-     * Creates an instance.
-     */
-    private CrashReporter() {
-    }
-
-    /**
      * Reports an exception with {@link #instance}
      *
      * @param e exception to report
      */
     public static void report(final Throwable e) {
         getInstance().uncaughtException(Thread.currentThread(), e);
+    }
+
+    /**
+     * Creates an instance.
+     */
+    private CrashReporter() {
     }
 
     /**

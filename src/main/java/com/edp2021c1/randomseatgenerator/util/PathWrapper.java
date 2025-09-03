@@ -64,29 +64,17 @@ public class PathWrapper implements Path {
         }
     };
 
-    private final Path path;
-
-    private FileChannel channel;
-
-    private PathWrapper(final Path path) {
-        if (path instanceof final PathWrapper wrapper) {
-            this.path = wrapper.path;
-            return;
-        }
-        this.path = path.toAbsolutePath();
-    }
-
     private static void compress0(final File fileToZip, final String fileName, final ZipOutputStream zipOut) throws IOException {
         if (fileToZip.isDirectory()) {
-            val children = fileToZip.listFiles();
+            File[] children = fileToZip.listFiles();
             if (children != null) {
-                for (val childFile : children) {
+                for (File childFile : children) {
                     compress0(childFile, fileName + "/" + childFile.getName(), zipOut);
                 }
             }
         } else {
-            val buffer = new byte[1024];
-            val fis    = new FileInputStream(fileToZip);
+            byte[]          buffer = new byte[1024];
+            FileInputStream fis    = new FileInputStream(fileToZip);
             zipOut.putNextEntry(new ZipEntry(fileName));
             int length;
             while ((length = fis.read(buffer)) >= 0) {
@@ -132,6 +120,18 @@ public class PathWrapper implements Path {
      */
     public static PathWrapper wrap(final Path path) {
         return new PathWrapper(path);
+    }
+
+    private final Path path;
+
+    private FileChannel channel;
+
+    private PathWrapper(final Path path) {
+        if (path instanceof final PathWrapper wrapper) {
+            this.path = wrapper.path;
+            return;
+        }
+        this.path = path.toAbsolutePath();
     }
 
     /**
@@ -304,12 +304,6 @@ public class PathWrapper implements Path {
 
     @NonNull
     @Override
-    public String toString() {
-        return path.toString();
-    }
-
-    @NonNull
-    @Override
     public FileSystem getFileSystem() {
         return path.getFileSystem();
     }
@@ -452,7 +446,7 @@ public class PathWrapper implements Path {
      */
     public String readString() throws IOException {
         if (channel != null && channel.isOpen()) {
-            val buffer = ByteBuffer.allocate((int) channel.size());
+            ByteBuffer buffer = ByteBuffer.allocate((int) channel.size());
             channel.read(buffer, 0);
             return new String(buffer.array());
         }
@@ -470,7 +464,7 @@ public class PathWrapper implements Path {
      */
     public void writeString(final String str) throws IOException {
         if (channel != null && channel.isOpen()) {
-            val bytes = Objects.requireNonNullElse(str, "").getBytes();
+            byte[] bytes = Objects.requireNonNullElse(str, "").getBytes();
             if (channel.truncate(0).write(ByteBuffer.wrap(bytes)) != bytes.length) {
                 throw new IOException();
             }
@@ -486,11 +480,17 @@ public class PathWrapper implements Path {
      * @throws IOException if an I/O error occurs.
      */
     public void compressToGZip() throws IOException {
-        try (val zipOut = new ZipOutputStream(new GZIPOutputStream(new FileOutputStream(path.resolveSibling(path.getFileName() + ".gz").toString())))) {
+        try (ZipOutputStream zipOut = new ZipOutputStream(new GZIPOutputStream(new FileOutputStream(path.resolveSibling(path.getFileName() + ".gz").toString())))) {
             if (exists()) {
                 compress0(toFile(), toFile().getName(), zipOut);
             }
         }
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return path.toString();
     }
 
 }

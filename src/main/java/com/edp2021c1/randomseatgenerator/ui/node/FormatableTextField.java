@@ -32,18 +32,6 @@ import java.util.function.BiFunction;
 public abstract class FormatableTextField extends TextField {
 
     /**
-     * Constructor.
-     */
-    protected FormatableTextField() {
-        textProperty().subscribe((oldValue, newValue) -> {
-            if (Objects.equals(oldValue, newValue)) {
-                return;
-            }
-            setText(format(oldValue, newValue));
-        });
-    }
-
-    /**
      * Creates an instance.
      *
      * @param formatter used for formatting the text, inputting the old and new value, and returning the formatted value
@@ -57,6 +45,18 @@ public abstract class FormatableTextField extends TextField {
                 return formatter.apply(oldValue, newValue);
             }
         };
+    }
+
+    /**
+     * Constructor.
+     */
+    protected FormatableTextField() {
+        textProperty().subscribe((oldValue, newValue) -> {
+            if (Objects.equals(oldValue, newValue)) {
+                return;
+            }
+            setText(format(oldValue, newValue));
+        });
     }
 
     /**

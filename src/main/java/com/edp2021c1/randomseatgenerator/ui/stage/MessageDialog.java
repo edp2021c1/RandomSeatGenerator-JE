@@ -22,12 +22,16 @@ import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 import lombok.val;
 
-import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
+import static com.edp2021c1.randomseatgenerator.ui.FXUtils.createButton;
+import static com.edp2021c1.randomseatgenerator.ui.FXUtils.createVBox;
+import static com.edp2021c1.randomseatgenerator.ui.FXUtils.setInsets;
 
 /**
  * Stage to show a simple message.
@@ -36,29 +40,6 @@ import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
  * @since 1.5.0
  */
 public final class MessageDialog extends DecoratedStage {
-
-    private MessageDialog(final Notice msg) {
-        super();
-
-        val txt = new Label(msg.message());
-
-        val button = createButton("确定", 80, 26);
-        button.setDefaultButton(true);
-        button.setOnAction(event -> close());
-
-        val buttonBar = new ButtonBar();
-        buttonBar.getButtons().add(button);
-
-        val mainBox = createVBox(txt, buttonBar);
-        mainBox.getStyleClass().add("main");
-
-        setInsets(new Insets(5), txt, buttonBar);
-
-        setScene(new Scene(mainBox));
-        setTitle(msg.title());
-        setMaxWidth(1280);
-        setMaxHeight(720);
-    }
 
     /**
      * Shows a message dialog.
@@ -77,10 +58,33 @@ public final class MessageDialog extends DecoratedStage {
      */
     public static void showMessage(final Window owner, final Notice msg) {
         DesktopUtils.runOnFXThread(() -> {
-            val dialog = new MessageDialog(msg);
+            MessageDialog dialog = new MessageDialog(msg);
             dialog.initOwner(owner);
             dialog.showAndWait();
         });
+    }
+
+    private MessageDialog(final Notice msg) {
+        super();
+
+        Label txt = new Label(msg.message());
+
+        Button button = createButton("确定", 80, 26);
+        button.setDefaultButton(true);
+        button.setOnAction(event -> close());
+
+        ButtonBar buttonBar = new ButtonBar();
+        buttonBar.getButtons().add(button);
+
+        VBox mainBox = createVBox(txt, buttonBar);
+        mainBox.getStyleClass().add("main");
+
+        setInsets(new Insets(5), txt, buttonBar);
+
+        setScene(new Scene(mainBox));
+        setTitle(msg.title());
+        setMaxWidth(1280);
+        setMaxHeight(720);
     }
 
     @Override

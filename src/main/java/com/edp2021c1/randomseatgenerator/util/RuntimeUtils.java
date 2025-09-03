@@ -61,12 +61,6 @@ public final class RuntimeUtils {
     }
 
     /**
-     * Don't let anyone else instantiate this class.
-     */
-    private RuntimeUtils() {
-    }
-
-    /**
      * Runs the exit hooks one by one.
      */
     public static void runExitHooks() {
@@ -144,11 +138,11 @@ public final class RuntimeUtils {
      * @return thread identified by {@code id}
      */
     public static Thread getThreadById(final long id) {
-        val thread = threadIdHashtable.get(id);
+        Thread thread = threadIdHashtable.get(id);
         if (thread != null) {
             return thread;
         }
-        val res = getThreads().stream().filter(t -> t.threadId() == id).findAny();
+        Optional<Thread> res = getThreads().stream().filter(t -> t.threadId() == id).findAny();
         res.ifPresent(value -> threadIdHashtable.put(id, value));
         return res.orElse(null);
     }
@@ -182,6 +176,12 @@ public final class RuntimeUtils {
     public static <T> T runWithTimeout(final Supplier<T> task, final long timeout, final TimeUnit timeUnit)
             throws TimeoutException, ExecutionException, InterruptedException, CancellationException {
         return executorService.submit(task::get).get(timeout, timeUnit);
+    }
+
+    /**
+     * Don't let anyone else instantiate this class.
+     */
+    private RuntimeUtils() {
     }
 
 }

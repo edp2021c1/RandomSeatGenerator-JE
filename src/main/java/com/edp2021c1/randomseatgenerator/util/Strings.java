@@ -64,12 +64,6 @@ public final class Strings {
     public static final Predicate<String> integerListPatternPredicate = Pattern.compile("[0-9 ]*").asMatchPredicate();
 
     /**
-     * Don't let anyone else instantiate this class.
-     */
-    private Strings() {
-    }
-
-    /**
      * Returns the instant of now formatted into string.
      *
      * @return now in {@code String}
@@ -97,8 +91,8 @@ public final class Strings {
      * @return hash code of {@code str}
      */
     public static long longHashCode(final String str) {
-        var h = 0;
-        for (val v : str.getBytes()) {
+        int h = 0;
+        for (byte v : str.getBytes()) {
             h = (v & 0xffff) + (h << 5) - h;
         }
         return h;
@@ -112,8 +106,8 @@ public final class Strings {
      * @return stack trace of {@code e}
      */
     public static String getStackTrace(final Throwable e) {
-        val writer      = new StringWriter(1024);
-        val printWriter = new PrintWriter(writer);
+        StringWriter writer      = new StringWriter(1024);
+        PrintWriter  printWriter = new PrintWriter(writer);
         e.printStackTrace(printWriter);
         printWriter.close();
         return writer.toString();
@@ -128,12 +122,18 @@ public final class Strings {
      * @return a randomly generated string
      */
     public static String randomString(final int len) {
-        val chars = new char[len];
-        val rd    = new Random();
-        for (var i = 0; i < len; i++) {
+        char[] chars = new char[len];
+        Random rd    = new Random();
+        for (int i = 0; i < len; i++) {
             chars[i] = DataUtils.pickRandomly(CHARACTERS_AND_DIGITS, rd);
         }
         return new String(chars);
+    }
+
+    /**
+     * Don't let anyone else instantiate this class.
+     */
+    private Strings() {
     }
 
 }

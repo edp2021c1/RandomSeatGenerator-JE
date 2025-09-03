@@ -39,6 +39,40 @@ public final class Log {
      */
     public static final Log LOG = new Log(DATA_DIR.resolve("logs"));
 
+    private static LogRecord generateLogRecord(final Level level, final String message) {
+        LogRecord res = new LogRecord(level, message);
+        res.setInstant(Instant.now());
+        res.setLongThreadID(Thread.currentThread().threadId());
+        return res;
+    }
+
+    private static boolean checkAndFormat(final LogRecord record) {
+        String msg = record.getMessage();
+        if (msg == null || msg.isEmpty()) {
+            return false;
+        }
+        Thread thread = RuntimeUtils.getThreadById(record.getLongThreadID());
+        record.setMessage(messageFormat.format(
+                new Object[]{
+                        new Date(record.getMillis()),
+                        thread == null ? "Unrecognized Thread" : thread.getName(),
+                        record.getLevel().getName(),
+                        (msg.lines().count() > 1) ? (System.lineSeparator() + msg) : msg
+                },
+                new StringBuffer(1024),
+                null
+        ).toString());
+
+        return true;
+    }
+
+    private static List<LogRecord> generateLogRecord(final Throwable throwable) {
+        return List.of(
+                generateLogRecord(LoggingLevels.ERROR, throwable.getClass().getName() + ": " + throwable.getLocalizedMessage()),
+                generateLogRecord(LoggingLevels.DEBUG, Strings.getStackTrace(throwable))
+        );
+    }
+
     private final BlockingQueue<LogRecord> queue = new LinkedBlockingQueue<>();
 
     private final Logger logger;
@@ -82,55 +116,21 @@ public final class Log {
         }
 
         loggerThread = new Thread(() -> {
-            val logs = new LinkedList<LogRecord>();
+            LinkedList<LogRecord> logs = new LinkedList<LogRecord>();
             while (!shutdown) {
                 if (queue.drainTo(logs) > 0) {
-                    for (val log : logs) {
+                    for (LogRecord log : logs) {
                         logger.log(log);
                     }
                     logs.clear();
                 }
             }
             queue.drainTo(logs);
-            for (val log : logs) {
+            for (LogRecord log : logs) {
                 logger.log(log);
             }
             logs.clear();
         }, "RandomSeatGenerator Logger Thread");
-    }
-
-    private static LogRecord generateLogRecord(final Level level, final String message) {
-        val res = new LogRecord(level, message);
-        res.setInstant(Instant.now());
-        res.setLongThreadID(Thread.currentThread().threadId());
-        return res;
-    }
-
-    private static boolean checkAndFormat(final LogRecord record) {
-        val msg = record.getMessage();
-        if (msg == null || msg.isEmpty()) {
-            return false;
-        }
-        val thread = RuntimeUtils.getThreadById(record.getLongThreadID());
-        record.setMessage(messageFormat.format(
-                new Object[]{
-                        new Date(record.getMillis()),
-                        thread == null ? "Unrecognized Thread" : thread.getName(),
-                        record.getLevel().getName(),
-                        (msg.lines().count() > 1) ? (System.lineSeparator() + msg) : msg
-                },
-                new StringBuffer(1024),
-                null
-        ).toString());
-
-        return true;
-    }
-
-    private static List<LogRecord> generateLogRecord(final Throwable throwable) {
-        return List.of(
-                generateLogRecord(LoggingLevels.ERROR, throwable.getClass().getName() + ": " + throwable.getLocalizedMessage()),
-                generateLogRecord(LoggingLevels.DEBUG, Strings.getStackTrace(throwable))
-        );
     }
 
     /**
@@ -163,7 +163,7 @@ public final class Log {
             loggerThread.join(1000);
         } catch (final InterruptedException ignored) {
         }
-        for (val handler : logger.getHandlers()) {
+        for (Handler handler : logger.getHandlers()) {
             logger.removeHandler(handler);
             handler.close();
         }
@@ -260,6 +260,10 @@ public final class Log {
 
     private static final class CH extends ConsoleHandler {
 
+        public static void register(final Logger logger, final boolean debugOn) {
+            logger.addHandler(new CH(logger, debugOn));
+        }
+
         private final Logger logger;
 
         private CH(final Logger logger, final boolean debugOn) {
@@ -270,15 +274,11 @@ public final class Log {
             setLevel(debugOn ? LoggingLevels.DEBUG : LoggingLevels.INFO);
         }
 
-        public static void register(final Logger logger, final boolean debugOn) {
-            logger.addHandler(new CH(logger, debugOn));
-        }
-
         @Override
         public void close() throws SecurityException {
-            val record = new LogRecord(LoggingLevels.DEBUG, "Closing console log handler");
+            LogRecord record = new LogRecord(LoggingLevels.DEBUG, "Closing console log handler");
             checkAndFormat(record);
-            for (val h : logger.getHandlers()) {
+            for (Handler h : logger.getHandlers()) {
                 h.publish(record);
             }
             publish(record);
@@ -303,31 +303,31 @@ public final class Log {
             setEncoding("UTF-8");
         }
 
+        protected PathWrapper getPath() {
+            return path;
+        }
+
         @Override
         public void close() throws SecurityException {
-            val record = new LogRecord(LoggingLevels.DEBUG, "Closing log file \"%s\"".formatted(path));
+            LogRecord record = new LogRecord(LoggingLevels.DEBUG, "Closing log file \"%s\"".formatted(path));
             checkAndFormat(record);
             publish(record);
-            for (val h : logger.getHandlers()) {
+            for (Handler h : logger.getHandlers()) {
                 h.publish(record);
             }
             super.close();
-        }
-
-        protected PathWrapper getPath() {
-            return path;
         }
 
     }
 
     private static final class LH extends FH {
 
-        private LH(final Logger logger, final PathWrapper logDir) throws IOException, SecurityException {
-            super(logger, logDir.resolve("latest.log"));
-        }
-
         public static void register(final Logger logger, final PathWrapper logDir) throws IOException {
             logger.addHandler(new LH(logger, logDir));
+        }
+
+        private LH(final Logger logger, final PathWrapper logDir) throws IOException, SecurityException {
+            super(logger, logDir.resolve("latest.log"));
         }
 
     }
@@ -336,12 +336,12 @@ public final class Log {
 
         private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
 
-        private DH(final Logger logger, final PathWrapper logDir) throws IOException, SecurityException {
-            super(logger, logDir.resolve(Strings.nowStr(dateFormat) + ".log"));
-        }
-
         public static void register(final Logger logger, final PathWrapper logDir) throws IOException {
             logger.addHandler(new DH(logger, logDir));
+        }
+
+        private DH(final Logger logger, final PathWrapper logDir) throws IOException, SecurityException {
+            super(logger, logDir.resolve(Strings.nowStr(dateFormat) + ".log"));
         }
 
         @Override

@@ -16,30 +16,56 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import java.nio.file.*
+import java.nio.file.CopyOption
+import java.nio.file.Files
+import java.nio.file.NoSuchFileException
 import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 import java.util.*
 import java.util.spi.ToolProvider
+import kotlin.Array
+import kotlin.RuntimeException
+import kotlin.String
+import kotlin.io.println
+import kotlin.to
 
 plugins {
     id("java")
+
+    // https://github.com/GradleUp/shadow
+    id("com.gradleup.shadow") version ("9.1.0")
+
+    // https://github.com/Fallen-Breath/yamlang
+    id("me.fallenbreath.yamlang") version ("1.5.0")
 }
 
 val prop = Properties(3)
-prop.load(Files.newInputStream(projectDir.toPath().resolve("project.properties")))
+prop.load(Files.newInputStream(projectDir.toPath().resolve("gradle.properties")))
 
 group = prop.getProperty("group")
 version = prop.getProperty("version")
 
-val os = System.getProperty("os.name").lowercase()
-val isWin = os.startsWith("win")
-val isMac = os.startsWith("mac")
-
 java {
+    val os = System.getProperty("os.name").lowercase()
+    val isWin = os.startsWith("win")
+    val isMac = os.startsWith("mac")
+
     if (!(isWin || isMac)) {
         withSourcesJar()
         withJavadocJar()
     }
+}
+
+yamlang {
+    targetSourceSets = listOf(sourceSets.getByName("main"))
+    inputDir = "assets/lang"
+}
+
+tasks.shadowJar {
+    configurations = project.configurations.runtimeClasspath.map { listOf(it) }.get()
+    exclude("META-INF")
+    archiveClassifier = "shadow"
+    minimize()
 }
 
 repositories {
@@ -56,9 +82,17 @@ dependencies {
     // FastJson，用于读取配置文件
     implementation("com.alibaba.fastjson2:fastjson2:2.0.46")
 
+    // Guava
+    implementation("com.google.guava:guava:33.4.8-jre")
+
+    // Gson
+    implementation("com.google.code.gson:gson:2.13.1")
+
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.30")
+    compileOnly("org.jetbrains:annotations:26.0.2")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.jetbrains:annotations:26.0.2")
 }
 
 tasks.compileJava {
@@ -90,13 +124,6 @@ tasks.jar {
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    from(sourceSets.main.get().output)
-
-    dependsOn(configurations.runtimeClasspath)
-    from({
-        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-    })
 }
 
 tasks.build {
@@ -104,6 +131,9 @@ tasks.build {
 }
 
 fun getPackingArguments(jarName: String, projectPath: String): Array<String> {
+    val os = System.getProperty("os.name").lowercase()
+    val isWin = os.startsWith("win")
+
     val args = mutableListOf(
         "@" + Path.of(projectPath, "build_resources", "pack_args", "all.txt"),
         "-i", Path.of(projectPath, "build", "libs").toString(),
@@ -134,23 +164,26 @@ fun copyToDir(source: Path, targetDir: Path, vararg options: CopyOption) {
     Files.copy(source, targetDir.resolve(source.fileName), *options)
 }
 
-val pack = task("pack") {
-    val jarState = tasks.jar.get().state
-    if (!jarState.executed) {
-        dependsOn(tasks.jar)
-    }
+val pack = tasks.register("pack") {
+    val os = System.getProperty("os.name").lowercase()
+    val isWin = os.startsWith("win")
+    val isMac = os.startsWith("mac")
 
-    onlyIf { jarState.executed }
+    dependsOn(tasks.shadowJar)
     doLast {
         val fName = project.name + "-" + version
         val projectPath = projectDir.path
         val jarName = "$fName.jar"
+        val shadowedJarName = "$fName-shadow.jar"
         val libsPath = Path.of(projectPath, "build", "libs")
         val jarPath = libsPath.resolve(jarName)
+        val shadowedJarPath = libsPath.resolve(shadowedJarName)
 
-        if (Files.notExists(jarPath)) {
-            throw NoSuchFileException("Jar not found at $jarPath")
+        if (Files.notExists(shadowedJarPath)) {
+            throw NoSuchFileException("Shadowed jar not found at $shadowedJarPath")
         }
+
+        Files.move(shadowedJarPath, jarPath, StandardCopyOption.REPLACE_EXISTING)
 
         val packageDir = Path.of(projectPath, "packages")
         if (!Files.isDirectory(packageDir)) {

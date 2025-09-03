@@ -22,10 +22,7 @@ import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -41,32 +38,41 @@ import static com.edp2021c1.randomseatgenerator.ui.FXUtils.createButton;
  */
 public final class CrashReporterDialog extends DecoratedStage {
 
+    /**
+     * Shows a crash reporter dialog.
+     *
+     * @param msg error message
+     */
+    public static void showCrashReporter(final Notice msg) {
+        DesktopUtils.runOnFXThread(() -> new CrashReporterDialog(msg).showAndWait());
+    }
+
     private CrashReporterDialog(final Notice msg) {
         super();
 
-        val preLabelBeforeLink = new Label("Something's wrong... Click");
-        val here               = new Hyperlink("here");
-        val preLabelAfterLink  = new Label("to copy the error message");
+        Label     preLabelBeforeLink = new Label("Something's wrong... Click");
+        Hyperlink here               = new Hyperlink("here");
+        Label     preLabelAfterLink  = new Label("to copy the error message");
         preLabelBeforeLink.getStyleClass().add("err-pre-label");
         here.getStyleClass().add("err-pre-label");
         preLabelAfterLink.getStyleClass().add("err-pre-label");
 
-        val mainText = new TextArea(msg.message());
+        TextArea mainText = new TextArea(msg.message());
         mainText.setEditable(false);
         mainText.getStyleClass().add("err-main-text");
 
-        val confirmBtn = createButton("关闭", 80, 26);
+        Button confirmBtn = createButton("关闭", 80, 26);
         confirmBtn.setOnAction(event -> close());
         confirmBtn.setDefaultButton(true);
 
-        val copyBtn = createButton("复制并关闭", 80, 26);
+        Button copyBtn = createButton("复制并关闭", 80, 26);
 
-        val buttonBar = new ButtonBar();
+        ButtonBar buttonBar = new ButtonBar();
         buttonBar.getButtons().addAll(copyBtn, confirmBtn);
         buttonBar.setPrefHeight(66);
         buttonBar.getStyleClass().add("bottom");
 
-        val mainBox = new VBox(new HBox(preLabelBeforeLink, here, preLabelAfterLink), mainText, buttonBar);
+        VBox mainBox = new VBox(new HBox(preLabelBeforeLink, here, preLabelAfterLink), mainText, buttonBar);
         mainBox.getStyleClass().add("main");
 
         setScene(new Scene(mainBox));
@@ -98,15 +104,6 @@ public final class CrashReporterDialog extends DecoratedStage {
                 }
             });
         }
-    }
-
-    /**
-     * Shows a crash reporter dialog.
-     *
-     * @param msg error message
-     */
-    public static void showCrashReporter(final Notice msg) {
-        DesktopUtils.runOnFXThread(() -> new CrashReporterDialog(msg).showAndWait());
     }
 
     @Override

@@ -49,6 +49,15 @@ public class AppPropertiesHolder {
         }
     }
 
+    /**
+     * Returns the global properties holder.
+     *
+     * @return the global holder
+     */
+    public static AppPropertiesHolder global() {
+        return global;
+    }
+
     private final Properties appProperties;
 
     private final PathWrapper path;
@@ -66,15 +75,6 @@ public class AppPropertiesHolder {
         init();
     }
 
-    /**
-     * Returns the global properties holder.
-     *
-     * @return the global holder
-     */
-    public static AppPropertiesHolder global() {
-        return global;
-    }
-
     private void init() throws IOException {
         if (path.replaceIfNonRegularFile().notFullyPermitted()) {
             throw new IOException("Does not has enough permission to read/write config");
@@ -83,7 +83,7 @@ public class AppPropertiesHolder {
     }
 
     private void store() {
-        val str = new StringWriter();
+        StringWriter str = new StringWriter();
         try {
             appProperties.store(str, null);
             path.writeString(str.toString());

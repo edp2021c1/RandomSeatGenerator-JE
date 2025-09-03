@@ -26,6 +26,7 @@ import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.NonNull;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -137,7 +138,7 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     }
 
     private List<Integer> regenerateDisabledLastRowPos() throws IllegalConfigException {
-        val disabledLastRowPos = getDisabledLastRowPos();
+        String disabledLastRowPos = getDisabledLastRowPos();
         if (disabledLastRowPos == null || disabledLastRowPos.isBlank()) {
             return new ArrayList<>();
         }
@@ -148,11 +149,11 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     }
 
     private List<String> regenerateNames() throws IllegalConfigException {
-        val names = getNames();
+        String names = getNames();
         if (names == null) {
             throw new IllegalConfigException("Name list cannot be null");
         }
-        val l = Arrays.asList(names.split(" "));
+        List<@NotNull String> l = Arrays.asList(names.split(" "));
         if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
                     "Name list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
@@ -168,11 +169,11 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     }
 
     private List<String> regenerateGroupLeaders() throws IllegalConfigException {
-        val groupLeaders = getGroupLeaders();
+        String groupLeaders = getGroupLeaders();
         if (groupLeaders == null) {
             throw new IllegalConfigException("Group leader list cannot be null");
         }
-        val l = Arrays.asList(groupLeaders.split(" "));
+        List<@NotNull String> l = Arrays.asList(groupLeaders.split(" "));
         if (l.contains(EMPTY_SEAT_PLACEHOLDER)) {
             throw new IllegalConfigException(
                     "Group leader list must not contain empty seat place holder \"%s\"".formatted(EMPTY_SEAT_PLACEHOLDER)
@@ -182,7 +183,7 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     }
 
     private List<NamePair> regenerateSeparatedPairs() throws IllegalConfigException {
-        val separatedPairs = getSeparatedPairs();
+        String separatedPairs = getSeparatedPairs();
         if (separatedPairs == null) {
             throw new IllegalConfigException("Separated list cannot be null");
         }
@@ -194,7 +195,7 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     }
 
     private int regenerateRandomBetweenRows() throws IllegalConfigException {
-        val randomBetweenRows = getRandomBetweenRows();
+        Integer randomBetweenRows = getRandomBetweenRows();
         if (randomBetweenRows == null || randomBetweenRows == 0) {
             return regenerateRowCount();
         }
@@ -205,7 +206,7 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     }
 
     private int regenerateRowCount() throws IllegalConfigException {
-        val rowCount = getRowCount();
+        Integer rowCount = getRowCount();
         if (rowCount == null || rowCount == 0) {
             throw new IllegalConfigException("Row count cannot be equal to or less than 0");
         }
@@ -213,7 +214,7 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     }
 
     private int regenerateColumnCount() throws IllegalConfigException {
-        val columnCount = getColumnCount();
+        Integer columnCount = getColumnCount();
         if (columnCount == null || columnCount == 0) {
             throw new IllegalConfigException("Column count cannot be equal to or less than 0");
         }
@@ -256,7 +257,7 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
 
     @Override
     public void check() throws IllegalConfigException {
-        val causes = new ArrayList<IllegalConfigException>();
+        ArrayList<IllegalConfigException> causes = new ArrayList<IllegalConfigException>();
         try {
             regenerateRowCount();
         } catch (final IllegalConfigException e) {
@@ -333,24 +334,6 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     public CachedMapSeatConfig checkAndReturn() throws IllegalConfigException {
         check();
         return this;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o == this) {
-            return true;
-        }
-        if (!(o instanceof final CachedMapSeatConfig other)) {
-            return false;
-        }
-        return Objects.equals(other.getRowCount(), getRowCount())
-                && Objects.equals(other.getColumnCount(), getColumnCount())
-                && Objects.equals(other.getRandomBetweenRows(), getRandomBetweenRows())
-                && Objects.equals(other.getDisabledLastRowPos(), getDisabledLastRowPos())
-                && Objects.equals(other.getNames(), getNames())
-                && Objects.equals(other.getGroupLeaders(), getGroupLeaders())
-                && Objects.equals(other.getSeparatedPairs(), getSeparatedPairs())
-                && other.getLucky() == getLucky();
     }
 
     /**
@@ -657,6 +640,24 @@ public class CachedMapSeatConfig implements Map<String, Object>, SeatConfig {
     @NonNull
     public Set<Entry<String, Object>> entrySet() {
         return config.entrySet();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof final CachedMapSeatConfig other)) {
+            return false;
+        }
+        return Objects.equals(other.getRowCount(), getRowCount())
+                && Objects.equals(other.getColumnCount(), getColumnCount())
+                && Objects.equals(other.getRandomBetweenRows(), getRandomBetweenRows())
+                && Objects.equals(other.getDisabledLastRowPos(), getDisabledLastRowPos())
+                && Objects.equals(other.getNames(), getNames())
+                && Objects.equals(other.getGroupLeaders(), getGroupLeaders())
+                && Objects.equals(other.getSeparatedPairs(), getSeparatedPairs())
+                && other.getLucky() == getLucky();
     }
 
 

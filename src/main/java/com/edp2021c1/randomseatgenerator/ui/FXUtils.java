@@ -25,6 +25,7 @@ import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
 import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -115,12 +116,6 @@ public final class FXUtils {
     public static final String KEY_IMPORT_DIR_PREVIOUS = "import.dir.previous";
 
     /**
-     * Don't let anyone else instantiate this class.
-     */
-    private FXUtils() {
-    }
-
-    /**
      * Returns the global export writable property.
      *
      * @return {@link #exportWritable}
@@ -167,7 +162,7 @@ public final class FXUtils {
 
         stage.sceneProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                val stylesheets = newValue.getStylesheets();
+                ObservableList<String> stylesheets = newValue.getStylesheets();
                 globalDarkMode.subscribe(n -> {
                     if (n) {
                         stylesheets.setAll(STYLESHEETS_DARK);
@@ -200,7 +195,7 @@ public final class FXUtils {
      * @param elements where margin will be set to
      */
     public static void setInsets(final Insets margin, final Node... elements) {
-        for (val n : elements) {
+        for (Node n : elements) {
             HBox.setMargin(n, margin);
             VBox.setMargin(n, margin);
         }
@@ -216,7 +211,7 @@ public final class FXUtils {
      * @return the button created
      */
     public static Button createButton(final String text, final double width, final double height) {
-        val btn = new Button(text);
+        Button btn = new Button(text);
         btn.setPrefSize(width, height);
         return btn;
     }
@@ -229,7 +224,7 @@ public final class FXUtils {
      * @return the box created
      */
     public static VBox createVBox(final Node... children) {
-        val vBox = new VBox(children);
+        VBox vBox = new VBox(children);
         vBox.setAlignment(Pos.CENTER);
         return vBox;
     }
@@ -242,7 +237,7 @@ public final class FXUtils {
      * @return the box created
      */
     public static HBox createHBox(final Node... children) {
-        val hBox = new HBox(children);
+        HBox hBox = new HBox(children);
         hBox.setAlignment(Pos.CENTER);
         return hBox;
     }
@@ -255,7 +250,7 @@ public final class FXUtils {
      * @return the field created
      */
     public static TextField createEmptyTextField(final String promptText) {
-        val t = new TextField();
+        TextField t = new TextField();
         t.setPromptText(promptText);
         return t;
     }
@@ -270,10 +265,16 @@ public final class FXUtils {
      * @return the area created
      */
     public static TextArea createEmptyTextArea(final String promptText, final double width, final double height) {
-        val t = new TextArea();
+        TextArea t = new TextArea();
         t.setPromptText(promptText);
         t.setPrefSize(width, height);
         return t;
+    }
+
+    /**
+     * Don't let anyone else instantiate this class.
+     */
+    private FXUtils() {
     }
 
 }

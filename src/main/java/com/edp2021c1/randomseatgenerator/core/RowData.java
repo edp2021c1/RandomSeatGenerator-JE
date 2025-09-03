@@ -38,28 +38,6 @@ public class RowData extends AbstractList<String> {
 
     private static final String DEFAULT_SEPARATOR = "\t\t";
 
-    private final String[] cells;
-
-    private final int cellCount;
-
-    @Getter
-    private final boolean header;
-
-    /**
-     * Instantiates this class.
-     */
-    private RowData(final boolean header, final String... cells) {
-        this.header = header;
-        this.cellCount = cells.length;
-        this.cells = cells;
-    }
-
-    private RowData(final boolean header, final Collection<String> cells) {
-        this.header = header;
-        this.cellCount = cells.size();
-        this.cells = cells.toArray(new String[0]);
-    }
-
     /**
      * Constructs and returns a row containing the given cells
      *
@@ -91,6 +69,28 @@ public class RowData extends AbstractList<String> {
      */
     public static RowData header(final int columnCount) {
         return new RowData(true, IntStream.range(1, columnCount + 1).mapToObj(i -> "Column " + i).toArray(String[]::new));
+    }
+
+    private final String[] cells;
+
+    private final int cellCount;
+
+    @Getter
+    private final boolean header;
+
+    /**
+     * Instantiates this class.
+     */
+    private RowData(final boolean header, final String... cells) {
+        this.header = header;
+        this.cellCount = cells.length;
+        this.cells = cells;
+    }
+
+    private RowData(final boolean header, final Collection<String> cells) {
+        this.header = header;
+        this.cellCount = cells.size();
+        this.cells = cells.toArray(new String[0]);
     }
 
     /**

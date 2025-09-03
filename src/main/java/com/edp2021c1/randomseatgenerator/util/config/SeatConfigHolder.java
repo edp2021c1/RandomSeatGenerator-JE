@@ -18,6 +18,7 @@
 
 package com.edp2021c1.randomseatgenerator.util.config;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.PathWrapper;
 import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
@@ -27,6 +28,7 @@ import lombok.Getter;
 import lombok.val;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -57,7 +59,7 @@ public class SeatConfigHolder {
 
             global = createHolder(globalPath, true);
             if (global.content.isEmpty()) {
-                val builtInConfigStream = SeatConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
+                InputStream builtInConfigStream = SeatConfigHolder.class.getResourceAsStream("/assets/conf/default.json");
                 if (builtInConfigStream != null) {
                     global.putAll(parseObject(new String(builtInConfigStream.readAllBytes())));
                     builtInConfigStream.close();
@@ -69,6 +71,33 @@ public class SeatConfigHolder {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Returns the global config holder.
+     *
+     * @return the global config holder
+     */
+    public static SeatConfigHolder global() {
+        return global;
+    }
+
+    /**
+     * Creates an instance with the given config path and adds it to the holders set.
+     *
+     * @param configPath  path of config
+     * @param closeOnExit whether the created holder will be automatically closed on application exit
+     *
+     * @return the holder created
+     *
+     * @throws IOException if failed to init config path, or does not have enough permission of the path
+     */
+    public static SeatConfigHolder createHolder(final Path configPath, final boolean closeOnExit) throws IOException {
+        SeatConfigHolder res = new SeatConfigHolder(configPath);
+        if (closeOnExit) {
+            RuntimeUtils.addExitHook(res::close);
+        }
+        return res;
     }
 
     @Getter
@@ -96,31 +125,31 @@ public class SeatConfigHolder {
         initChannel();
     }
 
-    /**
-     * Returns the global config holder.
-     *
-     * @return the global config holder
-     */
-    public static SeatConfigHolder global() {
-        return global;
+    private void initConfigPath() throws IOException {
+        if (configPath.getParent().replaceWithDirectory().notFullyPermitted()) {
+            throw new IOException("Does not has enough permission to read/write config");
+        }
+        if (configPath.replaceIfNonRegularFile().notFullyPermitted()) {
+            throw new IOException("Does not has enough permission to read/write config");
+        }
     }
 
-    /**
-     * Creates an instance with the given config path and adds it to the holders set.
-     *
-     * @param configPath  path of config
-     * @param closeOnExit whether the created holder will be automatically closed on application exit
-     *
-     * @return the holder created
-     *
-     * @throws IOException if failed to init config path, or does not have enough permission of the path
-     */
-    public static SeatConfigHolder createHolder(final Path configPath, final boolean closeOnExit) throws IOException {
-        val res = new SeatConfigHolder(configPath);
-        if (closeOnExit) {
-            RuntimeUtils.addExitHook(res::close);
+    private void initChannel() throws IOException {
+        if (channel.tryLock() == null) {
+            throw new FileAlreadyLockedException(configPath);
         }
-        return res;
+        JSONObject obj = parseObject(configPath.readString());
+        putAll(
+                content.putAllAndReturn(
+                        obj == null ? Map.of() : obj
+                )
+        ); // To load and truncate the content
+    }
+
+    private void checkState() {
+        if (closed) {
+            throw new IllegalStateException("Closed SeatConfigHolder");
+        }
     }
 
     /**
@@ -139,33 +168,6 @@ public class SeatConfigHolder {
                 LOG.debug("Config holder at " + configPath + " closed");
             }
             closed = true;
-        }
-    }
-
-    private void initConfigPath() throws IOException {
-        if (configPath.getParent().replaceWithDirectory().notFullyPermitted()) {
-            throw new IOException("Does not has enough permission to read/write config");
-        }
-        if (configPath.replaceIfNonRegularFile().notFullyPermitted()) {
-            throw new IOException("Does not has enough permission to read/write config");
-        }
-    }
-
-    private void initChannel() throws IOException {
-        if (channel.tryLock() == null) {
-            throw new FileAlreadyLockedException(configPath);
-        }
-        val obj = parseObject(configPath.readString());
-        putAll(
-                content.putAllAndReturn(
-                        obj == null ? Map.of() : obj
-                )
-        ); // To load and truncate the content
-    }
-
-    private void checkState() {
-        if (closed) {
-            throw new IllegalStateException("Closed SeatConfigHolder");
         }
     }
 

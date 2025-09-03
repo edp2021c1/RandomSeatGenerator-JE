@@ -1,0 +1,9 @@
+randomseatgenerator:
+  constants:
+    seats: 座位
+    leaders: 组长
+  exception:
+    illegal_argument:
+      must_be_positive: 值 %d 应为正数
+      not_enough: "%s 不足: 可用 %d, 需要 %d"
+    seat.too_many_generations: 已经迭代 %d 次了!

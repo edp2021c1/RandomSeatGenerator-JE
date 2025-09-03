@@ -36,12 +36,6 @@ import java.util.stream.Stream;
 public final class DataUtils {
 
     /**
-     * Don't let anyone else instantiate this class.
-     */
-    private DataUtils() {
-    }
-
-    /**
      * Returns a randomly picked element of the source collection
      * and then remove it from the collection.
      *
@@ -55,7 +49,7 @@ public final class DataUtils {
         if (src instanceof List<? extends T>) {
             return ((List<T>) src).remove(rd.nextInt(src.size()));
         }
-        val res = pickRandomly(src, rd);
+        T res = pickRandomly(src, rd);
         src.remove(res);
         return res;
     }
@@ -90,6 +84,12 @@ public final class DataUtils {
         return IntStream
                 .range(0, (int) Math.ceil((double) list.size() / chunkSize))
                 .mapToObj(i -> list.subList(i * chunkSize, Math.min((i + 1) * chunkSize, list.size())));
+    }
+
+    /**
+     * Don't let anyone else instantiate this class.
+     */
+    private DataUtils() {
     }
 
 }

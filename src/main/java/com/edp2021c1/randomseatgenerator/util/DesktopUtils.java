@@ -43,12 +43,6 @@ public final class DesktopUtils {
     private static final Clipboard clipboard = Clipboard.getSystemClipboard();
 
     /**
-     * Don't let anyone else instantiate this class.
-     */
-    private DesktopUtils() {
-    }
-
-    /**
      * Launches the default browser to display a {@code URI} if supported.
      * If the default browser is unable to handle the specified
      * {@code URI}, the application registered for handling
@@ -136,6 +130,12 @@ public final class DesktopUtils {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Don't let anyone else instantiate this class.
+     */
+    private DesktopUtils() {
     }
 
 }

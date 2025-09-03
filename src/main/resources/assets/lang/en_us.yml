@@ -1,0 +1,9 @@
+randomseatgenerator:
+  constants:
+    seats: seats
+    leaders: leaders
+  exception:
+    illegal_argument:
+      must_be_positive: Value %d expected to be positive
+      not_enough: "Not enough %s: %d available while the least is %d"
+    seat.too_many_generations: There's %d generations already!

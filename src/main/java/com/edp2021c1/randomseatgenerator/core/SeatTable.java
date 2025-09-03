@@ -28,6 +28,7 @@ import com.edp2021c1.randomseatgenerator.util.exception.IllegalConfigException;
 import lombok.Getter;
 import lombok.val;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
@@ -73,6 +74,66 @@ public class SeatTable {
     public static final String groupLeaderFormat = "*%s*";
 
     /**
+     * Generate a seat table using the specified config and the seed.
+     *
+     * @param config used to generate the seat table
+     * @param seed   used to generate the seat table
+     *
+     * @return an instance of {@code SeatTable}
+     *
+     * @throws NullPointerException   if the config is null
+     * @throws IllegalConfigException if the config has an illegal format, or if it
+     *                                costs too much time to generate the seat table
+     */
+    public static SeatTable generate(final SeatConfig config, final String seed) {
+        return generate(config, seed, SeatTableGenerator.defaultGenerator);
+    }
+
+    /**
+     * Generate a seat table using the specified config and the seed.
+     *
+     * @param config    used to generate the seat table
+     * @param seed      used to generate the seat table
+     * @param generator used to generate the seat table
+     *
+     * @return an instance of {@code SeatTable}
+     *
+     * @throws NullPointerException   if the config is null.
+     * @throws IllegalConfigException if the config has an illegal format, or if it
+     *                                costs too much time to generate the seat table
+     */
+    public static SeatTable generate(final SeatConfig config, final String seed, final SeatTableGenerator generator) {
+        try {
+            return RuntimeUtils.runWithTimeout(() -> generator.generate(config, seed), MAX_GENERATING_TIME_SECONDS, TimeUnit.SECONDS);
+        } catch (final Throwable e) {
+            Throwable e1 = e;
+            if (e1 instanceof ExecutionException) {
+                e1 = e1.getCause();
+            }
+            if (e1 instanceof RuntimeException) {
+                throw (RuntimeException) e1;
+            }
+            if (e1 instanceof TimeoutException) {
+                IllegalConfigException ex  = new IllegalConfigException("Seat table generating timeout, please check your config or use another seed");
+                IllegalConfigException exx = new IllegalConfigException("Seed: " + seed);
+                throw new IllegalConfigException(List.of(ex, exx));
+            }
+            throw new RuntimeException(e1);
+        }
+    }
+
+    /**
+     * Generates an empty seat table.
+     *
+     * @param config used to generate the empty seat table
+     *
+     * @return an empty seat table
+     */
+    public static SeatTable generateEmpty(final SeatConfig config) {
+        return generate(config, null, SeatTableGenerator.emptyGenerator);
+    }
+
+    /**
      * The seat table stored as a {@code  List}.
      */
     private final List<String> table;
@@ -108,89 +169,13 @@ public class SeatTable {
     }
 
     /**
-     * Generate a seat table using the specified config and the seed.
-     *
-     * @param config used to generate the seat table
-     * @param seed   used to generate the seat table
-     *
-     * @return an instance of {@code SeatTable}
-     *
-     * @throws NullPointerException   if the config is null
-     * @throws IllegalConfigException if the config has an illegal format, or if it
-     *                                costs too much time to generate the seat table
-     */
-    public static SeatTable generate(final SeatConfig config, final String seed) {
-        return generate(config, seed, SeatTableGenerator.defaultGenerator);
-    }
-
-    /**
-     * Generate a seat table using the specified config and the seed.
-     *
-     * @param config    used to generate the seat table
-     * @param seed      used to generate the seat table
-     * @param generator used to generate the seat table
-     *
-     * @return an instance of {@code SeatTable}
-     *
-     * @throws NullPointerException   if the config is null.
-     * @throws IllegalConfigException if the config has an illegal format, or if it
-     *                                costs too much time to generate the seat table
-     */
-    public static SeatTable generate(final SeatConfig config, final String seed, final SeatTableGenerator generator) {
-        try {
-            return RuntimeUtils.runWithTimeout(() -> generator.generate(config, seed), MAX_GENERATING_TIME_SECONDS, TimeUnit.SECONDS);
-        } catch (final Throwable e) {
-            var e1 = e;
-            if (e1 instanceof ExecutionException) {
-                e1 = e1.getCause();
-            }
-            if (e1 instanceof RuntimeException) {
-                throw (RuntimeException) e1;
-            }
-            if (e1 instanceof TimeoutException) {
-                val ex  = new IllegalConfigException("Seat table generating timeout, please check your config or use another seed");
-                val exx = new IllegalConfigException("Seed: " + seed);
-                throw new IllegalConfigException(List.of(ex, exx));
-            }
-            throw new RuntimeException(e1);
-        }
-    }
-
-    /**
-     * Generates an empty seat table.
-     *
-     * @param config used to generate the empty seat table
-     *
-     * @return an empty seat table
-     */
-    public static SeatTable generateEmpty(final SeatConfig config) {
-        return generate(config, null, SeatTableGenerator.emptyGenerator);
-    }
-
-    @Override
-    public String toString() {
-        return toString(System.lineSeparator());
-    }
-
-    /**
-     * Joins the cells together into a string, separated by the given separator.
-     *
-     * @param lineSeparator between each row
-     *
-     * @return the result string
-     */
-    public String toString(final String lineSeparator) {
-        return String.join(lineSeparator, toRowData().stream().map(RowData::toString).toList());
-    }
-
-    /**
      * Returns a list of {@code RowData} containing data of this.
      *
      * @return a {@code List} storing {@code RowData} transferred from this
      */
     public List<RowData> toRowData() {
-        val columnCount = config.columnCount();
-        val rows        = new LinkedList<RowData>();
+        int                 columnCount = config.columnCount();
+        LinkedList<RowData> rows        = new LinkedList<RowData>();
 
         rows.add(RowData.header(columnCount));
         rows.addAll(DataUtils.split(table, columnCount).map(RowData::of).toList());
@@ -201,20 +186,6 @@ public class SeatTable {
 
         rows.add(RowData.of("Seed", seed));
         return rows;
-    }
-
-    /**
-     * Joins the cells and rows together into a string and returns the result.
-     *
-     * @param seatSeparator separator between each seat
-     * @param rowSeparator  separator between each row
-     *
-     * @return the result string
-     *
-     * @see RowData#toString(String)
-     */
-    public String toString(final String seatSeparator, final String rowSeparator) {
-        return String.join(rowSeparator, toRowData().stream().map(rowData -> rowData.toString(seatSeparator)).toList());
     }
 
     /**
@@ -236,7 +207,7 @@ public class SeatTable {
         }
         try {
             PathWrapper.wrap(filePath).moveToTrash().getParent().replaceWithDirectory();
-            val f = filePath.toFile();
+            File f = filePath.toFile();
             excelWriterBuilder
                     .file(f)
                     .sheet("座位表-%tF".formatted(new Date()))
@@ -247,6 +218,36 @@ public class SeatTable {
         } catch (final Throwable e) {
             throw new IOException("Failed to save seat table to \"%s\"".formatted(filePath), e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return toString(System.lineSeparator());
+    }
+
+    /**
+     * Joins the cells together into a string, separated by the given separator.
+     *
+     * @param lineSeparator between each row
+     *
+     * @return the result string
+     */
+    public String toString(final String lineSeparator) {
+        return String.join(lineSeparator, toRowData().stream().map(RowData::toString).toList());
+    }
+
+    /**
+     * Joins the cells and rows together into a string and returns the result.
+     *
+     * @param seatSeparator separator between each seat
+     * @param rowSeparator  separator between each row
+     *
+     * @return the result string
+     *
+     * @see RowData#toString(String)
+     */
+    public String toString(final String seatSeparator, final String rowSeparator) {
+        return String.join(rowSeparator, toRowData().stream().map(rowData -> rowData.toString(seatSeparator)).toList());
     }
 
 }
