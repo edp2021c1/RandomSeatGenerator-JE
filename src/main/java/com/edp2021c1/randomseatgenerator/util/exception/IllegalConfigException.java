@@ -18,9 +18,8 @@
 
 package com.edp2021c1.randomseatgenerator.util.exception;
 
-import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
+import com.edp2021c1.randomseatgenerator.util.Notice;
 import lombok.Getter;
-import lombok.val;
 
 import java.util.List;
 
@@ -31,6 +30,7 @@ import java.util.List;
  * @since 1.2.6
  */
 @Getter
+@Deprecated
 public class IllegalConfigException extends RuntimeException implements Notice {
 
     /**
@@ -73,8 +73,8 @@ public class IllegalConfigException extends RuntimeException implements Notice {
             return;
         }
         single = false;
-        val str = new StringBuilder();
-        for (val e : causes) {
+        StringBuilder str = new StringBuilder();
+        for (IllegalConfigException e : causes) {
             if (e.isSingle()) {
                 str.append(System.lineSeparator());
             }

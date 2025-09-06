@@ -1,1 +1,0 @@
--t dmg --mac-package-name "Random Seat"

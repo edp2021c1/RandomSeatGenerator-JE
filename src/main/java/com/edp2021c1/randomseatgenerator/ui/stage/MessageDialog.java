@@ -18,20 +18,17 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
+import com.edp2021c1.randomseatgenerator.ui.FXUtils;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
-import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
+import com.edp2021c1.randomseatgenerator.util.Notice;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.stage.Window;
-import lombok.val;
-
-import static com.edp2021c1.randomseatgenerator.ui.FXUtils.createButton;
-import static com.edp2021c1.randomseatgenerator.ui.FXUtils.createVBox;
-import static com.edp2021c1.randomseatgenerator.ui.FXUtils.setInsets;
 
 /**
  * Stage to show a simple message.
@@ -39,7 +36,7 @@ import static com.edp2021c1.randomseatgenerator.ui.FXUtils.setInsets;
  * @author Calboot
  * @since 1.5.0
  */
-public final class MessageDialog extends DecoratedStage {
+public final class MessageDialog extends Stage {
 
     /**
      * Shows a message dialog.
@@ -66,30 +63,26 @@ public final class MessageDialog extends DecoratedStage {
 
     private MessageDialog(final Notice msg) {
         super();
+        FXUtils.decorate(this, StageType.DIALOG);
 
         Label txt = new Label(msg.message());
 
-        Button button = createButton("确定", 80, 26);
+        Button button = FXUtils.createButton("确定", 80, 26);
         button.setDefaultButton(true);
         button.setOnAction(event -> close());
 
         ButtonBar buttonBar = new ButtonBar();
         buttonBar.getButtons().add(button);
 
-        VBox mainBox = createVBox(txt, buttonBar);
+        VBox mainBox = FXUtils.createVBox(txt, buttonBar);
         mainBox.getStyleClass().add("main");
 
-        setInsets(new Insets(5), txt, buttonBar);
+        FXUtils.setInsets(new Insets(5), txt, buttonBar);
 
         setScene(new Scene(mainBox));
         setTitle(msg.title());
         setMaxWidth(1280);
         setMaxHeight(720);
-    }
-
-    @Override
-    public StageType getStageType() {
-        return StageType.DIALOG;
     }
 
 }

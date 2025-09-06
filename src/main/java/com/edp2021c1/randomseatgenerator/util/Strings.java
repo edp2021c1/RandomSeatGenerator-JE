@@ -18,8 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import lombok.val;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
@@ -42,6 +40,8 @@ public final class Strings {
      * Simple date format
      */
     private static final SimpleDateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+    private static final SimpleDateFormat dateFormatShort = new SimpleDateFormat("yyyy-MM-dd");
 
     private static final List<Character> CHARACTERS_AND_DIGITS = List.of(
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
@@ -70,6 +70,10 @@ public final class Strings {
      */
     public static String nowStr() {
         return nowStr(defaultDateFormat);
+    }
+
+    public static String nowStrShort() {
+        return nowStr(dateFormatShort);
     }
 
     /**

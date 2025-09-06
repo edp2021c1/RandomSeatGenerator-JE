@@ -18,15 +18,16 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
+import com.edp2021c1.randomseatgenerator.ui.FXUtils;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
+import com.edp2021c1.randomseatgenerator.util.Notice;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
-import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import lombok.val;
+import javafx.stage.Stage;
 
 import static com.edp2021c1.randomseatgenerator.ui.FXUtils.createButton;
 
@@ -36,7 +37,7 @@ import static com.edp2021c1.randomseatgenerator.ui.FXUtils.createButton;
  * @author Calboot
  * @since 1.4.1
  */
-public final class CrashReporterDialog extends DecoratedStage {
+public final class CrashReporterDialog extends Stage {
 
     /**
      * Shows a crash reporter dialog.
@@ -49,6 +50,7 @@ public final class CrashReporterDialog extends DecoratedStage {
 
     private CrashReporterDialog(final Notice msg) {
         super();
+        FXUtils.decorate(this, StageType.CRASH_REPORTER);
 
         Label     preLabelBeforeLink = new Label("Something's wrong... Click");
         Hyperlink here               = new Hyperlink("here");
@@ -104,11 +106,6 @@ public final class CrashReporterDialog extends DecoratedStage {
                 }
             });
         }
-    }
-
-    @Override
-    public StageType getStageType() {
-        return StageType.CRASH_REPORTER;
     }
 
 }

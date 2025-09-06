@@ -18,8 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import lombok.val;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +31,7 @@ import java.util.stream.Stream;
  * @author Calboot
  * @since 1.4.9
  */
+@Deprecated
 public final class DataUtils {
 
     /**

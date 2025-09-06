@@ -40,8 +40,6 @@ public final class DesktopUtils {
 
     private static final Desktop desktopTk = desktopSupported ? Desktop.getDesktop() : null;
 
-    private static final Clipboard clipboard = Clipboard.getSystemClipboard();
-
     /**
      * Launches the default browser to display a {@code URI} if supported.
      * If the default browser is unable to handle the specified
@@ -69,21 +67,19 @@ public final class DesktopUtils {
      *
      * @param file to move to trash
      *
-     * @throws IOException if failed to move the file to trash
      * @see Desktop#moveToTrash(File)
      */
-    public static void moveToTrashIfSupported(final File file) throws IOException {
+    public static boolean moveToTrashIfSupported(final File file) {
         if (desktopSupported && desktopTk.isSupported(Desktop.Action.MOVE_TO_TRASH)) {
             boolean b;
             try {
                 b = desktopTk.moveToTrash(file);
-            } catch (final Throwable e) {
-                throw new IOException("Failed to move file \"%s\" to trash".formatted(file), e);
+            } catch (Exception e) {
+                b = false;
             }
-            if (!b) {
-                throw new IOException("Failed to move file \"%s\" to trash".formatted(file));
-            }
+            return b;
         }
+        return false;
     }
 
     /**
@@ -92,7 +88,7 @@ public final class DesktopUtils {
      * @param text to copy.
      */
     public static void copyPlainText(final String text) {
-        clipboard.setContent(Map.of(DataFormat.PLAIN_TEXT, text));
+        runOnFXThread(() -> Clipboard.getSystemClipboard().setContent(Map.of(DataFormat.PLAIN_TEXT, text)));
     }
 
     /**

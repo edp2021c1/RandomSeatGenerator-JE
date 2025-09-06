@@ -27,6 +27,7 @@ import java.nio.file.Path;
  * @author Calboot
  * @since 1.5.0
  */
+@Deprecated
 public class FileAlreadyLockedException extends IOException {
 
     /**

@@ -18,6 +18,8 @@ import java.util.stream.IntStream;
 
 public class SeatGenerator {
 
+    private static final int MAX_GENERATIONS = 65536;
+
     private final int rowCount, columnCount, shuffledRowCount;
 
     private final Set<Integer> disabledLastRowIndexes;
@@ -28,8 +30,6 @@ public class SeatGenerator {
 
     private final ImmutableGraph<@NotNull String> seperatedGraph;
 
-    private static final int MAX_GENERATIONS = 65536;
-
     private final boolean findLucky, findLeaders;
 
     public SeatGenerator(SeatConfig config) {
@@ -37,9 +37,10 @@ public class SeatGenerator {
         this.columnCount = config.columnCount;
         this.shuffledRowCount = config.shuffledRowCount;
         this.disabledLastRowIndexes = Arrays.stream(config.disabledLastRowPositions.split(" "))
+                .filter(s -> !s.isBlank())
                 .map(s -> Integer.parseInt(s) - 1).filter(i -> i < this.columnCount).collect(Collectors.toSet());
         this.nameList = Arrays.asList(config.nameList.split(" "));
-        this.leaderNameSet = new HashSet<>(Arrays.asList(config.leaderNameSet.split(" ")));
+        this.leaderNameSet = Arrays.stream(config.leaderNameSet.split(" ")).filter(s -> !s.isBlank()).collect(Collectors.toSet());
 
         MutableGraph<@NotNull String> s = GraphBuilder.undirected().build();
         nameList.forEach(s::addNode);
@@ -74,8 +75,8 @@ public class SeatGenerator {
         // Check and find leaders
         if (seatTable.hasLeaders()) {
             for (int i = 0; i < columnCount; i++) {
-                Table.Column<String> c = seatTable.getColumn(i);
-                List<Integer> indexes = IntStream.range(0, rowCount).filter(j -> leaderNameSet.contains(c.get(j))).boxed().toList();
+                Table.Column<String> c       = seatTable.getColumn(i);
+                List<Integer>        indexes = IntStream.range(0, rowCount).filter(j -> leaderNameSet.contains(c.get(j))).boxed().toList();
                 if (indexes.isEmpty()) {
                     return false;
                 }
@@ -86,27 +87,42 @@ public class SeatGenerator {
         return true;
     }
 
+    private void checkPositive() {
+        if (rowCount <= 0) {
+            throw TranslatableException.seat("must_be_positive", rowCount);
+        }
+        if (columnCount <= 0) {
+            throw TranslatableException.seat("must_be_positive", columnCount);
+        }
+        if (shuffledRowCount <= 0) {
+            throw TranslatableException.seat("must_be_positive", shuffledRowCount);
+        }
+    }
+
+    @Contract(pure = true)
+    public SeatTable generateEmpty() {
+        checkPositive();
+        SeatTable table = new SeatTable(rowCount, columnCount, false);
+        table.fillEmpty();
+        if (findLucky) {
+            table.setLuckyPerson("-");
+        }
+        return table;
+    }
+
     @Contract(pure = true)
     public SeatTable generate(String seed) {
         // Check config
-        if (rowCount <= 0) {
-            throw TranslatableException.illegalArgument("must_be_positive", rowCount);
-        }
-        if (columnCount <= 0) {
-            throw TranslatableException.illegalArgument("must_be_positive", columnCount);
-        }
-        if (shuffledRowCount <= 0) {
-            throw TranslatableException.illegalArgument("must_be_positive", shuffledRowCount);
-        }
+        checkPositive();
 
         int seatCount         = rowCount * columnCount - disabledLastRowIndexes.size();
         int peopleInSeatCount = nameList.size() - (findLucky ? 1 : 0);
         if (seatCount < peopleInSeatCount) {
-            throw TranslatableException.illegalArgument("not_enough", I18N.constant("seats"), seatCount, peopleInSeatCount);
+            throw TranslatableException.seat("not_enough", I18N.constant("seats"), seatCount, peopleInSeatCount);
         }
 
         if (findLeaders && leaderNameSet.size() < columnCount) {
-            throw TranslatableException.illegalArgument("not_enough_leaders", I18N.constant("leaders"), leaderNameSet.size(), columnCount);
+            throw TranslatableException.seat("not_enough", I18N.constant("leaders"), leaderNameSet.size(), columnCount);
         }
 
         int block = shuffledRowCount * columnCount;
@@ -129,7 +145,7 @@ public class SeatGenerator {
 
         int loopTimes = 0;
 
-        SeatTable    seatTable = new SeatTable(rowCount, columnCount, seed, findLeaders);
+        SeatTable    seatTable = new SeatTable(rowCount, columnCount, findLeaders, seed);
         List<String> names     = Lists.newArrayListWithExpectedSize(nameList.size());
         do {
             if (loopTimes >= MAX_GENERATIONS) {

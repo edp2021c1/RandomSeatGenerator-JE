@@ -1,1 +1,0 @@
--t msi --win-menu --win-menu-group edp2021c1 --win-shortcut --win-shortcut-prompt --win-dir-chooser --win-help-url https://github.com/edp2021c1/RandomSeatGenerator-JE/ --win-update-url https://github.com/edp2021c1/RandomSeatGenerator-JE/releases/latest

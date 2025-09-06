@@ -3,7 +3,13 @@ randomseatgenerator:
     seats: seats
     leaders: leaders
   exception:
+    .: Exception
     illegal_argument:
+      .: Illegal argument
+    io:
+      .: IO exception
+    seat:
+      .: Illegal seat table
       must_be_positive: Value %d expected to be positive
       not_enough: "Not enough %s: %d available while the least is %d"
-    seat.too_many_generations: There's %d generations already!
+      too_many_generations: There's %d generations already!

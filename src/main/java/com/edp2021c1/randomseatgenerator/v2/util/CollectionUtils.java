@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 public final class CollectionUtils {
 
@@ -20,6 +21,10 @@ public final class CollectionUtils {
     @Contract(pure = true)
     public static <T> T randomlyPickOne(@NotNull List<T> list, @NotNull Random random) {
         return list.get(random.nextInt(list.size()));
+    }
+
+    public static List<Integer> range(int origin, int bound) {
+        return IntStream.range(origin, bound).boxed().toList();
     }
 
 }

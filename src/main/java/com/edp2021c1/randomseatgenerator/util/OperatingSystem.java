@@ -19,11 +19,10 @@
 package com.edp2021c1.randomseatgenerator.util;
 
 import lombok.Getter;
-import lombok.val;
 
 import java.util.stream.Stream;
 
-import static com.edp2021c1.randomseatgenerator.util.Metadata.OS_NAME;
+import static com.edp2021c1.randomseatgenerator.v2.util.Metadata.OS_NAME;
 
 /**
  * Enum of the operating system.
@@ -58,7 +57,7 @@ public enum OperatingSystem {
 
     static {
         if (OS_NAME != null) {
-            val osName = OS_NAME.toLowerCase();
+            String osName = OS_NAME.toLowerCase();
             if (osName.startsWith("windows")) {
                 current = WINDOWS;
             } else if (osName.startsWith("mac")) {

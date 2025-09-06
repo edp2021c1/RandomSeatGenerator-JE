@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN_INFO">[%d{yyyy-MM-dd HH:mm:ss}] [%t/%p] [%c] %m%n</Property>
+        <Property name="LOG_PATTERN_DEBUG">[%d{yyyy-MM-dd HH:mm:ss}] [%t/%p] [%c] (%C.%M) %m%n</Property>
+        <Property name="LOG_DIR">logs</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- 控制台输出，仅记录 INFO 及以上级别 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN_INFO}"/>
+        </Console>
+        <!-- 文件输出（多种滚动策略） -->
+        <File name="DebugLog" fileName="${LOG_DIR}/debug.log" append="false">
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN_DEBUG}"/>
+        </File>
+        <RollingFile name="RollingLog" fileName="${LOG_DIR}/latest.log"
+                     filePattern="${LOG_DIR}/%d{yyyy-MM-dd}-%i.log.gz">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN_INFO}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy compressionLevel="9" fileIndex="nomax">
+                <Delete basePath="${LOG_DIR}" maxDepth="2">
+                    <IfFileName glob="*/*.log.gz">
+                        <IfLastModified age="30d"/>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- 根 Logger -->
+        <Root level="debug">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="DebugLog"/>
+            <AppenderRef ref="RollingLog"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -5,6 +5,10 @@ on:
     tags:
       - v*.*.*
 
+env:
+  JAVA_VERSION: "21"
+  BUILD_RELEASE: "true"
+
 permissions:
   contents: write
 
@@ -26,7 +30,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-package: 'jdk+fx'
-          java-version: '21'
+          java-version: ${{env.JAVA_VERSION}}
           distribution: 'zulu'
 
       - name: Make Gradle Wrapper Executable

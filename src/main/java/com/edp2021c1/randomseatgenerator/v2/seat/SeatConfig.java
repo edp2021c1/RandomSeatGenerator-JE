@@ -1,7 +1,9 @@
 package com.edp2021c1.randomseatgenerator.v2.seat;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode
 public class SeatConfig {
 
     @SerializedName(value = "rows", alternate = "row_count")
@@ -30,5 +32,19 @@ public class SeatConfig {
 
     @SerializedName(value = "findLeaders")
     public boolean findLeaders;
+
+    public SeatConfig copy() {
+        SeatConfig seatConfig = new SeatConfig();
+        seatConfig.rowCount = rowCount;
+        seatConfig.columnCount = columnCount;
+        seatConfig.shuffledRowCount = shuffledRowCount;
+        seatConfig.disabledLastRowPositions = disabledLastRowPositions;
+        seatConfig.nameList = nameList;
+        seatConfig.leaderNameSet = leaderNameSet;
+        seatConfig.separatedPairs = separatedPairs;
+        seatConfig.findLucky = findLucky;
+        seatConfig.findLeaders = findLeaders;
+        return seatConfig;
+    }
 
 }

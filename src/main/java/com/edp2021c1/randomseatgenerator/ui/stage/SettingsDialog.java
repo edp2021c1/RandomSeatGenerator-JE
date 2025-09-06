@@ -23,13 +23,14 @@ import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.node.FormatableTextField;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
+import com.edp2021c1.randomseatgenerator.util.Notice;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
-import com.edp2021c1.randomseatgenerator.util.PathWrapper;
 import com.edp2021c1.randomseatgenerator.util.Strings;
-import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
-import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
-import com.edp2021c1.randomseatgenerator.util.useroutput.CrashReporter;
-import com.edp2021c1.randomseatgenerator.util.useroutput.Notice;
+import com.edp2021c1.randomseatgenerator.v2.AppConfig;
+import com.edp2021c1.randomseatgenerator.v2.AppSettings;
+import com.edp2021c1.randomseatgenerator.v2.util.IOUtils;
+import com.edp2021c1.randomseatgenerator.v2.util.Metadata;
+import com.edp2021c1.randomseatgenerator.v2.util.exception.ExceptionHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -38,16 +39,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import lombok.Getter;
-import lombok.val;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
-import static com.edp2021c1.randomseatgenerator.ui.FXUtils.*;
-import static com.edp2021c1.randomseatgenerator.util.Log.LOG;
-import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
+import static com.edp2021c1.randomseatgenerator.RandomSeatGenerator.LOGGER;
 
 /**
  * Settings dialog of the application.
@@ -55,12 +53,10 @@ import static com.edp2021c1.randomseatgenerator.util.Metadata.*;
  * @author Calboot
  * @since 1.3.3
  */
-public final class SettingsDialog extends DecoratedStage {
+public final class SettingsDialog extends Stage {
 
     @Getter
     private static final SettingsDialog settingsDialog = new SettingsDialog();
-
-    private final SeatConfigHolder cfHolder;
 
     private final FileChooser fileChooser;
 
@@ -71,8 +67,7 @@ public final class SettingsDialog extends DecoratedStage {
      */
     private SettingsDialog() {
         super();
-
-        cfHolder = SeatConfigHolder.global();
+        FXUtils.decorate(this, StageType.DIALOG);
 
         /* *************************************************************************
          *                                                                         *
@@ -80,13 +75,13 @@ public final class SettingsDialog extends DecoratedStage {
          *                                                                         *
          **************************************************************************/
 
-        val rowCountInput = new IntegerField(true, "行数");
+        IntegerField rowCountInput = new IntegerField(true, "行数");
 
-        val columnCountInput = new IntegerField(true, "列数");
+        IntegerField columnCountInput = new IntegerField(true, "列数");
 
-        val rbrInput = new IntegerField(true, "随机轮换的行数");
+        IntegerField rbrInput = new IntegerField(true, "随机轮换的行数");
 
-        val disabledLastRowPosInput = FormatableTextField.of((oldValue, newValue) -> {
+        FormatableTextField disabledLastRowPosInput = FormatableTextField.of((oldValue, newValue) -> {
             if (newValue == null || !Strings.integerListPatternPredicate.test(newValue)) {
                 return oldValue;
             }
@@ -94,21 +89,21 @@ public final class SettingsDialog extends DecoratedStage {
         });
         disabledLastRowPosInput.setPromptText("最后一排不可选位置");
 
-        val nameListInput = createEmptyTextField("名单 (按身高排序)");
+        TextField nameListInput = FXUtils.createEmptyTextField("名单 (按身高排序)");
 
-        val groupLeaderListInput = createEmptyTextField("组长列表");
+        TextField groupLeaderListInput = FXUtils.createEmptyTextField("组长列表");
 
-        val separateListInput = createEmptyTextArea("拆分列表", 165, 56);
+        TextArea separateListInput = FXUtils.createEmptyTextArea("拆分列表", 165, 56);
 
-        val luckyOptionCheck = new CheckBox("随机挑选左护法");
+        CheckBox findLuckyCheck = new CheckBox("挑选护法");
 
-        val exportWritableCheck = new CheckBox("导出为可写");
+        CheckBox findLeadersCheck = new CheckBox("挑选组长");
 
-        val darkModeCheck = new CheckBox("深色模式");
+        CheckBox darkModeCheck = new CheckBox("深色模式");
 
-        val loadConfigBtn = createButton("从文件加载", 90, 26);
+        Button loadConfigBtn = FXUtils.createButton("从文件加载", 90, 26);
 
-        val applyBtn = createButton("应用", 80, 26);
+        Button applyBtn = FXUtils.createButton("应用", 80, 26);
         applyBtn.setDisable(true);
 
         configPane = new ConfigPane(
@@ -119,65 +114,64 @@ public final class SettingsDialog extends DecoratedStage {
                 nameListInput,
                 groupLeaderListInput,
                 separateListInput,
-                luckyOptionCheck,
-                exportWritableCheck,
+                findLuckyCheck,
+                findLeadersCheck,
                 darkModeCheck,
-                applyBtn.disableProperty(),
-                cfHolder
+                applyBtn.disableProperty()
         );
-        configPane.setContent(cfHolder.getClone());
+        configPane.setContent(AppSettings.config);
 
-        val loadConfigBtnBox = new HBox(loadConfigBtn);
+        HBox loadConfigBtnBox = new HBox(loadConfigBtn);
         loadConfigBtnBox.setPrefHeight(45);
         loadConfigBtnBox.setAlignment(Pos.CENTER);
 
-        val appConfigBox = new VBox(configPane, loadConfigBtnBox);
+        VBox appConfigBox = new VBox(configPane, loadConfigBtnBox);
 
-        val iconView = new ImageView(getIcon());
+        ImageView iconView = new ImageView(FXUtils.getIcon());
         iconView.setFitWidth(275);
         iconView.setFitHeight(275);
 
-        val randomSeatGeneratorLabel = new Label(NAME);
+        Label randomSeatGeneratorLabel = new Label(Metadata.NAME);
         randomSeatGeneratorLabel.setPrefHeight(32);
         randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
 
-        val versionLink = new Hyperlink("版本:        " + VERSION);
+        Hyperlink versionLink = new Hyperlink("版本:        " + Metadata.VERSION);
 
-        val gitRepositoryLink = new Hyperlink("Git仓库:   " + GIT_REPOSITORY_URI);
+        Hyperlink gitRepositoryLink = new Hyperlink("Git仓库:   " + Metadata.GIT_REPOSITORY_URI);
 
-        val licenseLink = new Hyperlink("许可证:    %s(%s)".formatted(LICENSE_NAME, LICENSE_URI));
+        Hyperlink licenseLink = new Hyperlink("许可证:    %s(%s)".formatted(Metadata.LICENSE_NAME, Metadata.LICENSE_URI));
 
-        val licenseText = createEmptyTextArea(null, 650, 288);
-        licenseText.setText(LICENSE_INFO);
+        TextArea licenseText = FXUtils.createEmptyTextArea(null, 650, 288);
+        licenseText.setText(Metadata.LICENSE_INFO);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");
 
-        val bottomRightBox = new VBox(randomSeatGeneratorLabel, versionLink, gitRepositoryLink, licenseLink, licenseText);
+        VBox bottomRightBox = new VBox(randomSeatGeneratorLabel, versionLink, gitRepositoryLink, licenseLink, licenseText);
         bottomRightBox.setAlignment(Pos.CENTER_LEFT);
 
-        val aboutInfoBox = new HBox(iconView, bottomRightBox);
+        HBox aboutInfoBox = new HBox(iconView, bottomRightBox);
 
-        val confirmBtn = createButton("确定", 80, 26);
+        Button confirmBtn = FXUtils.createButton("确定", 80, 26);
 
-        val cancelBtn = createButton("取消", 80, 26);
+        Button cancelBtn = FXUtils.createButton("取消", 80, 26);
 
-        val confirm_apply_cancelBar = new ButtonBar();
+        ButtonBar confirm_apply_cancelBar = new ButtonBar();
         confirm_apply_cancelBar.getButtons().addAll(confirmBtn, applyBtn, cancelBtn);
         confirm_apply_cancelBar.setPrefHeight(66);
         confirm_apply_cancelBar.getStyleClass().add("bottom");
 
-        val appConfigTab = new Tab("常规", appConfigBox);
+        Tab appConfigTab = new Tab("常规", appConfigBox);
         appConfigTab.setClosable(false);
 
-        val aboutInfoTab = new Tab("关于", aboutInfoBox);
+        Tab aboutInfoTab = new Tab("关于", aboutInfoBox);
         aboutInfoTab.setClosable(false);
 
-        val topPane = new TabPane(appConfigTab, aboutInfoTab);
+        TabPane topPane = new TabPane(appConfigTab, aboutInfoTab);
 
-        val mainBox = new VBox(topPane, confirm_apply_cancelBar);
+        VBox mainBox = new VBox(topPane, confirm_apply_cancelBar);
         mainBox.getStyleClass().add("main");
 
-        setInsets(new Insets(5),
+        FXUtils.setInsets(new Insets(5),
                 rowCountInput,
                 columnCountInput,
                 rbrInput,
@@ -192,17 +186,14 @@ public final class SettingsDialog extends DecoratedStage {
         );
 
         setScene(new Scene(mainBox));
-        setTitle(NAME + " - 设置");
-        initOwner(getMainWindow());
+        setTitle(Metadata.NAME + " - 设置");
+        initOwner(PrimaryWindowManager.getPrimaryStage());
 
         fileChooser = new FileChooser();
         fileChooser.setTitle("加载配置文件");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
 
-        fileChooser.setInitialDirectory(new File(Objects.requireNonNullElse(
-                AppPropertiesHolder.global().getProperty(KEY_IMPORT_DIR_PREVIOUS),
-                cfHolder.getConfigPath().getParent().toString())
-        ));
+        fileChooser.setInitialDirectory(new File(Metadata.USER_HOME));
 
         /* *************************************************************************
          *                                                                         *
@@ -214,11 +205,11 @@ public final class SettingsDialog extends DecoratedStage {
 
         applyBtn.setOnAction(event -> applyConfig());
 
-        versionLink.setOnAction(event -> DesktopUtils.browseIfSupported(VERSION_PAGE_URI));
+        versionLink.setOnAction(event -> DesktopUtils.browseIfSupported(Metadata.VERSION_PAGE_URI));
 
-        gitRepositoryLink.setOnAction(event -> DesktopUtils.browseIfSupported(GIT_REPOSITORY_URI));
+        gitRepositoryLink.setOnAction(event -> DesktopUtils.browseIfSupported(Metadata.GIT_REPOSITORY_URI));
 
-        licenseLink.setOnAction(event -> DesktopUtils.browseIfSupported(LICENSE_URI));
+        licenseLink.setOnAction(event -> DesktopUtils.browseIfSupported(Metadata.LICENSE_URI));
 
         confirmBtn.setOnAction(event -> confirmConfig());
         confirmBtn.setDefaultButton(true);
@@ -252,30 +243,26 @@ public final class SettingsDialog extends DecoratedStage {
 
     private void loadConfig() {
         try {
-            var tmp = fileChooser.getInitialDirectory();
+            File tmp = fileChooser.getInitialDirectory();
             if (tmp != null) {
-                fileChooser.setInitialDirectory(PathWrapper.wrap(tmp).getDirParent().toFile());
+                fileChooser.setInitialDirectory(IOUtils.getClosestDirectory(tmp));
             }
 
-            val importFile = fileChooser.showOpenDialog(this);
+            File importFile = fileChooser.showOpenDialog(this);
             if (importFile == null) {
                 return;
             }
 
             try {
-                val temp = SeatConfigHolder.createHolder(importFile.toPath(), false);
-                configPane.setContent(temp.getClone());
-                temp.close();
-            } catch (final IOException e) {
-                LOG.warning("Failed to import config");
-                LOG.warning(Strings.getStackTrace(e));
+                configPane.setContent(AppConfig.loadFromPath(importFile.toPath()));
+            } catch (IOException e) {
+                LOGGER.warn("Failed to import config", e);
                 MessageDialog.showMessage(this, Notice.of("导入设置失败"));
             }
 
             fileChooser.setInitialDirectory(importFile.getParentFile());
-            AppPropertiesHolder.global().setProperty(KEY_IMPORT_DIR_PREVIOUS, fileChooser.getInitialDirectory().toString());
-        } catch (final Throwable e) {
-            CrashReporter.report(e);
+        } catch (Exception e) {
+            ExceptionHandler.INSTANCE.handleException(e);
         }
     }
 
@@ -286,17 +273,13 @@ public final class SettingsDialog extends DecoratedStage {
 
     private void applyConfig() {
         try {
-            cfHolder.putAll(configPane.getContent().checkAndReturn());
+            AppSettings.config = configPane.getContent().copy();
+            AppSettings.saveConfig();
             configPane.refreshState();
-            FXUtils.getMainWindow().configChanged();
-        } catch (final Throwable e) {
-            CrashReporter.report(e);
+            PrimaryWindowManager.configChanged();
+        } catch (Exception e) {
+            ExceptionHandler.INSTANCE.handleException(e);
         }
-    }
-
-    @Override
-    public StageType getStageType() {
-        return StageType.DIALOG;
     }
 
 }

@@ -18,7 +18,6 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
-import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -41,11 +40,11 @@ public class SeatTableCell extends Label {
      *
      * @param str {@code Object} to be shown
      */
-    public SeatTableCell(final String str) {
+    public SeatTableCell(String str, boolean leader) {
         setAlignment(Pos.CENTER);
         setText(str);
 
-        pseudoClassStateChanged(PSEUDO_CLASS_LEADER, str != null && SeatTable.groupLeaderRegexPredicate.test(str));
+        pseudoClassStateChanged(PSEUDO_CLASS_LEADER, leader);
 
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
     }

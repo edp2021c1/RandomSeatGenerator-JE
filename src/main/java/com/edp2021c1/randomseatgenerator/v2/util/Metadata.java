@@ -18,11 +18,16 @@
 
 package com.edp2021c1.randomseatgenerator.v2.util;
 
-import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
+import com.edp2021c1.randomseatgenerator.RandomSeatGenerator;
+import com.google.common.collect.Maps;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
 
 import static java.lang.System.getProperty;
 
@@ -34,10 +39,12 @@ import static java.lang.System.getProperty;
  */
 public final class Metadata {
 
+    public static final Map<String, String> META = Maps.newHashMapWithExpectedSize(1);
+
     /**
      * Version ID.
      */
-    private static final String VERSION_ID = Metadata.class.getPackage().getImplementationVersion();
+    public static final String VERSION_ID;
 
     /**
      * Key of the option controlling whether exported seat table should be writable.
@@ -89,7 +96,7 @@ public final class Metadata {
     /**
      * URL of the default app icon.
      */
-    public static final String ICON_URL = "/assets/img/icon.png";
+    public static final String ICON_URL = "assets/img/icon.png";
 
     /**
      * User home.
@@ -119,7 +126,7 @@ public final class Metadata {
     /**
      * Data directory.
      */
-    public static final Path DATA_DIR;
+    public static final Path DATA_DIR = Paths.get(".").toAbsolutePath();
 
     /**
      * Application name.
@@ -127,58 +134,37 @@ public final class Metadata {
     public static final String NAME = "Random Seat Generator";
 
     /**
-     * Java home.
-     */
-    public static final String JAVA_HOME = getProperty("java.home");
-
-    /**
-     * Java version.
-     */
-    public static final String JAVA_VERSION = "%s, %s".formatted(getProperty("java.version"), getProperty("java.vendor"));
-
-    /**
-     * Java Virtual Machine version.
-     */
-    public static final String JVM_VERSION = "%s (%s), %s".formatted(getProperty("java.vm.name"), getProperty("java.vm.info"), getProperty("java.vm.vendor"));
-
-    /**
      * Operating system name.
      */
     public static final String OS_NAME = getProperty("os.name");
 
     /**
-     * Operating system version.
-     */
-    public static final String OS_VERSION = getProperty("os.version");
-
-    /**
-     * Current architecture.
-     */
-    public static final String OS_ARCH = getProperty("os.arch");
-
-    /**
      * Version of the app.
      */
-    public static final String VERSION = (VERSION_ID == null) ? "dev" : ("v" + VERSION_ID);
+    public static final String VERSION;
 
     /**
      * Application title.
      */
-    public static final String TITLE = NAME + " - " + VERSION;
+    public static final String TITLE;
 
     static {
+        try {
+            META.putAll(RandomSeatGenerator.GSON.fromJson(IOUtils.readResource("app.json"), new TypeToken<Map<String, String>>() {
+            }));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        VERSION_ID = META.get("version");
+        VERSION = (VERSION_ID == null) ? "dev" : ("v" + VERSION_ID);
+        TITLE = NAME + " - " + VERSION;
+
         try {
             GIT_REPOSITORY_URI = new URI("https://github.com/edp2021c1/RandomSeatGenerator-JE");
             LICENSE_URI = new URI("https://www.gnu.org/licenses/gpl-3.0.txt");
             VERSION_PAGE_URI = new URI("https://github.com/edp2021c1/RandomSeatGenerator-JE/releases/tags/" + (VERSION_ID == null ? "" : VERSION));
-        } catch (final URISyntaxException e) {
+        } catch (URISyntaxException e) {
             throw new RuntimeException(e);
-        }
-
-        switch (OperatingSystem.getCurrent()) {
-            case WINDOWS -> DATA_DIR = Path.of(USER_HOME, "AppData", "Local", "RandomSeatGenerator");
-            case MAC -> DATA_DIR = Path.of(USER_HOME, "Library", "Application Support", "RandomSeatGenerator");
-            default -> DATA_DIR = Path.of(USER_HOME, ".rdstgnrt");
         }
     }
 

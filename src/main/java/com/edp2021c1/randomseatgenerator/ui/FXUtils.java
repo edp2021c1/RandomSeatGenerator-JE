@@ -18,11 +18,10 @@
 
 package com.edp2021c1.randomseatgenerator.ui;
 
-import com.edp2021c1.randomseatgenerator.ui.stage.DecoratedStage;
-import com.edp2021c1.randomseatgenerator.ui.stage.MainWindow;
-import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.RuntimeUtils;
-import com.edp2021c1.randomseatgenerator.util.config.AppPropertiesHolder;
+import com.edp2021c1.randomseatgenerator.ui.stage.PrimaryWindowManager;
+import com.edp2021c1.randomseatgenerator.ui.stage.StageType;
+import com.edp2021c1.randomseatgenerator.v2.AppSettings;
+import com.edp2021c1.randomseatgenerator.v2.util.Metadata;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
@@ -36,10 +35,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import lombok.Getter;
-import lombok.val;
-
-import static com.edp2021c1.randomseatgenerator.util.Metadata.KEY_EXPORT_WRITABLE;
 
 /**
  * Contains several useful methods for creating or initializing JavaFX controls.
@@ -59,81 +56,40 @@ public final class FXUtils {
      */
     private static final String[] STYLESHEETS_LIGHT = {"/assets/css/base.css", "/assets/css/light.css"};
 
-    private static final BooleanProperty exportWritable = new SimpleBooleanProperty(null, "exportWritable",
-            AppPropertiesHolder.global().getBoolean(KEY_EXPORT_WRITABLE)
-    ) {
-        @Override
-        protected void invalidated() {
-            AppPropertiesHolder.global().setProperty(KEY_EXPORT_WRITABLE, get());
-        }
-    };
-
     @Getter
     private static final Image icon = new Image(Metadata.ICON_URL);
+
+    private static final BooleanProperty globalDarkMode = new SimpleBooleanProperty(null, "globalDarkMode", AppSettings.config.darkMode) {
+
+        @Override
+        protected void invalidated() {
+            AppSettings.config.darkMode = get();
+        }
+    };
 
     /**
      * Key of the property of the height of the main window
      */
+    @Deprecated
     public static final String KEY_MAIN_WINDOW_HEIGHT = "appearance.window.main.height";
 
     /**
      * Key of the property of the width of the main window
      */
+    @Deprecated
     public static final String KEY_MAIN_WINDOW_WIDTH = "appearance.window.main.width";
 
     /**
      * Key of the property of the x position of the main window
      */
+    @Deprecated
     public static final String KEY_MAIN_WINDOW_X = "appearance.window.main.x";
 
     /**
      * Key of the property of the y position of the main window
      */
+    @Deprecated
     public static final String KEY_MAIN_WINDOW_Y = "appearance.window.main.y";
-
-    /**
-     * Key of the property of the global dark mode
-     */
-    public static final String KEY_DARK_MODE = "appearance.style.dark";
-
-    private static final BooleanProperty globalDarkMode = new SimpleBooleanProperty(null, "globalDarkMode",
-            AppPropertiesHolder.global().getBoolean(KEY_DARK_MODE)
-    ) {
-        @Override
-        protected void invalidated() {
-            AppPropertiesHolder.global().setProperty(KEY_DARK_MODE, get());
-        }
-    };
-
-    /**
-     * Key of the property of the previous exporting directory
-     */
-    public static final String KEY_EXPORT_DIR_PREVIOUS = "export.dir.previous";
-
-    /**
-     * Key of the property of the previous importing directory
-     */
-    public static final String KEY_IMPORT_DIR_PREVIOUS = "import.dir.previous";
-
-    /**
-     * Returns the global export writable property.
-     *
-     * @return {@link #exportWritable}
-     */
-    public static BooleanProperty exportWritableProperty() {
-        return exportWritable;
-    }
-
-    /**
-     * Sets the main window of the application if it has never been set.
-     *
-     * @param mainWindow to be set as the app's main window
-     *
-     * @return whether the main window has never been set
-     */
-    public static boolean setMainWindow(final MainWindow mainWindow) {
-        return RuntimeUtils.setProperty("window.main", mainWindow);
-    }
 
     /**
      * Returns the global dark mode property.
@@ -150,14 +106,14 @@ public final class FXUtils {
      *
      * @param stage to be decorated
      */
-    public static void decorate(final DecoratedStage stage) {
+    public static void decorate(Stage stage, StageType stageType) {
         stage.getIcons().add(icon);
-        if (stage.getStageType().level() > 0) {
+        if (stageType.level() > 0) {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setResizable(false);
         }
-        if (stage.getStageType().level() > 1) {
-            stage.initOwner(getMainWindow());
+        if (stageType.level() > 1) {
+            stage.initOwner(PrimaryWindowManager.getPrimaryStage());
         }
 
         stage.sceneProperty().addListener((observable, oldValue, newValue) -> {
@@ -177,15 +133,6 @@ public final class FXUtils {
                 stylesheets.setAll(STYLESHEETS_LIGHT);
             }
         });
-    }
-
-    /**
-     * Returns the main window of the application.
-     *
-     * @return the app's main window
-     */
-    public static MainWindow getMainWindow() {
-        return (MainWindow) RuntimeUtils.getProperty("window.main");
     }
 
     /**

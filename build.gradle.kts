@@ -16,18 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import java.nio.file.CopyOption
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.util.*
-import java.util.spi.ToolProvider
-import kotlin.Array
-import kotlin.RuntimeException
-import kotlin.String
-import kotlin.io.println
-import kotlin.to
 
 plugins {
     id("java")
@@ -42,18 +35,14 @@ plugins {
 val prop = Properties(3)
 prop.load(Files.newInputStream(projectDir.toPath().resolve("gradle.properties")))
 
+val releasing = System.getenv("BUILD_RELEASE") == "true"
+
 group = prop.getProperty("group")
-version = prop.getProperty("version")
+version = "${prop.getProperty("version")}${if (releasing) "" else "-SNAPSHOT"}"
 
 java {
-    val os = System.getProperty("os.name").lowercase()
-    val isWin = os.startsWith("win")
-    val isMac = os.startsWith("mac")
-
-    if (!(isWin || isMac)) {
-        withSourcesJar()
-        withJavadocJar()
-    }
+    withSourcesJar()
+    withJavadocJar()
 }
 
 yamlang {
@@ -74,13 +63,16 @@ repositories {
 
 dependencies {
     // EasyExcel，用于导出座位表
-    implementation("com.alibaba:easyexcel:3.3.3")
+    implementation("com.alibaba:easyexcel:4.0.3")
 
-    // EasyExcel不加这个就会报错。。。
-    implementation("org.slf4j:slf4j-nop:2.0.11")
+    // Logging
+    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.25.1")
+    implementation("org.apache.logging.log4j:log4j-api:2.25.1")
+    implementation("org.apache.logging.log4j:log4j-core:2.25.1")
 
     // FastJson，用于读取配置文件
-    implementation("com.alibaba.fastjson2:fastjson2:2.0.46")
+    implementation("com.alibaba.fastjson2:fastjson2:2.0.58")
 
     // Guava
     implementation("com.google.guava:guava:33.4.8-jre")
@@ -88,19 +80,19 @@ dependencies {
     // Gson
     implementation("com.google.code.gson:gson:2.13.1")
 
+    // Apache POI
+    implementation("org.apache.poi:poi:5.4.1")
+    implementation("org.apache.poi:poi-ooxml:5.4.1")
+
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.30")
+    compileOnly("org.projectlombok:lombok:1.18.38")
     compileOnly("org.jetbrains:annotations:26.0.2")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.jetbrains:annotations:26.0.2")
 }
 
-tasks.compileJava {
-    options.encoding = "UTF-8"
-}
-
-tasks.compileTestJava {
-    options.encoding = "UTF-8"
+tasks.withType(JavaCompile::class.java).forEach {
+    it.options.encoding = "UTF-8"
 }
 
 tasks.javadoc {
@@ -126,84 +118,26 @@ tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+tasks.processResources {
+    filesMatching("app.json") {
+        expand(
+            "version" to version
+        )
+    }
+}
+
 tasks.build {
-    dependsOn(pack)
-}
-
-fun getPackingArguments(jarName: String, projectPath: String): Array<String> {
-    val os = System.getProperty("os.name").lowercase()
-    val isWin = os.startsWith("win")
-
-    val args = mutableListOf(
-        "@" + Path.of(projectPath, "build_resources", "pack_args", "all.txt"),
-        "-i", Path.of(projectPath, "build", "libs").toString(),
-        "--license-file", Path.of(projectPath, "build_resources", "license.txt").toString(),
-        "--app-version", version.toString(),
-        "--main-jar", jarName,
-        "-d", Path.of(projectPath, "packages").toString(),
-    )
-    args.addAll(
-        if (isWin) {
-            listOf(
-                "@" + Path.of(projectPath, "build_resources", "pack_args", "win.txt"),
-                "--icon", Path.of(projectPath, "build_resources", "app_icon", "win.ico").toString(),
-                "--app-content", Path.of(projectPath, "LICENSE").toString() + "," + Path.of(projectPath, "README.md") + "," + Path.of(projectPath, "README_en.md")
-            )
-        } else {
-            listOf(
-                "@" + Path.of(projectPath, "build_resources", "pack_args", "mac.txt"),
-                "--icon", Path.of(projectPath, "build_resources", "app_icon", "mac.icns").toString(),
-                "--mac-dmg-content", Path.of(projectPath, "LICENSE").toString() + "," + Path.of(projectPath, "README.md") + "," + Path.of(projectPath, "README_en.md")
-            )
-        }
-    )
-    return args.toTypedArray()
-}
-
-fun copyToDir(source: Path, targetDir: Path, vararg options: CopyOption) {
-    Files.copy(source, targetDir.resolve(source.fileName), *options)
-}
-
-val pack = tasks.register("pack") {
-    val os = System.getProperty("os.name").lowercase()
-    val isWin = os.startsWith("win")
-    val isMac = os.startsWith("mac")
-
     dependsOn(tasks.shadowJar)
-    doLast {
-        val fName = project.name + "-" + version
-        val projectPath = projectDir.path
-        val jarName = "$fName.jar"
-        val shadowedJarName = "$fName-shadow.jar"
-        val libsPath = Path.of(projectPath, "build", "libs")
-        val jarPath = libsPath.resolve(jarName)
-        val shadowedJarPath = libsPath.resolve(shadowedJarName)
 
+    val fName = "${rootProject.name}-$version"
+    val libsPath = Path.of(projectDir.path, "build", "libs")
+    val jarPath = libsPath.resolve("$fName.jar")
+    val shadowedJarPath = libsPath.resolve("$fName-shadow.jar")
+
+    doLast {
         if (Files.notExists(shadowedJarPath)) {
             throw NoSuchFileException("Shadowed jar not found at $shadowedJarPath")
         }
-
         Files.move(shadowedJarPath, jarPath, StandardCopyOption.REPLACE_EXISTING)
-
-        val packageDir = Path.of(projectPath, "packages")
-        if (!Files.isDirectory(packageDir)) {
-            Files.deleteIfExists(packageDir)
-            Files.createDirectories(packageDir)
-        }
-
-        if (!(isMac || isWin)) {
-            val sourcesJarName = "$fName-sources.jar"
-            val docJarName = "$fName-javadoc.jar"
-            copyToDir(jarPath, packageDir, StandardCopyOption.REPLACE_EXISTING)
-            copyToDir(libsPath.resolve(sourcesJarName), packageDir, StandardCopyOption.REPLACE_EXISTING)
-            copyToDir(libsPath.resolve(docJarName), packageDir, StandardCopyOption.REPLACE_EXISTING)
-            return@doLast
-        }
-
-        val exitCode = ToolProvider.findFirst("jpackage").get().run(System.out, System.err, *getPackingArguments(jarName, projectPath))
-        if (exitCode != 0) {
-            throw RuntimeException("jpackage failed with exit code $exitCode")
-        }
-        println("jpackage succeeded with exit code 0")
     }
 }

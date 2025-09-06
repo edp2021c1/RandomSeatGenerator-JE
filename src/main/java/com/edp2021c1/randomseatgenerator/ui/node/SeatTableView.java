@@ -18,16 +18,18 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
-import com.edp2021c1.randomseatgenerator.core.SeatConfig;
-import com.edp2021c1.randomseatgenerator.core.SeatTable;
+import com.edp2021c1.randomseatgenerator.v2.seat.SeatConfig;
+import com.edp2021c1.randomseatgenerator.v2.seat.SeatTable;
+import com.edp2021c1.randomseatgenerator.v2.util.SeatUtils;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
-import lombok.val;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 /**
@@ -51,7 +53,7 @@ public class SeatTableView extends VBox {
      *
      * @param config used to generate the empty seat table
      */
-    public SeatTableView(final SeatConfig config) {
+    public SeatTableView(SeatConfig config) {
         super();
         setAlignment(Pos.CENTER);
         getStyleClass().setAll(DEFAULT_STYLE_CLASS);
@@ -65,19 +67,23 @@ public class SeatTableView extends VBox {
                 return;
             }
 
-            rowCount.set(newValue.getConfig().rowCount());
-            columnCount.set(newValue.getConfig().columnCount());
+            rowCount.set(newValue.getRowCount() + (newValue.hasLuckyPerson() ? 3 : 2));
+            columnCount.set(Math.max(newValue.getColumnCount(), 2));
 
-            val list = new LinkedList<SeatTableRow>();
-            for (val strings : newValue.toRowData()) {
-                val seatTableRow = new SeatTableRow(strings, columnCount.get());
-                seatTableRow.prefHeightProperty().bind(heightProperty().divide(rowCount));
-                list.add(seatTableRow);
+            DoubleBinding            height = heightProperty().divide(rowCount);
+            LinkedList<SeatTableRow> list   = new LinkedList<>();
+            list.add(SeatTableRow.createHeader(columnCount.get(), height));
+            for (int i = 0; i < newValue.getRowCount(); i++) {
+                list.add(new SeatTableRow(newValue.getRow(i), columnCount.get(), newValue.getLeadersOfRow(i), height));
             }
+            if (newValue.hasLuckyPerson()) {
+                list.add(new SeatTableRow(Arrays.asList("Lucky Person", newValue.getLuckyPerson()), columnCount.get(), height));
+            }
+            list.add(new SeatTableRow(Arrays.asList("Seed", newValue.getSeed()), columnCount.get(), height));
             super.getChildren().setAll(list);
         });
 
-        minHeightProperty().bind(rowCount.multiply(60));
+        minHeightProperty().bind(rowCount.multiply(80));
         minWidthProperty().bind(columnCount.multiply(120));
 
         setEmptySeatTable(config);
@@ -89,8 +95,8 @@ public class SeatTableView extends VBox {
      *
      * @param config used to generate the empty seat table
      */
-    public void setEmptySeatTable(final SeatConfig config) {
-        seatTable.set(SeatTable.generateEmpty(config));
+    public void setEmptySeatTable(SeatConfig config) {
+        seatTable.set(SeatUtils.generateEmpty(config));
     }
 
     /**

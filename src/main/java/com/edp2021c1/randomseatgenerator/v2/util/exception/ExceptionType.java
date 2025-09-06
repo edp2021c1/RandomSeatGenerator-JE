@@ -6,15 +6,15 @@ import java.io.IOException;
 
 public enum ExceptionType {
 
-    ILLEGAL_ARGUMENT("illegal_argument.", IllegalArgumentException.class),
-    IO("io.", IOException.class),
+    IO("io", IOException.class),
+    SEAT("seat", RuntimeException.class),
     COMMON("", Throwable.class);
+
+    private static final String BASE = "randomseatgenerator.exception";
 
     public static ExceptionType of(@NotNull Throwable cause) {
         if (IO.isOf(cause)) {
             return IO;
-        } else if (ILLEGAL_ARGUMENT.isOf(cause)) {
-            return ILLEGAL_ARGUMENT;
         } else {
             return COMMON;
         }
@@ -25,7 +25,7 @@ public enum ExceptionType {
     public final Class<? extends Throwable> clazz;
 
     ExceptionType(@NotNull String trKey, @NotNull Class<? extends Throwable> clazz) {
-        this.trKey = trKey;
+        this.trKey = trKey.isBlank() ? BASE : BASE + "." + trKey;
         this.clazz = clazz;
     }
 

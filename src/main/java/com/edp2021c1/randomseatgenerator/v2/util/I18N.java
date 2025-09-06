@@ -19,7 +19,7 @@ public final class I18N {
 
     public static final String LANG_PATH = "assets/lang/%s.json";
 
-    public static final String CONSTANT_KEY = "randomseatgenerator.constant.";
+    public static final String CONSTANT_KEY = "randomseatgenerator.constants.";
 
     private static String code = "zh_cn";
 
@@ -29,7 +29,7 @@ public final class I18N {
         String json;
 
         try {
-            json = FileUtils.readResource(LANG_PATH.formatted(I18N.code));
+            json = IOUtils.readResource(LANG_PATH.formatted(I18N.code));
         } catch (Exception e) {
             ExceptionHandler.INSTANCE.handleException(e);
             return;
@@ -37,7 +37,7 @@ public final class I18N {
         translations.putAll(RandomSeatGenerator.GSON.fromJson(json, MAP_TYPE));
 
         try {
-            json = FileUtils.readResource(LANG_PATH.formatted("en_us"));
+            json = IOUtils.readResource(LANG_PATH.formatted("en_us"));
         } catch (Exception e) {
             ExceptionHandler.INSTANCE.handleException(e);
             return;

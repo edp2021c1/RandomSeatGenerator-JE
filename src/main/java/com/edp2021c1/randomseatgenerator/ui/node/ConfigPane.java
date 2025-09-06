@@ -19,8 +19,8 @@
 package com.edp2021c1.randomseatgenerator.ui.node;
 
 import com.edp2021c1.randomseatgenerator.ui.FXUtils;
-import com.edp2021c1.randomseatgenerator.util.config.CachedMapSeatConfig;
-import com.edp2021c1.randomseatgenerator.util.config.SeatConfigHolder;
+import com.edp2021c1.randomseatgenerator.v2.AppConfig;
+import com.edp2021c1.randomseatgenerator.v2.AppSettings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
@@ -30,7 +30,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import lombok.val;
+import lombok.Getter;
 
 import java.util.Objects;
 
@@ -46,25 +46,24 @@ public class ConfigPane extends VBox {
 
     private final IntegerProperty columnCountProperty;
 
-    private final IntegerProperty randomBetweenRowsProperty;
+    private final IntegerProperty shuffledRowCountProperty;
 
     private final StringProperty disabledLastRowPosProperty;
 
     private final StringProperty nameListProperty;
 
-    private final StringProperty groupLeaderListProperty;
+    private final StringProperty leaderNameSetProperty;
 
     private final StringProperty separateListProperty;
 
-    private final BooleanProperty luckyOptionProperty;
+    private final BooleanProperty findLuckyProperty;
 
-    private final BooleanProperty exportWritableProperty;
+    private final BooleanProperty findLeadersProperty;
 
     private final BooleanProperty darkModeProperty;
 
-    private final SeatConfigHolder source;
-
-    private final CachedMapSeatConfig content;
+    @Getter
+    private final AppConfig content;
 
     private final BooleanProperty applyButtonDisabledProperty;
 
@@ -78,12 +77,11 @@ public class ConfigPane extends VBox {
      * @param nameListInput            input of names
      * @param groupLeaderListInput     input of group leaders
      * @param separateListInput        input of separated pairs
-     * @param luckyOptionCheck         input of lucky option
-     * @param exportWritableCheck      input of whether the seat table will be exported to a writable chart
+     * @param findLuckyCheck           input of lucky option
+     * @param findLeadersCheck         input of findLeaders
      * @param darkModeCheck            input of dark mode
      * @param applyBtnDisabledProperty property of whether the current globalHolder config is equal to the config in the pane,
      *                                 usually decides whether the apply button is disabled, ignored if is null
-     * @param configSource             holder of the config
      */
     public ConfigPane(
             final IntegerField rowCountInput,
@@ -93,82 +91,83 @@ public class ConfigPane extends VBox {
             final TextField nameListInput,
             final TextField groupLeaderListInput,
             final TextArea separateListInput,
-            final CheckBox luckyOptionCheck,
-            final CheckBox exportWritableCheck,
+            final CheckBox findLuckyCheck,
+            final CheckBox findLeadersCheck,
             final CheckBox darkModeCheck,
-            final BooleanProperty applyBtnDisabledProperty,
-            final SeatConfigHolder configSource
+            final BooleanProperty applyBtnDisabledProperty
     ) {
         super();
 
         rowCountProperty = rowCountInput.valueProperty();
         columnCountProperty = columnCountInput.valueProperty();
-        randomBetweenRowsProperty = rbrInput.valueProperty();
+        shuffledRowCountProperty = rbrInput.valueProperty();
         disabledLastRowPosProperty = disabledLastRowPosInput.textProperty();
         nameListProperty = nameListInput.textProperty();
-        groupLeaderListProperty = groupLeaderListInput.textProperty();
+        leaderNameSetProperty = groupLeaderListInput.textProperty();
         separateListProperty = separateListInput.textProperty();
-        luckyOptionProperty = luckyOptionCheck.selectedProperty();
-        exportWritableProperty = exportWritableCheck.selectedProperty();
+        findLuckyProperty = findLuckyCheck.selectedProperty();
+        findLeadersProperty = findLeadersCheck.selectedProperty();
         darkModeProperty = darkModeCheck.selectedProperty();
         applyButtonDisabledProperty = applyBtnDisabledProperty;
 
-        source = configSource;
-        content = source.getClone();
+        content = AppSettings.config.copy();
 
-        val box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
+        HBox box1 = new HBox(rowCountInput, columnCountInput, rbrInput, disabledLastRowPosInput);
         box1.setPrefHeight(60);
         box1.setAlignment(Pos.CENTER);
-        val box2 = new HBox(nameListInput, groupLeaderListInput, separateListInput, luckyOptionCheck);
+        HBox box2 = new HBox(nameListInput, groupLeaderListInput, separateListInput, findLeadersCheck, findLuckyCheck);
         box2.setPrefHeight(60);
         box2.setAlignment(Pos.CENTER);
-        val box3 = new HBox(exportWritableCheck, darkModeCheck);
+        HBox box3 = new HBox(darkModeCheck);
         box3.setPrefHeight(60);
         box3.setAlignment(Pos.CENTER);
         getChildren().addAll(box1, box2, box3);
 
-        exportWritableProperty.bindBidirectional(FXUtils.exportWritableProperty());
         darkModeProperty.bindBidirectional(FXUtils.globalDarkModeProperty());
 
         if (applyBtnDisabledProperty == null) {
             return;
         }
         rowCountProperty.subscribe(newValue -> {
-            content.setRowCount(newValue.intValue());
+            content.seatConfig.rowCount = newValue.intValue();
             refreshState();
         });
         columnCountProperty.subscribe(newValue -> {
-            content.setColumnCount(newValue.intValue());
+            content.seatConfig.columnCount = newValue.intValue();
             refreshState();
         });
-        randomBetweenRowsProperty.subscribe(newValue -> {
-            content.setRandomBetweenRows(newValue.intValue());
+        shuffledRowCountProperty.subscribe(newValue -> {
+            content.seatConfig.shuffledRowCount = newValue.intValue();
             refreshState();
         });
         disabledLastRowPosProperty.subscribe(newValue -> {
-            content.setDisabledLastRowPos(newValue);
+            content.seatConfig.disabledLastRowPositions = newValue;
             refreshState();
         });
         nameListProperty.subscribe(newValue -> {
-            content.setNames(newValue);
+            content.seatConfig.nameList = newValue;
             refreshState();
         });
-        groupLeaderListProperty.subscribe(newValue -> {
-            content.setGroupLeaders(newValue);
+        leaderNameSetProperty.subscribe(newValue -> {
+            content.seatConfig.leaderNameSet = newValue;
             refreshState();
         });
         separateListProperty.subscribe(newValue -> {
-            content.setSeparatedPairs(newValue);
+            content.seatConfig.separatedPairs = newValue;
             refreshState();
         });
-        luckyOptionProperty.subscribe(newValue -> {
-            content.setLucky(newValue);
+        findLuckyProperty.subscribe(newValue -> {
+            content.seatConfig.findLucky = newValue;
+            refreshState();
+        });
+        findLeadersProperty.subscribe(newValue -> {
+            content.seatConfig.findLeaders = newValue;
             refreshState();
         });
     }
 
     private boolean checkEquals() {
-        return Objects.equals(content, source.getClone());
+        return Objects.equals(content, AppSettings.config);
     }
 
     /**
@@ -179,33 +178,24 @@ public class ConfigPane extends VBox {
     }
 
     /**
-     * Returns a copy of the current config
-     *
-     * @return a copy of {@link #content}
-     */
-    public CachedMapSeatConfig getContent() {
-        return content.cloneThis();
-    }
-
-    /**
      * Resets the pane with the given config.
      *
      * @param config to set to the pane.
      */
-    public void setContent(final CachedMapSeatConfig config) {
+    public void setContent(AppConfig config) {
         if (config == null) {
             return;
         }
-        rowCountProperty.setValue(config.getRowCount());
-        columnCountProperty.setValue(config.getColumnCount());
-        randomBetweenRowsProperty.setValue(config.getRandomBetweenRows());
-        disabledLastRowPosProperty.set(config.getDisabledLastRowPos());
-        nameListProperty.set(config.getNames());
-        groupLeaderListProperty.set(config.getGroupLeaders());
-        separateListProperty.set(config.getSeparatedPairs());
-        luckyOptionProperty.set(config.getLucky());
-        exportWritableProperty.set(FXUtils.exportWritableProperty().get());
-        darkModeProperty.set(FXUtils.globalDarkModeProperty().get());
+        rowCountProperty.setValue(config.seatConfig.rowCount);
+        columnCountProperty.setValue(config.seatConfig.columnCount);
+        shuffledRowCountProperty.setValue(config.seatConfig.shuffledRowCount);
+        disabledLastRowPosProperty.set(config.seatConfig.disabledLastRowPositions);
+        nameListProperty.set(config.seatConfig.nameList);
+        leaderNameSetProperty.set(config.seatConfig.leaderNameSet);
+        separateListProperty.set(config.seatConfig.separatedPairs);
+        findLuckyProperty.set(config.seatConfig.findLucky);
+        findLeadersProperty.set(config.seatConfig.findLeaders);
+        darkModeProperty.set(config.darkMode);
     }
 
 }
