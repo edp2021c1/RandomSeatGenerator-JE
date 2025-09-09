@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright (C) 2023  EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +34,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-/**
- * Row of {@code SeatTableView}.
- *
- * @author Calboot
- * @since 1.4.0
- */
 public class SeatTableRow extends HBox {
 
     private static final String DEFAULT_STYLE_CLASS = "seat-table-row";

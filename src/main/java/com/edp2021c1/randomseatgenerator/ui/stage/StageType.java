@@ -1,39 +1,35 @@
+/*
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
 public enum StageType {
 
-    /**
-     * Identifies the main window in the application.
-     */
     MAIN_WINDOW(0),
-    /**
-     * Identifies dialogs in the application.
-     * <p>
-     * Not resizable.
-     * <p>
-     * Always on the top of other windows of this app.
-     */
     DIALOG(1),
-    /**
-     * Identifies crash reporter windows in the application.
-     * <p>
-     * Icon set to the error icon.
-     */
     CRASH_REPORTER(2);
 
-    private final int level;
+    public final int level;
 
     StageType(final int level) {
         this.level = level;
-    }
-
-    /**
-     * Returns the level of the type. The higher it is, the more customized the stage is.
-     *
-     * @return the level of the type
-     */
-    public int level() {
-        return level;
     }
 
 }

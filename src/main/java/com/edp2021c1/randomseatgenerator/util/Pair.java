@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright (C) 2023  EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,27 +18,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.util.exception;
+package com.edp2021c1.randomseatgenerator.util;
 
-import java.io.IOException;
-import java.nio.file.Path;
+public class Pair<M, N> {
 
-/**
- * Thrown if a file is already locked by another process when it is tried to be locked.
- *
- * @author Calboot
- * @since 1.5.0
- */
-@Deprecated
-public class FileAlreadyLockedException extends IOException {
+    public M first;
 
-    /**
-     * Default constructor.
-     *
-     * @param filePath path of the file locked
-     */
-    public FileAlreadyLockedException(final Path filePath) {
-        super(filePath.toAbsolutePath().toString());
+    public N second;
+
+    public Pair(M first, N second) {
+        this.first = first;
+        this.second = second;
     }
 
 }

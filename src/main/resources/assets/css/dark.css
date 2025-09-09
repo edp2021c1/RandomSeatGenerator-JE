@@ -28,8 +28,9 @@
     -background-color-scroll-bar-thumb: rgb(105, 105, 105);
     -background-color-scroll-bar-thumb-hover: rgb(155, 155, 155);
     -background-color-seat-table-cell: rgb(49, 49, 49);
-    -background-color-seat-table-cell-leader: rgb(69, 41, 108);
-    -background-color-seat-table-cell-header: rgb(44, 11, 23);
+    -background-color-seat-table-cell-leader: rgb(110, 110, 110);
+    -background-color-seat-table-cell-header: rgb(70, 70, 70);
+    -background-color-choice-hover: rgb(110, 110, 110);
 
     -border-color-root: rgb(124, 124, 124);
     -border-color-button-disabled: rgb(155, 155, 155);
@@ -175,4 +176,22 @@
 .err-main-text,
 .err-main-text:focused {
     -fx-border-color: -border-color-err;
+}
+
+.choice-box {
+    -fx-background-color: -background-color-root;
+    -fx-border-color: -border-color-root;
+}
+
+.choice-box .context-menu {
+    -fx-background-color: -background-color-root;
+    -fx-border-color: -border-color-focused;
+}
+
+.choice-box .menu-item:hover {
+    -fx-background-color: -background-color-choice-hover;
+}
+
+.choice-box .left-container .radio {
+    -fx-background-color: -text-fill-root;
 }

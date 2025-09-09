@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright (C) 2023  EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +20,16 @@
 
 package com.edp2021c1.randomseatgenerator;
 
+import com.edp2021c1.randomseatgenerator.core.SeatConfig;
+import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
+import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.ui.stage.PrimaryWindowManager;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.SeatUtils;
 import com.edp2021c1.randomseatgenerator.util.Strings;
-import com.edp2021c1.randomseatgenerator.v2.AppSettings;
-import com.edp2021c1.randomseatgenerator.v2.seat.SeatConfig;
-import com.edp2021c1.randomseatgenerator.v2.seat.SeatGenerator;
-import com.edp2021c1.randomseatgenerator.v2.seat.SeatTable;
-import com.edp2021c1.randomseatgenerator.v2.util.I18N;
-import com.edp2021c1.randomseatgenerator.v2.util.Metadata;
-import com.edp2021c1.randomseatgenerator.v2.util.SeatUtils;
-import com.edp2021c1.randomseatgenerator.v2.util.exception.ExceptionHandler;
+import com.edp2021c1.randomseatgenerator.util.exception.ExceptionHandler;
+import com.edp2021c1.randomseatgenerator.util.i18n.I18N;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
@@ -44,24 +45,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Application intro.
- *
- * @author Calboot
- * @since 1.0.0
- */
 public final class RandomSeatGenerator extends Application {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("RandomSeatGenerator");
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().setStrictness(Strictness.LENIENT).create();
 
-    /**
-     * App entrance.
-     *
-     * @param args used to start the application.
-     */
-    public static void main(final String... args) {
+    public static void main(String[] args) {
         Thread.currentThread().setName("main");
 
         try {
@@ -77,15 +67,16 @@ public final class RandomSeatGenerator extends Application {
 
     private boolean withGUI;
 
-    /**
-     * Default constructor.
-     */
     public RandomSeatGenerator() {
         super();
     }
 
     @Override
     public void init() {
+        Thread.currentThread().setUncaughtExceptionHandler(ExceptionHandler.INSTANCE);
+
+        LOGGER.info("***   RandomSeatGenerator {}  ***", Metadata.VERSION);
+
         Parameters para = getParameters();
         unnamedPara = para.getUnnamed();
         namedPara = para.getNamed();
@@ -103,6 +94,7 @@ public final class RandomSeatGenerator extends Application {
 
     @Override
     public void start(final Stage primaryStage) {
+        Thread.currentThread().setUncaughtExceptionHandler(ExceptionHandler.INSTANCE);
 
         try {
             if (!withGUI) {

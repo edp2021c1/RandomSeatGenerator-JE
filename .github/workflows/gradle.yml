@@ -14,11 +14,8 @@ permissions:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ windows-latest, macOS-latest, ubuntu-latest ]
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check Environment Variables
@@ -43,8 +40,8 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}
-          path: packages
+          name: build-artifacts
+          path: build/libs
 
   release:
     needs: [ build ]
@@ -63,7 +60,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: |
-            ./**/**.dmg
-            ./**/**.msi
-            ./**/**.jar
+          files: ./**/**.jar

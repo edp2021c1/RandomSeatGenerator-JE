@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright (C) 2023  EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +20,22 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
+import com.edp2021c1.randomseatgenerator.AppConfig;
+import com.edp2021c1.randomseatgenerator.AppSettings;
 import com.edp2021c1.randomseatgenerator.ui.FXUtils;
-import com.edp2021c1.randomseatgenerator.v2.AppConfig;
-import com.edp2021c1.randomseatgenerator.v2.AppSettings;
+import com.edp2021c1.randomseatgenerator.util.i18n.Language;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 
 import java.util.Objects;
 
-/**
- * Config pane.
- *
- * @author Calboot
- * @since 1.3.4
- */
 public class ConfigPane extends VBox {
 
     private final IntegerProperty rowCountProperty;
@@ -62,39 +58,27 @@ public class ConfigPane extends VBox {
 
     private final BooleanProperty darkModeProperty;
 
+    private final ObjectProperty<Language> languageProperty;
+
     @Getter
     private final AppConfig content;
 
     private final BooleanProperty applyButtonDisabledProperty;
 
-    /**
-     * Constructs an instance.
-     *
-     * @param rowCountInput            input of row count
-     * @param columnCountInput         input of column count
-     * @param rbrInput                 input of random between rows
-     * @param disabledLastRowPosInput  input of unavailable last row positions
-     * @param nameListInput            input of names
-     * @param groupLeaderListInput     input of group leaders
-     * @param separateListInput        input of separated pairs
-     * @param findLuckyCheck           input of lucky option
-     * @param findLeadersCheck         input of findLeaders
-     * @param darkModeCheck            input of dark mode
-     * @param applyBtnDisabledProperty property of whether the current globalHolder config is equal to the config in the pane,
-     *                                 usually decides whether the apply button is disabled, ignored if is null
-     */
     public ConfigPane(
-            final IntegerField rowCountInput,
-            final IntegerField columnCountInput,
-            final IntegerField rbrInput,
-            final TextField disabledLastRowPosInput,
-            final TextField nameListInput,
-            final TextField groupLeaderListInput,
-            final TextArea separateListInput,
-            final CheckBox findLuckyCheck,
-            final CheckBox findLeadersCheck,
-            final CheckBox darkModeCheck,
-            final BooleanProperty applyBtnDisabledProperty
+            IntegerField rowCountInput,
+            IntegerField columnCountInput,
+            IntegerField rbrInput,
+            TextField disabledLastRowPosInput,
+            TextField nameListInput,
+            TextField groupLeaderListInput,
+            TextArea separateListInput,
+            CheckBox findLuckyCheck,
+            CheckBox findLeadersCheck,
+            CheckBox darkModeCheck,
+            Label languageLabel,
+            ChoiceBox<Language> languageChoiceBox,
+            BooleanProperty applyBtnDisabledProperty
     ) {
         super();
 
@@ -108,6 +92,7 @@ public class ConfigPane extends VBox {
         findLuckyProperty = findLuckyCheck.selectedProperty();
         findLeadersProperty = findLeadersCheck.selectedProperty();
         darkModeProperty = darkModeCheck.selectedProperty();
+        languageProperty = languageChoiceBox.valueProperty();
         applyButtonDisabledProperty = applyBtnDisabledProperty;
 
         content = AppSettings.config.copy();
@@ -118,12 +103,10 @@ public class ConfigPane extends VBox {
         HBox box2 = new HBox(nameListInput, groupLeaderListInput, separateListInput, findLeadersCheck, findLuckyCheck);
         box2.setPrefHeight(60);
         box2.setAlignment(Pos.CENTER);
-        HBox box3 = new HBox(darkModeCheck);
+        HBox box3 = new HBox(darkModeCheck, languageLabel, languageChoiceBox);
         box3.setPrefHeight(60);
         box3.setAlignment(Pos.CENTER);
         getChildren().addAll(box1, box2, box3);
-
-        darkModeProperty.bindBidirectional(FXUtils.globalDarkModeProperty());
 
         if (applyBtnDisabledProperty == null) {
             return;
@@ -164,24 +147,25 @@ public class ConfigPane extends VBox {
             content.seatConfig.findLeaders = newValue;
             refreshState();
         });
+        darkModeProperty.bindBidirectional(FXUtils.globalDarkModeProperty());
+        darkModeProperty.subscribe(newValue -> {
+            content.darkMode = newValue;
+            refreshState();
+        });
+        languageProperty.subscribe(newValue -> {
+            content.language = newValue.code;
+            refreshState();
+        });
     }
 
     private boolean checkEquals() {
         return Objects.equals(content, AppSettings.config);
     }
 
-    /**
-     * Refreshes the state of {@link #applyButtonDisabledProperty}.
-     */
     public void refreshState() {
         applyButtonDisabledProperty.set(checkEquals());
     }
 
-    /**
-     * Resets the pane with the given config.
-     *
-     * @param config to set to the pane.
-     */
     public void setContent(AppConfig config) {
         if (config == null) {
             return;
@@ -196,6 +180,7 @@ public class ConfigPane extends VBox {
         findLuckyProperty.set(config.seatConfig.findLucky);
         findLeadersProperty.set(config.seatConfig.findLeaders);
         darkModeProperty.set(config.darkMode);
+        languageProperty.set(Language.getByCode(config.language));
     }
 
 }

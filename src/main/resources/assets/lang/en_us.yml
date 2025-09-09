@@ -1,7 +1,16 @@
 randomseatgenerator:
+  notice:
+    .: Notice
+    exportSuccess: Successfully exported seat table to%s%s
   constants:
     seats: seats
     leaders: leaders
+    language: Language
+  fileExtension:
+    xlsx: Excel Workbook
+    xls: Excel 97-2004 Workbook
+    csv: CSV Comma-Separated Values
+    json: Json File
   exception:
     .: Exception
     illegal_argument:
@@ -13,3 +22,40 @@ randomseatgenerator:
       must_be_positive: Value %d expected to be positive
       not_enough: "Not enough %s: %d available while the least is %d"
       too_many_generations: There's %d generations already!
+  ui:
+    title:
+      settings: Settings
+      importConfig: Import Config
+      exportSeatTable: Export Seat Table
+    button:
+      close: Close
+      copyAndClose: Copy and Close
+      apply: Apply
+      confirm: Confirm
+      cancel: Cancel
+      settings: Settings
+      generate: Generate
+      load: Import
+      export: Export
+      randomSeed: Random
+      fillInTime: Time
+    textInput:
+      rowCountInput: Row count
+      columnCountInput: Column count
+      shuffledRowCountInput: Shuffled row count
+      disabledLastRowPositionsInput: Disabled last row pos
+      nameListInput: Names sorted by height
+      leaderNameSetInput: Leaders
+      seperatedPairsInput: Seperated pairs
+      seedInput: Seed
+    tab:
+      general: General
+      about: About
+    checkbox:
+      findLucky: Find lucky person
+      findLeaders: Find group leaders
+      darkMode: Dark mode
+    hyperlink:
+      version: "Version:    %s built on %s"
+      git: "Git Repo:  %s"
+      license: "License:    %s"

@@ -1,11 +1,30 @@
-package com.edp2021c1.randomseatgenerator.v2.util.exception;
+/*
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import com.edp2021c1.randomseatgenerator.util.Notice;
-import com.edp2021c1.randomseatgenerator.v2.util.I18N;
+package com.edp2021c1.randomseatgenerator.util.exception;
+
+import com.edp2021c1.randomseatgenerator.util.i18n.TranslatableNotice;
 
 import java.io.IOException;
 
-public class TranslatableException extends RuntimeException implements Notice {
+public class TranslatableException extends RuntimeException implements TranslatableNotice {
 
     public static TranslatableException common(String key, Object... args) {
         return new TranslatableException(key, args);
@@ -49,13 +68,18 @@ public class TranslatableException extends RuntimeException implements Notice {
     }
 
     @Override
-    public String title() {
-        return I18N.tr(this.type.trKey);
+    public String titleKey() {
+        return this.type.trKey;
     }
 
     @Override
-    public String message() {
-        return I18N.tr(this.key, args);
+    public String messageKey() {
+        return this.key;
+    }
+
+    @Override
+    public Object[] messageArgs() {
+        return this.args;
     }
 
 }

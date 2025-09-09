@@ -1,15 +1,62 @@
 randomseatgenerator:
+  notice:
+    .: 通知
+    exportSuccess: 成功导出座位表到%s%s
   constants:
     seats: 座位
     leaders: 组长
+    language: 语言
+  fileExtension:
+    xlsx: Excel 工作薄
+    xls: Excel 97-2004 工作薄
+    csv: CSV 逗号分隔
+    json: Json文件
   exception:
     .: 异常
     illegal_argument:
       .: 参数非法
     io:
       .: IO错误
+      import_failure: "导入配置文件出错: %s"
     seat:
       .: 座位表错误
       must_be_positive: 值 %d 应为正数
       not_enough: "%s 不足: 可用 %d, 需要 %d"
       too_many_generations: 已经迭代 %d 次了!
+  ui:
+    title:
+      settings: 设置
+      importConfig: 导入配置
+      exportSeatTable: 导出座位表
+    button:
+      close: 关闭
+      copyAndClose: 复制并关闭
+      apply: 应用
+      confirm: 确认
+      cancel: 取消
+      settings: 设置
+      generate: 生成
+      load: 导入
+      export: 导出
+      randomSeed: 随机种子
+      fillInTime: 填入时间
+    textInput:
+      rowCountInput: 行数
+      columnCountInput: 列数
+      shuffledRowCountInput: 随机轮换的行数
+      disabledLastRowPositionsInput: 最后一排不可选位置
+      nameListInput: 名单 (按身高排序)
+      leaderNameSetInput: 组长列表
+      seperatedPairsInput: 拆分列表
+      seedInput: 种子
+    tab:
+      general: 通用
+      about: 关于
+    checkbox:
+      findLucky: 挑选护法
+      findLeaders: 挑选组长
+      darkMode: 深色模式
+    hyperlink:
+      version: "版本:        %s 构建于 %s"
+      git: "Git仓库:   %s"
+      license: "许可证:    %s"

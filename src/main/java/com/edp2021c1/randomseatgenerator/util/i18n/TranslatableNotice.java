@@ -18,44 +18,51 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.util;
+package com.edp2021c1.randomseatgenerator.util.i18n;
 
-import java.util.Objects;
+import com.edp2021c1.randomseatgenerator.util.Notice;
 
 @FunctionalInterface
-public interface Notice {
+public interface TranslatableNotice extends Notice {
 
-    static Notice of(final Thread t, final Throwable e) {
-        if (Objects.requireNonNull(e) instanceof Notice) {
-            return (Notice) e;
-        }
+    String TR_NOTICE = I18N.ROOT_KEY + "notice.";
 
-        return new Notice() {
-
-            private final String message = Strings.getStackTrace(e);
-
-            private final String title = e.getClass().getSimpleName() + (t == null ? "" : " thrown from " + t);
-
+    static TranslatableNotice of(String message, Object... messageArgs) {
+        return new TranslatableNotice() {
             @Override
-            public String title() {
-                return title;
+            public String messageKey() {
+                return TR_NOTICE + message;
             }
 
             @Override
-            public String message() {
-                return message;
+            public Object[] messageArgs() {
+                return messageArgs;
             }
         };
     }
 
-    default String string() {
-        return title() + ": " + message();
+    default String titleKey() {
+        return I18N.ROOT_KEY + "notice";
     }
 
+    default Object[] titleArgs() {
+        return new Object[0];
+    }
+
+    String messageKey();
+
+    default Object[] messageArgs() {
+        return new Object[0];
+    }
+
+    @Override
     default String title() {
-        return "Notice";
+        return I18N.tr(titleKey(), titleArgs());
     }
 
-    String message();
+    @Override
+    default String message() {
+        return I18N.tr(messageKey(), messageArgs());
+    }
 
 }

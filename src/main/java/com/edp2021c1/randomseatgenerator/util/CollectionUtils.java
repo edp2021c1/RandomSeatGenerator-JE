@@ -20,42 +20,28 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import java.util.Objects;
+import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
 
-@FunctionalInterface
-public interface Notice {
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.IntStream;
 
-    static Notice of(final Thread t, final Throwable e) {
-        if (Objects.requireNonNull(e) instanceof Notice) {
-            return (Notice) e;
-        }
+public final class CollectionUtils {
 
-        return new Notice() {
-
-            private final String message = Strings.getStackTrace(e);
-
-            private final String title = e.getClass().getSimpleName() + (t == null ? "" : " thrown from " + t);
-
-            @Override
-            public String title() {
-                return title;
-            }
-
-            @Override
-            public String message() {
-                return message;
-            }
-        };
+    public static <T> List<T> randomlyPick(@NotNull List<T> list, int count, @NotNull Random random) {
+        List<T> result = Lists.newLinkedList(list);
+        Collections.shuffle(result, random);
+        return Lists.newLinkedList(result.subList(0, Math.min(count, result.size())));
     }
 
-    default String string() {
-        return title() + ": " + message();
+    public static <T> T randomlyPickOne(@NotNull List<T> list, @NotNull Random random) {
+        return list.get(random.nextInt(list.size()));
     }
 
-    default String title() {
-        return "Notice";
+    public static List<Integer> range(int origin, int bound) {
+        return IntStream.range(origin, bound).boxed().toList();
     }
-
-    String message();
 
 }

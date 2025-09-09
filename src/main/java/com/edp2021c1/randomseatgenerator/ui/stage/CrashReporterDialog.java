@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright (C) 2023  EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,19 +33,8 @@ import javafx.stage.Stage;
 
 import static com.edp2021c1.randomseatgenerator.ui.FXUtils.createButton;
 
-/**
- * Stage of FX crash reporter.
- *
- * @author Calboot
- * @since 1.4.1
- */
 public final class CrashReporterDialog extends Stage {
 
-    /**
-     * Shows a crash reporter dialog.
-     *
-     * @param msg error message
-     */
     public static void showCrashReporter(final Notice msg) {
         DesktopUtils.runOnFXThread(() -> new CrashReporterDialog(msg).showAndWait());
     }
@@ -63,11 +54,11 @@ public final class CrashReporterDialog extends Stage {
         mainText.setEditable(false);
         mainText.getStyleClass().add("err-main-text");
 
-        Button confirmBtn = createButton("关闭", 80, 26);
+        Button confirmBtn = createButton("close", 80, 26);
         confirmBtn.setOnAction(event -> close());
         confirmBtn.setDefaultButton(true);
 
-        Button copyBtn = createButton("复制并关闭", 80, 26);
+        Button copyBtn = createButton("copyAndClose", 80, 26);
 
         ButtonBar buttonBar = new ButtonBar();
         buttonBar.getButtons().addAll(copyBtn, confirmBtn);

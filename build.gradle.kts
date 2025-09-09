@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright © 2023 EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -9,13 +11,14 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import nl.javadude.gradle.plugins.license.header.HeaderDefinitionBuilder
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
@@ -30,6 +33,9 @@ plugins {
 
     // https://github.com/Fallen-Breath/yamlang
     id("me.fallenbreath.yamlang") version ("1.5.0")
+
+    // https://github.com/hierynomus/license-gradle-plugin
+    id("com.github.hierynomus.license") version ("0.16.1")
 }
 
 val prop = Properties(3)
@@ -40,39 +46,16 @@ val releasing = System.getenv("BUILD_RELEASE") == "true"
 group = prop.getProperty("group")
 version = "${prop.getProperty("version")}${if (releasing) "" else "-SNAPSHOT"}"
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-yamlang {
-    targetSourceSets = listOf(sourceSets.getByName("main"))
-    inputDir = "assets/lang"
-}
-
-tasks.shadowJar {
-    configurations = project.configurations.runtimeClasspath.map { listOf(it) }.get()
-    exclude("META-INF")
-    archiveClassifier = "shadow"
-    minimize()
-}
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // EasyExcel，用于导出座位表
-    implementation("com.alibaba:easyexcel:4.0.3")
-
     // Logging
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.25.1")
     implementation("org.apache.logging.log4j:log4j-api:2.25.1")
     implementation("org.apache.logging.log4j:log4j-core:2.25.1")
-
-    // FastJson，用于读取配置文件
-    implementation("com.alibaba.fastjson2:fastjson2:2.0.58")
 
     // Guava
     implementation("com.google.guava:guava:33.4.8-jre")
@@ -91,21 +74,51 @@ dependencies {
     annotationProcessor("org.jetbrains:annotations:26.0.2")
 }
 
-tasks.withType(JavaCompile::class.java).forEach {
-    it.options.encoding = "UTF-8"
+yamlang {
+    targetSourceSets = listOf(sourceSets.getByName("main"))
+    inputDir = "assets/lang"
 }
 
-tasks.javadoc {
-    options {
-        encoding = "UTF-8"
-        if (optionFiles != null) {
-            optionFiles?.add(Path.of(projectDir.path, "build_resources", "javadoc_args.txt").toFile())
-        } else {
-            optionFiles = mutableListOf(Path.of(projectDir.path, "build_resources", "javadoc_args.txt").toFile())
-        }
-    }
+tasks.shadowJar {
+    configurations = project.configurations.runtimeClasspath.map { listOf(it) }.get()
+    exclude("META-INF")
+    archiveClassifier = "shadow"
+    minimize()
+}
 
-    (options as StandardJavadocDocletOptions).addStringOption("-tag")
+
+// https://github.com/hierynomus/license-gradle-plugin
+license {
+    // use "gradle licenseFormat" to apply license headers
+    header = rootProject.file("HEADER")
+    include("**/*.java")
+    // skipExistingHeaders = true
+
+    headerDefinition(
+        // ref: https://github.com/mathieucarbou/license-maven-plugin/blob/4c42374bb737378f5022a3a36849d5e23ac326ea/license-maven-plugin/src/main/java/com/mycila/maven/plugin/license/header/HeaderType.java#L48
+        // modification: add a newline at the end
+        HeaderDefinitionBuilder("SLASHSTAR_STYLE_NEWLINE")
+            .withFirstLine("/*")
+            .withBeforeEachLine(" * ")
+            .withEndLine(" */" + System.lineSeparator())
+            .withFirstLineDetectionDetectionPattern("(\\s|\\t)*/\\*.*$")
+            .withLastLineDetectionDetectionPattern(".*\\*/(\\s|\\t)*$")
+            .withNoBlankLines()
+            .multiline()
+            .noPadLines()
+    )
+    mapping(mutableMapOf("java" to "SLASHSTAR_STYLE_NEWLINE"))
+    ext {
+        set("name", project.name)
+        set("author", "EDP2021C1")
+        set("year", Calendar.getInstance().get(Calendar.YEAR).toString())
+    }
+}
+tasks.classes.get().dependsOn(tasks.licenseFormatMain)
+tasks.testClasses.get().dependsOn(tasks.licenseFormatTest)
+
+tasks.withType(JavaCompile::class.java).forEach {
+    it.options.encoding = "UTF-8"
 }
 
 tasks.jar {
@@ -119,9 +132,21 @@ tasks.jar {
 }
 
 tasks.processResources {
+    doFirst {
+        Files.copy(rootProject.file("HEADER").toPath(), rootProject.file("src/main/resources/license").toPath(), StandardCopyOption.REPLACE_EXISTING)
+    }
+
     filesMatching("app.json") {
         expand(
-            "version" to version
+            "version" to version,
+            "buildDate" to "%tF".format(Date())
+        )
+    }
+    filesMatching("license") {
+        expand(
+            "name" to rootProject.name,
+            "author" to "EDP2021C1",
+            "year" to Calendar.getInstance().get(Calendar.YEAR).toString()
         )
     }
 }

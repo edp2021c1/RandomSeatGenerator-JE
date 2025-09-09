@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright (C) 2023  EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +20,19 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
+import com.edp2021c1.randomseatgenerator.AppConfig;
+import com.edp2021c1.randomseatgenerator.AppSettings;
 import com.edp2021c1.randomseatgenerator.ui.FXUtils;
 import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
-import com.edp2021c1.randomseatgenerator.ui.node.FormatableTextField;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
-import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
-import com.edp2021c1.randomseatgenerator.util.Notice;
+import com.edp2021c1.randomseatgenerator.util.IOUtils;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
-import com.edp2021c1.randomseatgenerator.util.Strings;
-import com.edp2021c1.randomseatgenerator.v2.AppConfig;
-import com.edp2021c1.randomseatgenerator.v2.AppSettings;
-import com.edp2021c1.randomseatgenerator.v2.util.IOUtils;
-import com.edp2021c1.randomseatgenerator.v2.util.Metadata;
-import com.edp2021c1.randomseatgenerator.v2.util.exception.ExceptionHandler;
+import com.edp2021c1.randomseatgenerator.util.exception.ExceptionHandler;
+import com.edp2021c1.randomseatgenerator.util.exception.TranslatableException;
+import com.edp2021c1.randomseatgenerator.util.i18n.I18N;
+import com.edp2021c1.randomseatgenerator.util.i18n.Language;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -47,12 +49,6 @@ import java.io.IOException;
 
 import static com.edp2021c1.randomseatgenerator.RandomSeatGenerator.LOGGER;
 
-/**
- * Settings dialog of the application.
- *
- * @author Calboot
- * @since 1.3.3
- */
 public final class SettingsDialog extends Stage {
 
     @Getter
@@ -62,9 +58,6 @@ public final class SettingsDialog extends Stage {
 
     private final ConfigPane configPane;
 
-    /**
-     * Creates an instance.
-     */
     private SettingsDialog() {
         super();
         FXUtils.decorate(this, StageType.DIALOG);
@@ -75,35 +68,33 @@ public final class SettingsDialog extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        IntegerField rowCountInput = new IntegerField(true, "行数");
+        IntegerField rowCountInput = new IntegerField(true, "rowCountInput");
 
-        IntegerField columnCountInput = new IntegerField(true, "列数");
+        IntegerField columnCountInput = new IntegerField(true, "columnCountInput");
 
-        IntegerField rbrInput = new IntegerField(true, "随机轮换的行数");
+        IntegerField rbrInput = new IntegerField(true, "shuffledRowCountInput");
 
-        FormatableTextField disabledLastRowPosInput = FormatableTextField.of((oldValue, newValue) -> {
-            if (newValue == null || !Strings.integerListPatternPredicate.test(newValue)) {
-                return oldValue;
-            }
-            return newValue;
-        });
-        disabledLastRowPosInput.setPromptText("最后一排不可选位置");
+        TextField disabledLastRowPosInput = FXUtils.createEmptyTextField("disabledLastRowPositionsInput");
 
-        TextField nameListInput = FXUtils.createEmptyTextField("名单 (按身高排序)");
+        TextField nameListInput = FXUtils.createEmptyTextField("nameListInput");
 
-        TextField groupLeaderListInput = FXUtils.createEmptyTextField("组长列表");
+        TextField groupLeaderListInput = FXUtils.createEmptyTextField("leaderNameSetInput");
 
-        TextArea separateListInput = FXUtils.createEmptyTextArea("拆分列表", 165, 56);
+        TextArea separateListInput = FXUtils.createEmptyTextArea("seperatedPairsInput", 165, 56);
 
-        CheckBox findLuckyCheck = new CheckBox("挑选护法");
+        CheckBox findLuckyCheck = FXUtils.createCheckBox("findLucky");
 
-        CheckBox findLeadersCheck = new CheckBox("挑选组长");
+        CheckBox findLeadersCheck = FXUtils.createCheckBox("findLeaders");
 
-        CheckBox darkModeCheck = new CheckBox("深色模式");
+        CheckBox darkModeCheck = FXUtils.createCheckBox("darkMode");
 
-        Button loadConfigBtn = FXUtils.createButton("从文件加载", 90, 26);
+        Label               languageLabel     = new Label("    " + I18N.constant("language") + " ");
+        ChoiceBox<Language> languageChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(Language.values()));
+        languageChoiceBox.setValue(Language.getCurrent());
 
-        Button applyBtn = FXUtils.createButton("应用", 80, 26);
+        Button loadConfigBtn = FXUtils.createButton("load", 90, 26);
+
+        Button applyBtn = FXUtils.createButton("apply", 80, 26);
         applyBtn.setDisable(true);
 
         configPane = new ConfigPane(
@@ -117,6 +108,8 @@ public final class SettingsDialog extends Stage {
                 findLuckyCheck,
                 findLeadersCheck,
                 darkModeCheck,
+                languageLabel,
+                languageChoiceBox,
                 applyBtn.disableProperty()
         );
         configPane.setContent(AppSettings.config);
@@ -135,14 +128,14 @@ public final class SettingsDialog extends Stage {
         randomSeatGeneratorLabel.setPrefHeight(32);
         randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
 
-        Hyperlink versionLink = new Hyperlink("版本:        " + Metadata.VERSION);
+        Hyperlink versionLink = FXUtils.createHyperlink(Metadata.VERSION_PAGE_URI, "version", Metadata.VERSION, Metadata.BUILD_DATE);
 
-        Hyperlink gitRepositoryLink = new Hyperlink("Git仓库:   " + Metadata.GIT_REPOSITORY_URI);
+        Hyperlink gitRepositoryLink = FXUtils.createHyperlink(Metadata.GIT_REPOSITORY_URI, "git", Metadata.GIT_REPOSITORY_URI);
 
-        Hyperlink licenseLink = new Hyperlink("许可证:    %s(%s)".formatted(Metadata.LICENSE_NAME, Metadata.LICENSE_URI));
+        Hyperlink licenseLink = FXUtils.createHyperlink(Metadata.LICENSE_URI, "license", Metadata.LICENSE_NAME);
 
-        TextArea licenseText = FXUtils.createEmptyTextArea(null, 650, 288);
-        licenseText.setText(Metadata.LICENSE_INFO);
+        TextArea licenseText = FXUtils.createEmptyTextArea(650, 288);
+        licenseText.setText(Metadata.LICENSE);
         licenseText.setEditable(false);
         licenseText.getStyleClass().add("license-text-area");
 
@@ -151,19 +144,19 @@ public final class SettingsDialog extends Stage {
 
         HBox aboutInfoBox = new HBox(iconView, bottomRightBox);
 
-        Button confirmBtn = FXUtils.createButton("确定", 80, 26);
+        Button confirmBtn = FXUtils.createButton("confirm", 80, 26);
 
-        Button cancelBtn = FXUtils.createButton("取消", 80, 26);
+        Button cancelBtn = FXUtils.createButton("cancel", 80, 26);
 
         ButtonBar confirm_apply_cancelBar = new ButtonBar();
         confirm_apply_cancelBar.getButtons().addAll(confirmBtn, applyBtn, cancelBtn);
         confirm_apply_cancelBar.setPrefHeight(66);
         confirm_apply_cancelBar.getStyleClass().add("bottom");
 
-        Tab appConfigTab = new Tab("常规", appConfigBox);
+        Tab appConfigTab = FXUtils.createTab("general", appConfigBox);
         appConfigTab.setClosable(false);
 
-        Tab aboutInfoTab = new Tab("关于", aboutInfoBox);
+        Tab aboutInfoTab = FXUtils.createTab("about", aboutInfoBox);
         aboutInfoTab.setClosable(false);
 
         TabPane topPane = new TabPane(appConfigTab, aboutInfoTab);
@@ -186,14 +179,14 @@ public final class SettingsDialog extends Stage {
         );
 
         setScene(new Scene(mainBox));
-        setTitle(Metadata.NAME + " - 设置");
+        setTitle(Metadata.NAME + " - " + FXUtils.translateTitle("settings"));
         initOwner(PrimaryWindowManager.getPrimaryStage());
 
         fileChooser = new FileChooser();
-        fileChooser.setTitle("加载配置文件");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json文件", "*.json"));
+        fileChooser.setTitle("importConfig");
+        fileChooser.getExtensionFilters().add(FXUtils.extensionFilter("json"));
 
-        fileChooser.setInitialDirectory(new File(Metadata.USER_HOME));
+        fileChooser.setInitialDirectory(Metadata.DATA_DIR.toFile());
 
         /* *************************************************************************
          *                                                                         *
@@ -204,12 +197,6 @@ public final class SettingsDialog extends Stage {
         loadConfigBtn.setOnAction(event -> loadConfig());
 
         applyBtn.setOnAction(event -> applyConfig());
-
-        versionLink.setOnAction(event -> DesktopUtils.browseIfSupported(Metadata.VERSION_PAGE_URI));
-
-        gitRepositoryLink.setOnAction(event -> DesktopUtils.browseIfSupported(Metadata.GIT_REPOSITORY_URI));
-
-        licenseLink.setOnAction(event -> DesktopUtils.browseIfSupported(Metadata.LICENSE_URI));
 
         confirmBtn.setOnAction(event -> confirmConfig());
         confirmBtn.setDefaultButton(true);
@@ -257,7 +244,7 @@ public final class SettingsDialog extends Stage {
                 configPane.setContent(AppConfig.loadFromPath(importFile.toPath()));
             } catch (IOException e) {
                 LOGGER.warn("Failed to import config", e);
-                MessageDialog.showMessage(this, Notice.of("导入设置失败"));
+                MessageDialog.showMessage(this, TranslatableException.io(e, "import_failure", e.getMessage()));
             }
 
             fileChooser.setInitialDirectory(importFile.getParentFile());

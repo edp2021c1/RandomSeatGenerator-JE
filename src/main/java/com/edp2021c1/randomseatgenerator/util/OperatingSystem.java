@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright (C) 2023  EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,36 +24,15 @@ import lombok.Getter;
 
 import java.util.stream.Stream;
 
-import static com.edp2021c1.randomseatgenerator.v2.util.Metadata.OS_NAME;
+import static com.edp2021c1.randomseatgenerator.util.Metadata.OS_NAME;
 
-/**
- * Enum of the operating system.
- *
- * @author Calboot
- * @since 1.2.9
- */
 public enum OperatingSystem {
 
-    /**
-     * Microsoft Windows.
-     */
     WINDOWS(),
-    /**
-     * Mac OS X.
-     */
     MAC(),
-    /**
-     * Linux and Unix like OS, including Solaris.
-     */
     LINUX(),
-    /**
-     * Unknown operating system.
-     */
     UNKNOWN();
 
-    /**
-     * Current operating system.
-     */
     @Getter
     private static final OperatingSystem current;
 

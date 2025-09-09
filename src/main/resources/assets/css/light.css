@@ -30,6 +30,7 @@
     -background-color-seat-table-cell: rgb(255, 255, 255);
     -background-color-seat-table-cell-leader: rgb(255, 249, 171);
     -background-color-seat-table-cell-header: rgb(178, 213, 255);
+    -background-color-choice-hover: rgb(195, 195, 195);
 
     -border-color-root: rgb(124, 124, 124);
     -border-color-button-disabled: rgb(155, 155, 155);
@@ -175,4 +176,22 @@
 .err-main-text,
 .err-main-text:focused {
     -fx-border-color: -border-color-err;
+}
+
+.choice-box {
+    -fx-background-color: -background-color-root;
+    -fx-border-color: -border-color-root;
+}
+
+.choice-box .context-menu {
+    -fx-background-color: -background-color-root;
+    -fx-border-color: -border-color-focused;
+}
+
+.choice-box .menu-item:hover {
+    -fx-background-color: -background-color-choice-hover;
+}
+
+.choice-box .left-container .radio {
+    -fx-background-color: -text-fill-root;
 }

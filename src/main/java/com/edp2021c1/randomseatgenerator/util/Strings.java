@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright (C) 2023  EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,17 +30,8 @@ import java.util.Random;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-/**
- * Useful methods related to {@link String}.
- *
- * @author Calboot
- * @since 1.4.5
- */
 public final class Strings {
 
-    /**
-     * Simple date format
-     */
     private static final SimpleDateFormat defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     private static final SimpleDateFormat dateFormatShort = new SimpleDateFormat("yyyy-MM-dd");
@@ -48,26 +41,10 @@ public final class Strings {
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
 
-    /**
-     * Pattern of integer.
-     */
     public static final Predicate<String> integerPatternPredicate = Pattern.compile("-?\\d+").asMatchPredicate();
 
-    /**
-     * Pattern of unsigned integer.
-     */
     public static final Predicate<String> unsignedIntegerPatternPredicate = Pattern.compile("\\d+").asMatchPredicate();
 
-    /**
-     * Pattern of list of integer, divided by spaces.
-     */
-    public static final Predicate<String> integerListPatternPredicate = Pattern.compile("[0-9 ]*").asMatchPredicate();
-
-    /**
-     * Returns the instant of now formatted into string.
-     *
-     * @return now in {@code String}
-     */
     public static String nowStr() {
         return nowStr(defaultDateFormat);
     }
@@ -76,39 +53,10 @@ public final class Strings {
         return nowStr(dateFormatShort);
     }
 
-    /**
-     * Returns a string representing the current time in the given format.
-     *
-     * @param format to format the date
-     *
-     * @return a string representing the current time
-     */
     public static String nowStr(final DateFormat format) {
         return format.format(new Date());
     }
 
-    /**
-     * Returns a long hash code of a {@code String}.
-     *
-     * @param str owner of the hash code
-     *
-     * @return hash code of {@code str}
-     */
-    public static long longHashCode(final String str) {
-        int h = 0;
-        for (byte v : str.getBytes()) {
-            h = (v & 0xffff) + (h << 5) - h;
-        }
-        return h;
-    }
-
-    /**
-     * Returns stack trace of a {@code Throwable}.
-     *
-     * @param e owner of stack trace
-     *
-     * @return stack trace of {@code e}
-     */
     public static String getStackTrace(final Throwable e) {
         StringWriter writer      = new StringWriter(1024);
         PrintWriter  printWriter = new PrintWriter(writer);
@@ -117,27 +65,13 @@ public final class Strings {
         return writer.toString();
     }
 
-    /**
-     * Randomly generates a {@code String} that contains only
-     * decimal digits and English letters.
-     *
-     * @param len length of the string
-     *
-     * @return a randomly generated string
-     */
     public static String randomString(final int len) {
         char[] chars = new char[len];
         Random rd    = new Random();
         for (int i = 0; i < len; i++) {
-            chars[i] = DataUtils.pickRandomly(CHARACTERS_AND_DIGITS, rd);
+            chars[i] = CollectionUtils.randomlyPickOne(CHARACTERS_AND_DIGITS, rd);
         }
         return new String(chars);
-    }
-
-    /**
-     * Don't let anyone else instantiate this class.
-     */
-    private Strings() {
     }
 
 }

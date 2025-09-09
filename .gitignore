@@ -53,6 +53,7 @@ packages/
 ### Log ###
 *.log
 *.log.gz
+logs/
 
 .idea/gradle.xml
 .idea/misc.xml

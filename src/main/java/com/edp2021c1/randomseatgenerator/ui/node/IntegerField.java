@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright © 2023 EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -9,28 +11,24 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
+import com.edp2021c1.randomseatgenerator.ui.FXUtils;
 import com.edp2021c1.randomseatgenerator.util.Strings;
+import com.edp2021c1.randomseatgenerator.util.i18n.I18N;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 import java.util.function.Predicate;
 
-/**
- * Input for integer.
- *
- * @author Calboot
- * @since 1.5.0
- */
 @DefaultProperty("value")
 public class IntegerField extends FormatableTextField {
 
@@ -43,15 +41,9 @@ public class IntegerField extends FormatableTextField {
 
     private final Predicate<String> patternPredicate;
 
-    /**
-     * Constructs an instance.
-     *
-     * @param unsigned   whether the value should be unsigned
-     * @param promptText pre-set value of {@link #promptTextProperty()}
-     */
-    public IntegerField(final boolean unsigned, final String promptText) {
+    public IntegerField(boolean unsigned, String promptTextKey) {
         super();
-        setPromptText(promptText);
+        setPromptText(I18N.tr(FXUtils.TR_TEXT_INPUT + promptTextKey));
 
         patternPredicate = unsigned ? Strings.unsignedIntegerPatternPredicate : Strings.integerPatternPredicate;
 
@@ -66,7 +58,7 @@ public class IntegerField extends FormatableTextField {
     @Override
     protected String format(final String oldValue, final String newValue) {
         if (newValue == null || newValue.isEmpty()) {
-            return "0";
+            return newValue;
         }
         if (!patternPredicate.test(newValue)) {
             return oldValue;
@@ -75,11 +67,6 @@ public class IntegerField extends FormatableTextField {
         return newValue;
     }
 
-    /**
-     * Returns property of the integer value.
-     *
-     * @return {@link #value}
-     */
     public IntegerProperty valueProperty() {
         return value;
     }

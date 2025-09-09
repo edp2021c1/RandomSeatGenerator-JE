@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright (C) 2023  EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +20,9 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
-import com.edp2021c1.randomseatgenerator.v2.seat.SeatConfig;
-import com.edp2021c1.randomseatgenerator.v2.seat.SeatTable;
-import com.edp2021c1.randomseatgenerator.v2.util.SeatUtils;
+import com.edp2021c1.randomseatgenerator.core.SeatConfig;
+import com.edp2021c1.randomseatgenerator.core.SeatTable;
+import com.edp2021c1.randomseatgenerator.util.SeatUtils;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -32,12 +34,6 @@ import javafx.scene.layout.VBox;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-/**
- * View of seat table.
- *
- * @author Calboot
- * @since 1.4.0
- */
 public class SeatTableView extends VBox {
 
     private static final String DEFAULT_STYLE_CLASS = "seat-table-view";
@@ -48,11 +44,6 @@ public class SeatTableView extends VBox {
 
     private final ObjectProperty<SeatTable> seatTable;
 
-    /**
-     * Creates a view showing an empty {@code SeatTable}.
-     *
-     * @param config used to generate the empty seat table
-     */
     public SeatTableView(SeatConfig config) {
         super();
         setAlignment(Pos.CENTER);
@@ -86,24 +77,16 @@ public class SeatTableView extends VBox {
         minHeightProperty().bind(rowCount.multiply(80));
         minWidthProperty().bind(columnCount.multiply(120));
 
+        prefHeightProperty().bind(rowCount.multiply(100));
+        prefWidthProperty().bind(columnCount.multiply(150));
+
         setEmptySeatTable(config);
     }
 
-    /**
-     * Sets {@code seatTable} as empty and refreshes the
-     * view to display the table.
-     *
-     * @param config used to generate the empty seat table
-     */
     public void setEmptySeatTable(SeatConfig config) {
         seatTable.set(SeatUtils.generateEmpty(config));
     }
 
-    /**
-     * Returns the property of the table shown.
-     *
-     * @return {@link #seatTable}
-     */
     public ObjectProperty<SeatTable> seatTableProperty() {
         return seatTable;
     }

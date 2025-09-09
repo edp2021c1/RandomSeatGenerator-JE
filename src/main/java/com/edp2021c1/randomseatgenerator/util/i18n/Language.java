@@ -18,33 +18,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.edp2021c1.randomseatgenerator.ui.node;
+package com.edp2021c1.randomseatgenerator.util.i18n;
 
-import javafx.scene.control.TextField;
+import com.edp2021c1.randomseatgenerator.AppSettings;
+import org.jetbrains.annotations.Contract;
 
-import java.util.Objects;
-import java.util.function.BiFunction;
+public enum Language {
 
-public abstract class FormatableTextField extends TextField {
+    CHINESE_SIMPLIFIED("zh_cn", "简体中文"),
+    ENGLISH_US("en_us", "English (US)");
 
-    public static FormatableTextField of(BiFunction<String, String, String> formatter) {
-        return new FormatableTextField() {
-            @Override
-            protected String format(final String oldValue, final String newValue) {
-                return formatter.apply(oldValue, newValue);
+    @Contract(pure = true)
+    public static Language getByCode(String code) {
+        for (Language language : Language.values()) {
+            if (language.code.equals(code)) {
+                return language;
             }
-        };
+        }
+        return null;
     }
 
-    protected FormatableTextField() {
-        textProperty().subscribe((oldValue, newValue) -> {
-            if (Objects.equals(oldValue, newValue)) {
-                return;
-            }
-            setText(format(oldValue, newValue));
-        });
+    @Contract
+    public static Language getCurrent() {
+        return getByCode(AppSettings.config.language);
     }
 
-    protected abstract String format(String oldValue, String newValue);
+    public final String code;
+
+    public final String name;
+
+    Language(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }

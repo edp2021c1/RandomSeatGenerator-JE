@@ -1,6 +1,8 @@
 /*
- * RandomSeatGenerator
- * Copyright (C) 2023  EDP2021C1
+ * This file is part of the RandomSeatGenerator project, licensed under the
+ * GNU General Public License v3.0
+ *
+ * Copyright (C) 2025  EDP2021C1 and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +24,6 @@ import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 
-/**
- * Cell of {@code SeatTableView}.
- *
- * @author Calboot
- * @since 1.4.0
- */
 public class SeatTableCell extends Label {
 
     private static final String DEFAULT_STYLE_CLASS = "seat-table-cell";
@@ -35,11 +31,6 @@ public class SeatTableCell extends Label {
     private static final PseudoClass PSEUDO_CLASS_LEADER
             = PseudoClass.getPseudoClass("leader");
 
-    /**
-     * Creates a cell showing the given object.
-     *
-     * @param str {@code Object} to be shown
-     */
     public SeatTableCell(String str, boolean leader) {
         setAlignment(Pos.CENTER);
         setText(str);
