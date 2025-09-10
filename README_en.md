@@ -10,54 +10,42 @@ See also: [RandomSeat](https://github.com/edp2021c1/RandomSeat)
 
 ## Environment requirement
 
-|        | Windows  | Mac OS  | Others |
-|--------|:---------|:--------|:-------|
-| x86-64 | msi️/jar | jar️    | jar    |
-| ARM64  | msi/jar  | dmg/jar | jar    |
-| Others | -        | -       | jar️   |
-
-jar: Requires JRE and JavaFX Runtime
+JDK: 21+
+JavaFX: 21+
 
 ## Command line parameters
-
-### General parameters
-
-| Argument  | Function                          |
-|-----------|:----------------------------------|
-| --help    | Prints the help info and quits    |
-| --license | Prints the license info and quits |
-| --version | Prints the version info and quits |
-| --debug   | Turns on the console debug output |
-
-### Console-mode-only parameters
 
 | Argument             | Function                                                                   |
 |----------------------|:---------------------------------------------------------------------------|
 | --nogui              | Enters the console mode without launching GUI                              |
-| --config-path=<path> | Sets the path of the config used for generating seat table (only for once) |
 | --seed=<value>       | Sets the seed used to generate the seat table, default to a random string  |
-| --output-path=<path> | Sets the output file or directory path (only for once)                     |
 | --open-result        | Opens the output file after exporting                                      |
 
-## Seat table config format
+## Default config
 
 ```json5
 {
-  // Row count
-  "row_count": 7,
-  // Column count
-  "column_count": 7,
-  // Random rotated between rows
-  "random_between_rows": 2,
-  // Unavailable last row seats (from 1 to column count)
-  "last_row_pos_cannot_be_chosen": "1 2 7",
-  // Person names sorted by height
-  "person_sort_by_height": "31 28 22 3 37 24 34 1 6 44 38 7 2 4 16 19 13 40 12 36 8 21 18 10 41 14 20 43 35 15 26 32 17 42 27 29 9 5 25 30 11 23 39 33",
-  // Group leader list
-  "group_leader_list": "2 4 10 16 19 20 24 25 26 27 28 29 30 31 32 33 34 39 44",
-  // Separated pairs, one in each row
-  "separate_list": "25 30\n8 34",
-  // Whether a “lucky person” will be chosen
-  "lucky_option": true,
+  "language": "zh_cn",
+  "darkMode": false,
+  "seatConfig": {
+    "row_count": 6,
+    "column_count": 8,
+    "shuffledRows": 3,
+    "disabledLastRowPos": "",
+    "person_sort_by_height": "43 4 3 1 7 9 6 34 18 40 25 21 32 14 44 41 11 15 47 45 16 23 22 28 2 8 5 29 38 10 20 12 36 19 33 42 24 26 37 13 39 27 46 17 31 35",
+    "group_leader_list": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47",
+    "separate_list": "",
+    "lucky_option": false,
+    "findLeaders": true
+  }
 }
 ```
+
+## Libs
+
+- SLF4J Api v2.0.17 [Official](https://www.slf4j.org/) [GitHub](https://github.com/qos-ch/slf4j)
+- Log4J2 v2.25.1 [Official](https://logging.apache.org/log4j/2.x/index.html) [GitHub](https://github.com/apache/logging-log4j2)
+- Guava v33.4.8 [GitHub](https://github.com/google/guava)
+- Gson v2.13.1 [GitHub](https://github.com/google/gson)
+- Apache POI v5.4.1 [Official](https://poi.apache.org/) [GitHub](https://github.com/apache/poi)
+- JavaFX [Official](https://openjfx.io/) [GitHub](https://github.com/openjdk/jfx)

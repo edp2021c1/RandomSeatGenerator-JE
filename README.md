@@ -10,13 +10,8 @@ Java版随机排座位程序
 
 ## 环境要求
 
-|        | Windows  | Mac OS  | 其他   |
-|--------|:---------|:--------|:-----|
-| x86-64 | msi️/jar | jar️    | jar  |
-| ARM64  | msi/jar  | dmg/jar | jar  |
-| 其他     | -        | -       | jar️ |
-
-jar：需要JRE+JavaFX运行时
+JDK: 21+
+JavaFX: 21+
 
 ## 命令行参数
 
@@ -26,7 +21,7 @@ jar：需要JRE+JavaFX运行时
 | --seed=<value> | 设置生成座位表的种子，默认为随机数/字符串 |
 | --open-result  | 导出完成后打开文档             |
 
-## 配置文件格式：
+## 默认配置：
 
 ```json5
 {
@@ -45,3 +40,13 @@ jar：需要JRE+JavaFX运行时
   }
 }
 ```
+
+## 库
+
+- SLF4J Api v2.0.17 [官方](https://www.slf4j.org/) [GitHub](https://github.com/qos-ch/slf4j)
+- Log4J2 v2.25.1 [官方](https://logging.apache.org/log4j/2.x/index.html) [GitHub](https://github.com/apache/logging-log4j2)
+- Guava v33.4.8 [GitHub](https://github.com/google/guava)
+- Gson v2.13.1 [GitHub](https://github.com/google/gson)
+- Apache POI v5.4.1 [官方](https://poi.apache.org/) [GitHub](https://github.com/apache/poi)
+- JavaFX [官方](https://openjfx.io/) [GitHub](https://github.com/openjdk/jfx)
+
