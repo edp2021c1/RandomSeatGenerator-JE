@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+import static com.edp2021c1.randomseatgenerator.RandomSeatGenerator.LOGGER;
+
 public final class I18N {
 
     private static final TypeToken<Map<String, String>> MAP_TYPE = new TypeToken<>() {
@@ -48,6 +50,7 @@ public final class I18N {
 
     public static void init(@NotNull String code) {
         I18N.code = code.toLowerCase();
+        LOGGER.debug("Language: {}", I18N.code);
 
         String json;
 
@@ -71,10 +74,6 @@ public final class I18N {
 
     public static String tr(@NotNull String key, Object... args) {
         return translations.getOrDefault(key, key).formatted(args);
-    }
-
-    public static String getTranslation(@NotNull String key) {
-        return translations.get(key);
     }
 
     public static String constant(String name) {

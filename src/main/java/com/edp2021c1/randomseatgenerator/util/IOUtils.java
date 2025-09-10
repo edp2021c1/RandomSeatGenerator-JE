@@ -67,6 +67,10 @@ public final class IOUtils {
         Files.createFile(path);
     }
 
+    public static void delete(Path path) throws IOException {
+        PathUtils.delete(path);
+    }
+
     @Contract(pure = true)
     public static File getClosestDirectory(File file) {
         while (!file.isDirectory()) {

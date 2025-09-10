@@ -83,7 +83,6 @@ tasks.shadowJar {
     configurations = project.configurations.runtimeClasspath.map { listOf(it) }.get()
     exclude("META-INF")
     archiveClassifier = "shadow"
-    minimize()
 }
 
 
