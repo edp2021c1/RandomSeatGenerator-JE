@@ -23,6 +23,7 @@ import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
+import java.text.SimpleDateFormat
 import java.util.*
 
 plugins {
@@ -39,9 +40,11 @@ plugins {
 }
 
 val prop = Properties(3)
-prop.load(Files.newInputStream(projectDir.toPath().resolve("gradle.properties")))
+prop.load(Files.newInputStream(file("gradle.properties").toPath()))
 
 val releasing = System.getenv("BUILD_RELEASE") == "true"
+
+val buildTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss z")
 
 group = prop.getProperty("group")
 version = "${prop.getProperty("version")}${if (releasing) "" else "-SNAPSHOT"}"
@@ -61,17 +64,18 @@ dependencies {
     implementation("com.google.guava:guava:33.4.8-jre")
 
     // Gson
-    implementation("com.google.code.gson:gson:2.13.1")
+    implementation("com.google.code.gson:gson:2.13.2")
 
     // Apache POI
     implementation("org.apache.poi:poi:5.4.1")
     implementation("org.apache.poi:poi-ooxml:5.4.1")
+    implementation("org.apache.commons:commons-lang3:3.18.0") // Avoid CVE-2025-31672
 
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.38")
-    compileOnly("org.jetbrains:annotations:26.0.2")
-    annotationProcessor("org.projectlombok:lombok:1.18.38")
-    annotationProcessor("org.jetbrains:annotations:26.0.2")
+    compileOnly("org.projectlombok:lombok:1.18.40")
+    compileOnly("org.jetbrains:annotations:26.0.2-1")
+    annotationProcessor("org.projectlombok:lombok:1.18.40")
+    annotationProcessor("org.jetbrains:annotations:26.0.2-1")
 }
 
 yamlang {
@@ -106,7 +110,7 @@ license {
             .multiline()
             .noPadLines()
     )
-    mapping(mutableMapOf("java" to "SLASHSTAR_STYLE_NEWLINE"))
+    mapping("java", "SLASHSTAR_STYLE_NEWLINE")
     ext {
         set("name", project.name)
         set("author", "EDP2021C1")
@@ -132,16 +136,16 @@ tasks.jar {
 
 tasks.processResources {
     doFirst {
-        Files.copy(rootProject.file("HEADER").toPath(), rootProject.file("src/main/resources/license").toPath(), StandardCopyOption.REPLACE_EXISTING)
+        Files.copy(rootProject.file("HEADER").toPath(), rootProject.file("src/main/resources/assets/meta/license").toPath(), StandardCopyOption.REPLACE_EXISTING)
     }
 
-    filesMatching("app.json") {
+    filesMatching("assets/meta/version.json") {
         expand(
             "version" to version,
-            "buildDate" to "%tF".format(Date())
+            "buildTime" to buildTimeFormat.format(Date()),
         )
     }
-    filesMatching("license") {
+    filesMatching("assets/meta/license") {
         expand(
             "name" to rootProject.name,
             "author" to "EDP2021C1",

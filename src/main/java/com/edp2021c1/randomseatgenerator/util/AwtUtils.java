@@ -20,36 +20,15 @@
 
 package com.edp2021c1.randomseatgenerator.util;
 
-import lombok.Getter;
+import java.awt.Image;
+import java.awt.Taskbar;
 
-import java.util.stream.Stream;
+public final class AwtUtils {
 
-import static com.edp2021c1.randomseatgenerator.util.Metadata.OS_NAME;
-
-public enum OperatingSystem {
-
-    WINDOWS(),
-    MAC(),
-    LINUX(),
-    UNKNOWN();
-
-    @Getter
-    private static final OperatingSystem current;
-
-    static {
-        if (OS_NAME != null) {
-            String osName = OS_NAME.toLowerCase();
-            if (osName.startsWith("windows")) {
-                current = WINDOWS;
-            } else if (osName.startsWith("mac")) {
-                current = MAC;
-            } else if (Stream.of("solaris", "linux", "unix", "sunos").anyMatch(osName::contains)) {
-                current = LINUX;
-            } else {
-                current = UNKNOWN;
-            }
-        } else {
-            current = UNKNOWN;
+    public static void setAppIcon(Image image) {
+        try {
+            Taskbar.getTaskbar().setIconImage(image);
+        } catch (Throwable ignore) {
         }
     }
 

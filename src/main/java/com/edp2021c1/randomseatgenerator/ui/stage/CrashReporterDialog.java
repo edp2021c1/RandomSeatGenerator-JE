@@ -20,10 +20,10 @@
 
 package com.edp2021c1.randomseatgenerator.ui.stage;
 
+import com.edp2021c1.randomseatgenerator.AppSettings;
 import com.edp2021c1.randomseatgenerator.ui.FXUtils;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.Notice;
-import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -80,7 +80,7 @@ public final class CrashReporterDialog extends Stage {
             close();
         });
 
-        if (OperatingSystem.MAC == OperatingSystem.getCurrent()) {
+        if (AppSettings.mac) {
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;

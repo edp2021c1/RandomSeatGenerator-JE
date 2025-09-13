@@ -44,17 +44,6 @@ public final class IOUtils {
         Files.writeString(path, content, StandardCharsets.UTF_8);
     }
 
-    public static boolean tryMoveToTrash(Path path) {
-        return DesktopUtils.moveToTrashIfSupported(path.toFile());
-    }
-
-    public static void replaceWithDirectory(Path path) throws IOException {
-        if (!Files.isDirectory(path)) {
-            Files.deleteIfExists(path);
-            Files.createDirectories(path);
-        }
-    }
-
     public static void replaceWithFile(Path path) throws IOException {
         if (Files.isRegularFile(path)) {
             return;

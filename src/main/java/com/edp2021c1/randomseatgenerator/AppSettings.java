@@ -38,6 +38,8 @@ public final class AppSettings {
 
     public static boolean withGUI = false;
 
+    public static boolean mac = false;
+
     public static AppConfig config = null;
 
     public static boolean initializingDone = false;

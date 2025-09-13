@@ -27,7 +27,6 @@ import com.edp2021c1.randomseatgenerator.ui.node.ConfigPane;
 import com.edp2021c1.randomseatgenerator.ui.node.IntegerField;
 import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.OperatingSystem;
 import com.edp2021c1.randomseatgenerator.util.exception.ExceptionHandler;
 import com.edp2021c1.randomseatgenerator.util.exception.TranslatableException;
 import com.edp2021c1.randomseatgenerator.util.i18n.I18N;
@@ -128,7 +127,7 @@ public final class SettingsDialog extends Stage {
         randomSeatGeneratorLabel.setPrefHeight(32);
         randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
 
-        Hyperlink versionLink = FXUtils.createHyperlink(Metadata.VERSION_PAGE_URI, "version", Metadata.VERSION, Metadata.BUILD_DATE);
+        Hyperlink versionLink = FXUtils.createHyperlink(Metadata.VERSION_PAGE_URI, "version", Metadata.VERSION, Metadata.BUILD_TIME);
 
         Hyperlink gitRepositoryLink = FXUtils.createHyperlink(Metadata.GIT_REPOSITORY_URI, "git", Metadata.GIT_REPOSITORY_URI);
 
@@ -204,7 +203,7 @@ public final class SettingsDialog extends Stage {
         cancelBtn.setOnAction(event -> close());
         cancelBtn.setCancelButton(true);
 
-        if (OperatingSystem.MAC == OperatingSystem.getCurrent()) {
+        if (AppSettings.mac) {
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {
                     return;

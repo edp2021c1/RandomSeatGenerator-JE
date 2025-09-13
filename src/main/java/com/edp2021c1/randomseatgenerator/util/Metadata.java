@@ -35,7 +35,7 @@ import static java.lang.System.getProperty;
 
 public final class Metadata {
 
-    public static final Map<String, String> META = Maps.newHashMapWithExpectedSize(1);
+    public static final Map<String, String> VERSION_META = Maps.newHashMapWithExpectedSize(1);
 
     public static final String LICENSE;
 
@@ -57,7 +57,7 @@ public final class Metadata {
 
     public static final String VERSION_ID;
 
-    public static final String BUILD_DATE;
+    public static final String BUILD_TIME;
 
     public static final String VERSION;
 
@@ -65,21 +65,21 @@ public final class Metadata {
 
     static {
         try {
-            LICENSE = IOUtils.readResource("license");
-            META.putAll(RandomSeatGenerator.GSON.fromJson(IOUtils.readResource("app.json"), new TypeToken<Map<String, String>>() {
+            LICENSE = IOUtils.readResource("assets/meta/license");
+            VERSION_META.putAll(RandomSeatGenerator.GSON.fromJson(IOUtils.readResource("assets/meta/version.json"), new TypeToken<Map<String, String>>() {
             }));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        VERSION_ID = META.get("version");
-        BUILD_DATE = META.get("buildDate");
+        VERSION_ID = VERSION_META.get("version");
+        BUILD_TIME = VERSION_META.get("buildTime");
         VERSION = (VERSION_ID == null) ? "dev" : ("v" + VERSION_ID);
         TITLE = NAME + " - " + VERSION;
 
         try {
             GIT_REPOSITORY_URI = new URI("https://github.com/edp2021c1/RandomSeatGenerator-JE");
             LICENSE_URI = new URI("https://www.gnu.org/licenses/gpl-3.0.txt");
-            VERSION_PAGE_URI = new URI("https://github.com/edp2021c1/RandomSeatGenerator-JE/releases/tags/" + (VERSION_ID == null ? "" : VERSION));
+            VERSION_PAGE_URI = new URI("https://github.com/edp2021c1/RandomSeatGenerator-JE/releases/tag/" + (VERSION_ID == null ? "" : VERSION));
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

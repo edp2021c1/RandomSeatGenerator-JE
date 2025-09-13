@@ -27,9 +27,11 @@ import com.edp2021c1.randomseatgenerator.ui.stage.PrimaryWindowManager;
 import com.edp2021c1.randomseatgenerator.util.*;
 import com.edp2021c1.randomseatgenerator.util.exception.ExceptionHandler;
 import com.edp2021c1.randomseatgenerator.util.i18n.I18N;
+import com.google.common.io.Resources;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,7 +58,7 @@ public final class AppLaunch extends Application {
         Thread.currentThread().setUncaughtExceptionHandler(ExceptionHandler.INSTANCE);
 
         LOGGER.info("***   RandomSeatGenerator {}  ***", Metadata.VERSION);
-        LOGGER.debug("Build date: {}", Metadata.BUILD_DATE);
+        LOGGER.debug("Build date: {}", Metadata.BUILD_TIME);
         LOGGER.debug("OS name: {}", Metadata.OS_NAME);
         LOGGER.debug("Launching dir: {}", Metadata.DATA_DIR);
 
@@ -66,12 +68,14 @@ public final class AppLaunch extends Application {
 
         withGUI = !unnamedPara.contains("--nogui");
         AppSettings.withGUI = withGUI;
+        AppSettings.mac = Metadata.OS_NAME.toLowerCase().startsWith("mac");
         try {
             AppSettings.loadConfig();
         } catch (IOException e) {
             ExceptionHandler.INSTANCE.handleException(e);
         }
         I18N.init(AppSettings.config.language);
+        AwtUtils.setAppIcon(Toolkit.getDefaultToolkit().getImage(Resources.getResource(Metadata.ICON_URL)));
         AppSettings.initializingDone = true;
     }
 

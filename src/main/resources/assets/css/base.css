@@ -28,10 +28,6 @@
     src: url("/assets/font/FiraCode.ttf");
 }
 
-@font-face {
-    src: url("/assets/font/SegoeUIVariable.ttf");
-}
-
 .root {
     -fx-font-family: "Microsoft Yahei UI";
     -fx-font-size: 12;
@@ -129,8 +125,7 @@
 }
 
 .license-text-area {
-    -fx-font-family: "Segoe UI Variable Regular";
-    -fx-font-weight: bold;
+    -fx-font-family: "Fira Code";
 }
 
 .app-name-label {

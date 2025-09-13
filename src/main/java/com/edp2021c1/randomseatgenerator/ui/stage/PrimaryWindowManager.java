@@ -140,7 +140,7 @@ public final class PrimaryWindowManager {
 
         timeAsSeedBtn.setOnAction(event -> generateDateSeed());
 
-        if (OperatingSystem.MAC == OperatingSystem.getCurrent()) {
+        if (AppSettings.mac) {
             primaryStage.setFullScreenExitHint("");
             mainBox.setOnKeyPressed(event -> {
                 if (!event.isMetaDown()) {

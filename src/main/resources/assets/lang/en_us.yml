@@ -56,6 +56,6 @@ randomseatgenerator:
       findLeaders: Find group leaders
       darkMode: Dark mode
     hyperlink:
-      version: "Version:    %s built on %s"
+      version: "Version:    %s  Built Time: %s"
       git: "Git Repo:  %s"
       license: "License:    %s"

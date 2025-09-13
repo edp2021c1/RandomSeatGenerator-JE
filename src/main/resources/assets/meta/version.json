@@ -1,0 +1,4 @@
+{
+  "version": "${version}",
+  "buildTime": "${buildTime}"
+}
