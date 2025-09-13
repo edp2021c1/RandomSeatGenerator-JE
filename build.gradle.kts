@@ -86,14 +86,15 @@ yamlang {
 tasks.shadowJar {
     configurations = project.configurations.runtimeClasspath.map { listOf(it) }.get()
     exclude("META-INF")
-    archiveClassifier = "shadow"
+    archiveClassifier = ""
 }
+tasks.build.get().dependsOn(tasks.shadowJar)
 
 
 // https://github.com/hierynomus/license-gradle-plugin
 license {
     // use "gradle licenseFormat" to apply license headers
-    header = rootProject.file("HEADER")
+    header = rootProject.file("src/main/resources/assets/meta/license")
     include("**/*.java")
     // skipExistingHeaders = true
 
@@ -135,10 +136,6 @@ tasks.jar {
 }
 
 tasks.processResources {
-    doFirst {
-        Files.copy(rootProject.file("HEADER").toPath(), rootProject.file("src/main/resources/assets/meta/license").toPath(), StandardCopyOption.REPLACE_EXISTING)
-    }
-
     filesMatching("assets/meta/version.json") {
         expand(
             "version" to version,
@@ -151,21 +148,5 @@ tasks.processResources {
             "author" to "EDP2021C1",
             "year" to Calendar.getInstance().get(Calendar.YEAR).toString()
         )
-    }
-}
-
-tasks.build {
-    dependsOn(tasks.shadowJar)
-
-    val fName = "${rootProject.name}-$version"
-    val libsPath = Path.of(projectDir.path, "build", "libs")
-    val jarPath = libsPath.resolve("$fName.jar")
-    val shadowedJarPath = libsPath.resolve("$fName-shadow.jar")
-
-    doLast {
-        if (Files.notExists(shadowedJarPath)) {
-            throw NoSuchFileException("Shadowed jar not found at $shadowedJarPath")
-        }
-        Files.move(shadowedJarPath, jarPath, StandardCopyOption.REPLACE_EXISTING)
     }
 }
