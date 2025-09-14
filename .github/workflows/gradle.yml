@@ -35,7 +35,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Gradle Build
-        run: ./gradlew clean build --warning-mode all --stacktrace
+        run: ./gradlew clean build publishToMavenLocal --warning-mode all --stacktrace
 
       - name: Upload
         uses: actions/upload-artifact@v4

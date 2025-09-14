@@ -20,14 +20,12 @@
 
 import nl.javadude.gradle.plugins.license.header.HeaderDefinitionBuilder
 import java.nio.file.Files
-import java.nio.file.NoSuchFileException
-import java.nio.file.Path
-import java.nio.file.StandardCopyOption
 import java.text.SimpleDateFormat
 import java.util.*
 
 plugins {
     id("java")
+    id("maven-publish")
 
     // https://github.com/GradleUp/shadow
     id("com.gradleup.shadow") version ("9.1.0")
@@ -42,15 +40,17 @@ plugins {
 val prop = Properties(3)
 prop.load(Files.newInputStream(file("gradle.properties").toPath()))
 
-val releasing = System.getenv("BUILD_RELEASE") == "true"
-
 val buildTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss z")
 
 group = prop.getProperty("group")
-version = "${prop.getProperty("version")}${if (releasing) "" else "-SNAPSHOT"}"
+version = "${prop["version"]}${if (System.getenv("BUILD_RELEASE") == "true") "" else "-SNAPSHOT"}"
 
 repositories {
     mavenCentral()
+    maven {
+        name = "JitPack"
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
@@ -79,7 +79,7 @@ dependencies {
 }
 
 yamlang {
-    targetSourceSets = listOf(sourceSets.getByName("main"))
+    targetSourceSets = listOf(sourceSets["main"])
     inputDir = "assets/lang"
 }
 
@@ -148,5 +148,13 @@ tasks.processResources {
             "author" to "EDP2021C1",
             "year" to Calendar.getInstance().get(Calendar.YEAR).toString()
         )
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
     }
 }
