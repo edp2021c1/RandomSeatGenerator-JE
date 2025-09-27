@@ -26,6 +26,7 @@ import java.util.*
 plugins {
     id("java")
     id("maven-publish")
+    id("idea")
 
     // https://github.com/GradleUp/shadow
     id("com.gradleup.shadow") version ("9.1.0")
@@ -76,6 +77,13 @@ dependencies {
     compileOnly("org.jetbrains:annotations:26.0.2-1")
     annotationProcessor("org.projectlombok:lombok:1.18.40")
     annotationProcessor("org.jetbrains:annotations:26.0.2-1")
+}
+
+idea {
+    module {
+        isDownloadJavadoc = true
+        isDownloadSources = true
+    }
 }
 
 yamlang {
