@@ -19,17 +19,16 @@
  */
 
 import nl.javadude.gradle.plugins.license.header.HeaderDefinitionBuilder
-import java.nio.file.Files
 import java.text.SimpleDateFormat
 import java.util.*
 
 plugins {
-    id("java")
+    java
     id("maven-publish")
-    id("idea")
+    idea
 
     // https://github.com/GradleUp/shadow
-    id("com.gradleup.shadow") version ("9.1.0")
+    id("com.gradleup.shadow") version ("9.2.2")
 
     // https://github.com/Fallen-Breath/yamlang
     id("me.fallenbreath.yamlang") version ("1.5.0")
@@ -38,13 +37,13 @@ plugins {
     id("com.github.hierynomus.license") version ("0.16.1")
 }
 
-val prop = Properties(3)
-prop.load(Files.newInputStream(file("gradle.properties").toPath()))
+val jitpack = System.getenv("JITPACK") == "true"
+val releasing = System.getenv("BUILD_RELEASE") == "true"
+val ci = jitpack || releasing
 
 val buildTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss z")
 
-group = prop.getProperty("group")
-version = "${prop["version"]}${if (System.getenv("BUILD_RELEASE") == "true") "" else "-SNAPSHOT"}"
+version = "${version}${if (releasing) "" else "-SNAPSHOT"}"
 
 repositories {
     mavenCentral()
@@ -81,8 +80,10 @@ dependencies {
 
 idea {
     module {
-        isDownloadJavadoc = true
-        isDownloadSources = true
+        if (!ci) {
+            isDownloadJavadoc = true
+            isDownloadSources = true
+        }
     }
 }
 
@@ -129,13 +130,15 @@ license {
 tasks.classes.get().dependsOn(tasks.licenseFormatMain)
 tasks.testClasses.get().dependsOn(tasks.licenseFormatTest)
 
-tasks.withType(JavaCompile::class.java).forEach {
-    it.options.encoding = "UTF-8"
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
 }
 
 tasks.jar {
     manifest {
-        attributes("Main-Class" to prop.getProperty("mainClass"))
+        attributes("Main-Class" to providers.gradleProperty("mainClass"))
         attributes("Created-By" to "Copyright (C) EDP2021C1")
         attributes("Implementation-Version" to version)
     }
