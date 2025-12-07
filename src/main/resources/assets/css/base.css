@@ -28,26 +28,42 @@
     src: url("/assets/font/FiraCode.ttf");
 }
 
+* {
+    -highlight-fill: rgb(37, 113, 213);
+}
+
 .root {
     -fx-font-family: "Microsoft Yahei UI";
     -fx-font-size: 12;
+    -fx-text-fill: -monet-on-surface;
+    -fx-background-color: -monet-surface;
 }
 
 .label {
     -fx-padding: 3;
-
     -fx-wrap-text: true;
 }
 
-.button,
-.text-area,
-.text-field {
-    -fx-border-width: 1.5;
-    -fx-border-radius: 3;
+.label,
+.tab-label,
+.seat-table-cell {
+    -fx-text-fill: -monet-on-surface;
 }
 
 .button {
     -fx-padding: 2;
+}
+
+.button:hover {
+    -fx-border-color: -monet-outline-variant;
+}
+
+.button:default {
+    -fx-border-color: -monet-primary;
+}
+
+.button:default:hover {
+    -fx-border-color: -monet-inverse-primary;
 }
 
 .text-input {
@@ -60,42 +76,98 @@
 
 .text-area .content {
     -fx-padding: 0;
-
     -fx-background-radius: 0;
+    -fx-background-color: -monet-surface;
+}
+
+.text-field,
+.text-area {
+    -fx-highlight-fill: -highlight-fill;
+}
+
+.text-field:focused,
+.text-area:focused {
+    -fx-border-color: -monet-primary;
+}
+
+.button,
+.text-area,
+.text-field {
+    -fx-border-width: 1.5;
+    -fx-border-radius: 3;
+    -fx-text-fill: -monet-on-surface;
+    -fx-background-color: -monet-surface;
+    -fx-border-color: -monet-outline;
 }
 
 .check-box {
     -fx-padding: 0 10 0 10;
+    -fx-text-fill: -monet-on-surface;
 }
 
 .check-box .box {
     -fx-border-width: 1.5;
     -fx-border-radius: 4;
+    -fx-background-color: -monet-surface;
+    -fx-border-color: -monet-outline;
+}
+
+.check-box:selected .box .mark {
+    -fx-background-color: -monet-on-surface;
 }
 
 .scroll-bar {
     -fx-pref-width: 12;
+    -fx-background-color: inherit;
 }
 
 .scroll-bar .thumb {
     -fx-background-radius: 6;
+    -fx-background-color: -monet-surface-tint;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -monet-surface-tint;
+}
+
+.scroll-bar .track-background {
+    -fx-background-color: -monet-surface;
+}
+
+.scroll-bar .increment-button:hover,
+.scroll-bar .decrement-button:hover {
+    -fx-background-color: inherit;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: inherit;
 }
 
 .tab-pane {
     -fx-padding: 10;
 }
 
+.tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+}
+
 .tab-pane > .tab-content-area {
     -fx-padding: 10;
-
     -fx-border-width: 1.5 0 0 0;
+    -fx-border-color: -monet-outline;
 }
 
 .tab {
     -fx-border-radius: 3 3 0 0;
     -fx-border-width: 1.5 1.5 0 1.5;
-
+    -fx-border-color: -monet-outline;
     -fx-background-radius: 3 3 0 0;
+    -fx-background-color: -monet-surface;
+}
+
+.tab:selected,
+.tab:hover {
+    -fx-border-color: -monet-outline-variant;
 }
 
 .tab .focus-indicator {
@@ -112,15 +184,26 @@
     -fx-font-size: 15;
 
     -fx-background-radius: 5;
+    -fx-background-color: -monet-surface-container-high;
 
     -fx-border-width: 1;
     -fx-border-radius: 5;
+    -fx-border-color: -border-color-seat-table-cell;
 
     -fx-pref-width: 120;
     -fx-pref-height: 60;
 }
 
+.seat-table-cell:leader {
+    -fx-background-color: -monet-tertiary-container;
+}
+
+.seat-table-row:header .seat-table-cell {
+    -fx-background-color: -monet-primary-container;
+}
+
 .hyperlink {
+    -fx-text-fill: -monet-primary;
     -fx-border-width: 0;
 }
 
@@ -155,6 +238,7 @@
 
 .err-pre-label {
     -fx-font-size: 16;
+    -fx-text-fill: -monet-on-error-container;
 }
 
 .err-pre-label,
@@ -166,19 +250,33 @@
 .err-main-text {
     -fx-min-height: 450;
     -fx-min-width: 1080;
+    -fx-text-fill: -monet-on-error-container;
+}
+
+.err-main-text .content {
+    -fx-background-color: -monet-error-container;
+}
+
+.err-main-text,
+.err-main-text:focused {
+    -fx-border-color: -monet-error;
 }
 
 .choice-box {
     -fx-padding: 0 3 0 3;
+    -fx-background-color: -monet-surface;
     -fx-border-radius: 3;
     -fx-border-width: 1.5;
+    -fx-border-color: -monet-outline;
 }
 
 .choice-box .context-menu {
+    -fx-padding: 0;
     -fx-background-radius: 3;
+    -fx-background-color: -monet-surface;
     -fx-border-radius: 3;
     -fx-border-width: 1.5;
-    -fx-padding: 0;
+    -fx-border-color: -monet-outline-variant;
 }
 
 .choice-box .menu-item {
@@ -188,4 +286,12 @@
 
 .choice-box .menu-item:focused {
     -fx-background-color: inherit;
+}
+
+.choice-box .menu-item:hover {
+    -fx-background-color: -monet-outline-variant;
+}
+
+.choice-box .left-container .radio {
+    -fx-background-color: -monet-on-surface;
 }

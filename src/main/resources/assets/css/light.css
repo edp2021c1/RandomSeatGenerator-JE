@@ -1,197 +1,52 @@
-/*
- * RandomSeatGenerator
- * Copyright (C) 2023  EDP2021C1
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 * {
-    -highlight-fill: rgb(37, 113, 213);
-    -hyperlink-text-fill: rgb(73, 152, 255);
-
-    -text-fill-root: rgb(0, 0, 0);
-    -text-fill-button-disabled: rgb(155, 155, 155);
-    -text-fill-err: rgb(231, 79, 79);
-
-    -background-color-root: rgb(242, 242, 242);
-    -background-color-scroll-bar-thumb: rgb(195, 195, 195);
-    -background-color-scroll-bar-thumb-hover: rgb(171, 171, 171);
-    -background-color-seat-table-cell: rgb(255, 255, 255);
-    -background-color-seat-table-cell-leader: rgb(255, 249, 171);
-    -background-color-seat-table-cell-header: rgb(178, 213, 255);
-    -background-color-choice-hover: rgb(195, 195, 195);
-
-    -border-color-root: rgb(124, 124, 124);
-    -border-color-button-disabled: rgb(155, 155, 155);
-    -border-color-focused: rgb(0, 0, 0);
-    -border-color-checkbox-box: rgb(0, 0, 0);
-    -border-color-button-default: rgb(90, 161, 255);
-    -border-color-button-default-hover: rgb(0, 104, 255);
-    -border-color-seat-table-cell: rgb(238, 238, 238);
-    -border-color-err: rgb(231, 79, 79);
-}
-
-.root {
-    -fx-text-fill: -text-fill-root;
-
-    -fx-background-color: -background-color-root;
-}
-
-.label,
-.tab-label,
-.seat-table-cell {
-    -fx-text-fill: -text-fill-root;
-}
-
-.button,
-.text-field,
-.text-area {
-    -fx-text-fill: -text-fill-root;
-
-    -fx-background-color: -background-color-root;
-
-    -fx-border-color: -border-color-root;
-}
-
-.button:disabled {
-    -fx-text-fill: -text-fill-button-disabled;
-
-    -fx-border-color: -border-color-button-disabled;
-}
-
-.text-field,
-.text-area {
-    -fx-highlight-fill: -highlight-fill;
-}
-
-.button:hover,
-.text-field:focused,
-.text-area:focused {
-    -fx-border-color: -border-color-focused;
-}
-
-.button:default {
-    -fx-border-color: -border-color-button-default;
-}
-
-.button:default:hover {
-    -fx-border-color: -border-color-button-default-hover;
-}
-
-.text-area .content {
-    -fx-background-color: -background-color-root;
-}
-
-.check-box {
-    -fx-text-fill: -text-fill-root;
-}
-
-.check-box .box {
-    -fx-background-color: -background-color-root;
-
-    -fx-border-color: -border-color-root;
-}
-
-.check-box:selected .box .mark {
-    -fx-background-color: -text-fill-root;
-}
-
-.scroll-bar {
-    -fx-background-color: inherit;
-}
-
-.scroll-bar .track-background {
-    -fx-background-color: -background-color-root;
-}
-
-.scroll-bar .thumb {
-    -fx-background-color: -background-color-scroll-bar-thumb;
-}
-
-.scroll-bar .thumb:hover {
-    -fx-background-color: -background-color-scroll-bar-thumb-hover;
-}
-
-.scroll-bar .increment-button:hover,
-.scroll-bar .decrement-button:hover {
-    -fx-background-color: inherit;
-}
-
-.scroll-pane .viewport {
-    -fx-background-color: inherit;
-}
-
-.tab-header-area .tab-header-background {
-    -fx-background-color: -background-color-root;
-}
-
-.tab-pane > .tab-content-area {
-    -fx-border-color: -border-color-root;
-}
-
-.tab {
-    -fx-border-color: -border-color-root;
-
-    -fx-background-color: -background-color-root;
-}
-
-.tab:selected,
-.tab:hover {
-    -fx-border-color: -border-color-focused;
-}
-
-.hyperlink {
-    -fx-text-fill: -hyperlink-text-fill;
-}
-
-.seat-table-cell {
-    -fx-background-color: -background-color-seat-table-cell;
-
-    -fx-border-color: -border-color-seat-table-cell;
-}
-
-.seat-table-cell:leader {
-    -fx-background-color: -background-color-seat-table-cell-leader;
-}
-
-.seat-table-row:header .seat-table-cell {
-    -fx-background-color: -background-color-seat-table-cell-header;
-}
-
-.err-pre-label {
-    -fx-text-fill: -text-fill-err;
-}
-
-.err-main-text,
-.err-main-text:focused {
-    -fx-border-color: -border-color-err;
-}
-
-.choice-box {
-    -fx-background-color: -background-color-root;
-    -fx-border-color: -border-color-root;
-}
-
-.choice-box .context-menu {
-    -fx-background-color: -background-color-root;
-    -fx-border-color: -border-color-focused;
-}
-
-.choice-box .menu-item:hover {
-    -fx-background-color: -background-color-choice-hover;
-}
-
-.choice-box .left-container .radio {
-    -fx-background-color: -text-fill-root;
+    -monet-primary: rgb(57, 96, 143);
+    -monet-on-primary: rgb(255, 255, 255);
+    -monet-primary-container: rgb(211, 228, 255);
+    -monet-on-primary-container: rgb(30, 72, 118);
+    -monet-primary-fixed: rgb(211, 228, 255);
+    -monet-primary-fixed-dim: rgb(163, 201, 254);
+    -monet-on-primary-fixed: rgb(0, 28, 56);
+    -monet-on-primary-fixed-variant: rgb(30, 72, 118);
+    -monet-secondary: rgb(84, 95, 112);
+    -monet-on-secondary: rgb(255, 255, 255);
+    -monet-secondary-container: rgb(215, 227, 248);
+    -monet-on-secondary-container: rgb(60, 71, 88);
+    -monet-secondary-fixed: rgb(215, 227, 248);
+    -monet-secondary-fixed-dim: rgb(187, 199, 219);
+    -monet-on-secondary-fixed: rgb(17, 28, 43);
+    -monet-on-secondary-fixed-variant: rgb(60, 71, 88);
+    -monet-tertiary: rgb(108, 86, 119);
+    -monet-on-tertiary: rgb(255, 255, 255);
+    -monet-tertiary-container: rgb(245, 217, 255);
+    -monet-on-tertiary-container: rgb(84, 63, 94);
+    -monet-tertiary-fixed: rgb(245, 217, 255);
+    -monet-tertiary-fixed-dim: rgb(216, 189, 227);
+    -monet-on-tertiary-fixed: rgb(38, 20, 49);
+    -monet-on-tertiary-fixed-variant: rgb(84, 63, 94);
+    -monet-error: rgb(186, 26, 26);
+    -monet-on-error: rgb(255, 255, 255);
+    -monet-error-container: rgb(255, 218, 214);
+    -monet-on-error-container: rgb(147, 0, 10);
+    -monet-surface: rgb(248, 249, 255);
+    -monet-on-surface: rgb(25, 28, 32);
+    -monet-surface-dim: rgb(216, 218, 224);
+    -monet-surface-bright: rgb(248, 249, 255);
+    -monet-surface-container-lowest: rgb(255, 255, 255);
+    -monet-surface-container-low: rgb(242, 243, 250);
+    -monet-surface-container: rgb(236, 237, 244);
+    -monet-surface-container-high: rgb(231, 232, 238);
+    -monet-surface-container-highest: rgb(225, 226, 232);
+    -monet-surface-variant: rgb(223, 226, 235);
+    -monet-on-surface-variant: rgb(67, 71, 78);
+    -monet-background: rgb(248, 249, 255);
+    -monet-on-background: rgb(25, 28, 32);
+    -monet-outline: rgb(115, 119, 127);
+    -monet-outline-variant: rgb(195, 198, 207);
+    -monet-shadow: rgb(0, 0, 0);
+    -monet-scrim: rgb(0, 0, 0);
+    -monet-inverse-surface: rgb(46, 48, 53);
+    -monet-inverse-on-surface: rgb(239, 240, 247);
+    -monet-inverse-primary: rgb(163, 201, 254);
+    -monet-surface-tint: rgb(57, 96, 143);
+    -border-color-seat-table-cell: -monet-surface-bright;
 }

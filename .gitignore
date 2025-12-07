@@ -57,3 +57,5 @@ logs/
 
 .idea/gradle.xml
 .idea/misc.xml
+
+config.json
