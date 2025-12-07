@@ -28,8 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Table<E> extends AbstractCollection<E> implements RandomAccess {
 
@@ -88,14 +86,6 @@ public class Table<E> extends AbstractCollection<E> implements RandomAccess {
 
     public Column<E> getColumn(int columnIndex) {
         return new Column<>(this, columnIndex);
-    }
-
-    public Stream<Row<E>> getRows() {
-        return IntStream.range(0, rowCount).mapToObj(i -> new Row<>(this, i));
-    }
-
-    public Stream<Column<E>> getColumns() {
-        return IntStream.range(0, columnCount).mapToObj(i -> new Column<>(this, i));
     }
 
     public List<E> getNeighbours(int rowIndex, int columnIndex) {

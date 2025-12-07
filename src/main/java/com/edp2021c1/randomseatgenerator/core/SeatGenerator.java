@@ -24,7 +24,6 @@ import com.edp2021c1.randomseatgenerator.util.CollectionUtils;
 import com.edp2021c1.randomseatgenerator.util.Pair;
 import com.edp2021c1.randomseatgenerator.util.Table;
 import com.edp2021c1.randomseatgenerator.util.exception.TranslatableException;
-import com.edp2021c1.randomseatgenerator.util.i18n.I18N;
 import com.google.common.collect.Lists;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.ImmutableGraph;
@@ -35,6 +34,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.edp2021c1.randomseatgenerator.util.i18n.I18N.i18n;
 
 public class SeatGenerator {
 
@@ -109,13 +110,13 @@ public class SeatGenerator {
 
     private void checkPositive() {
         if (rowCount <= 0) {
-            throw TranslatableException.seat("must_be_positive", rowCount);
+            throw TranslatableException.seat("exception.seat.must_be_positive", rowCount);
         }
         if (columnCount <= 0) {
-            throw TranslatableException.seat("must_be_positive", columnCount);
+            throw TranslatableException.seat("exception.seat.must_be_positive", columnCount);
         }
         if (shuffledRowCount <= 0) {
-            throw TranslatableException.seat("must_be_positive", shuffledRowCount);
+            throw TranslatableException.seat("exception.seat.must_be_positive", shuffledRowCount);
         }
     }
 
@@ -138,11 +139,11 @@ public class SeatGenerator {
         int seatCount         = rowCount * columnCount - disabledLastRowIndexes.size();
         int peopleInSeatCount = nameList.size() - (findLucky ? 1 : 0);
         if (seatCount < peopleInSeatCount) {
-            throw TranslatableException.seat("not_enough", I18N.constant("seats"), seatCount, peopleInSeatCount);
+            throw TranslatableException.seat("exception.seat.not_enough", i18n("seats"), seatCount, peopleInSeatCount);
         }
 
         if (findLeaders && leaderNameSet.size() < columnCount) {
-            throw TranslatableException.seat("not_enough", I18N.constant("leaders"), leaderNameSet.size(), columnCount);
+            throw TranslatableException.seat("exception.seat.not_enough", i18n("leaders"), leaderNameSet.size(), columnCount);
         }
 
         int block = shuffledRowCount * columnCount;
@@ -169,7 +170,7 @@ public class SeatGenerator {
         List<String> names     = Lists.newArrayListWithExpectedSize(nameList.size());
         do {
             if (loopTimes >= MAX_GENERATIONS) {
-                throw TranslatableException.seat("too_many_generations", MAX_GENERATIONS);
+                throw TranslatableException.seat("exception.seat.too_many_generations", MAX_GENERATIONS);
             }
 
             Arrays.fill(seatTable.getData(), null);

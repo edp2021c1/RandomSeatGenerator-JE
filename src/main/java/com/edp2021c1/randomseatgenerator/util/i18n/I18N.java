@@ -20,64 +20,63 @@
 
 package com.edp2021c1.randomseatgenerator.util.i18n;
 
-import com.edp2021c1.randomseatgenerator.RandomSeatGenerator;
-import com.edp2021c1.randomseatgenerator.util.IOUtils;
-import com.edp2021c1.randomseatgenerator.util.exception.ExceptionHandler;
-import com.google.common.collect.Maps;
-import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.PropertyKey;
 
-import java.util.Map;
+import java.util.Arrays;
+import java.util.IllegalFormatException;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import static com.edp2021c1.randomseatgenerator.RandomSeatGenerator.LOGGER;
 
 public final class I18N {
 
-    private static final TypeToken<Map<String, String>> MAP_TYPE = new TypeToken<>() {
-    };
-
-    private static final Map<String, String> translations = Maps.newHashMap();
-
-    private static final Map<String, String> fallback = Maps.newHashMap();
-
+    @Deprecated
     public static final String LANG_PATH = "assets/lang/%s.json";
 
+    @Deprecated
     public static final String ROOT_KEY = "randomseatgenerator.";
 
+    @Deprecated
     public static final String CONSTANT_KEY = ROOT_KEY + "constants.";
 
-    private static String code = "zh_cn";
+    private static ResourceBundle resourceBundle = null;
+
+    private static Language language = Language.ENGLISH_US;
 
     public static void init(@NotNull String code) {
-        I18N.code = code.toLowerCase();
-        LOGGER.debug("Language: {}", I18N.code);
-
-        String json;
-
-        try {
-            json = IOUtils.readResource(LANG_PATH.formatted(I18N.code));
-        } catch (Exception e) {
-            ExceptionHandler.INSTANCE.handleException(e);
-            return;
-        }
-        translations.putAll(RandomSeatGenerator.GSON.fromJson(json, MAP_TYPE));
-
-        try {
-            json = IOUtils.readResource(LANG_PATH.formatted("en_us"));
-        } catch (Exception e) {
-            ExceptionHandler.INSTANCE.handleException(e);
-            return;
-        }
-        fallback.putAll(RandomSeatGenerator.GSON.fromJson(json, MAP_TYPE));
-
+        LOGGER.debug("Language: {}", code);
+        language = Language.getByCode(code);
     }
 
-    public static String tr(@NotNull String key, Object... args) {
-        return translations.getOrDefault(key, key).formatted(args);
+    public static ResourceBundle getResourceBundle() {
+        if (resourceBundle != null) {
+            return resourceBundle;
+        }
+        resourceBundle = ResourceBundle.getBundle("assets.lang.I18N", language.getLocale(), DefaultResourceBundleControl.INSTANCE);
+        return resourceBundle;
     }
 
-    public static String constant(String name) {
-        return tr(CONSTANT_KEY + name);
+    public static String i18n(@PropertyKey(resourceBundle = "assets.lang.I18N") String key, Object... formatArgs) {
+        try {
+            return String.format(getResourceBundle().getString(key), formatArgs);
+        } catch (MissingResourceException e) {
+            LOGGER.error("Cannot find key {} in resource bundle", key, e);
+        } catch (IllegalFormatException e) {
+            LOGGER.error("Illegal format string, key={}, args={}", key, Arrays.toString(formatArgs), e);
+        }
+
+        return key + Arrays.toString(formatArgs);
+    }
+
+    public static String i18n(@PropertyKey(resourceBundle = "assets.lang.I18N") String key) {
+        try {
+            return getResourceBundle().getString(key);
+        } catch (MissingResourceException e) {
+            LOGGER.error("Cannot find key {} in resource bundle", key, e);
+            return key;
+        }
     }
 
 }

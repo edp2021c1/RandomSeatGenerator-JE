@@ -21,20 +21,21 @@
 package com.edp2021c1.randomseatgenerator.util.exception;
 
 import com.edp2021c1.randomseatgenerator.util.i18n.TranslatableNotice;
+import org.jetbrains.annotations.PropertyKey;
 
 import java.io.IOException;
 
 public class TranslatableException extends RuntimeException implements TranslatableNotice {
 
-    public static TranslatableException common(String key, Object... args) {
+    public static TranslatableException common(@PropertyKey(resourceBundle = "assets.lang.I18N") String key, Object... args) {
         return new TranslatableException(key, args);
     }
 
-    public static TranslatableException io(IOException e, String key, Object... args) {
+    public static TranslatableException io(IOException e, @PropertyKey(resourceBundle = "assets.lang.I18N") String key, Object... args) {
         return new TranslatableException(e, key, args);
     }
 
-    public static TranslatableException seat(String key, Object... args) {
+    public static TranslatableException seat(@PropertyKey(resourceBundle = "assets.lang.I18N") String key, Object... args) {
         return new TranslatableException(ExceptionType.SEAT, key, args);
     }
 
@@ -48,17 +49,17 @@ public class TranslatableException extends RuntimeException implements Translata
         this(ExceptionType.COMMON, key, args);
     }
 
-    private TranslatableException(ExceptionType type, String key, Object... args) {
+    private TranslatableException(ExceptionType type, @PropertyKey(resourceBundle = "assets.lang.I18N") String key, Object... args) {
         super(key);
-        this.key = type.trKey + "." + key;
+        this.key = key;
         this.args = args;
         this.type = type;
     }
 
-    private TranslatableException(Throwable cause, String key, Object... args) {
+    private TranslatableException(Throwable cause, @PropertyKey(resourceBundle = "assets.lang.I18N") String key, Object... args) {
         super(key, cause);
         this.type = ExceptionType.of(cause);
-        this.key = this.type.trKey + "." + key;
+        this.key = key;
         this.args = args;
     }
 

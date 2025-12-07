@@ -28,10 +28,7 @@ plugins {
     idea
 
     // https://github.com/GradleUp/shadow
-    id("com.gradleup.shadow") version ("9.2.2")
-
-    // https://github.com/Fallen-Breath/yamlang
-    id("me.fallenbreath.yamlang") version ("1.5.0")
+    id("com.gradleup.shadow") version ("9.3.0")
 
     // https://github.com/hierynomus/license-gradle-plugin
     id("com.github.hierynomus.license") version ("0.16.1")
@@ -87,15 +84,10 @@ idea {
     }
 }
 
-yamlang {
-    targetSourceSets = listOf(sourceSets["main"])
-    inputDir = "assets/lang"
-}
-
 tasks.shadowJar {
     configurations = project.configurations.runtimeClasspath.map { listOf(it) }.get()
     exclude("META-INF")
-    archiveClassifier = ""
+    archiveClassifier = null
 }
 tasks.build.get().dependsOn(tasks.shadowJar)
 
@@ -132,8 +124,8 @@ tasks.testClasses.get().dependsOn(tasks.licenseFormatTest)
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
-    sourceCompatibility = "21"
-    targetCompatibility = "21"
+    sourceCompatibility = "25"
+    targetCompatibility = "25"
 }
 
 tasks.jar {

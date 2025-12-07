@@ -25,7 +25,6 @@ import com.edp2021c1.randomseatgenerator.ui.stage.PrimaryWindowManager;
 import com.edp2021c1.randomseatgenerator.ui.stage.StageType;
 import com.edp2021c1.randomseatgenerator.util.DesktopUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
-import com.edp2021c1.randomseatgenerator.util.i18n.I18N;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
@@ -40,9 +39,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
+import org.jetbrains.annotations.PropertyKey;
 
 import java.io.IOException;
 import java.net.URI;
+
+import static com.edp2021c1.randomseatgenerator.util.i18n.I18N.i18n;
 
 public final class FXUtils {
 
@@ -64,20 +66,6 @@ public final class FXUtils {
             }
         }
     };
-
-    public static final String TR_TITLE = "randomseatgenerator.ui.title.";
-
-    public static final String TR_BUTTON = "randomseatgenerator.ui.button.";
-
-    public static final String TR_TEXT_INPUT = "randomseatgenerator.ui.textInput.";
-
-    public static final String TR_TAB = "randomseatgenerator.ui.tab.";
-
-    public static final String TR_CHECKBOX = "randomseatgenerator.ui.checkbox.";
-
-    public static final String TR_HYPERLINK = "randomseatgenerator.ui.hyperlink.";
-
-    public static final String TR_FILE_EXTENSION = "randomseatgenerator.fileExtension.";
 
     public static BooleanProperty globalDarkModeProperty() {
         return globalDarkMode;
@@ -119,8 +107,8 @@ public final class FXUtils {
         }
     }
 
-    public static Button createButton(String key, final double width, final double height) {
-        Button btn = new Button(I18N.tr(TR_BUTTON + key));
+    public static Button createButton(@PropertyKey(resourceBundle = "assets.lang.I18N") String key, final double width, final double height) {
+        Button btn = new Button(i18n(key));
         btn.setPrefSize(width, height);
         return btn;
     }
@@ -137,15 +125,15 @@ public final class FXUtils {
         return hBox;
     }
 
-    public static TextField createEmptyTextField(String promptTextKey) {
+    public static TextField createEmptyTextField(@PropertyKey(resourceBundle = "assets.lang.I18N") String promptTextKey) {
         TextField t = new TextField();
-        t.setPromptText(I18N.tr(TR_TEXT_INPUT + promptTextKey));
+        t.setPromptText(i18n(promptTextKey));
         return t;
     }
 
-    public static TextArea createEmptyTextArea(String promptTextKey, double width, double height) {
+    public static TextArea createEmptyTextArea(@PropertyKey(resourceBundle = "assets.lang.I18N") String promptTextKey, double width, double height) {
         TextArea t = new TextArea();
-        t.setPromptText(I18N.tr(TR_TEXT_INPUT + promptTextKey));
+        t.setPromptText(i18n(promptTextKey));
         t.setPrefSize(width, height);
         return t;
     }
@@ -156,26 +144,26 @@ public final class FXUtils {
         return t;
     }
 
-    public static Tab createTab(String textKey, Node children) {
-        return new Tab(I18N.tr(TR_TAB + textKey), children);
+    public static Tab createTab(@PropertyKey(resourceBundle = "assets.lang.I18N") String textKey, Node children) {
+        return new Tab(i18n(textKey), children);
     }
 
-    public static CheckBox createCheckBox(String textKey) {
-        return new CheckBox(I18N.tr(TR_CHECKBOX + textKey));
+    public static CheckBox createCheckBox(@PropertyKey(resourceBundle = "assets.lang.I18N") String textKey) {
+        return new CheckBox(i18n(textKey));
     }
 
-    public static Hyperlink createHyperlink(URI uri, String key, Object... args) {
-        Hyperlink link = new Hyperlink(I18N.tr(TR_HYPERLINK + key, args));
+    public static Hyperlink createHyperlink(URI uri, @PropertyKey(resourceBundle = "assets.lang.I18N") String key, Object... args) {
+        Hyperlink link = new Hyperlink(i18n(key, args));
         link.setOnAction(event -> DesktopUtils.browseIfSupported(uri));
         return link;
     }
 
-    public static String translateTitle(String key) {
-        return I18N.tr(TR_TITLE + key);
+    public static String translateTitle(@PropertyKey(resourceBundle = "assets.lang.I18N") String key) {
+        return i18n(key);
     }
 
     public static FileChooser.ExtensionFilter extensionFilter(String extension) {
-        return new FileChooser.ExtensionFilter(I18N.tr(TR_FILE_EXTENSION + extension), "*." + extension);
+        return new FileChooser.ExtensionFilter(i18n("fileExtension." + extension), "*." + extension);
     }
 
 }

@@ -20,9 +20,7 @@
 
 package com.edp2021c1.randomseatgenerator.ui.node;
 
-import com.edp2021c1.randomseatgenerator.ui.FXUtils;
 import com.edp2021c1.randomseatgenerator.util.Strings;
-import com.edp2021c1.randomseatgenerator.util.i18n.I18N;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -41,9 +39,9 @@ public class IntegerField extends FormatableTextField {
 
     private final Predicate<String> patternPredicate;
 
-    public IntegerField(boolean unsigned, String promptTextKey) {
+    public IntegerField(boolean unsigned, String promptText) {
         super();
-        setPromptText(I18N.tr(FXUtils.TR_TEXT_INPUT + promptTextKey));
+        setPromptText(promptText);
 
         patternPredicate = unsigned ? Strings.unsignedIntegerPatternPredicate : Strings.integerPatternPredicate;
 

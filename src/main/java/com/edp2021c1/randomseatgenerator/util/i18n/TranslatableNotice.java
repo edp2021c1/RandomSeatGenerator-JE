@@ -21,17 +21,18 @@
 package com.edp2021c1.randomseatgenerator.util.i18n;
 
 import com.edp2021c1.randomseatgenerator.util.Notice;
+import org.jetbrains.annotations.PropertyKey;
+
+import static com.edp2021c1.randomseatgenerator.util.i18n.I18N.i18n;
 
 @FunctionalInterface
 public interface TranslatableNotice extends Notice {
 
-    String TR_NOTICE = I18N.ROOT_KEY + "notice.";
-
-    static TranslatableNotice of(String message, Object... messageArgs) {
+    static TranslatableNotice of(@PropertyKey(resourceBundle = "assets.lang.I18N") String messageKey, Object... messageArgs) {
         return new TranslatableNotice() {
             @Override
             public String messageKey() {
-                return TR_NOTICE + message;
+                return messageKey;
             }
 
             @Override
@@ -42,7 +43,7 @@ public interface TranslatableNotice extends Notice {
     }
 
     default String titleKey() {
-        return I18N.ROOT_KEY + "notice";
+        return "notice";
     }
 
     default Object[] titleArgs() {
@@ -57,12 +58,12 @@ public interface TranslatableNotice extends Notice {
 
     @Override
     default String title() {
-        return I18N.tr(titleKey(), titleArgs());
+        return i18n(titleKey(), titleArgs());
     }
 
     @Override
     default String message() {
-        return I18N.tr(messageKey(), messageArgs());
+        return i18n(messageKey(), messageArgs());
     }
 
 }

@@ -25,7 +25,10 @@ import com.edp2021c1.randomseatgenerator.core.SeatGenerator;
 import com.edp2021c1.randomseatgenerator.core.SeatTable;
 import com.edp2021c1.randomseatgenerator.ui.FXUtils;
 import com.edp2021c1.randomseatgenerator.ui.node.SeatTableView;
-import com.edp2021c1.randomseatgenerator.util.*;
+import com.edp2021c1.randomseatgenerator.util.IOUtils;
+import com.edp2021c1.randomseatgenerator.util.Metadata;
+import com.edp2021c1.randomseatgenerator.util.SeatUtils;
+import com.edp2021c1.randomseatgenerator.util.Strings;
 import com.edp2021c1.randomseatgenerator.util.exception.ExceptionHandler;
 import com.edp2021c1.randomseatgenerator.util.i18n.TranslatableNotice;
 import javafx.beans.property.ObjectProperty;
@@ -85,9 +88,9 @@ public final class PrimaryWindowManager {
         leftBox.getStyleClass().add("left");
 
         // 右上种子输入栏
-        TextField seedInput     = createEmptyTextField("seedInput");
-        Button    randomSeedBtn = createButton("randomSeed", 80, 26);
-        Button    timeAsSeedBtn = createButton("fillInTime", 80, 26);
+        TextField seedInput     = createEmptyTextField("generate.seed");
+        Button    randomSeedBtn = createButton("generate.seed.random", 80, 26);
+        Button    timeAsSeedBtn = createButton("generate.seed.time", 80, 26);
 
         seed = seedInput.textProperty();
 
@@ -210,7 +213,7 @@ public final class PrimaryWindowManager {
             SeatUtils.export(seatTable.get(), exportFile.toPath());
             LOGGER.info("Successfully export seat table");
 
-            MessageDialog.showMessage(primaryStage, TranslatableNotice.of("exportSuccess", System.lineSeparator(), exportFile));
+            MessageDialog.showMessage(primaryStage, TranslatableNotice.of("export.success", System.lineSeparator(), exportFile));
 
             fileChooser.setInitialDirectory(exportFile.getParentFile());
         } catch (Exception e) {

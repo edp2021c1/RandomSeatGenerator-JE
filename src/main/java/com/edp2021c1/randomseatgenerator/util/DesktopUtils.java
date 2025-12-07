@@ -45,19 +45,6 @@ public final class DesktopUtils {
         }
     }
 
-    public static boolean moveToTrashIfSupported(final File file) {
-        if (desktopSupported && desktopTk.isSupported(Desktop.Action.MOVE_TO_TRASH)) {
-            boolean b;
-            try {
-                b = desktopTk.moveToTrash(file);
-            } catch (Exception e) {
-                b = false;
-            }
-            return b;
-        }
-        return false;
-    }
-
     public static void copyPlainText(final String text) {
         runOnFXThread(() -> Clipboard.getSystemClipboard().setContent(Map.of(DataFormat.PLAIN_TEXT, text)));
     }

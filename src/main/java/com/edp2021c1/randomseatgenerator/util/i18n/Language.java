@@ -23,6 +23,8 @@ package com.edp2021c1.randomseatgenerator.util.i18n;
 import com.edp2021c1.randomseatgenerator.AppSettings;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Locale;
+
 public enum Language {
 
     CHINESE_SIMPLIFIED("zh_cn", "简体中文"),
@@ -38,9 +40,19 @@ public enum Language {
         return null;
     }
 
-    @Contract
+    @Contract(pure = true)
     public static Language getCurrent() {
         return getByCode(AppSettings.config.language);
+    }
+
+    @Contract(pure = true)
+    public static boolean isLocaleSupported(Locale locale) {
+        for (Language language : Language.values()) {
+            if (language.getLocale().equals(locale)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public final String code;
@@ -50,6 +62,11 @@ public enum Language {
     Language(String code, String name) {
         this.code = code;
         this.name = name;
+    }
+
+    @Contract(pure = true)
+    public Locale getLocale() {
+        return Locale.forLanguageTag(code.replace('_', '-'));
     }
 
     @Override

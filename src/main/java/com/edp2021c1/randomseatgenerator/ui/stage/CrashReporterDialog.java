@@ -54,11 +54,11 @@ public final class CrashReporterDialog extends Stage {
         mainText.setEditable(false);
         mainText.getStyleClass().add("err-main-text");
 
-        Button confirmBtn = createButton("close", 80, 26);
+        Button confirmBtn = createButton("button.close", 80, 26);
         confirmBtn.setOnAction(event -> close());
         confirmBtn.setDefaultButton(true);
 
-        Button copyBtn = createButton("copyAndClose", 80, 26);
+        Button copyBtn = createButton("button.copyAndClose", 80, 26);
 
         ButtonBar buttonBar = new ButtonBar();
         buttonBar.getButtons().addAll(copyBtn, confirmBtn);

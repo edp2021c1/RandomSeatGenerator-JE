@@ -158,7 +158,7 @@ public class ConfigPane extends VBox {
         });
     }
 
-    private boolean checkEquals() {
+    public boolean checkEquals() {
         return Objects.equals(content, AppSettings.config);
     }
 

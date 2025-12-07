@@ -26,11 +26,9 @@ import java.io.IOException;
 
 public enum ExceptionType {
 
-    IO("io", IOException.class),
-    SEAT("seat", RuntimeException.class),
-    COMMON("", Throwable.class);
-
-    private static final String BASE = "randomseatgenerator.exception";
+    IO("exception.io", IOException.class),
+    SEAT("exception.seat", RuntimeException.class),
+    COMMON("exception", Throwable.class);
 
     public static ExceptionType of(@NotNull Throwable cause) {
         if (IO.isOf(cause)) {
@@ -45,7 +43,7 @@ public enum ExceptionType {
     public final Class<? extends Throwable> clazz;
 
     ExceptionType(@NotNull String trKey, @NotNull Class<? extends Throwable> clazz) {
-        this.trKey = trKey.isBlank() ? BASE : BASE + "." + trKey;
+        this.trKey = trKey;
         this.clazz = clazz;
     }
 

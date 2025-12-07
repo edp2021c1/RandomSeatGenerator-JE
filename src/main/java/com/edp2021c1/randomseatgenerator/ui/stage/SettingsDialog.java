@@ -29,7 +29,6 @@ import com.edp2021c1.randomseatgenerator.util.IOUtils;
 import com.edp2021c1.randomseatgenerator.util.Metadata;
 import com.edp2021c1.randomseatgenerator.util.exception.ExceptionHandler;
 import com.edp2021c1.randomseatgenerator.util.exception.TranslatableException;
-import com.edp2021c1.randomseatgenerator.util.i18n.I18N;
 import com.edp2021c1.randomseatgenerator.util.i18n.Language;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -47,6 +46,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static com.edp2021c1.randomseatgenerator.RandomSeatGenerator.LOGGER;
+import static com.edp2021c1.randomseatgenerator.util.i18n.I18N.i18n;
 
 public final class SettingsDialog extends Stage {
 
@@ -67,33 +67,34 @@ public final class SettingsDialog extends Stage {
          *                                                                         *
          **************************************************************************/
 
-        IntegerField rowCountInput = new IntegerField(true, "rowCountInput");
+        IntegerField rowCountInput = new IntegerField(true, i18n("settings.input.rowCount"));
 
-        IntegerField columnCountInput = new IntegerField(true, "columnCountInput");
+        IntegerField columnCountInput = new IntegerField(true, i18n("settings.input.columnCount"));
 
-        IntegerField rbrInput = new IntegerField(true, "shuffledRowCountInput");
+        IntegerField rbrInput = new IntegerField(true, i18n("settings.input.shuffledRowCount"));
 
-        TextField disabledLastRowPosInput = FXUtils.createEmptyTextField("disabledLastRowPositionsInput");
+        TextField disabledLastRowPosInput = FXUtils.createEmptyTextField("settings.input.disabledLastRowPositions");
 
-        TextField nameListInput = FXUtils.createEmptyTextField("nameListInput");
+        TextField nameListInput = FXUtils.createEmptyTextField("settings.input.nameList");
 
-        TextField groupLeaderListInput = FXUtils.createEmptyTextField("leaderNameSetInput");
+        TextField groupLeaderListInput = FXUtils.createEmptyTextField("settings.input.leaderNameSet");
 
-        TextArea separateListInput = FXUtils.createEmptyTextArea("seperatedPairsInput", 165, 56);
+        TextArea separateListInput = FXUtils.createEmptyTextArea("settings.input.seperatedPairs", 165, 56);
 
-        CheckBox findLuckyCheck = FXUtils.createCheckBox("findLucky");
+        CheckBox findLuckyCheck = FXUtils.createCheckBox("settings.check.findLucky");
 
-        CheckBox findLeadersCheck = FXUtils.createCheckBox("findLeaders");
+        CheckBox findLeadersCheck = FXUtils.createCheckBox("settings.check.findLeaders");
 
-        CheckBox darkModeCheck = FXUtils.createCheckBox("darkMode");
+        CheckBox darkModeCheck = FXUtils.createCheckBox("settings.check.darkMode");
 
-        Label               languageLabel     = new Label("    " + I18N.constant("language") + " ");
+        Label languageLabel = new Label("    " + i18n("language") + " ");
         ChoiceBox<Language> languageChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(Language.values()));
+        languageLabel.setLabelFor(languageChoiceBox);
         languageChoiceBox.setValue(Language.getCurrent());
 
-        Button loadConfigBtn = FXUtils.createButton("load", 90, 26);
+        Button loadConfigBtn = FXUtils.createButton("settings.import", 90, 26);
 
-        Button applyBtn = FXUtils.createButton("apply", 80, 26);
+        Button applyBtn = FXUtils.createButton("button.apply", 80, 26);
         applyBtn.setDisable(true);
 
         configPane = new ConfigPane(
@@ -127,11 +128,11 @@ public final class SettingsDialog extends Stage {
         randomSeatGeneratorLabel.setPrefHeight(32);
         randomSeatGeneratorLabel.getStyleClass().add("app-name-label");
 
-        Hyperlink versionLink = FXUtils.createHyperlink(Metadata.VERSION_PAGE_URI, "version", Metadata.VERSION, Metadata.BUILD_TIME);
+        Hyperlink versionLink = FXUtils.createHyperlink(Metadata.VERSION_PAGE_URI, "about.version", Metadata.VERSION, Metadata.BUILD_TIME);
 
-        Hyperlink gitRepositoryLink = FXUtils.createHyperlink(Metadata.GIT_REPOSITORY_URI, "git", Metadata.GIT_REPOSITORY_URI);
+        Hyperlink gitRepositoryLink = FXUtils.createHyperlink(Metadata.GIT_REPOSITORY_URI, "about.git", Metadata.GIT_REPOSITORY_URI);
 
-        Hyperlink licenseLink = FXUtils.createHyperlink(Metadata.LICENSE_URI, "license", Metadata.LICENSE_NAME);
+        Hyperlink licenseLink = FXUtils.createHyperlink(Metadata.LICENSE_URI, "about.license", Metadata.LICENSE_NAME);
 
         TextArea licenseText = FXUtils.createEmptyTextArea(650, 288);
         licenseText.setText(Metadata.LICENSE);
@@ -143,16 +144,16 @@ public final class SettingsDialog extends Stage {
 
         HBox aboutInfoBox = new HBox(iconView, bottomRightBox);
 
-        Button confirmBtn = FXUtils.createButton("confirm", 80, 26);
+        Button confirmBtn = FXUtils.createButton("button.confirm", 80, 26);
 
-        Button cancelBtn = FXUtils.createButton("cancel", 80, 26);
+        Button cancelBtn = FXUtils.createButton("button.cancel", 80, 26);
 
         ButtonBar confirm_apply_cancelBar = new ButtonBar();
         confirm_apply_cancelBar.getButtons().addAll(confirmBtn, applyBtn, cancelBtn);
         confirm_apply_cancelBar.setPrefHeight(66);
         confirm_apply_cancelBar.getStyleClass().add("bottom");
 
-        Tab appConfigTab = FXUtils.createTab("general", appConfigBox);
+        Tab appConfigTab = FXUtils.createTab("settings", appConfigBox);
         appConfigTab.setClosable(false);
 
         Tab aboutInfoTab = FXUtils.createTab("about", aboutInfoBox);
@@ -243,7 +244,7 @@ public final class SettingsDialog extends Stage {
                 configPane.setContent(AppConfig.loadFromPath(importFile.toPath()));
             } catch (IOException e) {
                 LOGGER.warn("Failed to import config", e);
-                MessageDialog.showMessage(this, TranslatableException.io(e, "import_failure", e.getMessage()));
+                MessageDialog.showMessage(this, TranslatableException.io(e, "settings.import.failure", e.getMessage()));
             }
 
             fileChooser.setInitialDirectory(importFile.getParentFile());
@@ -258,6 +259,9 @@ public final class SettingsDialog extends Stage {
     }
 
     private void applyConfig() {
+        if (configPane.checkEquals()) {
+            return;
+        }
         try {
             AppSettings.config = configPane.getContent().copy();
             AppSettings.saveConfig();

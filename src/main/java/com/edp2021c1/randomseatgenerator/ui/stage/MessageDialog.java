@@ -52,7 +52,7 @@ public final class MessageDialog extends Stage {
 
         Label txt = new Label(msg.message());
 
-        Button button = FXUtils.createButton("confirm", 80, 26);
+        Button button = FXUtils.createButton("button.confirm", 80, 26);
         button.setDefaultButton(true);
         button.setOnAction(event -> close());
 

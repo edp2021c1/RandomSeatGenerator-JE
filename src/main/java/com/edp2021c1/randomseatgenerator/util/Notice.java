@@ -48,10 +48,6 @@ public interface Notice {
         };
     }
 
-    default String string() {
-        return title() + ": " + message();
-    }
-
     default String title() {
         return "Notice";
     }

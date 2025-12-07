@@ -25,8 +25,8 @@ See also: [RandomSeat](https://github.com/edp2021c1/RandomSeat)
 
 ## Environment requirement
 
-JDK: 21+
-JavaFX: 21+
+JDK: 25+
+JavaFX: 25+
 
 ## Command line parameters
 

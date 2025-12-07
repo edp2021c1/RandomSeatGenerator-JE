@@ -160,14 +160,14 @@
 .tab {
     -fx-border-radius: 3 3 0 0;
     -fx-border-width: 1.5 1.5 0 1.5;
-    -fx-border-color: -monet-outline;
+    -fx-border-color: -monet-outline-variant;
     -fx-background-radius: 3 3 0 0;
     -fx-background-color: -monet-surface;
 }
 
 .tab:selected,
 .tab:hover {
-    -fx-border-color: -monet-outline-variant;
+    -fx-border-color: -monet-outline;
 }
 
 .tab .focus-indicator {
