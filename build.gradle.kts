@@ -24,7 +24,7 @@ import java.util.*
 
 plugins {
     java
-    id("maven-publish")
+    `maven-publish`
     idea
 
     // https://github.com/GradleUp/shadow
@@ -53,25 +53,24 @@ repositories {
 dependencies {
     // Logging
     implementation("org.slf4j:slf4j-api:2.0.17")
-    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.25.1")
-    implementation("org.apache.logging.log4j:log4j-api:2.25.1")
-    implementation("org.apache.logging.log4j:log4j-core:2.25.1")
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.25.2")
+    implementation("org.apache.logging.log4j:log4j-api:2.25.2")
+    implementation("org.apache.logging.log4j:log4j-core:2.25.2")
 
     // Guava
-    implementation("com.google.guava:guava:33.4.8-jre")
+    implementation("com.google.guava:guava:33.5.0-jre")
 
     // Gson
     implementation("com.google.code.gson:gson:2.13.2")
 
     // Apache POI
-    implementation("org.apache.poi:poi:5.4.1")
-    implementation("org.apache.poi:poi-ooxml:5.4.1")
-    implementation("org.apache.commons:commons-lang3:3.18.0") // Avoid CVE-2025-31672
+    implementation("org.apache.poi:poi:5.5.1")
+    implementation("org.apache.poi:poi-ooxml:5.5.1")
 
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.40")
+    compileOnly("org.projectlombok:lombok:1.18.42")
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
     compileOnly("org.jetbrains:annotations:26.0.2-1")
-    annotationProcessor("org.projectlombok:lombok:1.18.40")
     annotationProcessor("org.jetbrains:annotations:26.0.2-1")
 }
 
